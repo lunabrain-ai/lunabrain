@@ -16,3 +16,5 @@ dist/
 
 # macOS trash files
 .DS_Store
+
+docker/

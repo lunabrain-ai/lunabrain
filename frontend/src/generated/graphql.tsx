@@ -1,0 +1,1278 @@
+import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
+export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+const defaultOptions = {} as const;
+/** All built-in and custom scalars, mapped to their actual values */
+export type Scalars = {
+  ID: string;
+  String: string;
+  Boolean: boolean;
+  Int: number;
+  Float: number;
+  smallint: any;
+  timestamp: any;
+};
+
+/** Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'. */
+export type Int_Comparison_Exp = {
+  _eq?: InputMaybe<Scalars['Int']>;
+  _gt?: InputMaybe<Scalars['Int']>;
+  _gte?: InputMaybe<Scalars['Int']>;
+  _in?: InputMaybe<Array<Scalars['Int']>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _lt?: InputMaybe<Scalars['Int']>;
+  _lte?: InputMaybe<Scalars['Int']>;
+  _neq?: InputMaybe<Scalars['Int']>;
+  _nin?: InputMaybe<Array<Scalars['Int']>>;
+};
+
+/** Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'. */
+export type String_Comparison_Exp = {
+  _eq?: InputMaybe<Scalars['String']>;
+  _gt?: InputMaybe<Scalars['String']>;
+  _gte?: InputMaybe<Scalars['String']>;
+  /** does the column match the given case-insensitive pattern */
+  _ilike?: InputMaybe<Scalars['String']>;
+  _in?: InputMaybe<Array<Scalars['String']>>;
+  /** does the column match the given POSIX regular expression, case insensitive */
+  _iregex?: InputMaybe<Scalars['String']>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  /** does the column match the given pattern */
+  _like?: InputMaybe<Scalars['String']>;
+  _lt?: InputMaybe<Scalars['String']>;
+  _lte?: InputMaybe<Scalars['String']>;
+  _neq?: InputMaybe<Scalars['String']>;
+  /** does the column NOT match the given case-insensitive pattern */
+  _nilike?: InputMaybe<Scalars['String']>;
+  _nin?: InputMaybe<Array<Scalars['String']>>;
+  /** does the column NOT match the given POSIX regular expression, case insensitive */
+  _niregex?: InputMaybe<Scalars['String']>;
+  /** does the column NOT match the given pattern */
+  _nlike?: InputMaybe<Scalars['String']>;
+  /** does the column NOT match the given POSIX regular expression, case sensitive */
+  _nregex?: InputMaybe<Scalars['String']>;
+  /** does the column NOT match the given SQL regular expression */
+  _nsimilar?: InputMaybe<Scalars['String']>;
+  /** does the column match the given POSIX regular expression, case sensitive */
+  _regex?: InputMaybe<Scalars['String']>;
+  /** does the column match the given SQL regular expression */
+  _similar?: InputMaybe<Scalars['String']>;
+};
+
+/** columns and relationships of "bookmark" */
+export type Bookmark = {
+  __typename?: 'bookmark';
+  author: Scalars['String'];
+  /** An array relationship */
+  bookmark_tags: Array<Bookmark_Tag>;
+  /** An aggregate relationship */
+  bookmark_tags_aggregate: Bookmark_Tag_Aggregate;
+  content: Scalars['String'];
+  excerpt: Scalars['String'];
+  html: Scalars['String'];
+  id: Scalars['Int'];
+  modified: Scalars['timestamp'];
+  public: Scalars['smallint'];
+  title: Scalars['String'];
+  url: Scalars['String'];
+};
+
+
+/** columns and relationships of "bookmark" */
+export type BookmarkBookmark_TagsArgs = {
+  distinct_on?: InputMaybe<Array<Bookmark_Tag_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Bookmark_Tag_Order_By>>;
+  where?: InputMaybe<Bookmark_Tag_Bool_Exp>;
+};
+
+
+/** columns and relationships of "bookmark" */
+export type BookmarkBookmark_Tags_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Bookmark_Tag_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Bookmark_Tag_Order_By>>;
+  where?: InputMaybe<Bookmark_Tag_Bool_Exp>;
+};
+
+/** aggregated selection of "bookmark" */
+export type Bookmark_Aggregate = {
+  __typename?: 'bookmark_aggregate';
+  aggregate?: Maybe<Bookmark_Aggregate_Fields>;
+  nodes: Array<Bookmark>;
+};
+
+/** aggregate fields of "bookmark" */
+export type Bookmark_Aggregate_Fields = {
+  __typename?: 'bookmark_aggregate_fields';
+  avg?: Maybe<Bookmark_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Bookmark_Max_Fields>;
+  min?: Maybe<Bookmark_Min_Fields>;
+  stddev?: Maybe<Bookmark_Stddev_Fields>;
+  stddev_pop?: Maybe<Bookmark_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Bookmark_Stddev_Samp_Fields>;
+  sum?: Maybe<Bookmark_Sum_Fields>;
+  var_pop?: Maybe<Bookmark_Var_Pop_Fields>;
+  var_samp?: Maybe<Bookmark_Var_Samp_Fields>;
+  variance?: Maybe<Bookmark_Variance_Fields>;
+};
+
+
+/** aggregate fields of "bookmark" */
+export type Bookmark_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Bookmark_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** aggregate avg on columns */
+export type Bookmark_Avg_Fields = {
+  __typename?: 'bookmark_avg_fields';
+  id?: Maybe<Scalars['Float']>;
+  public?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to filter rows from the table "bookmark". All fields are combined with a logical 'AND'. */
+export type Bookmark_Bool_Exp = {
+  _and?: InputMaybe<Array<Bookmark_Bool_Exp>>;
+  _not?: InputMaybe<Bookmark_Bool_Exp>;
+  _or?: InputMaybe<Array<Bookmark_Bool_Exp>>;
+  author?: InputMaybe<String_Comparison_Exp>;
+  bookmark_tags?: InputMaybe<Bookmark_Tag_Bool_Exp>;
+  content?: InputMaybe<String_Comparison_Exp>;
+  excerpt?: InputMaybe<String_Comparison_Exp>;
+  html?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<Int_Comparison_Exp>;
+  modified?: InputMaybe<Timestamp_Comparison_Exp>;
+  public?: InputMaybe<Smallint_Comparison_Exp>;
+  title?: InputMaybe<String_Comparison_Exp>;
+  url?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "bookmark" */
+export enum Bookmark_Constraint {
+  /** unique or primary key constraint */
+  BookmarkPkey = 'bookmark_pkey',
+  /** unique or primary key constraint */
+  BookmarkUrlUnique = 'bookmark_url_unique'
+}
+
+/** input type for incrementing numeric columns in table "bookmark" */
+export type Bookmark_Inc_Input = {
+  id?: InputMaybe<Scalars['Int']>;
+  public?: InputMaybe<Scalars['smallint']>;
+};
+
+/** input type for inserting data into table "bookmark" */
+export type Bookmark_Insert_Input = {
+  author?: InputMaybe<Scalars['String']>;
+  bookmark_tags?: InputMaybe<Bookmark_Tag_Arr_Rel_Insert_Input>;
+  content?: InputMaybe<Scalars['String']>;
+  excerpt?: InputMaybe<Scalars['String']>;
+  html?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['Int']>;
+  modified?: InputMaybe<Scalars['timestamp']>;
+  public?: InputMaybe<Scalars['smallint']>;
+  title?: InputMaybe<Scalars['String']>;
+  url?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Bookmark_Max_Fields = {
+  __typename?: 'bookmark_max_fields';
+  author?: Maybe<Scalars['String']>;
+  content?: Maybe<Scalars['String']>;
+  excerpt?: Maybe<Scalars['String']>;
+  html?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['Int']>;
+  modified?: Maybe<Scalars['timestamp']>;
+  public?: Maybe<Scalars['smallint']>;
+  title?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Bookmark_Min_Fields = {
+  __typename?: 'bookmark_min_fields';
+  author?: Maybe<Scalars['String']>;
+  content?: Maybe<Scalars['String']>;
+  excerpt?: Maybe<Scalars['String']>;
+  html?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['Int']>;
+  modified?: Maybe<Scalars['timestamp']>;
+  public?: Maybe<Scalars['smallint']>;
+  title?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "bookmark" */
+export type Bookmark_Mutation_Response = {
+  __typename?: 'bookmark_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Bookmark>;
+};
+
+/** on_conflict condition type for table "bookmark" */
+export type Bookmark_On_Conflict = {
+  constraint: Bookmark_Constraint;
+  update_columns?: Array<Bookmark_Update_Column>;
+  where?: InputMaybe<Bookmark_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "bookmark". */
+export type Bookmark_Order_By = {
+  author?: InputMaybe<Order_By>;
+  bookmark_tags_aggregate?: InputMaybe<Bookmark_Tag_Aggregate_Order_By>;
+  content?: InputMaybe<Order_By>;
+  excerpt?: InputMaybe<Order_By>;
+  html?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  modified?: InputMaybe<Order_By>;
+  public?: InputMaybe<Order_By>;
+  title?: InputMaybe<Order_By>;
+  url?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: bookmark */
+export type Bookmark_Pk_Columns_Input = {
+  id: Scalars['Int'];
+};
+
+/** select columns of table "bookmark" */
+export enum Bookmark_Select_Column {
+  /** column name */
+  Author = 'author',
+  /** column name */
+  Content = 'content',
+  /** column name */
+  Excerpt = 'excerpt',
+  /** column name */
+  Html = 'html',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Modified = 'modified',
+  /** column name */
+  Public = 'public',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  Url = 'url'
+}
+
+/** input type for updating data in table "bookmark" */
+export type Bookmark_Set_Input = {
+  author?: InputMaybe<Scalars['String']>;
+  content?: InputMaybe<Scalars['String']>;
+  excerpt?: InputMaybe<Scalars['String']>;
+  html?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['Int']>;
+  modified?: InputMaybe<Scalars['timestamp']>;
+  public?: InputMaybe<Scalars['smallint']>;
+  title?: InputMaybe<Scalars['String']>;
+  url?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate stddev on columns */
+export type Bookmark_Stddev_Fields = {
+  __typename?: 'bookmark_stddev_fields';
+  id?: Maybe<Scalars['Float']>;
+  public?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Bookmark_Stddev_Pop_Fields = {
+  __typename?: 'bookmark_stddev_pop_fields';
+  id?: Maybe<Scalars['Float']>;
+  public?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Bookmark_Stddev_Samp_Fields = {
+  __typename?: 'bookmark_stddev_samp_fields';
+  id?: Maybe<Scalars['Float']>;
+  public?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate sum on columns */
+export type Bookmark_Sum_Fields = {
+  __typename?: 'bookmark_sum_fields';
+  id?: Maybe<Scalars['Int']>;
+  public?: Maybe<Scalars['smallint']>;
+};
+
+/** columns and relationships of "bookmark_tag" */
+export type Bookmark_Tag = {
+  __typename?: 'bookmark_tag';
+  bookmark_id: Scalars['Int'];
+  tag_id: Scalars['Int'];
+};
+
+/** aggregated selection of "bookmark_tag" */
+export type Bookmark_Tag_Aggregate = {
+  __typename?: 'bookmark_tag_aggregate';
+  aggregate?: Maybe<Bookmark_Tag_Aggregate_Fields>;
+  nodes: Array<Bookmark_Tag>;
+};
+
+/** aggregate fields of "bookmark_tag" */
+export type Bookmark_Tag_Aggregate_Fields = {
+  __typename?: 'bookmark_tag_aggregate_fields';
+  avg?: Maybe<Bookmark_Tag_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Bookmark_Tag_Max_Fields>;
+  min?: Maybe<Bookmark_Tag_Min_Fields>;
+  stddev?: Maybe<Bookmark_Tag_Stddev_Fields>;
+  stddev_pop?: Maybe<Bookmark_Tag_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Bookmark_Tag_Stddev_Samp_Fields>;
+  sum?: Maybe<Bookmark_Tag_Sum_Fields>;
+  var_pop?: Maybe<Bookmark_Tag_Var_Pop_Fields>;
+  var_samp?: Maybe<Bookmark_Tag_Var_Samp_Fields>;
+  variance?: Maybe<Bookmark_Tag_Variance_Fields>;
+};
+
+
+/** aggregate fields of "bookmark_tag" */
+export type Bookmark_Tag_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Bookmark_Tag_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** order by aggregate values of table "bookmark_tag" */
+export type Bookmark_Tag_Aggregate_Order_By = {
+  avg?: InputMaybe<Bookmark_Tag_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<Bookmark_Tag_Max_Order_By>;
+  min?: InputMaybe<Bookmark_Tag_Min_Order_By>;
+  stddev?: InputMaybe<Bookmark_Tag_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<Bookmark_Tag_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<Bookmark_Tag_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<Bookmark_Tag_Sum_Order_By>;
+  var_pop?: InputMaybe<Bookmark_Tag_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<Bookmark_Tag_Var_Samp_Order_By>;
+  variance?: InputMaybe<Bookmark_Tag_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "bookmark_tag" */
+export type Bookmark_Tag_Arr_Rel_Insert_Input = {
+  data: Array<Bookmark_Tag_Insert_Input>;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Bookmark_Tag_On_Conflict>;
+};
+
+/** aggregate avg on columns */
+export type Bookmark_Tag_Avg_Fields = {
+  __typename?: 'bookmark_tag_avg_fields';
+  bookmark_id?: Maybe<Scalars['Float']>;
+  tag_id?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "bookmark_tag" */
+export type Bookmark_Tag_Avg_Order_By = {
+  bookmark_id?: InputMaybe<Order_By>;
+  tag_id?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "bookmark_tag". All fields are combined with a logical 'AND'. */
+export type Bookmark_Tag_Bool_Exp = {
+  _and?: InputMaybe<Array<Bookmark_Tag_Bool_Exp>>;
+  _not?: InputMaybe<Bookmark_Tag_Bool_Exp>;
+  _or?: InputMaybe<Array<Bookmark_Tag_Bool_Exp>>;
+  bookmark_id?: InputMaybe<Int_Comparison_Exp>;
+  tag_id?: InputMaybe<Int_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "bookmark_tag" */
+export enum Bookmark_Tag_Constraint {
+  /** unique or primary key constraint */
+  BookmarkTagPkey = 'bookmark_tag_pkey'
+}
+
+/** input type for incrementing numeric columns in table "bookmark_tag" */
+export type Bookmark_Tag_Inc_Input = {
+  bookmark_id?: InputMaybe<Scalars['Int']>;
+  tag_id?: InputMaybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "bookmark_tag" */
+export type Bookmark_Tag_Insert_Input = {
+  bookmark_id?: InputMaybe<Scalars['Int']>;
+  tag_id?: InputMaybe<Scalars['Int']>;
+};
+
+/** aggregate max on columns */
+export type Bookmark_Tag_Max_Fields = {
+  __typename?: 'bookmark_tag_max_fields';
+  bookmark_id?: Maybe<Scalars['Int']>;
+  tag_id?: Maybe<Scalars['Int']>;
+};
+
+/** order by max() on columns of table "bookmark_tag" */
+export type Bookmark_Tag_Max_Order_By = {
+  bookmark_id?: InputMaybe<Order_By>;
+  tag_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type Bookmark_Tag_Min_Fields = {
+  __typename?: 'bookmark_tag_min_fields';
+  bookmark_id?: Maybe<Scalars['Int']>;
+  tag_id?: Maybe<Scalars['Int']>;
+};
+
+/** order by min() on columns of table "bookmark_tag" */
+export type Bookmark_Tag_Min_Order_By = {
+  bookmark_id?: InputMaybe<Order_By>;
+  tag_id?: InputMaybe<Order_By>;
+};
+
+/** response of any mutation on the table "bookmark_tag" */
+export type Bookmark_Tag_Mutation_Response = {
+  __typename?: 'bookmark_tag_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Bookmark_Tag>;
+};
+
+/** on_conflict condition type for table "bookmark_tag" */
+export type Bookmark_Tag_On_Conflict = {
+  constraint: Bookmark_Tag_Constraint;
+  update_columns?: Array<Bookmark_Tag_Update_Column>;
+  where?: InputMaybe<Bookmark_Tag_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "bookmark_tag". */
+export type Bookmark_Tag_Order_By = {
+  bookmark_id?: InputMaybe<Order_By>;
+  tag_id?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: bookmark_tag */
+export type Bookmark_Tag_Pk_Columns_Input = {
+  bookmark_id: Scalars['Int'];
+  tag_id: Scalars['Int'];
+};
+
+/** select columns of table "bookmark_tag" */
+export enum Bookmark_Tag_Select_Column {
+  /** column name */
+  BookmarkId = 'bookmark_id',
+  /** column name */
+  TagId = 'tag_id'
+}
+
+/** input type for updating data in table "bookmark_tag" */
+export type Bookmark_Tag_Set_Input = {
+  bookmark_id?: InputMaybe<Scalars['Int']>;
+  tag_id?: InputMaybe<Scalars['Int']>;
+};
+
+/** aggregate stddev on columns */
+export type Bookmark_Tag_Stddev_Fields = {
+  __typename?: 'bookmark_tag_stddev_fields';
+  bookmark_id?: Maybe<Scalars['Float']>;
+  tag_id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev() on columns of table "bookmark_tag" */
+export type Bookmark_Tag_Stddev_Order_By = {
+  bookmark_id?: InputMaybe<Order_By>;
+  tag_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Bookmark_Tag_Stddev_Pop_Fields = {
+  __typename?: 'bookmark_tag_stddev_pop_fields';
+  bookmark_id?: Maybe<Scalars['Float']>;
+  tag_id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "bookmark_tag" */
+export type Bookmark_Tag_Stddev_Pop_Order_By = {
+  bookmark_id?: InputMaybe<Order_By>;
+  tag_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Bookmark_Tag_Stddev_Samp_Fields = {
+  __typename?: 'bookmark_tag_stddev_samp_fields';
+  bookmark_id?: Maybe<Scalars['Float']>;
+  tag_id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_samp() on columns of table "bookmark_tag" */
+export type Bookmark_Tag_Stddev_Samp_Order_By = {
+  bookmark_id?: InputMaybe<Order_By>;
+  tag_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate sum on columns */
+export type Bookmark_Tag_Sum_Fields = {
+  __typename?: 'bookmark_tag_sum_fields';
+  bookmark_id?: Maybe<Scalars['Int']>;
+  tag_id?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "bookmark_tag" */
+export type Bookmark_Tag_Sum_Order_By = {
+  bookmark_id?: InputMaybe<Order_By>;
+  tag_id?: InputMaybe<Order_By>;
+};
+
+/** update columns of table "bookmark_tag" */
+export enum Bookmark_Tag_Update_Column {
+  /** column name */
+  BookmarkId = 'bookmark_id',
+  /** column name */
+  TagId = 'tag_id'
+}
+
+/** aggregate var_pop on columns */
+export type Bookmark_Tag_Var_Pop_Fields = {
+  __typename?: 'bookmark_tag_var_pop_fields';
+  bookmark_id?: Maybe<Scalars['Float']>;
+  tag_id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_pop() on columns of table "bookmark_tag" */
+export type Bookmark_Tag_Var_Pop_Order_By = {
+  bookmark_id?: InputMaybe<Order_By>;
+  tag_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type Bookmark_Tag_Var_Samp_Fields = {
+  __typename?: 'bookmark_tag_var_samp_fields';
+  bookmark_id?: Maybe<Scalars['Float']>;
+  tag_id?: Maybe<Scalars['Float']>;
+};
+
+/** order by var_samp() on columns of table "bookmark_tag" */
+export type Bookmark_Tag_Var_Samp_Order_By = {
+  bookmark_id?: InputMaybe<Order_By>;
+  tag_id?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type Bookmark_Tag_Variance_Fields = {
+  __typename?: 'bookmark_tag_variance_fields';
+  bookmark_id?: Maybe<Scalars['Float']>;
+  tag_id?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "bookmark_tag" */
+export type Bookmark_Tag_Variance_Order_By = {
+  bookmark_id?: InputMaybe<Order_By>;
+  tag_id?: InputMaybe<Order_By>;
+};
+
+/** update columns of table "bookmark" */
+export enum Bookmark_Update_Column {
+  /** column name */
+  Author = 'author',
+  /** column name */
+  Content = 'content',
+  /** column name */
+  Excerpt = 'excerpt',
+  /** column name */
+  Html = 'html',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Modified = 'modified',
+  /** column name */
+  Public = 'public',
+  /** column name */
+  Title = 'title',
+  /** column name */
+  Url = 'url'
+}
+
+/** aggregate var_pop on columns */
+export type Bookmark_Var_Pop_Fields = {
+  __typename?: 'bookmark_var_pop_fields';
+  id?: Maybe<Scalars['Float']>;
+  public?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Bookmark_Var_Samp_Fields = {
+  __typename?: 'bookmark_var_samp_fields';
+  id?: Maybe<Scalars['Float']>;
+  public?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Bookmark_Variance_Fields = {
+  __typename?: 'bookmark_variance_fields';
+  id?: Maybe<Scalars['Float']>;
+  public?: Maybe<Scalars['Float']>;
+};
+
+/** mutation root */
+export type Mutation_Root = {
+  __typename?: 'mutation_root';
+  /** delete data from the table: "bookmark" */
+  delete_bookmark?: Maybe<Bookmark_Mutation_Response>;
+  /** delete single row from the table: "bookmark" */
+  delete_bookmark_by_pk?: Maybe<Bookmark>;
+  /** delete data from the table: "bookmark_tag" */
+  delete_bookmark_tag?: Maybe<Bookmark_Tag_Mutation_Response>;
+  /** delete single row from the table: "bookmark_tag" */
+  delete_bookmark_tag_by_pk?: Maybe<Bookmark_Tag>;
+  /** delete data from the table: "tag" */
+  delete_tag?: Maybe<Tag_Mutation_Response>;
+  /** delete single row from the table: "tag" */
+  delete_tag_by_pk?: Maybe<Tag>;
+  /** insert data into the table: "bookmark" */
+  insert_bookmark?: Maybe<Bookmark_Mutation_Response>;
+  /** insert a single row into the table: "bookmark" */
+  insert_bookmark_one?: Maybe<Bookmark>;
+  /** insert data into the table: "bookmark_tag" */
+  insert_bookmark_tag?: Maybe<Bookmark_Tag_Mutation_Response>;
+  /** insert a single row into the table: "bookmark_tag" */
+  insert_bookmark_tag_one?: Maybe<Bookmark_Tag>;
+  /** insert data into the table: "tag" */
+  insert_tag?: Maybe<Tag_Mutation_Response>;
+  /** insert a single row into the table: "tag" */
+  insert_tag_one?: Maybe<Tag>;
+  /** update data of the table: "bookmark" */
+  update_bookmark?: Maybe<Bookmark_Mutation_Response>;
+  /** update single row of the table: "bookmark" */
+  update_bookmark_by_pk?: Maybe<Bookmark>;
+  /** update data of the table: "bookmark_tag" */
+  update_bookmark_tag?: Maybe<Bookmark_Tag_Mutation_Response>;
+  /** update single row of the table: "bookmark_tag" */
+  update_bookmark_tag_by_pk?: Maybe<Bookmark_Tag>;
+  /** update data of the table: "tag" */
+  update_tag?: Maybe<Tag_Mutation_Response>;
+  /** update single row of the table: "tag" */
+  update_tag_by_pk?: Maybe<Tag>;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_BookmarkArgs = {
+  where: Bookmark_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Bookmark_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Bookmark_TagArgs = {
+  where: Bookmark_Tag_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Bookmark_Tag_By_PkArgs = {
+  bookmark_id: Scalars['Int'];
+  tag_id: Scalars['Int'];
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_TagArgs = {
+  where: Tag_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootDelete_Tag_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_BookmarkArgs = {
+  objects: Array<Bookmark_Insert_Input>;
+  on_conflict?: InputMaybe<Bookmark_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Bookmark_OneArgs = {
+  object: Bookmark_Insert_Input;
+  on_conflict?: InputMaybe<Bookmark_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Bookmark_TagArgs = {
+  objects: Array<Bookmark_Tag_Insert_Input>;
+  on_conflict?: InputMaybe<Bookmark_Tag_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Bookmark_Tag_OneArgs = {
+  object: Bookmark_Tag_Insert_Input;
+  on_conflict?: InputMaybe<Bookmark_Tag_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_TagArgs = {
+  objects: Array<Tag_Insert_Input>;
+  on_conflict?: InputMaybe<Tag_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootInsert_Tag_OneArgs = {
+  object: Tag_Insert_Input;
+  on_conflict?: InputMaybe<Tag_On_Conflict>;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_BookmarkArgs = {
+  _inc?: InputMaybe<Bookmark_Inc_Input>;
+  _set?: InputMaybe<Bookmark_Set_Input>;
+  where: Bookmark_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Bookmark_By_PkArgs = {
+  _inc?: InputMaybe<Bookmark_Inc_Input>;
+  _set?: InputMaybe<Bookmark_Set_Input>;
+  pk_columns: Bookmark_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Bookmark_TagArgs = {
+  _inc?: InputMaybe<Bookmark_Tag_Inc_Input>;
+  _set?: InputMaybe<Bookmark_Tag_Set_Input>;
+  where: Bookmark_Tag_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Bookmark_Tag_By_PkArgs = {
+  _inc?: InputMaybe<Bookmark_Tag_Inc_Input>;
+  _set?: InputMaybe<Bookmark_Tag_Set_Input>;
+  pk_columns: Bookmark_Tag_Pk_Columns_Input;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_TagArgs = {
+  _inc?: InputMaybe<Tag_Inc_Input>;
+  _set?: InputMaybe<Tag_Set_Input>;
+  where: Tag_Bool_Exp;
+};
+
+
+/** mutation root */
+export type Mutation_RootUpdate_Tag_By_PkArgs = {
+  _inc?: InputMaybe<Tag_Inc_Input>;
+  _set?: InputMaybe<Tag_Set_Input>;
+  pk_columns: Tag_Pk_Columns_Input;
+};
+
+/** column ordering options */
+export enum Order_By {
+  /** in ascending order, nulls last */
+  Asc = 'asc',
+  /** in ascending order, nulls first */
+  AscNullsFirst = 'asc_nulls_first',
+  /** in ascending order, nulls last */
+  AscNullsLast = 'asc_nulls_last',
+  /** in descending order, nulls first */
+  Desc = 'desc',
+  /** in descending order, nulls first */
+  DescNullsFirst = 'desc_nulls_first',
+  /** in descending order, nulls last */
+  DescNullsLast = 'desc_nulls_last'
+}
+
+export type Query_Root = {
+  __typename?: 'query_root';
+  /** fetch data from the table: "bookmark" */
+  bookmark: Array<Bookmark>;
+  /** fetch aggregated fields from the table: "bookmark" */
+  bookmark_aggregate: Bookmark_Aggregate;
+  /** fetch data from the table: "bookmark" using primary key columns */
+  bookmark_by_pk?: Maybe<Bookmark>;
+  /** fetch data from the table: "bookmark_tag" */
+  bookmark_tag: Array<Bookmark_Tag>;
+  /** fetch aggregated fields from the table: "bookmark_tag" */
+  bookmark_tag_aggregate: Bookmark_Tag_Aggregate;
+  /** fetch data from the table: "bookmark_tag" using primary key columns */
+  bookmark_tag_by_pk?: Maybe<Bookmark_Tag>;
+  /** fetch data from the table: "tag" */
+  tag: Array<Tag>;
+  /** fetch aggregated fields from the table: "tag" */
+  tag_aggregate: Tag_Aggregate;
+  /** fetch data from the table: "tag" using primary key columns */
+  tag_by_pk?: Maybe<Tag>;
+};
+
+
+export type Query_RootBookmarkArgs = {
+  distinct_on?: InputMaybe<Array<Bookmark_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Bookmark_Order_By>>;
+  where?: InputMaybe<Bookmark_Bool_Exp>;
+};
+
+
+export type Query_RootBookmark_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Bookmark_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Bookmark_Order_By>>;
+  where?: InputMaybe<Bookmark_Bool_Exp>;
+};
+
+
+export type Query_RootBookmark_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type Query_RootBookmark_TagArgs = {
+  distinct_on?: InputMaybe<Array<Bookmark_Tag_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Bookmark_Tag_Order_By>>;
+  where?: InputMaybe<Bookmark_Tag_Bool_Exp>;
+};
+
+
+export type Query_RootBookmark_Tag_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Bookmark_Tag_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Bookmark_Tag_Order_By>>;
+  where?: InputMaybe<Bookmark_Tag_Bool_Exp>;
+};
+
+
+export type Query_RootBookmark_Tag_By_PkArgs = {
+  bookmark_id: Scalars['Int'];
+  tag_id: Scalars['Int'];
+};
+
+
+export type Query_RootTagArgs = {
+  distinct_on?: InputMaybe<Array<Tag_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Tag_Order_By>>;
+  where?: InputMaybe<Tag_Bool_Exp>;
+};
+
+
+export type Query_RootTag_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Tag_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Tag_Order_By>>;
+  where?: InputMaybe<Tag_Bool_Exp>;
+};
+
+
+export type Query_RootTag_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+/** Boolean expression to compare columns of type "smallint". All fields are combined with logical 'AND'. */
+export type Smallint_Comparison_Exp = {
+  _eq?: InputMaybe<Scalars['smallint']>;
+  _gt?: InputMaybe<Scalars['smallint']>;
+  _gte?: InputMaybe<Scalars['smallint']>;
+  _in?: InputMaybe<Array<Scalars['smallint']>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _lt?: InputMaybe<Scalars['smallint']>;
+  _lte?: InputMaybe<Scalars['smallint']>;
+  _neq?: InputMaybe<Scalars['smallint']>;
+  _nin?: InputMaybe<Array<Scalars['smallint']>>;
+};
+
+export type Subscription_Root = {
+  __typename?: 'subscription_root';
+  /** fetch data from the table: "bookmark" */
+  bookmark: Array<Bookmark>;
+  /** fetch aggregated fields from the table: "bookmark" */
+  bookmark_aggregate: Bookmark_Aggregate;
+  /** fetch data from the table: "bookmark" using primary key columns */
+  bookmark_by_pk?: Maybe<Bookmark>;
+  /** fetch data from the table: "bookmark_tag" */
+  bookmark_tag: Array<Bookmark_Tag>;
+  /** fetch aggregated fields from the table: "bookmark_tag" */
+  bookmark_tag_aggregate: Bookmark_Tag_Aggregate;
+  /** fetch data from the table: "bookmark_tag" using primary key columns */
+  bookmark_tag_by_pk?: Maybe<Bookmark_Tag>;
+  /** fetch data from the table: "tag" */
+  tag: Array<Tag>;
+  /** fetch aggregated fields from the table: "tag" */
+  tag_aggregate: Tag_Aggregate;
+  /** fetch data from the table: "tag" using primary key columns */
+  tag_by_pk?: Maybe<Tag>;
+};
+
+
+export type Subscription_RootBookmarkArgs = {
+  distinct_on?: InputMaybe<Array<Bookmark_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Bookmark_Order_By>>;
+  where?: InputMaybe<Bookmark_Bool_Exp>;
+};
+
+
+export type Subscription_RootBookmark_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Bookmark_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Bookmark_Order_By>>;
+  where?: InputMaybe<Bookmark_Bool_Exp>;
+};
+
+
+export type Subscription_RootBookmark_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type Subscription_RootBookmark_TagArgs = {
+  distinct_on?: InputMaybe<Array<Bookmark_Tag_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Bookmark_Tag_Order_By>>;
+  where?: InputMaybe<Bookmark_Tag_Bool_Exp>;
+};
+
+
+export type Subscription_RootBookmark_Tag_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Bookmark_Tag_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Bookmark_Tag_Order_By>>;
+  where?: InputMaybe<Bookmark_Tag_Bool_Exp>;
+};
+
+
+export type Subscription_RootBookmark_Tag_By_PkArgs = {
+  bookmark_id: Scalars['Int'];
+  tag_id: Scalars['Int'];
+};
+
+
+export type Subscription_RootTagArgs = {
+  distinct_on?: InputMaybe<Array<Tag_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Tag_Order_By>>;
+  where?: InputMaybe<Tag_Bool_Exp>;
+};
+
+
+export type Subscription_RootTag_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Tag_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  order_by?: InputMaybe<Array<Tag_Order_By>>;
+  where?: InputMaybe<Tag_Bool_Exp>;
+};
+
+
+export type Subscription_RootTag_By_PkArgs = {
+  id: Scalars['Int'];
+};
+
+/** columns and relationships of "tag" */
+export type Tag = {
+  __typename?: 'tag';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
+/** aggregated selection of "tag" */
+export type Tag_Aggregate = {
+  __typename?: 'tag_aggregate';
+  aggregate?: Maybe<Tag_Aggregate_Fields>;
+  nodes: Array<Tag>;
+};
+
+/** aggregate fields of "tag" */
+export type Tag_Aggregate_Fields = {
+  __typename?: 'tag_aggregate_fields';
+  avg?: Maybe<Tag_Avg_Fields>;
+  count: Scalars['Int'];
+  max?: Maybe<Tag_Max_Fields>;
+  min?: Maybe<Tag_Min_Fields>;
+  stddev?: Maybe<Tag_Stddev_Fields>;
+  stddev_pop?: Maybe<Tag_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Tag_Stddev_Samp_Fields>;
+  sum?: Maybe<Tag_Sum_Fields>;
+  var_pop?: Maybe<Tag_Var_Pop_Fields>;
+  var_samp?: Maybe<Tag_Var_Samp_Fields>;
+  variance?: Maybe<Tag_Variance_Fields>;
+};
+
+
+/** aggregate fields of "tag" */
+export type Tag_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Tag_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']>;
+};
+
+/** aggregate avg on columns */
+export type Tag_Avg_Fields = {
+  __typename?: 'tag_avg_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to filter rows from the table "tag". All fields are combined with a logical 'AND'. */
+export type Tag_Bool_Exp = {
+  _and?: InputMaybe<Array<Tag_Bool_Exp>>;
+  _not?: InputMaybe<Tag_Bool_Exp>;
+  _or?: InputMaybe<Array<Tag_Bool_Exp>>;
+  id?: InputMaybe<Int_Comparison_Exp>;
+  name?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** unique or primary key constraints on table "tag" */
+export enum Tag_Constraint {
+  /** unique or primary key constraint */
+  TagNameUnique = 'tag_name_unique',
+  /** unique or primary key constraint */
+  TagPkey = 'tag_pkey'
+}
+
+/** input type for incrementing numeric columns in table "tag" */
+export type Tag_Inc_Input = {
+  id?: InputMaybe<Scalars['Int']>;
+};
+
+/** input type for inserting data into table "tag" */
+export type Tag_Insert_Input = {
+  id?: InputMaybe<Scalars['Int']>;
+  name?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate max on columns */
+export type Tag_Max_Fields = {
+  __typename?: 'tag_max_fields';
+  id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** aggregate min on columns */
+export type Tag_Min_Fields = {
+  __typename?: 'tag_min_fields';
+  id?: Maybe<Scalars['Int']>;
+  name?: Maybe<Scalars['String']>;
+};
+
+/** response of any mutation on the table "tag" */
+export type Tag_Mutation_Response = {
+  __typename?: 'tag_mutation_response';
+  /** number of rows affected by the mutation */
+  affected_rows: Scalars['Int'];
+  /** data from the rows affected by the mutation */
+  returning: Array<Tag>;
+};
+
+/** on_conflict condition type for table "tag" */
+export type Tag_On_Conflict = {
+  constraint: Tag_Constraint;
+  update_columns?: Array<Tag_Update_Column>;
+  where?: InputMaybe<Tag_Bool_Exp>;
+};
+
+/** Ordering options when selecting data from "tag". */
+export type Tag_Order_By = {
+  id?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+};
+
+/** primary key columns input for table: tag */
+export type Tag_Pk_Columns_Input = {
+  id: Scalars['Int'];
+};
+
+/** select columns of table "tag" */
+export enum Tag_Select_Column {
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name'
+}
+
+/** input type for updating data in table "tag" */
+export type Tag_Set_Input = {
+  id?: InputMaybe<Scalars['Int']>;
+  name?: InputMaybe<Scalars['String']>;
+};
+
+/** aggregate stddev on columns */
+export type Tag_Stddev_Fields = {
+  __typename?: 'tag_stddev_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Tag_Stddev_Pop_Fields = {
+  __typename?: 'tag_stddev_pop_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Tag_Stddev_Samp_Fields = {
+  __typename?: 'tag_stddev_samp_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate sum on columns */
+export type Tag_Sum_Fields = {
+  __typename?: 'tag_sum_fields';
+  id?: Maybe<Scalars['Int']>;
+};
+
+/** update columns of table "tag" */
+export enum Tag_Update_Column {
+  /** column name */
+  Id = 'id',
+  /** column name */
+  Name = 'name'
+}
+
+/** aggregate var_pop on columns */
+export type Tag_Var_Pop_Fields = {
+  __typename?: 'tag_var_pop_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Tag_Var_Samp_Fields = {
+  __typename?: 'tag_var_samp_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Tag_Variance_Fields = {
+  __typename?: 'tag_variance_fields';
+  id?: Maybe<Scalars['Float']>;
+};
+
+/** Boolean expression to compare columns of type "timestamp". All fields are combined with logical 'AND'. */
+export type Timestamp_Comparison_Exp = {
+  _eq?: InputMaybe<Scalars['timestamp']>;
+  _gt?: InputMaybe<Scalars['timestamp']>;
+  _gte?: InputMaybe<Scalars['timestamp']>;
+  _in?: InputMaybe<Array<Scalars['timestamp']>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _lt?: InputMaybe<Scalars['timestamp']>;
+  _lte?: InputMaybe<Scalars['timestamp']>;
+  _neq?: InputMaybe<Scalars['timestamp']>;
+  _nin?: InputMaybe<Array<Scalars['timestamp']>>;
+};
+
+export type GetBookmarksQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type GetBookmarksQuery = { __typename?: 'query_root', bookmark: Array<{ __typename?: 'bookmark', id: number, title: string, url: string, public: any, modified: any, author: string }> };
+
+export type SaveBookmarksMutationVariables = Exact<{
+  bookmarks?: InputMaybe<Array<Bookmark_Insert_Input> | Bookmark_Insert_Input>;
+}>;
+
+
+export type SaveBookmarksMutation = { __typename?: 'mutation_root', insert_bookmark?: { __typename?: 'bookmark_mutation_response', affected_rows: number } | null };
+
+
+export const GetBookmarksDocument = gql`
+    query GetBookmarks($limit: Int = 10) {
+  bookmark(limit: $limit) {
+    id
+    title
+    url
+    public
+    modified
+    author
+  }
+}
+    `;
+
+/**
+ * __useGetBookmarksQuery__
+ *
+ * To run a query within a React component, call `useGetBookmarksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBookmarksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBookmarksQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useGetBookmarksQuery(baseOptions?: Apollo.QueryHookOptions<GetBookmarksQuery, GetBookmarksQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBookmarksQuery, GetBookmarksQueryVariables>(GetBookmarksDocument, options);
+      }
+export function useGetBookmarksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBookmarksQuery, GetBookmarksQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBookmarksQuery, GetBookmarksQueryVariables>(GetBookmarksDocument, options);
+        }
+export type GetBookmarksQueryHookResult = ReturnType<typeof useGetBookmarksQuery>;
+export type GetBookmarksLazyQueryHookResult = ReturnType<typeof useGetBookmarksLazyQuery>;
+export type GetBookmarksQueryResult = Apollo.QueryResult<GetBookmarksQuery, GetBookmarksQueryVariables>;
+export const SaveBookmarksDocument = gql`
+    mutation SaveBookmarks($bookmarks: [bookmark_insert_input!] = {}) {
+  insert_bookmark(objects: $bookmarks) {
+    affected_rows
+  }
+}
+    `;
+export type SaveBookmarksMutationFn = Apollo.MutationFunction<SaveBookmarksMutation, SaveBookmarksMutationVariables>;
+
+/**
+ * __useSaveBookmarksMutation__
+ *
+ * To run a mutation, you first call `useSaveBookmarksMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveBookmarksMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveBookmarksMutation, { data, loading, error }] = useSaveBookmarksMutation({
+ *   variables: {
+ *      bookmarks: // value for 'bookmarks'
+ *   },
+ * });
+ */
+export function useSaveBookmarksMutation(baseOptions?: Apollo.MutationHookOptions<SaveBookmarksMutation, SaveBookmarksMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SaveBookmarksMutation, SaveBookmarksMutationVariables>(SaveBookmarksDocument, options);
+      }
+export type SaveBookmarksMutationHookResult = ReturnType<typeof useSaveBookmarksMutation>;
+export type SaveBookmarksMutationResult = Apollo.MutationResult<SaveBookmarksMutation>;
+export type SaveBookmarksMutationOptions = Apollo.BaseMutationOptions<SaveBookmarksMutation, SaveBookmarksMutationVariables>;

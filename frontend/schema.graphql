@@ -1,0 +1,1388 @@
+schema {
+  query: query_root
+  mutation: mutation_root
+  subscription: subscription_root
+}
+
+"""whether this query should be cached (Hasura Cloud only)"""
+directive @cached(
+  """measured in seconds"""
+  ttl: Int! = 60
+
+  """refresh the cache entry"""
+  refresh: Boolean! = false
+) on QUERY
+
+"""
+Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
+"""
+input Int_comparison_exp {
+  _eq: Int
+  _gt: Int
+  _gte: Int
+  _in: [Int!]
+  _is_null: Boolean
+  _lt: Int
+  _lte: Int
+  _neq: Int
+  _nin: [Int!]
+}
+
+"""
+Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'.
+"""
+input String_comparison_exp {
+  _eq: String
+  _gt: String
+  _gte: String
+
+  """does the column match the given case-insensitive pattern"""
+  _ilike: String
+  _in: [String!]
+
+  """
+  does the column match the given POSIX regular expression, case insensitive
+  """
+  _iregex: String
+  _is_null: Boolean
+
+  """does the column match the given pattern"""
+  _like: String
+  _lt: String
+  _lte: String
+  _neq: String
+
+  """does the column NOT match the given case-insensitive pattern"""
+  _nilike: String
+  _nin: [String!]
+
+  """
+  does the column NOT match the given POSIX regular expression, case insensitive
+  """
+  _niregex: String
+
+  """does the column NOT match the given pattern"""
+  _nlike: String
+
+  """
+  does the column NOT match the given POSIX regular expression, case sensitive
+  """
+  _nregex: String
+
+  """does the column NOT match the given SQL regular expression"""
+  _nsimilar: String
+
+  """
+  does the column match the given POSIX regular expression, case sensitive
+  """
+  _regex: String
+
+  """does the column match the given SQL regular expression"""
+  _similar: String
+}
+
+"""
+columns and relationships of "bookmark"
+"""
+type bookmark {
+  author: String!
+
+  """An array relationship"""
+  bookmark_tags(
+    """distinct select on columns"""
+    distinct_on: [bookmark_tag_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [bookmark_tag_order_by!]
+
+    """filter the rows returned"""
+    where: bookmark_tag_bool_exp
+  ): [bookmark_tag!]!
+
+  """An aggregate relationship"""
+  bookmark_tags_aggregate(
+    """distinct select on columns"""
+    distinct_on: [bookmark_tag_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [bookmark_tag_order_by!]
+
+    """filter the rows returned"""
+    where: bookmark_tag_bool_exp
+  ): bookmark_tag_aggregate!
+  content: String!
+  excerpt: String!
+  html: String!
+  id: Int!
+  modified: timestamp!
+  public: smallint!
+  title: String!
+  url: String!
+}
+
+"""
+aggregated selection of "bookmark"
+"""
+type bookmark_aggregate {
+  aggregate: bookmark_aggregate_fields
+  nodes: [bookmark!]!
+}
+
+"""
+aggregate fields of "bookmark"
+"""
+type bookmark_aggregate_fields {
+  avg: bookmark_avg_fields
+  count(columns: [bookmark_select_column!], distinct: Boolean): Int!
+  max: bookmark_max_fields
+  min: bookmark_min_fields
+  stddev: bookmark_stddev_fields
+  stddev_pop: bookmark_stddev_pop_fields
+  stddev_samp: bookmark_stddev_samp_fields
+  sum: bookmark_sum_fields
+  var_pop: bookmark_var_pop_fields
+  var_samp: bookmark_var_samp_fields
+  variance: bookmark_variance_fields
+}
+
+"""aggregate avg on columns"""
+type bookmark_avg_fields {
+  id: Float
+  public: Float
+}
+
+"""
+Boolean expression to filter rows from the table "bookmark". All fields are combined with a logical 'AND'.
+"""
+input bookmark_bool_exp {
+  _and: [bookmark_bool_exp!]
+  _not: bookmark_bool_exp
+  _or: [bookmark_bool_exp!]
+  author: String_comparison_exp
+  bookmark_tags: bookmark_tag_bool_exp
+  content: String_comparison_exp
+  excerpt: String_comparison_exp
+  html: String_comparison_exp
+  id: Int_comparison_exp
+  modified: timestamp_comparison_exp
+  public: smallint_comparison_exp
+  title: String_comparison_exp
+  url: String_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "bookmark"
+"""
+enum bookmark_constraint {
+  """unique or primary key constraint"""
+  bookmark_pkey
+
+  """unique or primary key constraint"""
+  bookmark_url_unique
+}
+
+"""
+input type for incrementing numeric columns in table "bookmark"
+"""
+input bookmark_inc_input {
+  id: Int
+  public: smallint
+}
+
+"""
+input type for inserting data into table "bookmark"
+"""
+input bookmark_insert_input {
+  author: String
+  bookmark_tags: bookmark_tag_arr_rel_insert_input
+  content: String
+  excerpt: String
+  html: String
+  id: Int
+  modified: timestamp
+  public: smallint
+  title: String
+  url: String
+}
+
+"""aggregate max on columns"""
+type bookmark_max_fields {
+  author: String
+  content: String
+  excerpt: String
+  html: String
+  id: Int
+  modified: timestamp
+  public: smallint
+  title: String
+  url: String
+}
+
+"""aggregate min on columns"""
+type bookmark_min_fields {
+  author: String
+  content: String
+  excerpt: String
+  html: String
+  id: Int
+  modified: timestamp
+  public: smallint
+  title: String
+  url: String
+}
+
+"""
+response of any mutation on the table "bookmark"
+"""
+type bookmark_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [bookmark!]!
+}
+
+"""
+on_conflict condition type for table "bookmark"
+"""
+input bookmark_on_conflict {
+  constraint: bookmark_constraint!
+  update_columns: [bookmark_update_column!]! = []
+  where: bookmark_bool_exp
+}
+
+"""Ordering options when selecting data from "bookmark"."""
+input bookmark_order_by {
+  author: order_by
+  bookmark_tags_aggregate: bookmark_tag_aggregate_order_by
+  content: order_by
+  excerpt: order_by
+  html: order_by
+  id: order_by
+  modified: order_by
+  public: order_by
+  title: order_by
+  url: order_by
+}
+
+"""primary key columns input for table: bookmark"""
+input bookmark_pk_columns_input {
+  id: Int!
+}
+
+"""
+select columns of table "bookmark"
+"""
+enum bookmark_select_column {
+  """column name"""
+  author
+
+  """column name"""
+  content
+
+  """column name"""
+  excerpt
+
+  """column name"""
+  html
+
+  """column name"""
+  id
+
+  """column name"""
+  modified
+
+  """column name"""
+  public
+
+  """column name"""
+  title
+
+  """column name"""
+  url
+}
+
+"""
+input type for updating data in table "bookmark"
+"""
+input bookmark_set_input {
+  author: String
+  content: String
+  excerpt: String
+  html: String
+  id: Int
+  modified: timestamp
+  public: smallint
+  title: String
+  url: String
+}
+
+"""aggregate stddev on columns"""
+type bookmark_stddev_fields {
+  id: Float
+  public: Float
+}
+
+"""aggregate stddev_pop on columns"""
+type bookmark_stddev_pop_fields {
+  id: Float
+  public: Float
+}
+
+"""aggregate stddev_samp on columns"""
+type bookmark_stddev_samp_fields {
+  id: Float
+  public: Float
+}
+
+"""aggregate sum on columns"""
+type bookmark_sum_fields {
+  id: Int
+  public: smallint
+}
+
+"""
+columns and relationships of "bookmark_tag"
+"""
+type bookmark_tag {
+  bookmark_id: Int!
+  tag_id: Int!
+}
+
+"""
+aggregated selection of "bookmark_tag"
+"""
+type bookmark_tag_aggregate {
+  aggregate: bookmark_tag_aggregate_fields
+  nodes: [bookmark_tag!]!
+}
+
+"""
+aggregate fields of "bookmark_tag"
+"""
+type bookmark_tag_aggregate_fields {
+  avg: bookmark_tag_avg_fields
+  count(columns: [bookmark_tag_select_column!], distinct: Boolean): Int!
+  max: bookmark_tag_max_fields
+  min: bookmark_tag_min_fields
+  stddev: bookmark_tag_stddev_fields
+  stddev_pop: bookmark_tag_stddev_pop_fields
+  stddev_samp: bookmark_tag_stddev_samp_fields
+  sum: bookmark_tag_sum_fields
+  var_pop: bookmark_tag_var_pop_fields
+  var_samp: bookmark_tag_var_samp_fields
+  variance: bookmark_tag_variance_fields
+}
+
+"""
+order by aggregate values of table "bookmark_tag"
+"""
+input bookmark_tag_aggregate_order_by {
+  avg: bookmark_tag_avg_order_by
+  count: order_by
+  max: bookmark_tag_max_order_by
+  min: bookmark_tag_min_order_by
+  stddev: bookmark_tag_stddev_order_by
+  stddev_pop: bookmark_tag_stddev_pop_order_by
+  stddev_samp: bookmark_tag_stddev_samp_order_by
+  sum: bookmark_tag_sum_order_by
+  var_pop: bookmark_tag_var_pop_order_by
+  var_samp: bookmark_tag_var_samp_order_by
+  variance: bookmark_tag_variance_order_by
+}
+
+"""
+input type for inserting array relation for remote table "bookmark_tag"
+"""
+input bookmark_tag_arr_rel_insert_input {
+  data: [bookmark_tag_insert_input!]!
+
+  """upsert condition"""
+  on_conflict: bookmark_tag_on_conflict
+}
+
+"""aggregate avg on columns"""
+type bookmark_tag_avg_fields {
+  bookmark_id: Float
+  tag_id: Float
+}
+
+"""
+order by avg() on columns of table "bookmark_tag"
+"""
+input bookmark_tag_avg_order_by {
+  bookmark_id: order_by
+  tag_id: order_by
+}
+
+"""
+Boolean expression to filter rows from the table "bookmark_tag". All fields are combined with a logical 'AND'.
+"""
+input bookmark_tag_bool_exp {
+  _and: [bookmark_tag_bool_exp!]
+  _not: bookmark_tag_bool_exp
+  _or: [bookmark_tag_bool_exp!]
+  bookmark_id: Int_comparison_exp
+  tag_id: Int_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "bookmark_tag"
+"""
+enum bookmark_tag_constraint {
+  """unique or primary key constraint"""
+  bookmark_tag_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "bookmark_tag"
+"""
+input bookmark_tag_inc_input {
+  bookmark_id: Int
+  tag_id: Int
+}
+
+"""
+input type for inserting data into table "bookmark_tag"
+"""
+input bookmark_tag_insert_input {
+  bookmark_id: Int
+  tag_id: Int
+}
+
+"""aggregate max on columns"""
+type bookmark_tag_max_fields {
+  bookmark_id: Int
+  tag_id: Int
+}
+
+"""
+order by max() on columns of table "bookmark_tag"
+"""
+input bookmark_tag_max_order_by {
+  bookmark_id: order_by
+  tag_id: order_by
+}
+
+"""aggregate min on columns"""
+type bookmark_tag_min_fields {
+  bookmark_id: Int
+  tag_id: Int
+}
+
+"""
+order by min() on columns of table "bookmark_tag"
+"""
+input bookmark_tag_min_order_by {
+  bookmark_id: order_by
+  tag_id: order_by
+}
+
+"""
+response of any mutation on the table "bookmark_tag"
+"""
+type bookmark_tag_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [bookmark_tag!]!
+}
+
+"""
+on_conflict condition type for table "bookmark_tag"
+"""
+input bookmark_tag_on_conflict {
+  constraint: bookmark_tag_constraint!
+  update_columns: [bookmark_tag_update_column!]! = []
+  where: bookmark_tag_bool_exp
+}
+
+"""Ordering options when selecting data from "bookmark_tag"."""
+input bookmark_tag_order_by {
+  bookmark_id: order_by
+  tag_id: order_by
+}
+
+"""primary key columns input for table: bookmark_tag"""
+input bookmark_tag_pk_columns_input {
+  bookmark_id: Int!
+  tag_id: Int!
+}
+
+"""
+select columns of table "bookmark_tag"
+"""
+enum bookmark_tag_select_column {
+  """column name"""
+  bookmark_id
+
+  """column name"""
+  tag_id
+}
+
+"""
+input type for updating data in table "bookmark_tag"
+"""
+input bookmark_tag_set_input {
+  bookmark_id: Int
+  tag_id: Int
+}
+
+"""aggregate stddev on columns"""
+type bookmark_tag_stddev_fields {
+  bookmark_id: Float
+  tag_id: Float
+}
+
+"""
+order by stddev() on columns of table "bookmark_tag"
+"""
+input bookmark_tag_stddev_order_by {
+  bookmark_id: order_by
+  tag_id: order_by
+}
+
+"""aggregate stddev_pop on columns"""
+type bookmark_tag_stddev_pop_fields {
+  bookmark_id: Float
+  tag_id: Float
+}
+
+"""
+order by stddev_pop() on columns of table "bookmark_tag"
+"""
+input bookmark_tag_stddev_pop_order_by {
+  bookmark_id: order_by
+  tag_id: order_by
+}
+
+"""aggregate stddev_samp on columns"""
+type bookmark_tag_stddev_samp_fields {
+  bookmark_id: Float
+  tag_id: Float
+}
+
+"""
+order by stddev_samp() on columns of table "bookmark_tag"
+"""
+input bookmark_tag_stddev_samp_order_by {
+  bookmark_id: order_by
+  tag_id: order_by
+}
+
+"""aggregate sum on columns"""
+type bookmark_tag_sum_fields {
+  bookmark_id: Int
+  tag_id: Int
+}
+
+"""
+order by sum() on columns of table "bookmark_tag"
+"""
+input bookmark_tag_sum_order_by {
+  bookmark_id: order_by
+  tag_id: order_by
+}
+
+"""
+update columns of table "bookmark_tag"
+"""
+enum bookmark_tag_update_column {
+  """column name"""
+  bookmark_id
+
+  """column name"""
+  tag_id
+}
+
+"""aggregate var_pop on columns"""
+type bookmark_tag_var_pop_fields {
+  bookmark_id: Float
+  tag_id: Float
+}
+
+"""
+order by var_pop() on columns of table "bookmark_tag"
+"""
+input bookmark_tag_var_pop_order_by {
+  bookmark_id: order_by
+  tag_id: order_by
+}
+
+"""aggregate var_samp on columns"""
+type bookmark_tag_var_samp_fields {
+  bookmark_id: Float
+  tag_id: Float
+}
+
+"""
+order by var_samp() on columns of table "bookmark_tag"
+"""
+input bookmark_tag_var_samp_order_by {
+  bookmark_id: order_by
+  tag_id: order_by
+}
+
+"""aggregate variance on columns"""
+type bookmark_tag_variance_fields {
+  bookmark_id: Float
+  tag_id: Float
+}
+
+"""
+order by variance() on columns of table "bookmark_tag"
+"""
+input bookmark_tag_variance_order_by {
+  bookmark_id: order_by
+  tag_id: order_by
+}
+
+"""
+update columns of table "bookmark"
+"""
+enum bookmark_update_column {
+  """column name"""
+  author
+
+  """column name"""
+  content
+
+  """column name"""
+  excerpt
+
+  """column name"""
+  html
+
+  """column name"""
+  id
+
+  """column name"""
+  modified
+
+  """column name"""
+  public
+
+  """column name"""
+  title
+
+  """column name"""
+  url
+}
+
+"""aggregate var_pop on columns"""
+type bookmark_var_pop_fields {
+  id: Float
+  public: Float
+}
+
+"""aggregate var_samp on columns"""
+type bookmark_var_samp_fields {
+  id: Float
+  public: Float
+}
+
+"""aggregate variance on columns"""
+type bookmark_variance_fields {
+  id: Float
+  public: Float
+}
+
+"""mutation root"""
+type mutation_root {
+  """
+  delete data from the table: "bookmark"
+  """
+  delete_bookmark(
+    """filter the rows which have to be deleted"""
+    where: bookmark_bool_exp!
+  ): bookmark_mutation_response
+
+  """
+  delete single row from the table: "bookmark"
+  """
+  delete_bookmark_by_pk(id: Int!): bookmark
+
+  """
+  delete data from the table: "bookmark_tag"
+  """
+  delete_bookmark_tag(
+    """filter the rows which have to be deleted"""
+    where: bookmark_tag_bool_exp!
+  ): bookmark_tag_mutation_response
+
+  """
+  delete single row from the table: "bookmark_tag"
+  """
+  delete_bookmark_tag_by_pk(bookmark_id: Int!, tag_id: Int!): bookmark_tag
+
+  """
+  delete data from the table: "tag"
+  """
+  delete_tag(
+    """filter the rows which have to be deleted"""
+    where: tag_bool_exp!
+  ): tag_mutation_response
+
+  """
+  delete single row from the table: "tag"
+  """
+  delete_tag_by_pk(id: Int!): tag
+
+  """
+  insert data into the table: "bookmark"
+  """
+  insert_bookmark(
+    """the rows to be inserted"""
+    objects: [bookmark_insert_input!]!
+
+    """upsert condition"""
+    on_conflict: bookmark_on_conflict
+  ): bookmark_mutation_response
+
+  """
+  insert a single row into the table: "bookmark"
+  """
+  insert_bookmark_one(
+    """the row to be inserted"""
+    object: bookmark_insert_input!
+
+    """upsert condition"""
+    on_conflict: bookmark_on_conflict
+  ): bookmark
+
+  """
+  insert data into the table: "bookmark_tag"
+  """
+  insert_bookmark_tag(
+    """the rows to be inserted"""
+    objects: [bookmark_tag_insert_input!]!
+
+    """upsert condition"""
+    on_conflict: bookmark_tag_on_conflict
+  ): bookmark_tag_mutation_response
+
+  """
+  insert a single row into the table: "bookmark_tag"
+  """
+  insert_bookmark_tag_one(
+    """the row to be inserted"""
+    object: bookmark_tag_insert_input!
+
+    """upsert condition"""
+    on_conflict: bookmark_tag_on_conflict
+  ): bookmark_tag
+
+  """
+  insert data into the table: "tag"
+  """
+  insert_tag(
+    """the rows to be inserted"""
+    objects: [tag_insert_input!]!
+
+    """upsert condition"""
+    on_conflict: tag_on_conflict
+  ): tag_mutation_response
+
+  """
+  insert a single row into the table: "tag"
+  """
+  insert_tag_one(
+    """the row to be inserted"""
+    object: tag_insert_input!
+
+    """upsert condition"""
+    on_conflict: tag_on_conflict
+  ): tag
+
+  """
+  update data of the table: "bookmark"
+  """
+  update_bookmark(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: bookmark_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: bookmark_set_input
+
+    """filter the rows which have to be updated"""
+    where: bookmark_bool_exp!
+  ): bookmark_mutation_response
+
+  """
+  update single row of the table: "bookmark"
+  """
+  update_bookmark_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: bookmark_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: bookmark_set_input
+    pk_columns: bookmark_pk_columns_input!
+  ): bookmark
+
+  """
+  update data of the table: "bookmark_tag"
+  """
+  update_bookmark_tag(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: bookmark_tag_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: bookmark_tag_set_input
+
+    """filter the rows which have to be updated"""
+    where: bookmark_tag_bool_exp!
+  ): bookmark_tag_mutation_response
+
+  """
+  update single row of the table: "bookmark_tag"
+  """
+  update_bookmark_tag_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: bookmark_tag_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: bookmark_tag_set_input
+    pk_columns: bookmark_tag_pk_columns_input!
+  ): bookmark_tag
+
+  """
+  update data of the table: "tag"
+  """
+  update_tag(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: tag_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: tag_set_input
+
+    """filter the rows which have to be updated"""
+    where: tag_bool_exp!
+  ): tag_mutation_response
+
+  """
+  update single row of the table: "tag"
+  """
+  update_tag_by_pk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: tag_inc_input
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: tag_set_input
+    pk_columns: tag_pk_columns_input!
+  ): tag
+}
+
+"""column ordering options"""
+enum order_by {
+  """in ascending order, nulls last"""
+  asc
+
+  """in ascending order, nulls first"""
+  asc_nulls_first
+
+  """in ascending order, nulls last"""
+  asc_nulls_last
+
+  """in descending order, nulls first"""
+  desc
+
+  """in descending order, nulls first"""
+  desc_nulls_first
+
+  """in descending order, nulls last"""
+  desc_nulls_last
+}
+
+type query_root {
+  """
+  fetch data from the table: "bookmark"
+  """
+  bookmark(
+    """distinct select on columns"""
+    distinct_on: [bookmark_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [bookmark_order_by!]
+
+    """filter the rows returned"""
+    where: bookmark_bool_exp
+  ): [bookmark!]!
+
+  """
+  fetch aggregated fields from the table: "bookmark"
+  """
+  bookmark_aggregate(
+    """distinct select on columns"""
+    distinct_on: [bookmark_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [bookmark_order_by!]
+
+    """filter the rows returned"""
+    where: bookmark_bool_exp
+  ): bookmark_aggregate!
+
+  """fetch data from the table: "bookmark" using primary key columns"""
+  bookmark_by_pk(id: Int!): bookmark
+
+  """
+  fetch data from the table: "bookmark_tag"
+  """
+  bookmark_tag(
+    """distinct select on columns"""
+    distinct_on: [bookmark_tag_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [bookmark_tag_order_by!]
+
+    """filter the rows returned"""
+    where: bookmark_tag_bool_exp
+  ): [bookmark_tag!]!
+
+  """
+  fetch aggregated fields from the table: "bookmark_tag"
+  """
+  bookmark_tag_aggregate(
+    """distinct select on columns"""
+    distinct_on: [bookmark_tag_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [bookmark_tag_order_by!]
+
+    """filter the rows returned"""
+    where: bookmark_tag_bool_exp
+  ): bookmark_tag_aggregate!
+
+  """fetch data from the table: "bookmark_tag" using primary key columns"""
+  bookmark_tag_by_pk(bookmark_id: Int!, tag_id: Int!): bookmark_tag
+
+  """
+  fetch data from the table: "tag"
+  """
+  tag(
+    """distinct select on columns"""
+    distinct_on: [tag_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [tag_order_by!]
+
+    """filter the rows returned"""
+    where: tag_bool_exp
+  ): [tag!]!
+
+  """
+  fetch aggregated fields from the table: "tag"
+  """
+  tag_aggregate(
+    """distinct select on columns"""
+    distinct_on: [tag_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [tag_order_by!]
+
+    """filter the rows returned"""
+    where: tag_bool_exp
+  ): tag_aggregate!
+
+  """fetch data from the table: "tag" using primary key columns"""
+  tag_by_pk(id: Int!): tag
+}
+
+scalar smallint
+
+"""
+Boolean expression to compare columns of type "smallint". All fields are combined with logical 'AND'.
+"""
+input smallint_comparison_exp {
+  _eq: smallint
+  _gt: smallint
+  _gte: smallint
+  _in: [smallint!]
+  _is_null: Boolean
+  _lt: smallint
+  _lte: smallint
+  _neq: smallint
+  _nin: [smallint!]
+}
+
+type subscription_root {
+  """
+  fetch data from the table: "bookmark"
+  """
+  bookmark(
+    """distinct select on columns"""
+    distinct_on: [bookmark_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [bookmark_order_by!]
+
+    """filter the rows returned"""
+    where: bookmark_bool_exp
+  ): [bookmark!]!
+
+  """
+  fetch aggregated fields from the table: "bookmark"
+  """
+  bookmark_aggregate(
+    """distinct select on columns"""
+    distinct_on: [bookmark_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [bookmark_order_by!]
+
+    """filter the rows returned"""
+    where: bookmark_bool_exp
+  ): bookmark_aggregate!
+
+  """fetch data from the table: "bookmark" using primary key columns"""
+  bookmark_by_pk(id: Int!): bookmark
+
+  """
+  fetch data from the table: "bookmark_tag"
+  """
+  bookmark_tag(
+    """distinct select on columns"""
+    distinct_on: [bookmark_tag_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [bookmark_tag_order_by!]
+
+    """filter the rows returned"""
+    where: bookmark_tag_bool_exp
+  ): [bookmark_tag!]!
+
+  """
+  fetch aggregated fields from the table: "bookmark_tag"
+  """
+  bookmark_tag_aggregate(
+    """distinct select on columns"""
+    distinct_on: [bookmark_tag_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [bookmark_tag_order_by!]
+
+    """filter the rows returned"""
+    where: bookmark_tag_bool_exp
+  ): bookmark_tag_aggregate!
+
+  """fetch data from the table: "bookmark_tag" using primary key columns"""
+  bookmark_tag_by_pk(bookmark_id: Int!, tag_id: Int!): bookmark_tag
+
+  """
+  fetch data from the table: "tag"
+  """
+  tag(
+    """distinct select on columns"""
+    distinct_on: [tag_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [tag_order_by!]
+
+    """filter the rows returned"""
+    where: tag_bool_exp
+  ): [tag!]!
+
+  """
+  fetch aggregated fields from the table: "tag"
+  """
+  tag_aggregate(
+    """distinct select on columns"""
+    distinct_on: [tag_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [tag_order_by!]
+
+    """filter the rows returned"""
+    where: tag_bool_exp
+  ): tag_aggregate!
+
+  """fetch data from the table: "tag" using primary key columns"""
+  tag_by_pk(id: Int!): tag
+}
+
+"""
+columns and relationships of "tag"
+"""
+type tag {
+  id: Int!
+  name: String!
+}
+
+"""
+aggregated selection of "tag"
+"""
+type tag_aggregate {
+  aggregate: tag_aggregate_fields
+  nodes: [tag!]!
+}
+
+"""
+aggregate fields of "tag"
+"""
+type tag_aggregate_fields {
+  avg: tag_avg_fields
+  count(columns: [tag_select_column!], distinct: Boolean): Int!
+  max: tag_max_fields
+  min: tag_min_fields
+  stddev: tag_stddev_fields
+  stddev_pop: tag_stddev_pop_fields
+  stddev_samp: tag_stddev_samp_fields
+  sum: tag_sum_fields
+  var_pop: tag_var_pop_fields
+  var_samp: tag_var_samp_fields
+  variance: tag_variance_fields
+}
+
+"""aggregate avg on columns"""
+type tag_avg_fields {
+  id: Float
+}
+
+"""
+Boolean expression to filter rows from the table "tag". All fields are combined with a logical 'AND'.
+"""
+input tag_bool_exp {
+  _and: [tag_bool_exp!]
+  _not: tag_bool_exp
+  _or: [tag_bool_exp!]
+  id: Int_comparison_exp
+  name: String_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "tag"
+"""
+enum tag_constraint {
+  """unique or primary key constraint"""
+  tag_name_unique
+
+  """unique or primary key constraint"""
+  tag_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "tag"
+"""
+input tag_inc_input {
+  id: Int
+}
+
+"""
+input type for inserting data into table "tag"
+"""
+input tag_insert_input {
+  id: Int
+  name: String
+}
+
+"""aggregate max on columns"""
+type tag_max_fields {
+  id: Int
+  name: String
+}
+
+"""aggregate min on columns"""
+type tag_min_fields {
+  id: Int
+  name: String
+}
+
+"""
+response of any mutation on the table "tag"
+"""
+type tag_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [tag!]!
+}
+
+"""
+on_conflict condition type for table "tag"
+"""
+input tag_on_conflict {
+  constraint: tag_constraint!
+  update_columns: [tag_update_column!]! = []
+  where: tag_bool_exp
+}
+
+"""Ordering options when selecting data from "tag"."""
+input tag_order_by {
+  id: order_by
+  name: order_by
+}
+
+"""primary key columns input for table: tag"""
+input tag_pk_columns_input {
+  id: Int!
+}
+
+"""
+select columns of table "tag"
+"""
+enum tag_select_column {
+  """column name"""
+  id
+
+  """column name"""
+  name
+}
+
+"""
+input type for updating data in table "tag"
+"""
+input tag_set_input {
+  id: Int
+  name: String
+}
+
+"""aggregate stddev on columns"""
+type tag_stddev_fields {
+  id: Float
+}
+
+"""aggregate stddev_pop on columns"""
+type tag_stddev_pop_fields {
+  id: Float
+}
+
+"""aggregate stddev_samp on columns"""
+type tag_stddev_samp_fields {
+  id: Float
+}
+
+"""aggregate sum on columns"""
+type tag_sum_fields {
+  id: Int
+}
+
+"""
+update columns of table "tag"
+"""
+enum tag_update_column {
+  """column name"""
+  id
+
+  """column name"""
+  name
+}
+
+"""aggregate var_pop on columns"""
+type tag_var_pop_fields {
+  id: Float
+}
+
+"""aggregate var_samp on columns"""
+type tag_var_samp_fields {
+  id: Float
+}
+
+"""aggregate variance on columns"""
+type tag_variance_fields {
+  id: Float
+}
+
+scalar timestamp
+
+"""
+Boolean expression to compare columns of type "timestamp". All fields are combined with logical 'AND'.
+"""
+input timestamp_comparison_exp {
+  _eq: timestamp
+  _gt: timestamp
+  _gte: timestamp
+  _in: [timestamp!]
+  _is_null: Boolean
+  _lt: timestamp
+  _lte: timestamp
+  _neq: timestamp
+  _nin: [timestamp!]
+}
+

@@ -1,0 +1,11 @@
+table:
+  name: bookmark
+  schema: public
+array_relationships:
+- name: bookmark_tags
+  using:
+    foreign_key_constraint_on:
+      column: bookmark_id
+      table:
+        name: bookmark_tag
+        schema: public

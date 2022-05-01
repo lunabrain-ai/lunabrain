@@ -1,0 +1,3 @@
+- "!include public_bookmark.yaml"
+- "!include public_bookmark_tag.yaml"
+- "!include public_tag.yaml"

@@ -1,0 +1,16 @@
+version: '3.6'
+services:
+  frontend:
+    image: ghcr.io/cookwherever/frontend@sha256:3c9430f064a9c3fe4f491dc4b5bd1d57923bfeb861f7cd2264929fd0cbda3004
+    restart: always
+    ports:
+      - '80:80'
+    labels:
+      kompose.service.expose: "getsifty.com"
+      kompose.service.expose.tls-secret: "cookwherever-com-tls"
+      kompose.image-pull-secret: "ghcr-pull-secret"
+  graphql-engine:
+    image: hasura/graphql-engine:v2.4.0
+    # image: ghcr.io/cookwherever/hasura:latest
+    labels:
+      kompose.image-pull-secret: "ghcr-pull-secret"
