@@ -1,5 +1,0 @@
-mutation SaveBookmarks($bookmarks: [bookmark_insert_input!] = {}) {
-  insert_bookmark(objects: $bookmarks) {
-    affected_rows
-  }
-}

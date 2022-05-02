@@ -1,6 +1,6 @@
 import React from "react";
 import {useGetBookmarksQuery} from "../generated/graphql";
-import {Card, Col} from "react-bootstrap";
+import {Card, Col, Container, Row} from "react-bootstrap";
 
 interface BookmarkStreamProps {}
 
@@ -15,7 +15,7 @@ export const BookmarkStream: React.FunctionComponent<BookmarkStreamProps> = (pro
 
   if (error) {
     return (
-      <p>Error loading bookmarks: {error}</p>
+      <p>Error loading bookmarks: {error.graphQLErrors.map(e => e.message)}</p>
     )
   }
 
@@ -26,20 +26,24 @@ export const BookmarkStream: React.FunctionComponent<BookmarkStreamProps> = (pro
   }
 
   const bookmarks = data.bookmark.map(bookmark => (
-    <Col>
-      <Card>
-        <Card.Title>
-        </Card.Title>
-        <Card.Subtitle>
-        </Card.Subtitle>
-      </Card>
-    </Col>
+    <div key={bookmark.id}>
+      <Col>
+        <Card>
+          <Card.Title>
+            {bookmark.title}
+          </Card.Title>
+          <Card.Subtitle>
+            {bookmark.url}
+          </Card.Subtitle>
+        </Card>
+      </Col>
+    </div>
   ))
 
   return (
     <Container>
       <Row>
-
+        {bookmarks}
       </Row>
     </Container>
   )

@@ -1,5 +1,7 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
+
 CREATE TABLE IF NOT EXISTS bookmark(
-	id       SERIAL,
+	id       uuid       DEFAULT public.gen_random_uuid() NOT NULL,
 	url      TEXT       NOT NULL,
 	title    TEXT       NOT NULL,
 	excerpt  TEXT       NOT NULL DEFAULT '',
@@ -12,14 +14,14 @@ CREATE TABLE IF NOT EXISTS bookmark(
 	CONSTRAINT bookmark_url_UNIQUE UNIQUE (url));
 
 CREATE TABLE IF NOT EXISTS tag(
-	id   SERIAL,
+	id   uuid       DEFAULT public.gen_random_uuid() NOT NULL,
 	name VARCHAR(250) NOT NULL,
 	PRIMARY KEY (id),
 	CONSTRAINT tag_name_UNIQUE UNIQUE (name));
 
 CREATE TABLE IF NOT EXISTS bookmark_tag(
-	bookmark_id INT      NOT NULL,
-	tag_id      INT      NOT NULL,
+	bookmark_id uuid      NOT NULL,
+	tag_id      uuid      NOT NULL,
 	PRIMARY KEY(bookmark_id, tag_id),
 	CONSTRAINT bookmark_tag_bookmark_id_FK FOREIGN KEY (bookmark_id) REFERENCES bookmark (id),
 	CONSTRAINT bookmark_tag_tag_id_FK FOREIGN KEY (tag_id) REFERENCES tag (id));

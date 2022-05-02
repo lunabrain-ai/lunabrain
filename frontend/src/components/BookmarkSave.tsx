@@ -1,30 +1,25 @@
 import React, {useState} from "react";
-import {useSaveBookmarksMutation} from "../generated/graphql";
+import {useSaveBookmarkByUrlMutation} from "../generated/graphql";
 import {Button, Form, FormGroup} from "react-bootstrap";
 import {inputChangeHandler} from "../utils/hook-helpers";
 
 interface BookmarkSaveProps {}
 
 export const BookmarkSave: React.FunctionComponent<BookmarkSaveProps> = (props) => {
-  const [saveBoomarksMutation, {data, loading, error}] = useSaveBookmarksMutation();
+  const [saveBoomarkByUrlMutation, {data, loading, error}] = useSaveBookmarkByUrlMutation();
 
   const [url, setUrl] = useState<string | null>(null);
 
   const saveBookmark = async () => {
-    const resp = await saveBoomarksMutation({
-      variables: {
-        bookmarks: [
-          {
-            url
-          }
-        ]
-      }
-    })
-    if (resp.errors) {
-      console.error(resp.errors);
+    if (url === null) {
       return;
     }
-    console.log(resp);
+
+    const resp = await saveBoomarkByUrlMutation({
+      variables: {
+        url,
+      }
+    })
   }
 
   return (
@@ -37,6 +32,9 @@ export const BookmarkSave: React.FunctionComponent<BookmarkSaveProps> = (props) 
         <Button type='submit' onClick={saveBookmark}>
           Submit
         </Button>
+        {error && (
+          <p>Error while saving bookmark: {error.graphQLErrors.map(e => e.message)}</p>
+        )}
       </fieldset>
     </Form>
   )

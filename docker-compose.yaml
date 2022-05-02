@@ -52,6 +52,8 @@ services:
       HASURA_GRAPHQL_LOG_LEVEL: debug
       HASURA_GRAPHQL_ENABLE_CONSOLE: 'true'
       HASURA_GRAPHQL_METADATA_DIRECTORY: /config/hasura/metadata
+      HASURA_GRAPHQL_MIGRATIONS_DIRECTORY: /config/hasura/migrations
+      BACKEND_GRAPHQL_ENDPOINT: http://oathkeeper:4455/api/backend/v1/graphql
     volumes:
       - "./hasura:/config/hasura"
     env_file:

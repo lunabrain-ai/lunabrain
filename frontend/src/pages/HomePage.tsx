@@ -3,6 +3,8 @@ import React, { useEffect } from 'react'
 import { useLocation } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { getRefreshedToken } from '../utils/auth';
+import {BookmarkSave} from "../components/BookmarkSave";
+import {BookmarkStream} from "../components/BookmarkStream";
 
 interface HomePageProps {}
 

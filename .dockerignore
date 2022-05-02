@@ -4,3 +4,4 @@ Dockerfile
 .githooks
 .github
 .goreleaser.yaml
+docker

@@ -1,0 +1,10 @@
+table:
+  name: bookmark_tag
+  schema: public
+select_permissions:
+- permission:
+    columns:
+    - bookmark_id
+    - tag_id
+    filter: {}
+  role: anonymous

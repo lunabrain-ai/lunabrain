@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/99designs/gqlgen/graphql/handler/debug"
 	"log"
 	"net/http"
 	"os"
@@ -12,7 +11,7 @@ import (
 	"github.com/breadchris/sifty/backend/graph/generated"
 )
 
-const defaultPort = "8088"
+const defaultPort = "8080"
 
 func main() {
 	port := os.Getenv("PORT")
@@ -21,10 +20,9 @@ func main() {
 	}
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
-	srv.Use(&debug.Tracer{})
 
-	http.Handle("/", playground.Handler("GraphQL playground", "/v1/graphql"))
-	http.Handle("/v1/graphql", srv)
+	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	http.Handle("/query", srv)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
