@@ -3,6 +3,8 @@ package core
 import (
 	"bytes"
 	"fmt"
+	md "github.com/JohannesKaufmann/html-to-markdown"
+	goose "github.com/advancedlogic/GoOse"
 	"image"
 	"image/color"
 	"image/draw"
@@ -16,9 +18,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/breadchris/sifty/backend/internal/model"
 	"github.com/disintegration/imaging"
 	"github.com/go-shiori/go-readability"
-	"github.com/breadchris/sifty/backend/internal/model"
 	"github.com/go-shiori/warc"
 
 	// Add support for png
@@ -51,12 +53,13 @@ func ProcessBookmark(req ProcessRequest) (book model.Bookmark, isFatalErr bool, 
 	archivalInput := bytes.NewBuffer(nil)
 	readabilityInput := bytes.NewBuffer(nil)
 	readabilityCheckInput := bytes.NewBuffer(nil)
+	gooseInput := bytes.NewBuffer(nil)
 
 	var multiWriter io.Writer
 	if !strings.Contains(contentType, "text/html") {
 		multiWriter = io.MultiWriter(archivalInput)
 	} else {
-		multiWriter = io.MultiWriter(archivalInput, readabilityInput, readabilityCheckInput)
+		multiWriter = io.MultiWriter(archivalInput, readabilityInput, readabilityCheckInput, gooseInput)
 	}
 
 	_, err = io.Copy(multiWriter, req.Content)
@@ -79,8 +82,19 @@ func ProcessBookmark(req ProcessRequest) (book model.Bookmark, isFatalErr bool, 
 			return book, false, fmt.Errorf("failed to parse article: %v", err)
 		}
 
+		g := goose.New()
+
+		gArticle, err := g.ExtractFromRawHTML(gooseInput.String(), nurl.String())
+		if err != nil {
+			return book, false, fmt.Errorf("failed to parse article: %v", err)
+		}
+
+		converter := md.NewConverter("", true, nil)
+
+		markdown := converter.Convert(gArticle.TopNode)
+
 		book.Author = article.Byline
-		book.Content = article.TextContent
+		book.Content = markdown
 		book.HTML = article.Content
 
 		// If title and excerpt doesnt have submitted value, use from article

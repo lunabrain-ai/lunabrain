@@ -11,6 +11,7 @@ import { LoginPage } from './pages/LoginPage';
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import 'bootstrap/dist/css/bootstrap.css';
 import 'src/styles/main.css';
+import {BookmarkViewPage} from "./pages/BookmarkViewPage";
 
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_GRAPHQL_URL
@@ -46,6 +47,7 @@ export const AppRouter: FunctionComponent = () => {
             <Switch>
               <Route exact path="/" component={HomePage} />
               <Route path="/login" component={LoginPage} />
+              <Route path="/view/:id" component={BookmarkViewPage} />
             </Switch>
           </Suspense>
         </RecoilRoot>

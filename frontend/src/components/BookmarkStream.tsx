@@ -1,10 +1,13 @@
 import React from "react";
 import {useGetBookmarksQuery} from "../generated/graphql";
 import {Card, Col, Container, Row} from "react-bootstrap";
+import {useHistory} from "react-router-dom";
 
 interface BookmarkStreamProps {}
 
 export const BookmarkStream: React.FunctionComponent<BookmarkStreamProps> = (props) => {
+  const history = useHistory();
+
   const {data, error, loading} = useGetBookmarksQuery();
 
   if (loading) {
@@ -26,18 +29,28 @@ export const BookmarkStream: React.FunctionComponent<BookmarkStreamProps> = (pro
   }
 
   const bookmarks = data.bookmark.map(bookmark => (
-    <div key={bookmark.id}>
-      <Col>
-        <Card>
-          <Card.Title>
-            {bookmark.title}
-          </Card.Title>
-          <Card.Subtitle>
-            {bookmark.url}
-          </Card.Subtitle>
-        </Card>
-      </Col>
-    </div>
+    <Col
+      sm
+      className='my-2'
+      key={bookmark.id}
+    >
+      <Card
+        style={{ width: '18rem', height: '100%' }}
+        onClick={() => {
+          history.push(`/view/${bookmark.id}`)
+        }}
+      >
+        <Card.Title>
+          {bookmark.title}
+        </Card.Title>
+        <Card.Subtitle>
+          {bookmark.url}
+        </Card.Subtitle>
+        <Card.Body>
+          {bookmark.excerpt}
+        </Card.Body>
+      </Card>
+    </Col>
   ))
 
   return (

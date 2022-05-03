@@ -969,12 +969,19 @@ export type Uuid_Comparison_Exp = {
   _nin?: InputMaybe<Array<Scalars['uuid']>>;
 };
 
+export type GetBookmarkQueryVariables = Exact<{
+  id: Scalars['uuid'];
+}>;
+
+
+export type GetBookmarkQuery = { __typename?: 'query_root', bookmark_by_pk?: { __typename?: 'bookmark', url: string, title: string, public: any, modified: any, id: any, html: string, excerpt: string, content: string, author: string } | null };
+
 export type GetBookmarksQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetBookmarksQuery = { __typename?: 'query_root', bookmark: Array<{ __typename?: 'bookmark', id: any, title: string, url: string, public: any, modified: any, author: string }> };
+export type GetBookmarksQuery = { __typename?: 'query_root', bookmark: Array<{ __typename?: 'bookmark', id: any, title: string, url: string, public: any, excerpt: string, modified: any, author: string }> };
 
 export type SaveBookmarkByUrlMutationVariables = Exact<{
   url: Scalars['String'];
@@ -984,6 +991,49 @@ export type SaveBookmarkByUrlMutationVariables = Exact<{
 export type SaveBookmarkByUrlMutation = { __typename?: 'mutation_root', saveBookmark: { __typename?: 'SavedBookmark', title: string } };
 
 
+export const GetBookmarkDocument = gql`
+    query GetBookmark($id: uuid!) {
+  bookmark_by_pk(id: $id) {
+    url
+    title
+    public
+    modified
+    id
+    html
+    excerpt
+    content
+    author
+  }
+}
+    `;
+
+/**
+ * __useGetBookmarkQuery__
+ *
+ * To run a query within a React component, call `useGetBookmarkQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBookmarkQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBookmarkQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetBookmarkQuery(baseOptions: Apollo.QueryHookOptions<GetBookmarkQuery, GetBookmarkQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBookmarkQuery, GetBookmarkQueryVariables>(GetBookmarkDocument, options);
+      }
+export function useGetBookmarkLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBookmarkQuery, GetBookmarkQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBookmarkQuery, GetBookmarkQueryVariables>(GetBookmarkDocument, options);
+        }
+export type GetBookmarkQueryHookResult = ReturnType<typeof useGetBookmarkQuery>;
+export type GetBookmarkLazyQueryHookResult = ReturnType<typeof useGetBookmarkLazyQuery>;
+export type GetBookmarkQueryResult = Apollo.QueryResult<GetBookmarkQuery, GetBookmarkQueryVariables>;
 export const GetBookmarksDocument = gql`
     query GetBookmarks($limit: Int = 10) {
   bookmark(limit: $limit) {
@@ -991,6 +1041,7 @@ export const GetBookmarksDocument = gql`
     title
     url
     public
+    excerpt
     modified
     author
   }

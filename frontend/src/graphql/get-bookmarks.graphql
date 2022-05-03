@@ -4,6 +4,7 @@ query GetBookmarks($limit: Int = 10) {
     title
     url
     public
+    excerpt
     modified
     author
   }
