@@ -19,9 +19,10 @@ services:
       - '4434:4434' # admin
     restart: unless-stopped
     environment:
-      - DSN=postgres://postgres:secretpgpassword@postgres:5432/postgres
-      - LOG_LEVEL=trace
-    command: serve -c /config/kratos/config.yaml --dev --watch-courier
+      DSN: postgres://postgres:secretpgpassword@postgres:5432/postgres
+      LOG_LEVEL: trace
+      SELFSERVICE_METHODS_OIDC_CONFIG_PROVIDERS[0]_MAPPER_URL: file:///config/kratos/oidc.google.jsonnet
+    command: serve -c /config/kratos/config.yaml -c /config/kratos/config.dev.yaml --dev --watch-courier
     volumes:
       - ./ory/kratos:/config/kratos
   mailslurper:

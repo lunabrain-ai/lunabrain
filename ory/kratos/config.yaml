@@ -1,6 +1,7 @@
 serve:
   public:
-    base_url: http://localhost:4433/
+    base_url: http://localhost:4455/api/kratos
+
     cors:
       enabled: true
   admin:
@@ -15,7 +16,7 @@ selfservice:
     password:
       enabled: false
     oidc:
-      enabled: true
+      enabled: false
 
   flows:
     error:
