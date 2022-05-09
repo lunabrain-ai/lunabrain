@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/postgres"
 )
 
-var Bookmark = newBookmarkTable("public", "bookmark", "")
+var Bookmarks = newBookmarksTable("public", "bookmarks", "")
 
-type bookmarkTable struct {
+type bookmarksTable struct {
 	postgres.Table
 
 	//Columns
@@ -22,7 +22,7 @@ type bookmarkTable struct {
 	Title    postgres.ColumnString
 	Excerpt  postgres.ColumnString
 	Author   postgres.ColumnString
-	Public   postgres.ColumnInteger
+	Public   postgres.ColumnBool
 	Content  postgres.ColumnString
 	HTML     postgres.ColumnString
 	Modified postgres.ColumnTimestamp
@@ -31,37 +31,37 @@ type bookmarkTable struct {
 	MutableColumns postgres.ColumnList
 }
 
-type BookmarkTable struct {
-	bookmarkTable
+type BookmarksTable struct {
+	bookmarksTable
 
-	EXCLUDED bookmarkTable
+	EXCLUDED bookmarksTable
 }
 
-// AS creates new BookmarkTable with assigned alias
-func (a BookmarkTable) AS(alias string) *BookmarkTable {
-	return newBookmarkTable(a.SchemaName(), a.TableName(), alias)
+// AS creates new BookmarksTable with assigned alias
+func (a BookmarksTable) AS(alias string) *BookmarksTable {
+	return newBookmarksTable(a.SchemaName(), a.TableName(), alias)
 }
 
-// Schema creates new BookmarkTable with assigned schema name
-func (a BookmarkTable) FromSchema(schemaName string) *BookmarkTable {
-	return newBookmarkTable(schemaName, a.TableName(), a.Alias())
+// Schema creates new BookmarksTable with assigned schema name
+func (a BookmarksTable) FromSchema(schemaName string) *BookmarksTable {
+	return newBookmarksTable(schemaName, a.TableName(), a.Alias())
 }
 
-func newBookmarkTable(schemaName, tableName, alias string) *BookmarkTable {
-	return &BookmarkTable{
-		bookmarkTable: newBookmarkTableImpl(schemaName, tableName, alias),
-		EXCLUDED:      newBookmarkTableImpl("", "excluded", ""),
+func newBookmarksTable(schemaName, tableName, alias string) *BookmarksTable {
+	return &BookmarksTable{
+		bookmarksTable: newBookmarksTableImpl(schemaName, tableName, alias),
+		EXCLUDED:       newBookmarksTableImpl("", "excluded", ""),
 	}
 }
 
-func newBookmarkTableImpl(schemaName, tableName, alias string) bookmarkTable {
+func newBookmarksTableImpl(schemaName, tableName, alias string) bookmarksTable {
 	var (
 		IDColumn       = postgres.StringColumn("id")
 		URLColumn      = postgres.StringColumn("url")
 		TitleColumn    = postgres.StringColumn("title")
 		ExcerptColumn  = postgres.StringColumn("excerpt")
 		AuthorColumn   = postgres.StringColumn("author")
-		PublicColumn   = postgres.IntegerColumn("public")
+		PublicColumn   = postgres.BoolColumn("public")
 		ContentColumn  = postgres.StringColumn("content")
 		HTMLColumn     = postgres.StringColumn("html")
 		ModifiedColumn = postgres.TimestampColumn("modified")
@@ -69,7 +69,7 @@ func newBookmarkTableImpl(schemaName, tableName, alias string) bookmarkTable {
 		mutableColumns = postgres.ColumnList{URLColumn, TitleColumn, ExcerptColumn, AuthorColumn, PublicColumn, ContentColumn, HTMLColumn, ModifiedColumn}
 	)
 
-	return bookmarkTable{
+	return bookmarksTable{
 		Table: postgres.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

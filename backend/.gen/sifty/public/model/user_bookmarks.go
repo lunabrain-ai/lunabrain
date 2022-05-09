@@ -11,7 +11,9 @@ import (
 	"github.com/google/uuid"
 )
 
-type BookmarkTag struct {
-	BookmarkID uuid.UUID `sql:"primary_key"`
-	TagID      uuid.UUID `sql:"primary_key"`
+type UserBookmarks struct {
+	ID         uuid.UUID `sql:"primary_key"`
+	UserID     uuid.UUID
+	BookmarkID uuid.UUID
+	Name       *string
 }

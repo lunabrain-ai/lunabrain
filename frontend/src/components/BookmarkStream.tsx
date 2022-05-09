@@ -22,13 +22,13 @@ export const BookmarkStream: React.FunctionComponent<BookmarkStreamProps> = (pro
     )
   }
 
-  if (!data || data.bookmark.length === 0) {
+  if (!data || data.bookmarks.length === 0) {
     return (
       <p>No boomarks! Try adding some :)</p>
     )
   }
 
-  const bookmarks = data.bookmark.map(bookmark => (
+  const bookmarks = data.bookmarks.map(bookmark => (
     <Col
       sm
       className='my-2'

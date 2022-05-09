@@ -21,6 +21,21 @@ type BookmarkQueryResponse {
   test: String!
 }
 
+"""
+Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'.
+"""
+input Boolean_comparison_exp {
+  _eq: Boolean
+  _gt: Boolean
+  _gte: Boolean
+  _in: [Boolean!]
+  _is_null: Boolean
+  _lt: Boolean
+  _lte: Boolean
+  _neq: Boolean
+  _nin: [Boolean!]
+}
+
 input NewBookmark {
   url: String!
 }
@@ -85,150 +100,338 @@ input String_comparison_exp {
 }
 
 """
-columns and relationships of "bookmark"
+columns and relationships of "bookmark_tags"
 """
-type bookmark {
+type bookmark_tags {
+  bookmark_id: uuid!
+  tag_id: uuid!
+}
+
+"""
+aggregated selection of "bookmark_tags"
+"""
+type bookmark_tags_aggregate {
+  aggregate: bookmark_tags_aggregate_fields
+  nodes: [bookmark_tags!]!
+}
+
+"""
+aggregate fields of "bookmark_tags"
+"""
+type bookmark_tags_aggregate_fields {
+  count(columns: [bookmark_tags_select_column!], distinct: Boolean): Int!
+  max: bookmark_tags_max_fields
+  min: bookmark_tags_min_fields
+}
+
+"""
+order by aggregate values of table "bookmark_tags"
+"""
+input bookmark_tags_aggregate_order_by {
+  count: order_by
+  max: bookmark_tags_max_order_by
+  min: bookmark_tags_min_order_by
+}
+
+"""
+input type for inserting array relation for remote table "bookmark_tags"
+"""
+input bookmark_tags_arr_rel_insert_input {
+  data: [bookmark_tags_insert_input!]!
+
+  """upsert condition"""
+  on_conflict: bookmark_tags_on_conflict
+}
+
+"""
+Boolean expression to filter rows from the table "bookmark_tags". All fields are combined with a logical 'AND'.
+"""
+input bookmark_tags_bool_exp {
+  _and: [bookmark_tags_bool_exp!]
+  _not: bookmark_tags_bool_exp
+  _or: [bookmark_tags_bool_exp!]
+  bookmark_id: uuid_comparison_exp
+  tag_id: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "bookmark_tags"
+"""
+enum bookmark_tags_constraint {
+  """unique or primary key constraint"""
+  bookmark_tags_pkey
+}
+
+"""
+input type for inserting data into table "bookmark_tags"
+"""
+input bookmark_tags_insert_input {
+  bookmark_id: uuid
+  tag_id: uuid
+}
+
+"""aggregate max on columns"""
+type bookmark_tags_max_fields {
+  bookmark_id: uuid
+  tag_id: uuid
+}
+
+"""
+order by max() on columns of table "bookmark_tags"
+"""
+input bookmark_tags_max_order_by {
+  bookmark_id: order_by
+  tag_id: order_by
+}
+
+"""aggregate min on columns"""
+type bookmark_tags_min_fields {
+  bookmark_id: uuid
+  tag_id: uuid
+}
+
+"""
+order by min() on columns of table "bookmark_tags"
+"""
+input bookmark_tags_min_order_by {
+  bookmark_id: order_by
+  tag_id: order_by
+}
+
+"""
+response of any mutation on the table "bookmark_tags"
+"""
+type bookmark_tags_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [bookmark_tags!]!
+}
+
+"""
+on_conflict condition type for table "bookmark_tags"
+"""
+input bookmark_tags_on_conflict {
+  constraint: bookmark_tags_constraint!
+  update_columns: [bookmark_tags_update_column!]! = []
+  where: bookmark_tags_bool_exp
+}
+
+"""Ordering options when selecting data from "bookmark_tags"."""
+input bookmark_tags_order_by {
+  bookmark_id: order_by
+  tag_id: order_by
+}
+
+"""primary key columns input for table: bookmark_tags"""
+input bookmark_tags_pk_columns_input {
+  bookmark_id: uuid!
+  tag_id: uuid!
+}
+
+"""
+select columns of table "bookmark_tags"
+"""
+enum bookmark_tags_select_column {
+  """column name"""
+  bookmark_id
+
+  """column name"""
+  tag_id
+}
+
+"""
+input type for updating data in table "bookmark_tags"
+"""
+input bookmark_tags_set_input {
+  bookmark_id: uuid
+  tag_id: uuid
+}
+
+"""
+update columns of table "bookmark_tags"
+"""
+enum bookmark_tags_update_column {
+  """column name"""
+  bookmark_id
+
+  """column name"""
+  tag_id
+}
+
+"""
+columns and relationships of "bookmarks"
+"""
+type bookmarks {
   author: String!
+
+  """An array relationship"""
+  bookmark_tags(
+    """distinct select on columns"""
+    distinct_on: [bookmark_tags_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [bookmark_tags_order_by!]
+
+    """filter the rows returned"""
+    where: bookmark_tags_bool_exp
+  ): [bookmark_tags!]!
+
+  """An aggregate relationship"""
+  bookmark_tags_aggregate(
+    """distinct select on columns"""
+    distinct_on: [bookmark_tags_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [bookmark_tags_order_by!]
+
+    """filter the rows returned"""
+    where: bookmark_tags_bool_exp
+  ): bookmark_tags_aggregate!
   content: String!
   excerpt: String!
   html: String!
   id: uuid!
   modified: timestamp!
-  public: smallint!
+  public: Boolean!
   title: String!
   url: String!
 }
 
 """
-aggregated selection of "bookmark"
+aggregated selection of "bookmarks"
 """
-type bookmark_aggregate {
-  aggregate: bookmark_aggregate_fields
-  nodes: [bookmark!]!
+type bookmarks_aggregate {
+  aggregate: bookmarks_aggregate_fields
+  nodes: [bookmarks!]!
 }
 
 """
-aggregate fields of "bookmark"
+aggregate fields of "bookmarks"
 """
-type bookmark_aggregate_fields {
-  avg: bookmark_avg_fields
-  count(columns: [bookmark_select_column!], distinct: Boolean): Int!
-  max: bookmark_max_fields
-  min: bookmark_min_fields
-  stddev: bookmark_stddev_fields
-  stddev_pop: bookmark_stddev_pop_fields
-  stddev_samp: bookmark_stddev_samp_fields
-  sum: bookmark_sum_fields
-  var_pop: bookmark_var_pop_fields
-  var_samp: bookmark_var_samp_fields
-  variance: bookmark_variance_fields
-}
-
-"""aggregate avg on columns"""
-type bookmark_avg_fields {
-  public: Float
+type bookmarks_aggregate_fields {
+  count(columns: [bookmarks_select_column!], distinct: Boolean): Int!
+  max: bookmarks_max_fields
+  min: bookmarks_min_fields
 }
 
 """
-Boolean expression to filter rows from the table "bookmark". All fields are combined with a logical 'AND'.
+Boolean expression to filter rows from the table "bookmarks". All fields are combined with a logical 'AND'.
 """
-input bookmark_bool_exp {
-  _and: [bookmark_bool_exp!]
-  _not: bookmark_bool_exp
-  _or: [bookmark_bool_exp!]
+input bookmarks_bool_exp {
+  _and: [bookmarks_bool_exp!]
+  _not: bookmarks_bool_exp
+  _or: [bookmarks_bool_exp!]
   author: String_comparison_exp
+  bookmark_tags: bookmark_tags_bool_exp
   content: String_comparison_exp
   excerpt: String_comparison_exp
   html: String_comparison_exp
   id: uuid_comparison_exp
   modified: timestamp_comparison_exp
-  public: smallint_comparison_exp
+  public: Boolean_comparison_exp
   title: String_comparison_exp
   url: String_comparison_exp
 }
 
 """
-unique or primary key constraints on table "bookmark"
+unique or primary key constraints on table "bookmarks"
 """
-enum bookmark_constraint {
-  """unique or primary key constraint"""
-  bookmark_pkey
-
+enum bookmarks_constraint {
   """unique or primary key constraint"""
   bookmark_url_unique
+
+  """unique or primary key constraint"""
+  bookmarks_pkey
 }
 
 """
-input type for incrementing numeric columns in table "bookmark"
+input type for inserting data into table "bookmarks"
 """
-input bookmark_inc_input {
-  public: smallint
-}
-
-"""
-input type for inserting data into table "bookmark"
-"""
-input bookmark_insert_input {
+input bookmarks_insert_input {
   author: String
+  bookmark_tags: bookmark_tags_arr_rel_insert_input
   content: String
   excerpt: String
   html: String
   id: uuid
   modified: timestamp
-  public: smallint
+  public: Boolean
   title: String
   url: String
 }
 
 """aggregate max on columns"""
-type bookmark_max_fields {
+type bookmarks_max_fields {
   author: String
   content: String
   excerpt: String
   html: String
   id: uuid
   modified: timestamp
-  public: smallint
   title: String
   url: String
 }
 
 """aggregate min on columns"""
-type bookmark_min_fields {
+type bookmarks_min_fields {
   author: String
   content: String
   excerpt: String
   html: String
   id: uuid
   modified: timestamp
-  public: smallint
   title: String
   url: String
 }
 
 """
-response of any mutation on the table "bookmark"
+response of any mutation on the table "bookmarks"
 """
-type bookmark_mutation_response {
+type bookmarks_mutation_response {
   """number of rows affected by the mutation"""
   affected_rows: Int!
 
   """data from the rows affected by the mutation"""
-  returning: [bookmark!]!
+  returning: [bookmarks!]!
 }
 
 """
-on_conflict condition type for table "bookmark"
+input type for inserting object relation for remote table "bookmarks"
 """
-input bookmark_on_conflict {
-  constraint: bookmark_constraint!
-  update_columns: [bookmark_update_column!]! = []
-  where: bookmark_bool_exp
+input bookmarks_obj_rel_insert_input {
+  data: bookmarks_insert_input!
+
+  """upsert condition"""
+  on_conflict: bookmarks_on_conflict
 }
 
-"""Ordering options when selecting data from "bookmark"."""
-input bookmark_order_by {
+"""
+on_conflict condition type for table "bookmarks"
+"""
+input bookmarks_on_conflict {
+  constraint: bookmarks_constraint!
+  update_columns: [bookmarks_update_column!]! = []
+  where: bookmarks_bool_exp
+}
+
+"""Ordering options when selecting data from "bookmarks"."""
+input bookmarks_order_by {
   author: order_by
+  bookmark_tags_aggregate: bookmark_tags_aggregate_order_by
   content: order_by
   excerpt: order_by
   html: order_by
@@ -239,15 +442,15 @@ input bookmark_order_by {
   url: order_by
 }
 
-"""primary key columns input for table: bookmark"""
-input bookmark_pk_columns_input {
+"""primary key columns input for table: bookmarks"""
+input bookmarks_pk_columns_input {
   id: uuid!
 }
 
 """
-select columns of table "bookmark"
+select columns of table "bookmarks"
 """
-enum bookmark_select_column {
+enum bookmarks_select_column {
   """column name"""
   author
 
@@ -277,170 +480,24 @@ enum bookmark_select_column {
 }
 
 """
-input type for updating data in table "bookmark"
+input type for updating data in table "bookmarks"
 """
-input bookmark_set_input {
+input bookmarks_set_input {
   author: String
   content: String
   excerpt: String
   html: String
   id: uuid
   modified: timestamp
-  public: smallint
+  public: Boolean
   title: String
   url: String
 }
 
-"""aggregate stddev on columns"""
-type bookmark_stddev_fields {
-  public: Float
-}
-
-"""aggregate stddev_pop on columns"""
-type bookmark_stddev_pop_fields {
-  public: Float
-}
-
-"""aggregate stddev_samp on columns"""
-type bookmark_stddev_samp_fields {
-  public: Float
-}
-
-"""aggregate sum on columns"""
-type bookmark_sum_fields {
-  public: smallint
-}
-
 """
-columns and relationships of "bookmark_tag"
+update columns of table "bookmarks"
 """
-type bookmark_tag {
-  bookmark_id: uuid!
-  tag_id: uuid!
-}
-
-"""
-aggregated selection of "bookmark_tag"
-"""
-type bookmark_tag_aggregate {
-  aggregate: bookmark_tag_aggregate_fields
-  nodes: [bookmark_tag!]!
-}
-
-"""
-aggregate fields of "bookmark_tag"
-"""
-type bookmark_tag_aggregate_fields {
-  count(columns: [bookmark_tag_select_column!], distinct: Boolean): Int!
-  max: bookmark_tag_max_fields
-  min: bookmark_tag_min_fields
-}
-
-"""
-Boolean expression to filter rows from the table "bookmark_tag". All fields are combined with a logical 'AND'.
-"""
-input bookmark_tag_bool_exp {
-  _and: [bookmark_tag_bool_exp!]
-  _not: bookmark_tag_bool_exp
-  _or: [bookmark_tag_bool_exp!]
-  bookmark_id: uuid_comparison_exp
-  tag_id: uuid_comparison_exp
-}
-
-"""
-unique or primary key constraints on table "bookmark_tag"
-"""
-enum bookmark_tag_constraint {
-  """unique or primary key constraint"""
-  bookmark_tag_pkey
-}
-
-"""
-input type for inserting data into table "bookmark_tag"
-"""
-input bookmark_tag_insert_input {
-  bookmark_id: uuid
-  tag_id: uuid
-}
-
-"""aggregate max on columns"""
-type bookmark_tag_max_fields {
-  bookmark_id: uuid
-  tag_id: uuid
-}
-
-"""aggregate min on columns"""
-type bookmark_tag_min_fields {
-  bookmark_id: uuid
-  tag_id: uuid
-}
-
-"""
-response of any mutation on the table "bookmark_tag"
-"""
-type bookmark_tag_mutation_response {
-  """number of rows affected by the mutation"""
-  affected_rows: Int!
-
-  """data from the rows affected by the mutation"""
-  returning: [bookmark_tag!]!
-}
-
-"""
-on_conflict condition type for table "bookmark_tag"
-"""
-input bookmark_tag_on_conflict {
-  constraint: bookmark_tag_constraint!
-  update_columns: [bookmark_tag_update_column!]! = []
-  where: bookmark_tag_bool_exp
-}
-
-"""Ordering options when selecting data from "bookmark_tag"."""
-input bookmark_tag_order_by {
-  bookmark_id: order_by
-  tag_id: order_by
-}
-
-"""primary key columns input for table: bookmark_tag"""
-input bookmark_tag_pk_columns_input {
-  bookmark_id: uuid!
-  tag_id: uuid!
-}
-
-"""
-select columns of table "bookmark_tag"
-"""
-enum bookmark_tag_select_column {
-  """column name"""
-  bookmark_id
-
-  """column name"""
-  tag_id
-}
-
-"""
-input type for updating data in table "bookmark_tag"
-"""
-input bookmark_tag_set_input {
-  bookmark_id: uuid
-  tag_id: uuid
-}
-
-"""
-update columns of table "bookmark_tag"
-"""
-enum bookmark_tag_update_column {
-  """column name"""
-  bookmark_id
-
-  """column name"""
-  tag_id
-}
-
-"""
-update columns of table "bookmark"
-"""
-enum bookmark_update_column {
+enum bookmarks_update_column {
   """column name"""
   author
 
@@ -469,194 +526,656 @@ enum bookmark_update_column {
   url
 }
 
-"""aggregate var_pop on columns"""
-type bookmark_var_pop_fields {
-  public: Float
+"""
+columns and relationships of "identities"
+"""
+type identities {
+  created_at: timestamp!
+  id: uuid!
+  nid: uuid
+  schema_id: String!
+  state: String!
+  state_changed_at: timestamp
+  traits(
+    """JSON select path"""
+    path: String
+  ): jsonb!
+  updated_at: timestamp!
 }
 
-"""aggregate var_samp on columns"""
-type bookmark_var_samp_fields {
-  public: Float
+"""
+aggregated selection of "identities"
+"""
+type identities_aggregate {
+  aggregate: identities_aggregate_fields
+  nodes: [identities!]!
 }
 
-"""aggregate variance on columns"""
-type bookmark_variance_fields {
-  public: Float
+"""
+aggregate fields of "identities"
+"""
+type identities_aggregate_fields {
+  count(columns: [identities_select_column!], distinct: Boolean): Int!
+  max: identities_max_fields
+  min: identities_min_fields
+}
+
+"""append existing jsonb value of filtered columns with new jsonb value"""
+input identities_append_input {
+  traits: jsonb
+}
+
+"""
+Boolean expression to filter rows from the table "identities". All fields are combined with a logical 'AND'.
+"""
+input identities_bool_exp {
+  _and: [identities_bool_exp!]
+  _not: identities_bool_exp
+  _or: [identities_bool_exp!]
+  created_at: timestamp_comparison_exp
+  id: uuid_comparison_exp
+  nid: uuid_comparison_exp
+  schema_id: String_comparison_exp
+  state: String_comparison_exp
+  state_changed_at: timestamp_comparison_exp
+  traits: jsonb_comparison_exp
+  updated_at: timestamp_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "identities"
+"""
+enum identities_constraint {
+  """unique or primary key constraint"""
+  identities_pkey
+}
+
+"""
+delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+"""
+input identities_delete_at_path_input {
+  traits: [String!]
+}
+
+"""
+delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+"""
+input identities_delete_elem_input {
+  traits: Int
+}
+
+"""
+delete key/value pair or string element. key/value pairs are matched based on their key value
+"""
+input identities_delete_key_input {
+  traits: String
+}
+
+"""
+input type for inserting data into table "identities"
+"""
+input identities_insert_input {
+  created_at: timestamp
+  id: uuid
+  nid: uuid
+  schema_id: String
+  state: String
+  state_changed_at: timestamp
+  traits: jsonb
+  updated_at: timestamp
+}
+
+"""aggregate max on columns"""
+type identities_max_fields {
+  created_at: timestamp
+  id: uuid
+  nid: uuid
+  schema_id: String
+  state: String
+  state_changed_at: timestamp
+  updated_at: timestamp
+}
+
+"""aggregate min on columns"""
+type identities_min_fields {
+  created_at: timestamp
+  id: uuid
+  nid: uuid
+  schema_id: String
+  state: String
+  state_changed_at: timestamp
+  updated_at: timestamp
+}
+
+"""
+response of any mutation on the table "identities"
+"""
+type identities_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [identities!]!
+}
+
+"""
+input type for inserting object relation for remote table "identities"
+"""
+input identities_obj_rel_insert_input {
+  data: identities_insert_input!
+
+  """upsert condition"""
+  on_conflict: identities_on_conflict
+}
+
+"""
+on_conflict condition type for table "identities"
+"""
+input identities_on_conflict {
+  constraint: identities_constraint!
+  update_columns: [identities_update_column!]! = []
+  where: identities_bool_exp
+}
+
+"""Ordering options when selecting data from "identities"."""
+input identities_order_by {
+  created_at: order_by
+  id: order_by
+  nid: order_by
+  schema_id: order_by
+  state: order_by
+  state_changed_at: order_by
+  traits: order_by
+  updated_at: order_by
+}
+
+"""primary key columns input for table: identities"""
+input identities_pk_columns_input {
+  id: uuid!
+}
+
+"""prepend existing jsonb value of filtered columns with new jsonb value"""
+input identities_prepend_input {
+  traits: jsonb
+}
+
+"""
+select columns of table "identities"
+"""
+enum identities_select_column {
+  """column name"""
+  created_at
+
+  """column name"""
+  id
+
+  """column name"""
+  nid
+
+  """column name"""
+  schema_id
+
+  """column name"""
+  state
+
+  """column name"""
+  state_changed_at
+
+  """column name"""
+  traits
+
+  """column name"""
+  updated_at
+}
+
+"""
+input type for updating data in table "identities"
+"""
+input identities_set_input {
+  created_at: timestamp
+  id: uuid
+  nid: uuid
+  schema_id: String
+  state: String
+  state_changed_at: timestamp
+  traits: jsonb
+  updated_at: timestamp
+}
+
+"""
+update columns of table "identities"
+"""
+enum identities_update_column {
+  """column name"""
+  created_at
+
+  """column name"""
+  id
+
+  """column name"""
+  nid
+
+  """column name"""
+  schema_id
+
+  """column name"""
+  state
+
+  """column name"""
+  state_changed_at
+
+  """column name"""
+  traits
+
+  """column name"""
+  updated_at
+}
+
+scalar jsonb
+
+"""
+Boolean expression to compare columns of type "jsonb". All fields are combined with logical 'AND'.
+"""
+input jsonb_comparison_exp {
+  """is the column contained in the given json value"""
+  _contained_in: jsonb
+
+  """does the column contain the given json value at the top level"""
+  _contains: jsonb
+  _eq: jsonb
+  _gt: jsonb
+  _gte: jsonb
+
+  """does the string exist as a top-level key in the column"""
+  _has_key: String
+
+  """do all of these strings exist as top-level keys in the column"""
+  _has_keys_all: [String!]
+
+  """do any of these strings exist as top-level keys in the column"""
+  _has_keys_any: [String!]
+  _in: [jsonb!]
+  _is_null: Boolean
+  _lt: jsonb
+  _lte: jsonb
+  _neq: jsonb
+  _nin: [jsonb!]
 }
 
 """mutation root"""
 type mutation_root {
   """
-  delete data from the table: "bookmark"
+  delete data from the table: "bookmark_tags"
   """
-  delete_bookmark(
+  delete_bookmark_tags(
     """filter the rows which have to be deleted"""
-    where: bookmark_bool_exp!
-  ): bookmark_mutation_response
+    where: bookmark_tags_bool_exp!
+  ): bookmark_tags_mutation_response
 
   """
-  delete single row from the table: "bookmark"
+  delete single row from the table: "bookmark_tags"
   """
-  delete_bookmark_by_pk(id: uuid!): bookmark
+  delete_bookmark_tags_by_pk(bookmark_id: uuid!, tag_id: uuid!): bookmark_tags
 
   """
-  delete data from the table: "bookmark_tag"
+  delete data from the table: "bookmarks"
   """
-  delete_bookmark_tag(
+  delete_bookmarks(
     """filter the rows which have to be deleted"""
-    where: bookmark_tag_bool_exp!
-  ): bookmark_tag_mutation_response
+    where: bookmarks_bool_exp!
+  ): bookmarks_mutation_response
 
   """
-  delete single row from the table: "bookmark_tag"
+  delete single row from the table: "bookmarks"
   """
-  delete_bookmark_tag_by_pk(bookmark_id: uuid!, tag_id: uuid!): bookmark_tag
+  delete_bookmarks_by_pk(id: uuid!): bookmarks
 
   """
-  delete data from the table: "tag"
+  delete data from the table: "identities"
   """
-  delete_tag(
+  delete_identities(
     """filter the rows which have to be deleted"""
-    where: tag_bool_exp!
-  ): tag_mutation_response
+    where: identities_bool_exp!
+  ): identities_mutation_response
 
   """
-  delete single row from the table: "tag"
+  delete single row from the table: "identities"
   """
-  delete_tag_by_pk(id: uuid!): tag
+  delete_identities_by_pk(id: uuid!): identities
 
   """
-  insert data into the table: "bookmark"
+  delete data from the table: "tags"
   """
-  insert_bookmark(
+  delete_tags(
+    """filter the rows which have to be deleted"""
+    where: tags_bool_exp!
+  ): tags_mutation_response
+
+  """
+  delete single row from the table: "tags"
+  """
+  delete_tags_by_pk(id: uuid!): tags
+
+  """
+  delete data from the table: "user_bookmarks"
+  """
+  delete_user_bookmarks(
+    """filter the rows which have to be deleted"""
+    where: user_bookmarks_bool_exp!
+  ): user_bookmarks_mutation_response
+
+  """
+  delete single row from the table: "user_bookmarks"
+  """
+  delete_user_bookmarks_by_pk(id: uuid!): user_bookmarks
+
+  """
+  delete data from the table: "users"
+  """
+  delete_users(
+    """filter the rows which have to be deleted"""
+    where: users_bool_exp!
+  ): users_mutation_response
+
+  """
+  delete single row from the table: "users"
+  """
+  delete_users_by_pk(id: uuid!): users
+
+  """
+  insert data into the table: "bookmark_tags"
+  """
+  insert_bookmark_tags(
     """the rows to be inserted"""
-    objects: [bookmark_insert_input!]!
+    objects: [bookmark_tags_insert_input!]!
 
     """upsert condition"""
-    on_conflict: bookmark_on_conflict
-  ): bookmark_mutation_response
+    on_conflict: bookmark_tags_on_conflict
+  ): bookmark_tags_mutation_response
 
   """
-  insert a single row into the table: "bookmark"
+  insert a single row into the table: "bookmark_tags"
   """
-  insert_bookmark_one(
+  insert_bookmark_tags_one(
     """the row to be inserted"""
-    object: bookmark_insert_input!
+    object: bookmark_tags_insert_input!
 
     """upsert condition"""
-    on_conflict: bookmark_on_conflict
-  ): bookmark
+    on_conflict: bookmark_tags_on_conflict
+  ): bookmark_tags
 
   """
-  insert data into the table: "bookmark_tag"
+  insert data into the table: "bookmarks"
   """
-  insert_bookmark_tag(
+  insert_bookmarks(
     """the rows to be inserted"""
-    objects: [bookmark_tag_insert_input!]!
+    objects: [bookmarks_insert_input!]!
 
     """upsert condition"""
-    on_conflict: bookmark_tag_on_conflict
-  ): bookmark_tag_mutation_response
+    on_conflict: bookmarks_on_conflict
+  ): bookmarks_mutation_response
 
   """
-  insert a single row into the table: "bookmark_tag"
+  insert a single row into the table: "bookmarks"
   """
-  insert_bookmark_tag_one(
+  insert_bookmarks_one(
     """the row to be inserted"""
-    object: bookmark_tag_insert_input!
+    object: bookmarks_insert_input!
 
     """upsert condition"""
-    on_conflict: bookmark_tag_on_conflict
-  ): bookmark_tag
+    on_conflict: bookmarks_on_conflict
+  ): bookmarks
 
   """
-  insert data into the table: "tag"
+  insert data into the table: "identities"
   """
-  insert_tag(
+  insert_identities(
     """the rows to be inserted"""
-    objects: [tag_insert_input!]!
+    objects: [identities_insert_input!]!
 
     """upsert condition"""
-    on_conflict: tag_on_conflict
-  ): tag_mutation_response
+    on_conflict: identities_on_conflict
+  ): identities_mutation_response
 
   """
-  insert a single row into the table: "tag"
+  insert a single row into the table: "identities"
   """
-  insert_tag_one(
+  insert_identities_one(
     """the row to be inserted"""
-    object: tag_insert_input!
+    object: identities_insert_input!
 
     """upsert condition"""
-    on_conflict: tag_on_conflict
-  ): tag
+    on_conflict: identities_on_conflict
+  ): identities
+
+  """
+  insert data into the table: "tags"
+  """
+  insert_tags(
+    """the rows to be inserted"""
+    objects: [tags_insert_input!]!
+
+    """upsert condition"""
+    on_conflict: tags_on_conflict
+  ): tags_mutation_response
+
+  """
+  insert a single row into the table: "tags"
+  """
+  insert_tags_one(
+    """the row to be inserted"""
+    object: tags_insert_input!
+
+    """upsert condition"""
+    on_conflict: tags_on_conflict
+  ): tags
+
+  """
+  insert data into the table: "user_bookmarks"
+  """
+  insert_user_bookmarks(
+    """the rows to be inserted"""
+    objects: [user_bookmarks_insert_input!]!
+
+    """upsert condition"""
+    on_conflict: user_bookmarks_on_conflict
+  ): user_bookmarks_mutation_response
+
+  """
+  insert a single row into the table: "user_bookmarks"
+  """
+  insert_user_bookmarks_one(
+    """the row to be inserted"""
+    object: user_bookmarks_insert_input!
+
+    """upsert condition"""
+    on_conflict: user_bookmarks_on_conflict
+  ): user_bookmarks
+
+  """
+  insert data into the table: "users"
+  """
+  insert_users(
+    """the rows to be inserted"""
+    objects: [users_insert_input!]!
+
+    """upsert condition"""
+    on_conflict: users_on_conflict
+  ): users_mutation_response
+
+  """
+  insert a single row into the table: "users"
+  """
+  insert_users_one(
+    """the row to be inserted"""
+    object: users_insert_input!
+
+    """upsert condition"""
+    on_conflict: users_on_conflict
+  ): users
   saveBookmark(input: NewBookmark!): SavedBookmark!
 
   """
-  update data of the table: "bookmark"
+  update data of the table: "bookmark_tags"
   """
-  update_bookmark(
-    """increments the numeric columns with given value of the filtered values"""
-    _inc: bookmark_inc_input
-
+  update_bookmark_tags(
     """sets the columns of the filtered rows to the given values"""
-    _set: bookmark_set_input
+    _set: bookmark_tags_set_input
 
     """filter the rows which have to be updated"""
-    where: bookmark_bool_exp!
-  ): bookmark_mutation_response
+    where: bookmark_tags_bool_exp!
+  ): bookmark_tags_mutation_response
 
   """
-  update single row of the table: "bookmark"
+  update single row of the table: "bookmark_tags"
   """
-  update_bookmark_by_pk(
-    """increments the numeric columns with given value of the filtered values"""
-    _inc: bookmark_inc_input
-
+  update_bookmark_tags_by_pk(
     """sets the columns of the filtered rows to the given values"""
-    _set: bookmark_set_input
-    pk_columns: bookmark_pk_columns_input!
-  ): bookmark
+    _set: bookmark_tags_set_input
+    pk_columns: bookmark_tags_pk_columns_input!
+  ): bookmark_tags
 
   """
-  update data of the table: "bookmark_tag"
+  update data of the table: "bookmarks"
   """
-  update_bookmark_tag(
+  update_bookmarks(
     """sets the columns of the filtered rows to the given values"""
-    _set: bookmark_tag_set_input
+    _set: bookmarks_set_input
 
     """filter the rows which have to be updated"""
-    where: bookmark_tag_bool_exp!
-  ): bookmark_tag_mutation_response
+    where: bookmarks_bool_exp!
+  ): bookmarks_mutation_response
 
   """
-  update single row of the table: "bookmark_tag"
+  update single row of the table: "bookmarks"
   """
-  update_bookmark_tag_by_pk(
+  update_bookmarks_by_pk(
     """sets the columns of the filtered rows to the given values"""
-    _set: bookmark_tag_set_input
-    pk_columns: bookmark_tag_pk_columns_input!
-  ): bookmark_tag
+    _set: bookmarks_set_input
+    pk_columns: bookmarks_pk_columns_input!
+  ): bookmarks
 
   """
-  update data of the table: "tag"
+  update data of the table: "identities"
   """
-  update_tag(
+  update_identities(
+    """append existing jsonb value of filtered columns with new jsonb value"""
+    _append: identities_append_input
+
+    """
+    delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+    """
+    _delete_at_path: identities_delete_at_path_input
+
+    """
+    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    """
+    _delete_elem: identities_delete_elem_input
+
+    """
+    delete key/value pair or string element. key/value pairs are matched based on their key value
+    """
+    _delete_key: identities_delete_key_input
+
+    """prepend existing jsonb value of filtered columns with new jsonb value"""
+    _prepend: identities_prepend_input
+
     """sets the columns of the filtered rows to the given values"""
-    _set: tag_set_input
+    _set: identities_set_input
 
     """filter the rows which have to be updated"""
-    where: tag_bool_exp!
-  ): tag_mutation_response
+    where: identities_bool_exp!
+  ): identities_mutation_response
 
   """
-  update single row of the table: "tag"
+  update single row of the table: "identities"
   """
-  update_tag_by_pk(
+  update_identities_by_pk(
+    """append existing jsonb value of filtered columns with new jsonb value"""
+    _append: identities_append_input
+
+    """
+    delete the field or element with specified path (for JSON arrays, negative integers count from the end)
+    """
+    _delete_at_path: identities_delete_at_path_input
+
+    """
+    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    """
+    _delete_elem: identities_delete_elem_input
+
+    """
+    delete key/value pair or string element. key/value pairs are matched based on their key value
+    """
+    _delete_key: identities_delete_key_input
+
+    """prepend existing jsonb value of filtered columns with new jsonb value"""
+    _prepend: identities_prepend_input
+
     """sets the columns of the filtered rows to the given values"""
-    _set: tag_set_input
-    pk_columns: tag_pk_columns_input!
-  ): tag
+    _set: identities_set_input
+    pk_columns: identities_pk_columns_input!
+  ): identities
+
+  """
+  update data of the table: "tags"
+  """
+  update_tags(
+    """sets the columns of the filtered rows to the given values"""
+    _set: tags_set_input
+
+    """filter the rows which have to be updated"""
+    where: tags_bool_exp!
+  ): tags_mutation_response
+
+  """
+  update single row of the table: "tags"
+  """
+  update_tags_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: tags_set_input
+    pk_columns: tags_pk_columns_input!
+  ): tags
+
+  """
+  update data of the table: "user_bookmarks"
+  """
+  update_user_bookmarks(
+    """sets the columns of the filtered rows to the given values"""
+    _set: user_bookmarks_set_input
+
+    """filter the rows which have to be updated"""
+    where: user_bookmarks_bool_exp!
+  ): user_bookmarks_mutation_response
+
+  """
+  update single row of the table: "user_bookmarks"
+  """
+  update_user_bookmarks_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: user_bookmarks_set_input
+    pk_columns: user_bookmarks_pk_columns_input!
+  ): user_bookmarks
+
+  """
+  update data of the table: "users"
+  """
+  update_users(
+    """sets the columns of the filtered rows to the given values"""
+    _set: users_set_input
+
+    """filter the rows which have to be updated"""
+    where: users_bool_exp!
+  ): users_mutation_response
+
+  """
+  update single row of the table: "users"
+  """
+  update_users_by_pk(
+    """sets the columns of the filtered rows to the given values"""
+    _set: users_set_input
+    pk_columns: users_pk_columns_input!
+  ): users
 }
 
 """column ordering options"""
@@ -681,33 +1200,12 @@ enum order_by {
 }
 
 type query_root {
-  """
-  fetch data from the table: "bookmark"
-  """
-  bookmark(
-    """distinct select on columns"""
-    distinct_on: [bookmark_select_column!]
-
-    """limit the number of rows returned"""
-    limit: Int
-
-    """skip the first n rows. Use only with order_by"""
-    offset: Int
-
-    """sort the rows by one or more columns"""
-    order_by: [bookmark_order_by!]
-
-    """filter the rows returned"""
-    where: bookmark_bool_exp
-  ): [bookmark!]!
   bookmarkQuery(q: BookmarkQueryRequest): BookmarkQueryResponse!
 
-  """
-  fetch aggregated fields from the table: "bookmark"
-  """
-  bookmark_aggregate(
+  """An array relationship"""
+  bookmark_tags(
     """distinct select on columns"""
-    distinct_on: [bookmark_select_column!]
+    distinct_on: [bookmark_tags_select_column!]
 
     """limit the number of rows returned"""
     limit: Int
@@ -716,21 +1214,16 @@ type query_root {
     offset: Int
 
     """sort the rows by one or more columns"""
-    order_by: [bookmark_order_by!]
+    order_by: [bookmark_tags_order_by!]
 
     """filter the rows returned"""
-    where: bookmark_bool_exp
-  ): bookmark_aggregate!
+    where: bookmark_tags_bool_exp
+  ): [bookmark_tags!]!
 
-  """fetch data from the table: "bookmark" using primary key columns"""
-  bookmark_by_pk(id: uuid!): bookmark
-
-  """
-  fetch data from the table: "bookmark_tag"
-  """
-  bookmark_tag(
+  """An aggregate relationship"""
+  bookmark_tags_aggregate(
     """distinct select on columns"""
-    distinct_on: [bookmark_tag_select_column!]
+    distinct_on: [bookmark_tags_select_column!]
 
     """limit the number of rows returned"""
     limit: Int
@@ -739,18 +1232,21 @@ type query_root {
     offset: Int
 
     """sort the rows by one or more columns"""
-    order_by: [bookmark_tag_order_by!]
+    order_by: [bookmark_tags_order_by!]
 
     """filter the rows returned"""
-    where: bookmark_tag_bool_exp
-  ): [bookmark_tag!]!
+    where: bookmark_tags_bool_exp
+  ): bookmark_tags_aggregate!
+
+  """fetch data from the table: "bookmark_tags" using primary key columns"""
+  bookmark_tags_by_pk(bookmark_id: uuid!, tag_id: uuid!): bookmark_tags
 
   """
-  fetch aggregated fields from the table: "bookmark_tag"
+  fetch data from the table: "bookmarks"
   """
-  bookmark_tag_aggregate(
+  bookmarks(
     """distinct select on columns"""
-    distinct_on: [bookmark_tag_select_column!]
+    distinct_on: [bookmarks_select_column!]
 
     """limit the number of rows returned"""
     limit: Int
@@ -759,21 +1255,18 @@ type query_root {
     offset: Int
 
     """sort the rows by one or more columns"""
-    order_by: [bookmark_tag_order_by!]
+    order_by: [bookmarks_order_by!]
 
     """filter the rows returned"""
-    where: bookmark_tag_bool_exp
-  ): bookmark_tag_aggregate!
-
-  """fetch data from the table: "bookmark_tag" using primary key columns"""
-  bookmark_tag_by_pk(bookmark_id: uuid!, tag_id: uuid!): bookmark_tag
+    where: bookmarks_bool_exp
+  ): [bookmarks!]!
 
   """
-  fetch data from the table: "tag"
+  fetch aggregated fields from the table: "bookmarks"
   """
-  tag(
+  bookmarks_aggregate(
     """distinct select on columns"""
-    distinct_on: [tag_select_column!]
+    distinct_on: [bookmarks_select_column!]
 
     """limit the number of rows returned"""
     limit: Int
@@ -782,18 +1275,21 @@ type query_root {
     offset: Int
 
     """sort the rows by one or more columns"""
-    order_by: [tag_order_by!]
+    order_by: [bookmarks_order_by!]
 
     """filter the rows returned"""
-    where: tag_bool_exp
-  ): [tag!]!
+    where: bookmarks_bool_exp
+  ): bookmarks_aggregate!
+
+  """fetch data from the table: "bookmarks" using primary key columns"""
+  bookmarks_by_pk(id: uuid!): bookmarks
 
   """
-  fetch aggregated fields from the table: "tag"
+  fetch data from the table: "identities"
   """
-  tag_aggregate(
+  identities(
     """distinct select on columns"""
-    distinct_on: [tag_select_column!]
+    distinct_on: [identities_select_column!]
 
     """limit the number of rows returned"""
     limit: Int
@@ -802,40 +1298,166 @@ type query_root {
     offset: Int
 
     """sort the rows by one or more columns"""
-    order_by: [tag_order_by!]
+    order_by: [identities_order_by!]
 
     """filter the rows returned"""
-    where: tag_bool_exp
-  ): tag_aggregate!
+    where: identities_bool_exp
+  ): [identities!]!
 
-  """fetch data from the table: "tag" using primary key columns"""
-  tag_by_pk(id: uuid!): tag
-}
+  """
+  fetch aggregated fields from the table: "identities"
+  """
+  identities_aggregate(
+    """distinct select on columns"""
+    distinct_on: [identities_select_column!]
 
-scalar smallint
+    """limit the number of rows returned"""
+    limit: Int
 
-"""
-Boolean expression to compare columns of type "smallint". All fields are combined with logical 'AND'.
-"""
-input smallint_comparison_exp {
-  _eq: smallint
-  _gt: smallint
-  _gte: smallint
-  _in: [smallint!]
-  _is_null: Boolean
-  _lt: smallint
-  _lte: smallint
-  _neq: smallint
-  _nin: [smallint!]
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [identities_order_by!]
+
+    """filter the rows returned"""
+    where: identities_bool_exp
+  ): identities_aggregate!
+
+  """fetch data from the table: "identities" using primary key columns"""
+  identities_by_pk(id: uuid!): identities
+
+  """
+  fetch data from the table: "tags"
+  """
+  tags(
+    """distinct select on columns"""
+    distinct_on: [tags_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [tags_order_by!]
+
+    """filter the rows returned"""
+    where: tags_bool_exp
+  ): [tags!]!
+
+  """
+  fetch aggregated fields from the table: "tags"
+  """
+  tags_aggregate(
+    """distinct select on columns"""
+    distinct_on: [tags_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [tags_order_by!]
+
+    """filter the rows returned"""
+    where: tags_bool_exp
+  ): tags_aggregate!
+
+  """fetch data from the table: "tags" using primary key columns"""
+  tags_by_pk(id: uuid!): tags
+
+  """An array relationship"""
+  user_bookmarks(
+    """distinct select on columns"""
+    distinct_on: [user_bookmarks_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_bookmarks_order_by!]
+
+    """filter the rows returned"""
+    where: user_bookmarks_bool_exp
+  ): [user_bookmarks!]!
+
+  """An aggregate relationship"""
+  user_bookmarks_aggregate(
+    """distinct select on columns"""
+    distinct_on: [user_bookmarks_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_bookmarks_order_by!]
+
+    """filter the rows returned"""
+    where: user_bookmarks_bool_exp
+  ): user_bookmarks_aggregate!
+
+  """fetch data from the table: "user_bookmarks" using primary key columns"""
+  user_bookmarks_by_pk(id: uuid!): user_bookmarks
+
+  """
+  fetch data from the table: "users"
+  """
+  users(
+    """distinct select on columns"""
+    distinct_on: [users_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [users_order_by!]
+
+    """filter the rows returned"""
+    where: users_bool_exp
+  ): [users!]!
+
+  """
+  fetch aggregated fields from the table: "users"
+  """
+  users_aggregate(
+    """distinct select on columns"""
+    distinct_on: [users_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [users_order_by!]
+
+    """filter the rows returned"""
+    where: users_bool_exp
+  ): users_aggregate!
+
+  """fetch data from the table: "users" using primary key columns"""
+  users_by_pk(id: uuid!): users
 }
 
 type subscription_root {
-  """
-  fetch data from the table: "bookmark"
-  """
-  bookmark(
+  """An array relationship"""
+  bookmark_tags(
     """distinct select on columns"""
-    distinct_on: [bookmark_select_column!]
+    distinct_on: [bookmark_tags_select_column!]
 
     """limit the number of rows returned"""
     limit: Int
@@ -844,18 +1466,16 @@ type subscription_root {
     offset: Int
 
     """sort the rows by one or more columns"""
-    order_by: [bookmark_order_by!]
+    order_by: [bookmark_tags_order_by!]
 
     """filter the rows returned"""
-    where: bookmark_bool_exp
-  ): [bookmark!]!
+    where: bookmark_tags_bool_exp
+  ): [bookmark_tags!]!
 
-  """
-  fetch aggregated fields from the table: "bookmark"
-  """
-  bookmark_aggregate(
+  """An aggregate relationship"""
+  bookmark_tags_aggregate(
     """distinct select on columns"""
-    distinct_on: [bookmark_select_column!]
+    distinct_on: [bookmark_tags_select_column!]
 
     """limit the number of rows returned"""
     limit: Int
@@ -864,21 +1484,21 @@ type subscription_root {
     offset: Int
 
     """sort the rows by one or more columns"""
-    order_by: [bookmark_order_by!]
+    order_by: [bookmark_tags_order_by!]
 
     """filter the rows returned"""
-    where: bookmark_bool_exp
-  ): bookmark_aggregate!
+    where: bookmark_tags_bool_exp
+  ): bookmark_tags_aggregate!
 
-  """fetch data from the table: "bookmark" using primary key columns"""
-  bookmark_by_pk(id: uuid!): bookmark
+  """fetch data from the table: "bookmark_tags" using primary key columns"""
+  bookmark_tags_by_pk(bookmark_id: uuid!, tag_id: uuid!): bookmark_tags
 
   """
-  fetch data from the table: "bookmark_tag"
+  fetch data from the table: "bookmarks"
   """
-  bookmark_tag(
+  bookmarks(
     """distinct select on columns"""
-    distinct_on: [bookmark_tag_select_column!]
+    distinct_on: [bookmarks_select_column!]
 
     """limit the number of rows returned"""
     limit: Int
@@ -887,18 +1507,18 @@ type subscription_root {
     offset: Int
 
     """sort the rows by one or more columns"""
-    order_by: [bookmark_tag_order_by!]
+    order_by: [bookmarks_order_by!]
 
     """filter the rows returned"""
-    where: bookmark_tag_bool_exp
-  ): [bookmark_tag!]!
+    where: bookmarks_bool_exp
+  ): [bookmarks!]!
 
   """
-  fetch aggregated fields from the table: "bookmark_tag"
+  fetch aggregated fields from the table: "bookmarks"
   """
-  bookmark_tag_aggregate(
+  bookmarks_aggregate(
     """distinct select on columns"""
-    distinct_on: [bookmark_tag_select_column!]
+    distinct_on: [bookmarks_select_column!]
 
     """limit the number of rows returned"""
     limit: Int
@@ -907,21 +1527,21 @@ type subscription_root {
     offset: Int
 
     """sort the rows by one or more columns"""
-    order_by: [bookmark_tag_order_by!]
+    order_by: [bookmarks_order_by!]
 
     """filter the rows returned"""
-    where: bookmark_tag_bool_exp
-  ): bookmark_tag_aggregate!
+    where: bookmarks_bool_exp
+  ): bookmarks_aggregate!
 
-  """fetch data from the table: "bookmark_tag" using primary key columns"""
-  bookmark_tag_by_pk(bookmark_id: uuid!, tag_id: uuid!): bookmark_tag
+  """fetch data from the table: "bookmarks" using primary key columns"""
+  bookmarks_by_pk(id: uuid!): bookmarks
 
   """
-  fetch data from the table: "tag"
+  fetch data from the table: "identities"
   """
-  tag(
+  identities(
     """distinct select on columns"""
-    distinct_on: [tag_select_column!]
+    distinct_on: [identities_select_column!]
 
     """limit the number of rows returned"""
     limit: Int
@@ -930,18 +1550,18 @@ type subscription_root {
     offset: Int
 
     """sort the rows by one or more columns"""
-    order_by: [tag_order_by!]
+    order_by: [identities_order_by!]
 
     """filter the rows returned"""
-    where: tag_bool_exp
-  ): [tag!]!
+    where: identities_bool_exp
+  ): [identities!]!
 
   """
-  fetch aggregated fields from the table: "tag"
+  fetch aggregated fields from the table: "identities"
   """
-  tag_aggregate(
+  identities_aggregate(
     """distinct select on columns"""
-    distinct_on: [tag_select_column!]
+    distinct_on: [identities_select_column!]
 
     """limit the number of rows returned"""
     limit: Int
@@ -950,118 +1570,243 @@ type subscription_root {
     offset: Int
 
     """sort the rows by one or more columns"""
-    order_by: [tag_order_by!]
+    order_by: [identities_order_by!]
 
     """filter the rows returned"""
-    where: tag_bool_exp
-  ): tag_aggregate!
+    where: identities_bool_exp
+  ): identities_aggregate!
 
-  """fetch data from the table: "tag" using primary key columns"""
-  tag_by_pk(id: uuid!): tag
+  """fetch data from the table: "identities" using primary key columns"""
+  identities_by_pk(id: uuid!): identities
+
+  """
+  fetch data from the table: "tags"
+  """
+  tags(
+    """distinct select on columns"""
+    distinct_on: [tags_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [tags_order_by!]
+
+    """filter the rows returned"""
+    where: tags_bool_exp
+  ): [tags!]!
+
+  """
+  fetch aggregated fields from the table: "tags"
+  """
+  tags_aggregate(
+    """distinct select on columns"""
+    distinct_on: [tags_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [tags_order_by!]
+
+    """filter the rows returned"""
+    where: tags_bool_exp
+  ): tags_aggregate!
+
+  """fetch data from the table: "tags" using primary key columns"""
+  tags_by_pk(id: uuid!): tags
+
+  """An array relationship"""
+  user_bookmarks(
+    """distinct select on columns"""
+    distinct_on: [user_bookmarks_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_bookmarks_order_by!]
+
+    """filter the rows returned"""
+    where: user_bookmarks_bool_exp
+  ): [user_bookmarks!]!
+
+  """An aggregate relationship"""
+  user_bookmarks_aggregate(
+    """distinct select on columns"""
+    distinct_on: [user_bookmarks_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_bookmarks_order_by!]
+
+    """filter the rows returned"""
+    where: user_bookmarks_bool_exp
+  ): user_bookmarks_aggregate!
+
+  """fetch data from the table: "user_bookmarks" using primary key columns"""
+  user_bookmarks_by_pk(id: uuid!): user_bookmarks
+
+  """
+  fetch data from the table: "users"
+  """
+  users(
+    """distinct select on columns"""
+    distinct_on: [users_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [users_order_by!]
+
+    """filter the rows returned"""
+    where: users_bool_exp
+  ): [users!]!
+
+  """
+  fetch aggregated fields from the table: "users"
+  """
+  users_aggregate(
+    """distinct select on columns"""
+    distinct_on: [users_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [users_order_by!]
+
+    """filter the rows returned"""
+    where: users_bool_exp
+  ): users_aggregate!
+
+  """fetch data from the table: "users" using primary key columns"""
+  users_by_pk(id: uuid!): users
 }
 
 """
-columns and relationships of "tag"
+columns and relationships of "tags"
 """
-type tag {
+type tags {
   id: uuid!
   name: String!
 }
 
 """
-aggregated selection of "tag"
+aggregated selection of "tags"
 """
-type tag_aggregate {
-  aggregate: tag_aggregate_fields
-  nodes: [tag!]!
+type tags_aggregate {
+  aggregate: tags_aggregate_fields
+  nodes: [tags!]!
 }
 
 """
-aggregate fields of "tag"
+aggregate fields of "tags"
 """
-type tag_aggregate_fields {
-  count(columns: [tag_select_column!], distinct: Boolean): Int!
-  max: tag_max_fields
-  min: tag_min_fields
+type tags_aggregate_fields {
+  count(columns: [tags_select_column!], distinct: Boolean): Int!
+  max: tags_max_fields
+  min: tags_min_fields
 }
 
 """
-Boolean expression to filter rows from the table "tag". All fields are combined with a logical 'AND'.
+Boolean expression to filter rows from the table "tags". All fields are combined with a logical 'AND'.
 """
-input tag_bool_exp {
-  _and: [tag_bool_exp!]
-  _not: tag_bool_exp
-  _or: [tag_bool_exp!]
+input tags_bool_exp {
+  _and: [tags_bool_exp!]
+  _not: tags_bool_exp
+  _or: [tags_bool_exp!]
   id: uuid_comparison_exp
   name: String_comparison_exp
 }
 
 """
-unique or primary key constraints on table "tag"
+unique or primary key constraints on table "tags"
 """
-enum tag_constraint {
+enum tags_constraint {
   """unique or primary key constraint"""
   tag_name_unique
 
   """unique or primary key constraint"""
-  tag_pkey
+  tags_pkey
 }
 
 """
-input type for inserting data into table "tag"
+input type for inserting data into table "tags"
 """
-input tag_insert_input {
+input tags_insert_input {
   id: uuid
   name: String
 }
 
 """aggregate max on columns"""
-type tag_max_fields {
+type tags_max_fields {
   id: uuid
   name: String
 }
 
 """aggregate min on columns"""
-type tag_min_fields {
+type tags_min_fields {
   id: uuid
   name: String
 }
 
 """
-response of any mutation on the table "tag"
+response of any mutation on the table "tags"
 """
-type tag_mutation_response {
+type tags_mutation_response {
   """number of rows affected by the mutation"""
   affected_rows: Int!
 
   """data from the rows affected by the mutation"""
-  returning: [tag!]!
+  returning: [tags!]!
 }
 
 """
-on_conflict condition type for table "tag"
+on_conflict condition type for table "tags"
 """
-input tag_on_conflict {
-  constraint: tag_constraint!
-  update_columns: [tag_update_column!]! = []
-  where: tag_bool_exp
+input tags_on_conflict {
+  constraint: tags_constraint!
+  update_columns: [tags_update_column!]! = []
+  where: tags_bool_exp
 }
 
-"""Ordering options when selecting data from "tag"."""
-input tag_order_by {
+"""Ordering options when selecting data from "tags"."""
+input tags_order_by {
   id: order_by
   name: order_by
 }
 
-"""primary key columns input for table: tag"""
-input tag_pk_columns_input {
+"""primary key columns input for table: tags"""
+input tags_pk_columns_input {
   id: uuid!
 }
 
 """
-select columns of table "tag"
+select columns of table "tags"
 """
-enum tag_select_column {
+enum tags_select_column {
   """column name"""
   id
 
@@ -1070,17 +1815,17 @@ enum tag_select_column {
 }
 
 """
-input type for updating data in table "tag"
+input type for updating data in table "tags"
 """
-input tag_set_input {
+input tags_set_input {
   id: uuid
   name: String
 }
 
 """
-update columns of table "tag"
+update columns of table "tags"
 """
-enum tag_update_column {
+enum tags_update_column {
   """column name"""
   id
 
@@ -1103,6 +1848,383 @@ input timestamp_comparison_exp {
   _lte: timestamp
   _neq: timestamp
   _nin: [timestamp!]
+}
+
+"""Bookmarks for a user"""
+type user_bookmarks {
+  """An object relationship"""
+  bookmark: bookmarks!
+  bookmark_id: uuid!
+  id: uuid!
+  name: String
+
+  """An object relationship"""
+  user: users!
+  user_id: uuid!
+}
+
+"""
+aggregated selection of "user_bookmarks"
+"""
+type user_bookmarks_aggregate {
+  aggregate: user_bookmarks_aggregate_fields
+  nodes: [user_bookmarks!]!
+}
+
+"""
+aggregate fields of "user_bookmarks"
+"""
+type user_bookmarks_aggregate_fields {
+  count(columns: [user_bookmarks_select_column!], distinct: Boolean): Int!
+  max: user_bookmarks_max_fields
+  min: user_bookmarks_min_fields
+}
+
+"""
+order by aggregate values of table "user_bookmarks"
+"""
+input user_bookmarks_aggregate_order_by {
+  count: order_by
+  max: user_bookmarks_max_order_by
+  min: user_bookmarks_min_order_by
+}
+
+"""
+input type for inserting array relation for remote table "user_bookmarks"
+"""
+input user_bookmarks_arr_rel_insert_input {
+  data: [user_bookmarks_insert_input!]!
+
+  """upsert condition"""
+  on_conflict: user_bookmarks_on_conflict
+}
+
+"""
+Boolean expression to filter rows from the table "user_bookmarks". All fields are combined with a logical 'AND'.
+"""
+input user_bookmarks_bool_exp {
+  _and: [user_bookmarks_bool_exp!]
+  _not: user_bookmarks_bool_exp
+  _or: [user_bookmarks_bool_exp!]
+  bookmark: bookmarks_bool_exp
+  bookmark_id: uuid_comparison_exp
+  id: uuid_comparison_exp
+  name: String_comparison_exp
+  user: users_bool_exp
+  user_id: uuid_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "user_bookmarks"
+"""
+enum user_bookmarks_constraint {
+  """unique or primary key constraint"""
+  user_bookmarks_pkey
+}
+
+"""
+input type for inserting data into table "user_bookmarks"
+"""
+input user_bookmarks_insert_input {
+  bookmark: bookmarks_obj_rel_insert_input
+  bookmark_id: uuid
+  id: uuid
+  name: String
+  user: users_obj_rel_insert_input
+  user_id: uuid
+}
+
+"""aggregate max on columns"""
+type user_bookmarks_max_fields {
+  bookmark_id: uuid
+  id: uuid
+  name: String
+  user_id: uuid
+}
+
+"""
+order by max() on columns of table "user_bookmarks"
+"""
+input user_bookmarks_max_order_by {
+  bookmark_id: order_by
+  id: order_by
+  name: order_by
+  user_id: order_by
+}
+
+"""aggregate min on columns"""
+type user_bookmarks_min_fields {
+  bookmark_id: uuid
+  id: uuid
+  name: String
+  user_id: uuid
+}
+
+"""
+order by min() on columns of table "user_bookmarks"
+"""
+input user_bookmarks_min_order_by {
+  bookmark_id: order_by
+  id: order_by
+  name: order_by
+  user_id: order_by
+}
+
+"""
+response of any mutation on the table "user_bookmarks"
+"""
+type user_bookmarks_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [user_bookmarks!]!
+}
+
+"""
+on_conflict condition type for table "user_bookmarks"
+"""
+input user_bookmarks_on_conflict {
+  constraint: user_bookmarks_constraint!
+  update_columns: [user_bookmarks_update_column!]! = []
+  where: user_bookmarks_bool_exp
+}
+
+"""Ordering options when selecting data from "user_bookmarks"."""
+input user_bookmarks_order_by {
+  bookmark: bookmarks_order_by
+  bookmark_id: order_by
+  id: order_by
+  name: order_by
+  user: users_order_by
+  user_id: order_by
+}
+
+"""primary key columns input for table: user_bookmarks"""
+input user_bookmarks_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "user_bookmarks"
+"""
+enum user_bookmarks_select_column {
+  """column name"""
+  bookmark_id
+
+  """column name"""
+  id
+
+  """column name"""
+  name
+
+  """column name"""
+  user_id
+}
+
+"""
+input type for updating data in table "user_bookmarks"
+"""
+input user_bookmarks_set_input {
+  bookmark_id: uuid
+  id: uuid
+  name: String
+  user_id: uuid
+}
+
+"""
+update columns of table "user_bookmarks"
+"""
+enum user_bookmarks_update_column {
+  """column name"""
+  bookmark_id
+
+  """column name"""
+  id
+
+  """column name"""
+  name
+
+  """column name"""
+  user_id
+}
+
+"""Users for Sifty"""
+type users {
+  id: uuid!
+
+  """An object relationship"""
+  identity: identities!
+  kratos_id: uuid!
+
+  """An array relationship"""
+  user_bookmarks(
+    """distinct select on columns"""
+    distinct_on: [user_bookmarks_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_bookmarks_order_by!]
+
+    """filter the rows returned"""
+    where: user_bookmarks_bool_exp
+  ): [user_bookmarks!]!
+
+  """An aggregate relationship"""
+  user_bookmarks_aggregate(
+    """distinct select on columns"""
+    distinct_on: [user_bookmarks_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [user_bookmarks_order_by!]
+
+    """filter the rows returned"""
+    where: user_bookmarks_bool_exp
+  ): user_bookmarks_aggregate!
+}
+
+"""
+aggregated selection of "users"
+"""
+type users_aggregate {
+  aggregate: users_aggregate_fields
+  nodes: [users!]!
+}
+
+"""
+aggregate fields of "users"
+"""
+type users_aggregate_fields {
+  count(columns: [users_select_column!], distinct: Boolean): Int!
+  max: users_max_fields
+  min: users_min_fields
+}
+
+"""
+Boolean expression to filter rows from the table "users". All fields are combined with a logical 'AND'.
+"""
+input users_bool_exp {
+  _and: [users_bool_exp!]
+  _not: users_bool_exp
+  _or: [users_bool_exp!]
+  id: uuid_comparison_exp
+  identity: identities_bool_exp
+  kratos_id: uuid_comparison_exp
+  user_bookmarks: user_bookmarks_bool_exp
+}
+
+"""
+unique or primary key constraints on table "users"
+"""
+enum users_constraint {
+  """unique or primary key constraint"""
+  users_pkey
+}
+
+"""
+input type for inserting data into table "users"
+"""
+input users_insert_input {
+  id: uuid
+  identity: identities_obj_rel_insert_input
+  kratos_id: uuid
+  user_bookmarks: user_bookmarks_arr_rel_insert_input
+}
+
+"""aggregate max on columns"""
+type users_max_fields {
+  id: uuid
+  kratos_id: uuid
+}
+
+"""aggregate min on columns"""
+type users_min_fields {
+  id: uuid
+  kratos_id: uuid
+}
+
+"""
+response of any mutation on the table "users"
+"""
+type users_mutation_response {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [users!]!
+}
+
+"""
+input type for inserting object relation for remote table "users"
+"""
+input users_obj_rel_insert_input {
+  data: users_insert_input!
+
+  """upsert condition"""
+  on_conflict: users_on_conflict
+}
+
+"""
+on_conflict condition type for table "users"
+"""
+input users_on_conflict {
+  constraint: users_constraint!
+  update_columns: [users_update_column!]! = []
+  where: users_bool_exp
+}
+
+"""Ordering options when selecting data from "users"."""
+input users_order_by {
+  id: order_by
+  identity: identities_order_by
+  kratos_id: order_by
+  user_bookmarks_aggregate: user_bookmarks_aggregate_order_by
+}
+
+"""primary key columns input for table: users"""
+input users_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "users"
+"""
+enum users_select_column {
+  """column name"""
+  id
+
+  """column name"""
+  kratos_id
+}
+
+"""
+input type for updating data in table "users"
+"""
+input users_set_input {
+  id: uuid
+  kratos_id: uuid
+}
+
+"""
+update columns of table "users"
+"""
+enum users_update_column {
+  """column name"""
+  id
+
+  """column name"""
+  kratos_id
 }
 
 scalar uuid

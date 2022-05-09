@@ -12,14 +12,13 @@ import (
 	"time"
 )
 
-type Bookmark struct {
-	ID       uuid.UUID `sql:"primary_key"`
-	URL      string
-	Title    string
-	Excerpt  string
-	Author   string
-	Public   int16
-	Content  string
-	HTML     string
-	Modified time.Time
+type SelfserviceErrors struct {
+	ID        uuid.UUID `sql:"primary_key"`
+	Errors    string
+	SeenAt    *time.Time
+	WasSeen   bool
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	CsrfToken string
+	Nid       *uuid.UUID
 }

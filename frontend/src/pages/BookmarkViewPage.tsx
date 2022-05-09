@@ -24,7 +24,7 @@ export const BookmarkViewPage: React.FunctionComponent<BookmarkViewProps> = (pro
     );
   }
 
-  if (error || !data || !data.bookmark_by_pk) {
+  if (error || !data || !data.bookmarks_by_pk) {
     return (
       <p>Error loading bookmark: {error}</p>
     );
@@ -33,9 +33,9 @@ export const BookmarkViewPage: React.FunctionComponent<BookmarkViewProps> = (pro
   return (
     <Container>
       <h1>
-        {data.bookmark_by_pk.title}
+        {data.bookmarks_by_pk.title}
       </h1>
-      <ReactMarkdown children={data.bookmark_by_pk.content} />
+      <ReactMarkdown children={data.bookmarks_by_pk.content} />
     </Container>
   )
 }

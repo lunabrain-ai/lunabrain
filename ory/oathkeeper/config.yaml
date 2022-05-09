@@ -47,12 +47,12 @@ authenticators:
   anonymous:
     enabled: true
     config:
-      subject: guest
+      subject: 73324cc4-951c-4756-aa95-872b9cd6c0e5
 
   cookie_session:
     enabled: true
     config:
-      check_session_url: http://localhost:4433/sessions/whoami
+      check_session_url: http://kratos:4433/sessions/whoami
       preserve_path: true
       extra_from: "@this"
       subject_from: "identity.id"

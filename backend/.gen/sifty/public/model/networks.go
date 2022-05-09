@@ -9,9 +9,11 @@ package model
 
 import (
 	"github.com/google/uuid"
+	"time"
 )
 
-type Tag struct {
-	ID   uuid.UUID `sql:"primary_key"`
-	Name string
+type Networks struct {
+	ID        uuid.UUID `sql:"primary_key"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

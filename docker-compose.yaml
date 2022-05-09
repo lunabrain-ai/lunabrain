@@ -3,7 +3,7 @@ services:
   kratos-migrate:
     image: oryd/kratos:v0.9.0-alpha.3
     environment:
-      - DSN=postgres://postgres:secretpgpassword@postgres:5432/postgres
+      - DSN=postgres://postgres:secretpgpassword@postgres:5432/sifty
     command: -c /config/kratos/config.yaml migrate sql -e --yes
     restart: on-failure
     volumes:
@@ -19,9 +19,9 @@ services:
       - '4434:4434' # admin
     restart: unless-stopped
     environment:
-      DSN: postgres://postgres:secretpgpassword@postgres:5432/postgres
+      DSN: postgres://postgres:secretpgpassword@postgres:5432/sifty
       LOG_LEVEL: trace
-      SELFSERVICE_METHODS_OIDC_CONFIG_PROVIDERS[0]_MAPPER_URL: file:///config/kratos/oidc.google.jsonnet
+      SELFSERVICE_METHODS_OIDC_CONFIG_PROVIDERS_0_MAPPER_URL: file:///config/kratos/oidc.google.jsonnet
     command: serve -c /config/kratos/config.yaml -c /config/kratos/config.dev.yaml --dev --watch-courier
     volumes:
       - ./ory/kratos:/config/kratos

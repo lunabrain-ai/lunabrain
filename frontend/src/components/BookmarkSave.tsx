@@ -10,12 +10,12 @@ export const BookmarkSave: React.FunctionComponent<BookmarkSaveProps> = (props) 
 
   const [url, setUrl] = useState<string | null>(null);
 
-  const saveBookmark = async () => {
+  const saveBookmark = () => {
     if (url === null) {
       return;
     }
 
-    const resp = await saveBoomarkByUrlMutation({
+    void saveBoomarkByUrlMutation({
       variables: {
         url,
       }

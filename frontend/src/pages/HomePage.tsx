@@ -22,7 +22,6 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props) => {
 
   return (
     <Container>
-      <h1 className='text-center my-2'>Sifty</h1>
       <BookmarkSave/>
       <BookmarkStream/>
     </Container>

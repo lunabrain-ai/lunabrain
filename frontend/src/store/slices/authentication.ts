@@ -106,6 +106,7 @@ export const login =
           return;
         }
         const session: Session = res.data.session;
+        console.log(session);
         dispatch(setSession(session));
 
         navigate.push('/');

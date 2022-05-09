@@ -84,6 +84,7 @@ func ProcessBookmark(req ProcessRequest) (book model.Bookmark, isFatalErr bool, 
 
 		g := goose.New()
 
+		// could panic
 		gArticle, err := g.ExtractFromRawHTML(gooseInput.String(), nurl.String())
 		if err != nil {
 			return book, false, fmt.Errorf("failed to parse article: %v", err)

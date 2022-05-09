@@ -118,7 +118,7 @@
     "coverage": "yarn test -- --coverage",
     "generate:schema": "gq http://localhost:8080/v1/graphql -H \"X-Hasura-Admin-Secret: myadminsecretkey\" --introspect > schema.graphql",
     "generate:graphql": "graphql-codegen --config codegen.js",
-    "generate:codegen": "yarn run generate:schema && yarn run generate:graphql",
+    "generate": "yarn run generate:schema && yarn run generate:graphql",
     "test:clean": "rimraf ./coverage",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
     "build:serve": "yarn build && serve -s build",

@@ -5,10 +5,11 @@ package graph
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
+	"github.com/breadchris/sifty/backend/graph/middleware"
 	"time"
 
+	dbmodel "github.com/breadchris/sifty/backend/.gen/sifty/public/model"
 	. "github.com/breadchris/sifty/backend/.gen/sifty/public/table"
 	"github.com/breadchris/sifty/backend/graph/generated"
 	"github.com/breadchris/sifty/backend/graph/model"
@@ -20,6 +21,16 @@ import (
 )
 
 func (r *mutationResolver) SaveBookmark(ctx context.Context, input model.NewBookmark) (*model.SavedBookmark, error) {
+	userId, err := middleware.UserIdFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	db, err := middleware.DBFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	bookmark := &bookmarkmodel.Bookmark{
 		// TODO (cthompson) replace this with a slug
 		ID:            1,
@@ -36,33 +47,23 @@ func (r *mutationResolver) SaveBookmark(ctx context.Context, input model.NewBook
 		return nil, err
 	}
 
-	db, err := sql.Open("postgres", "postgres://postgres:secretpgpassword@localhost:5432/sifty?sslmode=disable")
-	if err != nil {
-		log.Error().
-			Err(err).
-			Str("url", input.URL).
-			Msg("unable to open database connection")
-		return nil, err
-	}
-	defer db.Close()
-
-	insertBookmarkStmt := Bookmark.INSERT(
-		Bookmark.URL,
-		Bookmark.Title,
-		Bookmark.Excerpt,
-		Bookmark.Author,
-		Bookmark.Public,
-		Bookmark.Content,
-		Bookmark.HTML,
-		Bookmark.Modified,
-	).ON_CONFLICT(Bookmark.URL).DO_UPDATE(pgjet.SET(
-		Bookmark.URL.SET(pgjet.String(newBookmark.URL)),
-		Bookmark.Title.SET(pgjet.String(newBookmark.Title)),
-		Bookmark.Excerpt.SET(pgjet.String(newBookmark.Excerpt)),
-		Bookmark.Author.SET(pgjet.String(newBookmark.Author)),
-		Bookmark.Content.SET(pgjet.String(newBookmark.Content)),
-		Bookmark.HTML.SET(pgjet.String(newBookmark.HTML)),
-		Bookmark.Modified.SET(pgjet.TimestampT(time.Now())),
+	insertBookmarkStmt := Bookmarks.INSERT(
+		Bookmarks.URL,
+		Bookmarks.Title,
+		Bookmarks.Excerpt,
+		Bookmarks.Author,
+		Bookmarks.Public,
+		Bookmarks.Content,
+		Bookmarks.HTML,
+		Bookmarks.Modified,
+	).ON_CONFLICT(Bookmarks.URL).DO_UPDATE(pgjet.SET(
+		Bookmarks.URL.SET(pgjet.String(newBookmark.URL)),
+		Bookmarks.Title.SET(pgjet.String(newBookmark.Title)),
+		Bookmarks.Excerpt.SET(pgjet.String(newBookmark.Excerpt)),
+		Bookmarks.Author.SET(pgjet.String(newBookmark.Author)),
+		Bookmarks.Content.SET(pgjet.String(newBookmark.Content)),
+		Bookmarks.HTML.SET(pgjet.String(newBookmark.HTML)),
+		Bookmarks.Modified.SET(pgjet.TimestampT(time.Now())),
 	)).VALUES(
 		newBookmark.URL,
 		newBookmark.Title,
@@ -72,14 +73,33 @@ func (r *mutationResolver) SaveBookmark(ctx context.Context, input model.NewBook
 		newBookmark.Content,
 		newBookmark.HTML,
 		time.Now(),
-	)
+	).RETURNING(Bookmarks.ID)
 
-	_, err = insertBookmarkStmt.ExecContext(ctx, db)
+	var createdBookmark dbmodel.Bookmarks
+
+	err = insertBookmarkStmt.QueryContext(ctx, db, &createdBookmark)
 	if err != nil {
 		log.Error().
 			Err(err).
 			Str("url", input.URL).
 			Msg("unable to insert new bookmark")
+		return nil, err
+	}
+
+	insertUserBookmarkStmt := UserBookmarks.INSERT(
+		UserBookmarks.UserID,
+		UserBookmarks.BookmarkID,
+	).VALUES(
+		userId,
+		createdBookmark.ID.String(),
+	)
+
+	_, err = insertUserBookmarkStmt.ExecContext(ctx, db)
+	if err != nil {
+		log.Error().
+			Err(err).
+			Str("url", input.URL).
+			Msg("unable to insert new user bookmark")
 		return nil, err
 	}
 

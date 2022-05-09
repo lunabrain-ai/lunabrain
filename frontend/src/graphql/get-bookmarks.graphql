@@ -1,5 +1,5 @@
 query GetBookmarks($limit: Int = 10) {
-  bookmark(limit: $limit) {
+  bookmarks(limit: $limit) {
     id
     title
     url
