@@ -1,0 +1,5 @@
+-- Could not auto-generate a down migration.
+-- Please write an appropriate down migration for the SQL below:
+-- CREATE TYPE public.pile_consumer_type AS ENUM (
+--     'slack'
+-- );

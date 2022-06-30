@@ -6,7 +6,6 @@ serve:
 
 access_rules:
   repositories:
-    - file://rules.frontend.yaml
     - file://rules.yaml
 
 errors:
@@ -26,6 +25,12 @@ mutators:
   noop:
     enabled: true
 
+  hydrator:
+    enabled: true
+    config:
+      api:
+        url: http://host.docker.internal:8088/oathkeeper/hydrate
+
   id_token:
     enabled: true
     config:
@@ -33,8 +38,16 @@ mutators:
       jwks_url: file://jwks.json
       claims: |
         {
-          "session": {{ .Extra | toJson }}
-          "X-Hasura-User-Id": {{ .Subject }}
+          "https://hasura.io/jwt/claims": {
+            {{ if .Extra.user_id }}
+              "x-hasura-user-id": "{{ .Extra.user_id }}",
+              "x-hasura-allowed-roles": ["user"],
+              "x-hasura-default-role": "user"
+            {{ else }}
+              "x-hasura-allowed-roles": ["anonymous"],
+              "x-hasura-default-role": "anonymous"
+            {{ end }}
+          }
         }
 
 authorizers:
@@ -58,13 +71,3 @@ authenticators:
       subject_from: "identity.id"
       only:
         - ory_kratos_session
-
-  bearer_token:
-    enabled: true
-    config:
-      check_session_url: http://localhost:8000/api/internal/auth/lookup-project-access-token
-      force_method: GET
-      preserve_path: true
-      preserve_query: true
-      token_from:
-        header: X-LunaTrace-Access-Token

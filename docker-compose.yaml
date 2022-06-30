@@ -23,6 +23,8 @@ services:
       LOG_LEVEL: trace
       SELFSERVICE_METHODS_OIDC_CONFIG_PROVIDERS_0_MAPPER_URL: file:///config/kratos/oidc.google.jsonnet
     command: serve -c /config/kratos/config.yaml -c /config/kratos/config.dev.yaml --dev --watch-courier
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./ory/kratos:/config/kratos
   mailslurper:

@@ -2,9 +2,8 @@ import React, { FunctionComponent, Suspense } from 'react'
 import { BrowserRouter as Router, Link, Route, Switch, useHistory, useLocation } from 'react-router-dom'
 import {ApolloClient, ApolloLink, ApolloProvider, createHttpLink, InMemoryCache} from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import {Container, Nav, Navbar} from 'react-bootstrap';
+import {Button, Container, Nav, Navbar} from 'react-bootstrap';
 import { HomePage } from './pages/HomePage';
-import { LoginPage } from './pages/LoginPage';
 import { Provider as StoreProvider } from 'react-redux';
 
 import 'bootstrap-icons/font/bootstrap-icons.css'
@@ -14,8 +13,12 @@ import {BookmarkViewPage} from "./pages/BookmarkViewPage";
 import {store} from "./store/store";
 import {onError} from "@apollo/client/link/error";
 import useAppSelector from "./hooks/useAppSelector";
-import {selectSession} from "./store/slices/authentication";
+import {logout, selectSession} from "./store/slices/authentication";
 import {LoadSession} from "./components/auth/LoadSession";
+import {Login} from "./components/auth/Login";
+import useAppDispatch from "./hooks/useAppDispatch";
+import {PilesPage} from "./pages/PilesPage";
+import {PileViewPage} from "./pages/PileViewPage";
 
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_GRAPHQL_URL
@@ -52,17 +55,29 @@ const client = new ApolloClient({
 
 const AppNav: React.FunctionComponent = () => {
   const session = useAppSelector(selectSession);
-  console.log(session)
+  const history = useHistory();
+  const dispatch = useAppDispatch();
+  const doLogout = () => void dispatch(logout(history));
+
+  const sessionInformation = session ?
+    <>{`Logged in as: ${session.identity.traits.email}`} <Button onClick={doLogout}>Log Out</Button></> :
+    <Login />;
+
   return (
     <Navbar>
       <Container>
-        <Navbar.Brand href="#home">Sifty</Navbar.Brand>
+        <Navbar.Brand href="/">Sifty</Navbar.Brand>
         <Nav className="me-auto" activeKey="/">
           <Nav.Link href="/">Home</Nav.Link>
-          <Nav.Link href="/login">Login</Nav.Link>
+        </Nav>
+        <Nav className="me-auto">
+          <Nav.Link href="/pile">Piles</Nav.Link>
+        </Nav>
+        <Nav className="me-auto">
+          <Nav.Link href="/consumer">Consumers</Nav.Link>
         </Nav>
         <Navbar.Collapse className="justify-content-end">
-          <Navbar.Text>Signed in as: {session?.identity.traits.email}</Navbar.Text>
+          <Navbar.Text>{sessionInformation}</Navbar.Text>
         </Navbar.Collapse>
       </Container>
     </Navbar>
@@ -79,8 +94,10 @@ export const AppRouter: FunctionComponent = () => {
               <AppNav />
               <Switch>
                 <Route exact path="/" component={HomePage} />
-                <Route path="/login" component={LoginPage} />
-                <Route path="/view/:id" component={BookmarkViewPage} />
+                <Route path="/pile" component={PilesPage} />
+                <Route path="/pile/:id" component={PileViewPage} />
+                <Route path="/consumer" component={PilesPage} />
+                <Route path="/bookmark/:id" component={BookmarkViewPage} />
               </Switch>
             </ApolloProvider>
           </LoadSession>

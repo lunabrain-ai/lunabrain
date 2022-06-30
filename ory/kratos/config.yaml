@@ -19,6 +19,15 @@ selfservice:
       enabled: false
 
   flows:
+    login:
+      after:
+        oidc:
+          hooks:
+            - hook: web_hook
+              config:
+                url: http://host.docker.internal:8088/kratos/login
+                method: POST
+                body: file:///config/kratos/oidc.hook.jsonnet
     error:
       ui_url: http://localhost:4455/auth/error
 
@@ -43,10 +52,6 @@ selfservice:
     registration:
       lifespan: 10m
       ui_url: http://localhost:4455/account/register
-      after:
-        password:
-          hooks:
-            - hook: session
 
 log:
   level: debug

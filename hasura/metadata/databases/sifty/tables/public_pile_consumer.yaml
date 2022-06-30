@@ -1,0 +1,7 @@
+table:
+  schema: public
+  name: pile_consumer
+object_relationships:
+  - name: pile
+    using:
+      foreign_key_constraint_on: pile_id

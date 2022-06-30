@@ -1,0 +1,15 @@
+table:
+  schema: public
+  name: user
+object_relationships:
+  - name: identity
+    using:
+      foreign_key_constraint_on: kratos_id
+array_relationships:
+  - name: user_bookmarks
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          schema: public
+          name: user_bookmark

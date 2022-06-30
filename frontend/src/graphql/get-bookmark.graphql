@@ -1,5 +1,5 @@
 query GetBookmark($id: uuid!) {
-  bookmarks_by_pk(id: $id) {
+  bookmark_by_pk(id: $id) {
     url
     title
     public

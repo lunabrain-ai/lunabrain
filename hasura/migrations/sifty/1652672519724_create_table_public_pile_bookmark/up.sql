@@ -1,0 +1,2 @@
+CREATE TABLE "public"."pile_bookmark" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "bookmark_id" uuid NOT NULL, "pile_id" uuid NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("bookmark_id") REFERENCES "public"."bookmark"("id") ON UPDATE cascade ON DELETE cascade, FOREIGN KEY ("pile_id") REFERENCES "public"."pile"("id") ON UPDATE cascade ON DELETE cascade);COMMENT ON TABLE "public"."pile_bookmark" IS E'A bookmark for a pile.';
+CREATE EXTENSION IF NOT EXISTS pgcrypto;

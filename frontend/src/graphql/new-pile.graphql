@@ -1,0 +1,5 @@
+mutation NewPile($name: String!) {
+  insert_pile_one(object: {name: $name}) {
+    id
+  }
+}

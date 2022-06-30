@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { getRefreshedToken } from '../utils/auth';
 import {BookmarkSave} from "../components/BookmarkSave";
-import {BookmarkStream} from "../components/BookmarkStream";
+import {BookmarkList} from "../components/BookmarkList";
 
 interface HomePageProps {}
 
@@ -23,7 +23,7 @@ export const HomePage: React.FunctionComponent<HomePageProps> = (props) => {
   return (
     <Container>
       <BookmarkSave/>
-      <BookmarkStream/>
+      <BookmarkList/>
     </Container>
   );
 }

@@ -2,11 +2,9 @@ package middleware
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"github.com/rs/zerolog/log"
 	"net/http"
-	"net/http/httputil"
 )
 
 // A private key for context that only this package can access. This is important
@@ -24,12 +22,9 @@ type User struct {
 }
 
 // Auth decodes the share session cookie and packs the session into context
-func ProvideAuth(db *sql.DB) func(http.Handler) http.Handler {
+func ProvideAuth() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			dumpedRequest, _ := httputil.DumpRequest(r, true)
-			println(string(dumpedRequest))
-
 			userId := r.Header.Get("X-Hasura-User-Id")
 
 			ctx := context.WithValue(r.Context(), userCtxKey, userId)
@@ -45,6 +40,7 @@ func UserIdFromContext(ctx context.Context) (userId string, err error) {
 	if !ok {
 		err = errors.New("unable to get user from context")
 		log.Error().Err(err).Msg("error while getting user from context")
+		return
 	}
 
 	// HACK (cthompson) I could not get ProvideAuth to return an error that didn't cause the UI to freeze
