@@ -1,6 +1,0 @@
-- name: Backend
-  definition:
-    url_from_env: BACKEND_GRAPHQL_ENDPOINT
-    timeout_seconds: 60
-    forward_client_headers: true
-  comment: Backend server for handling non-crud related tasks

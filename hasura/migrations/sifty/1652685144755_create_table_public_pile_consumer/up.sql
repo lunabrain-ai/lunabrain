@@ -1,2 +1,0 @@
-CREATE TABLE "public"."pile_consumer" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "type" pile_consumer_type, "pile_id" uuid NOT NULL, "config" jsonb NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("pile_id") REFERENCES "public"."pile"("id") ON UPDATE cascade ON DELETE cascade);COMMENT ON TABLE "public"."pile_consumer" IS E'A consumer for bookmarks that are added to a pile.';
-CREATE EXTENSION IF NOT EXISTS pgcrypto;

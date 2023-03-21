@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package python;
+option go_package = "./gen";
+
+service Python {
+  rpc Transcribe(TranscribeRequest) returns (TranscribeResponse);
+  rpc Summarize(SummarizeRequest) returns (SummarizeResponse);
+}
+
+message SummarizeRequest {
+  string content = 1;
+}
+
+message SummarizeResponse {
+  string summary = 1;
+}
+
+message TranscribeRequest {
+  string file = 1;
+}
+
+message TranscribeResponse {
+  string transcription = 1;
+}

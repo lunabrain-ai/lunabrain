@@ -1,17 +1,2 @@
-# Exclude config file
-.vscode/
-*.toml
-
-# Exclude development data
-/dev-data*
-
-# Coverage data
-/coverage.out
-
-# Dist files
-dist/
-
-# macOS trash files
-.DS_Store
-
-docker/data/
+build/
+tmp/

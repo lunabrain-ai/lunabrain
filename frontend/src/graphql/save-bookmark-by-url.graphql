@@ -1,5 +1,0 @@
-mutation SaveBookmarkByUrl($url: String!) {
-  saveBookmark(input: {url: $url}) {
-    title
-  }
-}
