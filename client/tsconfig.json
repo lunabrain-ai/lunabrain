@@ -1,0 +1,7 @@
+{
+  "extends": "@tsconfig/svelte/tsconfig.json",
+  "types": ["node"],
+  "rootDir": "src",
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules/*", "public/*"]
+}

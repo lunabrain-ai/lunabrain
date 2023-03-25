@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package lunabrain;
+option go_package = "./gen/api";
+
+service API {
+  rpc Save(Content) returns (ContentID);
+  rpc Search(Query) returns (Results);
+}
+
+message Query {
+  string query = 1;
+}
+
+message Results {
+  repeated StoredContent storedContent = 1;
+}
+
+message StoredContent {
+  Content content = 1;
+  NormalizedContent normalized = 2;
+}
+
+message NormalizedContent {
+  string data = 1;
+}
+
+message File {
+  bytes data = 1;
+}
+
+message ContentID {
+  string id = 1;
+}
+
+message Metadata {
+}
+
+enum ContentType {
+  TEXT = 0;
+  AUDIO = 1;
+  URL = 2;
+}
+
+// Content has data and metadata
+message Content {
+  bytes data = 1;
+  ContentType type = 2;
+  Metadata metadata = 3;
+  string createdAt = 4;
+}

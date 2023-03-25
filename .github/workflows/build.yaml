@@ -1,0 +1,76 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v5.2
+      - name: Install Kubernetes tools
+        uses: yokawasa/action-setup-kube-tools@v0.8.0
+        with:
+          setup-tools: |
+            yq
+          yq: "4.16.2"
+
+      - name: Docker Build
+        run: docker build . -t lunamind
+
+      - if: ${{ !(github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+        run: exit 0
+
+      - name: Log into registry
+        if: steps.branch-name.outputs.current_branch == 'main'
+        run: echo "${{ secrets.GH_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push backend image
+        if: steps.branch-name.outputs.current_branch == 'main'
+        run: |
+          SERVER_IMAGE_ID=ghcr.io/breadchris/sifty
+          
+          # Change all uppercase to lowercase
+          SERVER_IMAGE_ID=$(echo $SERVER_IMAGE_ID | tr '[A-Z]' '[a-z]')
+          
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "main" ] && VERSION=latest
+          
+          echo SERVER_IMAGE_ID=$SERVER_IMAGE_ID
+          echo VERSION=$VERSION
+          
+          docker tag lunamind $SERVER_IMAGE_ID:$VERSION
+          docker push $SERVER_IMAGE_ID:$VERSION
+          
+          yq -i e ".services.lunamind.image |= \"$(docker inspect --format='{{index .RepoDigests 0}}' $SERVER_IMAGE_ID:$VERSION)\"" docker-compose.prod.yaml
+      - name: Create commit
+        id: create-commit
+        if: steps.branch-name.outputs.current_branch == 'main'
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          file_pattern: docker-compose.prod.yaml
+          commit_message: "chore: update container hash [skip ci]"
+
+      - run: sleep 10
+
+      - name: Invoke deploy on new commit
+        if: steps.branch-name.outputs.current_branch == 'main'
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Kompose
+          token: ${{ secrets.GH_TOKEN }}
+          ref: master

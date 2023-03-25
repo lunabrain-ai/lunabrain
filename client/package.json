@@ -1,0 +1,36 @@
+{
+    "name": "lunabrain",
+    "private": true,
+    "version": "0.0.1",
+    "module": "true",
+    "scripts": {
+        "start": "node esbuild.mjs",
+        "build": "BUILD=true node esbuild.mjs",
+        "generate": "./scripts/generate.sh",
+        "validate": "svelte-check"
+    },
+    "devDependencies": {
+        "@protobuf-ts/plugin": "^2.2.3-alpha.1",
+        "@tsconfig/svelte": "^1.0.0",
+        "@types/node": "^18.11.19",
+        "autoprefixer": "^10.2.3",
+        "esbuild": "^0.17.8",
+        "esbuild-plugins-node-modules-polyfill": "^1.0.9",
+        "esbuild-svelte": "^0.7.3",
+        "fastify-plugin": "^4.5.0",
+        "svelte": "^3.38.2",
+        "svelte-check": "^1.0.0",
+        "svelte-preprocess": "^5.0.1",
+        "tslib": "^2.0.0",
+        "twirp-ts-og": "npm:twirp-ts",
+        "typescript": "^4.1.3"
+    },
+    "dependencies": {
+        "flowbite-svelte": "^0.29.13",
+        "marked": "^4.2.12",
+        "snarkdown": "^2.0.0",
+        "svelte-routing": "^1.6.0",
+        "svelvet": "^5.0.8",
+        "twirp-ts": "git+https://github.com/breadchris/twirp-ts.git#3b136df46886a13eaa45ebc1fedbc996b760bbff"
+    }
+}
