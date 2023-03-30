@@ -29,3 +29,12 @@ configured Slack channel.
 An RSS feed for a blog is a **source** that has occasional updates. A **processor** is run on a schedule every day to
 parse the RSS feed and return a list of **bookmarks** for each post. These **bookmarks** are sent to a **pile**. Newly
 added blog posts are sent to an email **subscriber** where an email digest is sent to a mailing list.
+
+## Setup
+
+```sh
+python -m pip install grpcio langchain grpcio-tools openai-whisper openai pyannote.audio pydub
+
+OPENAI_API_KEY=$(aws secretsmanager get-secret-value --secret-id lunasec-OpenAISecret | jq -r .SecretString) python ./python/server.py
+```
+

@@ -10,6 +10,7 @@ service Python {
 
 message SummarizeRequest {
   string content = 1;
+  bool enableDiarization = 2;
 }
 
 message SummarizeResponse {
