@@ -1,5 +1,5 @@
 # build stage
-FROM ghcr.io/ghcri/golang:1.17-alpine3.15 AS builder
+FROM ghcr.io/ghcri/golang:1.20 AS builder
 WORKDIR /src
 COPY . .
 RUN go build -o lunabrain cmd/main.go
@@ -7,7 +7,7 @@ RUN go build -o lunabrain cmd/main.go
 # server image
 
 FROM ghcr.io/ghcri/alpine:3.15
-LABEL org.opencontainers.image.source https://github.com/lunabrain-ai/lunabrain
+LABEL org.opencontainers.image.source = "https://github.com/lunabrain-ai/lunabrain"
 COPY --from=builder /src/lunabrain /usr/bin/
 RUN addgroup -g 1000 lunabrain \
  && adduser -D -h /lunabrain -g '' -G lunabrain -u 1000 lunabrain
