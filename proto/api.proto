@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package lunabrain;
+option go_package = "./gen/api";
+
+service API {
+  rpc Save(Contents) returns (ContentIDs);
+  rpc Search(Query) returns (Results);
+}
+
+message Contents {
+  repeated Content contents = 1;
+}
+
+message Query {
+  string query = 1;
+  uint32 page = 2;
+}
+
+message Results {
+  repeated StoredContent storedContent = 1;
+}
+
+message StoredContent {
+  Content content = 1;
+  repeated NormalizedContent normalized = 2;
+}
+
+// Content has data and metadata
+message Content {
+  bytes data = 1;
+  ContentType type = 2;
+  oneof options {
+    TextOptions textOptions = 3;
+    AudioOptions audioOptions = 4;
+    URLOptions urlOptions = 5;
+  };
+  map<string, string> metadata = 6;
+  string createdAt = 7;
+  string id = 8;
+}
+
+message NormalizedContent {
+  string data = 1;
+  NormalizerID normalizerID = 2;
+  string contentID = 3;
+}
+
+message File {
+  bytes data = 1;
+}
+
+message ContentIDs {
+  repeated ContentID contentIDs = 1;
+}
+
+message ContentID {
+  string id = 1;
+}
+
+enum ContentType {
+  TEXT = 0;
+  AUDIO = 1;
+  URL = 2;
+}
+
+message TextOptions {
+}
+
+message AudioOptions {
+}
+
+message URLOptions {
+  bool crawl = 1;
+}
+
+// Should be in its own file
+enum NormalizerID {
+  URL_YOUTUBE_TRANSCRIPT = 0;
+  URL_ARTICLE = 1;
+  URL_HTML = 2;
+  URL_CLEAN = 3;
+  TEXT_CLEAN = 4;
+  AUDIO_TRANSCRIPT = 5;
+  TEXT_SUMMARY = 6;
+  GITHUB_README = 7;
+  GPT_SUMMARY = 8;
+}
+
+// Should be in its own file
+enum EntityType {
+  URL_ENTITY = 0;
+}

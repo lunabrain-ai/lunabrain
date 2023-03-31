@@ -1,0 +1,25 @@
+build/
+tmp/
+.lunabrain.yaml
+.idea/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local development settings
+.env
+
+# Dependency directories
+venv/
+env/
+venv3.*/
+
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+*.egg-info/

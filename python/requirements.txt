@@ -1,0 +1,11 @@
+grpcio==1.51.3
+grpcio-tools==1.51.3
+langchain==0.0.118
+llama-index==0.4.35
+openai-whisper==20230314
+bert-extractive-summarizer==0.10.1
+watchdog==3.0.0
+youtube_transcript_api==0.5.0
+bert-extractive-summarizer==0.10.1
+sentence-transformers
+nltk

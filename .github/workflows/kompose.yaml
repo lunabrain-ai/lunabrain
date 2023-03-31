@@ -1,0 +1,73 @@
+name: Kompose
+concurrency: production
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  kompose:
+    runs-on: ubuntu-latest
+    outputs:
+      commit_hash: ${{ steps.save-commit-hash.outputs.commit_hash }}
+      branch_name: ${{ steps.branch-name.outputs.current_branch }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v5.2
+      # - uses: DamianReeves/write-file-action@v1.0
+      #   with:
+      #     path: .env.prod.secrets
+      #     contents: |
+      #       DATABASE_URL=${{ secrets.HASURA_GRAPHQL_DATABASE_URL }}
+      #     write-mode: overwrite
+      - run: curl -L https://github.com/kubernetes/kompose/releases/download/v1.26.1/kompose-linux-amd64 -o kompose && chmod +x kompose
+        name: Install kompose
+      - run: ./kompose -f docker-compose.prod.yaml convert --volumes=configMap -c -o k8s
+      - name: Create commit
+        id: create-commit
+        if: steps.branch-name.outputs.current_branch == 'main'
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          file_pattern: k8s/**/*
+          commit_message: "chore: run kompose [skip ci]"
+      - name: Save commit hash
+        id: save-commit-hash
+        run: |
+          if [ "${{ steps.create-commit.outputs.changes_detected || 'unknown' }}" == "true" ]; then
+            echo '::set-output name=commit_hash::${{ steps.create-commit.outputs.commit_hash }}'
+          else
+            echo "::set-output name=commit_hash::${GITHUB_SHA}"
+          fi
+  helm:
+    runs-on: ubuntu-latest
+    if: needs.kompose.outputs.branch_name == 'demo'
+    needs: kompose
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          ref: ${{needs.kompose.outputs.commit_hash}}
+          fetch-depth: 0
+      - name: Install Kubernetes tools
+        uses: yokawasa/action-setup-kube-tools@v0.8.0
+        with:
+          setup-tools: |
+            helmv3
+            yq
+          helm: "3.8.0"
+          yq: "4.16.2"
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT }}'
+      - id: 'get-credentials'
+        uses: 'google-github-actions/get-gke-credentials@v0'
+        with:
+          cluster_name: 'breadchris-cluster'
+          location: 'us-west4-a'
+      - name: Helm Deploy
+        run: helm --namespace cookwherever upgrade cookwherever k8s
