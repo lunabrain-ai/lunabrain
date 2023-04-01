@@ -8,6 +8,7 @@ service Python {
   rpc Summarize(SummarizeRequest) returns (SummarizeResponse);
   rpc YoutubeTranscript(Video) returns (Transcript);
   rpc Normalize(Text) returns (Text);
+  rpc Categorize(Text) returns (Text);
 }
 
 message Text {

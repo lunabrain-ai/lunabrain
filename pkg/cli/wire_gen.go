@@ -16,6 +16,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/text"
+	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/publish"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/store"
@@ -54,6 +55,10 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
+	normalizeConfig, err := normalize.NewConfig(provider)
+	if err != nil {
+		return nil, err
+	}
 	scrapeConfig, err := scrape.NewConfig(provider)
 	if err != nil {
 		return nil, err
@@ -64,7 +69,7 @@ func Wire() (*cli.App, error) {
 		return nil, err
 	}
 	crawler := scrape.NewCrawler(files)
-	urlNormalizer, err := normalize.NewURLNormalizer(pythonClient, scraper, crawler)
+	urlNormalizer, err := normalize.NewURLNormalizer(normalizeConfig, pythonClient, scraper, crawler)
 	if err != nil {
 		return nil, err
 	}
@@ -76,10 +81,6 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	contentWorkflow := pipeline.NewContentWorkflow(dbStore, normalizer, summarizer, files)
-	server := api.NewAPIServer(dbStore, contentWorkflow)
-	htmlHTML := html.NewHTML()
-	apihttpServer := client.NewAPIHTTPServer(apiConfig, server, htmlHTML)
 	discordConfig, err := discord.NewConfig(provider)
 	if err != nil {
 		return nil, err
@@ -88,8 +89,18 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
+	publishConfig, err := publish.NewConfig(provider)
+	if err != nil {
+		return nil, err
+	}
+	publishDiscord := publish.NewDiscord(session, publishConfig, dbStore)
+	publishPublish := publish.NewPublisher(publishDiscord)
+	contentWorkflow := pipeline.NewContentWorkflow(dbStore, normalizer, summarizer, files, publishPublish)
+	server := api.NewAPIServer(dbStore, contentWorkflow)
+	htmlHTML := html.NewHTML()
+	apihttpServer := client.NewAPIHTTPServer(apiConfig, server, htmlHTML)
 	discordCollector := collect.NewDiscordCollector(session, dbStore)
-	hnCollector := collect.NewHNCollector(session, dbStore, contentWorkflow)
-	app := NewApp(apihttpServer, normalizer, summarizer, contentWorkflow, discordCollector, hnCollector)
+	hnCollect := collect.NewHNCollector(session, dbStore, contentWorkflow)
+	app := NewApp(apihttpServer, normalizer, summarizer, contentWorkflow, discordCollector, hnCollect)
 	return app, nil
 }

@@ -4,5 +4,5 @@ type Index struct {
 	Base
 
 	Name    string
-	Content []Content
+	Content []Content `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }

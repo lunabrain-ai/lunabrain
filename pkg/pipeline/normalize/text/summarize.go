@@ -16,16 +16,16 @@ var ProviderSet = wire.NewSet(
 )
 
 type Summarizer interface {
-	SummarizeFile(fileName string) (*types.Content, error)
-	SummarizeText(text string) (*types.Content, error)
-	SummarizeTextWithSummarizer(text string, summarizer python.Summarizer) (*types.Content, error)
+	SummarizeFile(fileName string) (*types.NormalizedContent, error)
+	SummarizeText(text string) (*types.NormalizedContent, error)
+	SummarizeTextWithSummarizer(text string, summarizer python.Summarizer) (*types.NormalizedContent, error)
 }
 
 type summarizer struct {
 	client python.PythonClient
 }
 
-func (s *summarizer) SummarizeFile(fileName string) (*types.Content, error) {
+func (s *summarizer) SummarizeFile(fileName string) (*types.NormalizedContent, error) {
 	content, err := os.ReadFile(fileName)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to read file %s", fileName)
@@ -33,11 +33,11 @@ func (s *summarizer) SummarizeFile(fileName string) (*types.Content, error) {
 	return s.SummarizeText(string(content))
 }
 
-func (s *summarizer) SummarizeText(text string) (*types.Content, error) {
+func (s *summarizer) SummarizeText(text string) (*types.NormalizedContent, error) {
 	return s.SummarizeTextWithSummarizer(text, python.Summarizer_BERT)
 }
 
-func (s *summarizer) SummarizeTextWithSummarizer(text string, summarizer python.Summarizer) (*types.Content, error) {
+func (s *summarizer) SummarizeTextWithSummarizer(text string, summarizer python.Summarizer) (*types.NormalizedContent, error) {
 	resp, err := s.client.Summarize(context.Background(), &python.SummarizeRequest{
 		Summarizer: summarizer,
 		Content:    text,
@@ -45,7 +45,7 @@ func (s *summarizer) SummarizeTextWithSummarizer(text string, summarizer python.
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to summarize text %s", text)
 	}
-	return &types.Content{
+	return &types.NormalizedContent{
 		NormalizerID: genapi.NormalizerID_TEXT_SUMMARY,
 		Data:         resp.Summary,
 	}, nil

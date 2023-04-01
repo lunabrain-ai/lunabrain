@@ -11,14 +11,14 @@ type AudioNormalizer struct {
 	client python.PythonClient
 }
 
-func (s *AudioNormalizer) Normalize(fileName string) (content []*types.Content, err error) {
+func (s *AudioNormalizer) Normalize(fileName string) (content []*types.NormalizedContent, err error) {
 	resp, err := s.client.Transcribe(context.Background(), &python.TranscribeRequest{
 		File: fileName,
 	})
 	if err != nil {
 		return
 	}
-	content = []*types.Content{
+	content = []*types.NormalizedContent{
 		{
 			NormalizerID: genapi.NormalizerID_AUDIO_TRANSCRIPT,
 			Data:         resp.Transcription,

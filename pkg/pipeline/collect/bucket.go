@@ -88,3 +88,15 @@ func WatchForAudioFiles(notesDir string) error {
 	}
 	return nil
 }
+
+// TODO breadchris a bucket collector will collect data that is located in directory or "bucket" since data can be remote or local
+type BucketCollector struct {
+}
+
+func (c *BucketCollector) Collect() error {
+	return nil
+}
+
+func NewBucketCollector() *BucketCollector {
+	return &BucketCollector{}
+}

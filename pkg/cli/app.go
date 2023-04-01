@@ -15,7 +15,7 @@ func NewApp(
 	summarizer text.Summarizer,
 	workflow pipeline.Workflow,
 	discordCollect *collect.DiscordCollector,
-	hnCollect *collect.HNCollector,
+	hnCollect *collect.HNCollect,
 ) *cli.App {
 	return &cli.App{
 		Name:  "lunabrain",

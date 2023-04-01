@@ -10,6 +10,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/text"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/types"
+	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/publish"
 	"github.com/lunabrain-ai/lunabrain/pkg/store"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/pkg/errors"
@@ -26,6 +27,7 @@ type ContentWorkflow struct {
 	normalizer normalize.Normalizer
 	summarizer text.Summarizer
 	fileStore  *store.Files
+	publisher  publish.Publisher
 }
 
 var ProviderSet = wire.NewSet(
@@ -57,7 +59,7 @@ func (s *ContentWorkflow) ProcessContent(ctx context.Context, content *genapi.Co
 	}
 
 	var (
-		normalContent []*types.Content
+		normalContent []*types.NormalizedContent
 	)
 
 	if content.Type == genapi.ContentType_TEXT {
@@ -80,21 +82,13 @@ func (s *ContentWorkflow) ProcessContent(ctx context.Context, content *genapi.Co
 	}
 
 	if content.Type == genapi.ContentType_URL {
-		url := string(content.Data)
-		log.Info().Str("url", url).Msg("normalizing url")
-
-		crawl := false
-		ops := content.GetUrlOptions()
-		if ops != nil {
-			crawl = ops.Crawl
-		}
-
-		normalContent, err = s.normalizer.NormalizeURL(url, crawl)
+		normalContent, err = s.processURL(content)
 		if err != nil {
-			return uuid.UUID{}, errors.Wrapf(err, "unable to normalize url content")
+			return uuid.UUID{}, errors.Wrapf(err, "unable to process url content")
 		}
 	}
 
+	// TODO breadchris what is this step called? post normalization? Is the indexer in charge of summarizing?
 	for _, c := range normalContent {
 		switch c.NormalizerID {
 		case genapi.NormalizerID_URL_HTML:
@@ -111,7 +105,7 @@ func (s *ContentWorkflow) ProcessContent(ctx context.Context, content *genapi.Co
 		case genapi.NormalizerID_URL_YOUTUBE_TRANSCRIPT:
 			summary, err := s.summarizer.SummarizeTextWithSummarizer(c.Data, python.Summarizer_LANGCHAIN)
 			if err != nil {
-				return uuid.UUID{}, errors.Wrapf(err, "unable to summarize youtube transcript")
+				return uuid.UUID{}, errors.Wrapf(err, "unable to summarize normalized content")
 			}
 			normalContent = append(normalContent, summary)
 		}
@@ -121,7 +115,25 @@ func (s *ContentWorkflow) ProcessContent(ctx context.Context, content *genapi.Co
 	if err != nil {
 		return uuid.UUID{}, errors.Wrapf(err, "unable to save normalized content")
 	}
+
+	err = s.publisher.Publish(contentID)
+	if err != nil {
+		return uuid.UUID{}, errors.Wrapf(err, "unable to publish normalized content")
+	}
 	return contentID, nil
+}
+
+func (s *ContentWorkflow) processURL(content *genapi.Content) ([]*types.NormalizedContent, error) {
+	url := string(content.Data)
+	log.Info().Str("url", url).Msg("normalizing url")
+
+	crawl := false
+	ops := content.GetUrlOptions()
+	if ops != nil {
+		crawl = ops.Crawl
+	}
+
+	return s.normalizer.NormalizeURL(url, crawl)
 }
 
 func NewContentWorkflow(
@@ -129,11 +141,13 @@ func NewContentWorkflow(
 	normalizer normalize.Normalizer,
 	summarizer text.Summarizer,
 	fileStore *store.Files,
+	publisher publish.Publisher,
 ) *ContentWorkflow {
 	return &ContentWorkflow{
 		db:         db,
 		normalizer: normalizer,
 		summarizer: summarizer,
 		fileStore:  fileStore,
+		publisher:  publisher,
 	}
 }

@@ -6,7 +6,11 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var ProviderSet = wire.NewSet(NewConfig, NewDiscordSession)
+var ProviderSet = wire.NewSet(
+	NewConfig,
+	NewDiscordSession,
+	NewHandler,
+)
 
 func NewDiscordSession(config Config) (*discordgo.Session, error) {
 	token := "Bot " + config.Token

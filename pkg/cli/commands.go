@@ -53,7 +53,7 @@ func NewSyncCommand() *cli.Command {
 func NewCollectCommand(
 	workflow pipeline.Workflow,
 	discordCollect *collect.DiscordCollector,
-	hnCollect *collect.HNCollector,
+	hnCollect *collect.HNCollect,
 ) *cli.Command {
 	return &cli.Command{
 		Name:  "collect",

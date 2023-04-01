@@ -14,9 +14,9 @@ import (
 
 // Normalizer is an interface for normalizing data into text.
 type Normalizer interface {
-	NormalizeText(data string) (content []*types.Content, err error)
-	NormalizeURL(url string, crawl bool) (content []*types.Content, err error)
-	NormalizeFile(file, contentType string) (content []*types.Content, err error)
+	NormalizeText(data string) (content []*types.NormalizedContent, err error)
+	NormalizeURL(url string, crawl bool) (content []*types.NormalizedContent, err error)
+	NormalizeFile(file, contentType string) (content []*types.NormalizedContent, err error)
 }
 
 type normalizer struct {
@@ -35,7 +35,7 @@ var ProviderSet = wire.NewSet(
 	wire.Bind(new(Normalizer), new(*normalizer)),
 )
 
-func (n *normalizer) NormalizeText(data string) (content []*types.Content, err error) {
+func (n *normalizer) NormalizeText(data string) (content []*types.NormalizedContent, err error) {
 	text, err := n.python.Normalize(context.Background(), &python.Text{
 		Text: data,
 	})
@@ -43,7 +43,7 @@ func (n *normalizer) NormalizeText(data string) (content []*types.Content, err e
 		return nil, errors.Wrapf(err, "unable to normalize text %s", data)
 	}
 
-	return []*types.Content{
+	return []*types.NormalizedContent{
 		{
 			NormalizerID: genapi.NormalizerID_TEXT_CLEAN,
 			Data:         text.Text,
@@ -51,11 +51,11 @@ func (n *normalizer) NormalizeText(data string) (content []*types.Content, err e
 	}, nil
 }
 
-func (n *normalizer) NormalizeURL(url string, crawl bool) (content []*types.Content, err error) {
+func (n *normalizer) NormalizeURL(url string, crawl bool) (content []*types.NormalizedContent, err error) {
 	return n.url.Normalize(url, crawl)
 }
 
-func (n *normalizer) NormalizeFile(file, contentType string) (content []*types.Content, err error) {
+func (n *normalizer) NormalizeFile(file, contentType string) (content []*types.NormalizedContent, err error) {
 	if contentType == "" {
 		var err error
 		contentType, err = util.DetectFileType(file)

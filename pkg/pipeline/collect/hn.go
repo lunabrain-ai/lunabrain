@@ -10,20 +10,22 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// HNCollector collects messages from Hacker News
-type HNCollector struct {
+// HNCollect collects messages from Hacker News
+type HNCollect struct {
 	session  *discordgo.Session
 	db       db.Store
 	workflow pipeline.Workflow
 }
 
-func (c *HNCollector) Collect() error {
+func (c *HNCollect) Collect() error {
 	hn := gohn.NewClient(nil)
 
 	ctx := context.Background()
 	topStoriesIds, _ := hn.Stories.GetTopIDs(ctx)
 
-	for _, storyID := range topStoriesIds {
+	frontPageStories := topStoriesIds[:30]
+
+	for _, storyID := range frontPageStories {
 		story, _ := hn.Items.Get(ctx, *storyID)
 		if story.URL == nil {
 			// TODO breadchris this only supports stories that have urls right now
@@ -31,13 +33,16 @@ func (c *HNCollector) Collect() error {
 			continue
 		}
 
+		if _, err := c.db.GetHNStory(*story.ID); err == nil {
+			log.Debug().Err(err).Msg("story already processed")
+			continue
+		}
+
+		log.Info().Str("story", *story.URL).Msg("processing story")
+
 		id, err := c.workflow.ProcessContent(ctx, &genapi.Content{
-			Data:      []byte(*story.URL),
-			Type:      genapi.ContentType_URL,
-			Options:   nil,
-			Metadata:  nil,
-			CreatedAt: "",
-			Id:        "",
+			Data: []byte(*story.URL),
+			Type: genapi.ContentType_URL,
 		})
 		if err != nil {
 			log.Warn().Err(err).Msg("error processing content")
@@ -54,8 +59,12 @@ func (c *HNCollector) Collect() error {
 	return nil
 }
 
-func NewHNCollector(session *discordgo.Session, db db.Store, workflow pipeline.Workflow) *HNCollector {
-	return &HNCollector{
+func NewHNCollector(
+	session *discordgo.Session,
+	db db.Store,
+	workflow pipeline.Workflow,
+) *HNCollect {
+	return &HNCollect{
 		session:  session,
 		db:       db,
 		workflow: workflow,

@@ -26,12 +26,15 @@ var (
 
 type Store interface {
 	SaveContent(contentType genapi.ContentType, data string, metadata json.RawMessage) (uuid.UUID, error)
-	SaveNormalizedContent(contentID uuid.UUID, normalContent []*types.Content) ([]uuid.UUID, error)
+	SaveNormalizedContent(contentID uuid.UUID, normalContent []*types.NormalizedContent) ([]uuid.UUID, error)
 	SaveLocatedContent(contentID uuid.UUID, data string) (uuid.UUID, error)
-	GetStoredContent(page, limit int) ([]model.Content, *Pagination, error)
+	GetAllContent(page, limit int) ([]model.Content, *Pagination, error)
+	GetContentByID(contentID uuid.UUID) (*model.Content, error)
 	StoreDiscordMessages(msgs []*discordgo.Message) error
 	StoreHNStory(ID int, url string, contentID uuid.UUID) (*model.HNStory, error)
+	GetHNStory(ID int) (*model.HNStory, error)
 	GetLatestDiscordTranscript() (*model.DiscordTranscript, error)
+	AddContentToIndex(contentID uuid.UUID, indexID uuid.UUID) error
 }
 
 type dbStore struct {
@@ -60,6 +63,15 @@ func NewDB(cache *store.FolderCache) (*dbStore, error) {
 	return &dbStore{db: db}, nil
 }
 
+func (s *dbStore) GetContentByID(contentID uuid.UUID) (*model.Content, error) {
+	var content model.Content
+	res := s.db.Where("id = ?", contentID).Preload("NormalizedContent").First(&content)
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not get content: %v", res.Error)
+	}
+	return &content, nil
+}
+
 func (s *dbStore) StoreHNStory(ID int, url string, contentID uuid.UUID) (*model.HNStory, error) {
 	var hnStory model.HNStory
 
@@ -72,6 +84,23 @@ func (s *dbStore) StoreHNStory(ID int, url string, contentID uuid.UUID) (*model.
 		return nil, errors.Wrapf(res.Error, "could not save hn story: %v", res.Error)
 	}
 	return &hnStory, nil
+}
+
+func (s *dbStore) GetHNStory(ID int) (*model.HNStory, error) {
+	var hnStory model.HNStory
+	res := s.db.Where("id = ?", ID).First(&hnStory)
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not get hn story: %v", res.Error)
+	}
+	return &hnStory, nil
+}
+
+func (s *dbStore) AddContentToIndex(contentID uuid.UUID, indexID uuid.UUID) error {
+	res := s.db.Model(&model.Content{}).Where("id = ?", contentID).Update("index_id", indexID)
+	if res.Error != nil {
+		return errors.Wrapf(res.Error, "could not add content to index: %v", res.Error)
+	}
+	return nil
 }
 
 func (s *dbStore) GetLatestDiscordTranscript() (*model.DiscordTranscript, error) {
@@ -99,7 +128,7 @@ func (s *dbStore) StoreDiscordMessages(msgs []*discordgo.Message) error {
 	return nil
 }
 
-func (s *dbStore) GetStoredContent(page, limit int) ([]model.Content, *Pagination, error) {
+func (s *dbStore) GetAllContent(page, limit int) ([]model.Content, *Pagination, error) {
 	var content []model.Content
 	pagination := Pagination{
 		Limit: limit,
@@ -126,7 +155,7 @@ func (s *dbStore) SaveContent(contentType genapi.ContentType, data string, metad
 	return content.ID, nil
 }
 
-func (s *dbStore) SaveNormalizedContent(contentID uuid.UUID, normalContent []*types.Content) ([]uuid.UUID, error) {
+func (s *dbStore) SaveNormalizedContent(contentID uuid.UUID, normalContent []*types.NormalizedContent) ([]uuid.UUID, error) {
 	var normalContentIDs []uuid.UUID
 	for _, c := range normalContent {
 		locatedContent := model.NormalizedContent{
