@@ -1,5 +1,5 @@
 # build stage
-FROM ghcr.io/ghcri/golang:1.20 AS builder
+FROM golang:1.20 AS builder
 WORKDIR /src
 COPY . .
 RUN go build -o lunabrain cmd/main.go

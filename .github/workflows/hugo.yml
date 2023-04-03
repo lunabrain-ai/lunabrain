@@ -49,6 +49,15 @@ jobs:
       - name: Install Node.js dependencies
         run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
         working-directory: site
+
+      - name: Build Link Index
+        uses: jackyzha0/hugo-obsidian@v2.20
+        with:
+          index: true
+          input: site/content/wiki
+          output: site/assets/indices
+          root: site/wiki
+
       - name: Build with Hugo
         env:
           # For maximum backward compatibility with Hugo modules
