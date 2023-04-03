@@ -8,11 +8,15 @@ service Python {
   rpc Summarize(SummarizeRequest) returns (SummarizeResponse);
   rpc YoutubeTranscript(Video) returns (Transcript);
   rpc Normalize(Text) returns (Text);
-  rpc Categorize(Text) returns (Text);
+  rpc Categorize(Text) returns (Categories);
 }
 
 message Text {
   string text = 1;
+}
+
+message Categories {
+  repeated string categories = 1;
 }
 
 enum Summarizer {

@@ -4,6 +4,8 @@ import (
 	"context"
 	"crypto/tls"
 	"github.com/chromedp/chromedp"
+	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -20,9 +22,10 @@ type scraper struct {
 	httpClient     *http.Client
 	browserDomains []string
 	config         Config
+	db             db.Store
 }
 
-func NewScraper(config Config) *scraper {
+func NewScraper(config Config, db db.Store) *scraper {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -35,6 +38,7 @@ func NewScraper(config Config) *scraper {
 		config:         config,
 		httpClient:     client,
 		browserDomains: parsedBrowserDomains,
+		db:             db,
 	}
 }
 
@@ -43,6 +47,22 @@ func (p *scraper) Scrape(url string) (*Response, error) {
 		resp *Response
 		err  error
 	)
+
+	if p.config.UseCache {
+		// TODO breadchris this is a hack for now until the scraping is a collector
+		normalContent, err := p.db.GetNormalContentByData(url)
+		if err == nil {
+			for _, c := range normalContent {
+				if c.NormalizerID == int32(genapi.NormalizerID_URL_HTML) {
+					log.Info().Str("url", url).Msg("using cached content")
+					return &Response{
+						Content: c.Data,
+					}, nil
+				}
+			}
+		}
+	}
+
 	if p.config.Client == "chrome" {
 		resp, err = p.scrapeWithChrome(url)
 	} else if p.config.Client == "http" {

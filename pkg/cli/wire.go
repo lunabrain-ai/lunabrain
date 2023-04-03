@@ -11,8 +11,8 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/text"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/publish"
+	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
+	"github.com/lunabrain-ai/lunabrain/pkg/publish"
 	"github.com/lunabrain-ai/lunabrain/pkg/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/store"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
@@ -28,7 +28,7 @@ func Wire() (*cli.App, error) {
 		store.ProviderSet,
 		db.ProviderSet,
 		normalize.ProviderSet,
-		text.ProviderSet,
+		transform.ProviderSet,
 		discord.ProviderSet,
 		publish.ProviderSet,
 		collect.ProviderSet,

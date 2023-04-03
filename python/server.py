@@ -3,12 +3,12 @@ from concurrent import futures
 from summarizer.sbert import SBertSummarizer
 
 import python_pb2
+import categorize
 from python_pb2_grpc import PythonServicer
 import python_pb2_grpc
 
 from langchain.chains.summarize import load_summarize_chain
 from langchain.llms import OpenAI
-from langchain.docstore.document import Document
 from langchain.chains import AnalyzeDocumentChain
 import grpc
 import whisper
@@ -19,6 +19,8 @@ llm = OpenAI(temperature=0.9)
 
 model = whisper.load_model("base")
 
+normalizer = normalize.Normalizer()
+categorizer = categorize.Categorizer()
 
 class PythonSerivce(PythonServicer):
     def Transcribe(self, req: python_pb2.TranscribeRequest, context):
@@ -26,11 +28,13 @@ class PythonSerivce(PythonServicer):
         return python_pb2.TranscribeResponse(transcription=result['text'])
 
     def Summarize(self, req: python_pb2.SummarizeRequest, context):
+        print("Summarizing with", req.summarizer)
+
         if req.summarizer == python_pb2.LANGCHAIN:
 
             # Content is tweet size, so it already is kind of a summary
             if len(req.content) < 150:
-                return python_pb2.SummarizeResponse(summary="")
+                return python_pb2.SummarizeResponse(summary=req.content)
 
             chain = load_summarize_chain(llm, chain_type="map_reduce")
             summarize_document_chain = AnalyzeDocumentChain(combine_docs_chain=chain)
@@ -51,8 +55,12 @@ class PythonSerivce(PythonServicer):
         return python_pb2.Transcript(transcript=result)
 
     def Normalize(self, request: python_pb2.Text, context):
-        normalized = normalize.normalize(request.text)
+        normalized = normalizer.normalize(request.text)
         return python_pb2.Text(text=normalized)
+
+    def Categorize(self, request: python_pb2.Text, context):
+        categories = categorizer.categorize(request.text)
+        return python_pb2.Categories(categories=categories)
 
 
 def serve():

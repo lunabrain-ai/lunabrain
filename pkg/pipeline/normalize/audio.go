@@ -4,27 +4,26 @@ import (
 	"context"
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
 	"github.com/lunabrain-ai/lunabrain/gen/python"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/types"
+	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
 )
 
 type AudioNormalizer struct {
 	client python.PythonClient
 }
 
-func (s *AudioNormalizer) Normalize(fileName string) (content []*types.NormalizedContent, err error) {
+func (s *AudioNormalizer) Normalize(fileName string) ([]*content.Content, error) {
 	resp, err := s.client.Transcribe(context.Background(), &python.TranscribeRequest{
 		File: fileName,
 	})
 	if err != nil {
-		return
+		return nil, err
 	}
-	content = []*types.NormalizedContent{
+	return []*content.Content{
 		{
 			NormalizerID: genapi.NormalizerID_AUDIO_TRANSCRIPT,
 			Data:         resp.Transcription,
 		},
-	}
-	return
+	}, nil
 }
 
 func NewAudioNormalizer(client python.PythonClient) (*AudioNormalizer, error) {

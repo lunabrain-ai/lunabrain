@@ -1,8 +1,8 @@
-package types
+package content
 
 import genapi "github.com/lunabrain-ai/lunabrain/gen/api"
 
-type NormalizedContent struct {
+type Content struct {
 	NormalizerID genapi.NormalizerID
 	Data         string
 }

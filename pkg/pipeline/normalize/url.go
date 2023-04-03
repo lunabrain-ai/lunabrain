@@ -7,8 +7,7 @@ import (
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
 	"github.com/lunabrain-ai/lunabrain/gen/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/types"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/scrape"
+	scrape2 "github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -20,8 +19,8 @@ import (
 type URLNormalizer struct {
 	config  URLConfig
 	client  python.PythonClient
-	scraper scrape.Scraper
-	crawler scrape.Crawler
+	scraper scrape2.Scraper
+	crawler scrape2.Crawler
 }
 
 func determineURLType(purl *url.URL) (string, error) {
@@ -36,11 +35,11 @@ func determineURLType(purl *url.URL) (string, error) {
 	return "", errors.Errorf("unable to determine url type for url %s", purl)
 }
 
-func (s *URLNormalizer) Normalize(nurl string, crawl bool) ([]*types.NormalizedContent, error) {
+func (s *URLNormalizer) Normalize(nurl string, crawl bool) ([]*content.Content, error) {
 	// TODO breadchris determine what to do about the "collect" vs "normalize" phases
 	if crawl {
 		err := s.crawler.Crawl(nurl)
-		return []*types.NormalizedContent{}, err
+		return []*content.Content{}, err
 	}
 
 	// Parse the url
@@ -49,7 +48,7 @@ func (s *URLNormalizer) Normalize(nurl string, crawl bool) ([]*types.NormalizedC
 		return nil, errors.Wrapf(err, "unable to parse url %s", nurl)
 	}
 
-	var c []*types.NormalizedContent
+	var c []*content.Content
 
 	urlType, err := determineURLType(purl)
 	if err == nil && s.config.DomainContent {
@@ -74,7 +73,7 @@ func (s *URLNormalizer) Normalize(nurl string, crawl bool) ([]*types.NormalizedC
 
 		return nil, errors.Errorf("unable to scrape url %s", nurl)
 	} else {
-		c = append(c, &types.NormalizedContent{
+		c = append(c, &content.Content{
 			NormalizerID: genapi.NormalizerID_URL_HTML,
 			Data:         resp.Content,
 		})
@@ -84,7 +83,7 @@ func (s *URLNormalizer) Normalize(nurl string, crawl bool) ([]*types.NormalizedC
 	if err != nil {
 		log.Debug().Err(err).Str("url", nurl).Msg("unable to clean raw html")
 	} else {
-		c = append(c, &types.NormalizedContent{
+		c = append(c, &content.Content{
 			NormalizerID: genapi.NormalizerID_URL_CLEAN,
 			Data:         clean,
 		})
@@ -94,7 +93,7 @@ func (s *URLNormalizer) Normalize(nurl string, crawl bool) ([]*types.NormalizedC
 	if err != nil {
 		log.Debug().Err(err).Str("url", nurl).Msg("unable to format content as article")
 	} else {
-		c = append(c, &types.NormalizedContent{
+		c = append(c, &content.Content{
 			NormalizerID: genapi.NormalizerID_URL_ARTICLE,
 			Data:         article,
 		})
@@ -117,7 +116,7 @@ func (s *URLNormalizer) normalizePageArticle(purl *url.URL, page string) (string
 	return strContent, nil
 }
 
-func (s *URLNormalizer) normalizeYoutube(url *url.URL) ([]*types.NormalizedContent, error) {
+func (s *URLNormalizer) normalizeYoutube(url *url.URL) ([]*content.Content, error) {
 	id := content.ExtractVideoID(url)
 	resp, err := s.client.YoutubeTranscript(context.Background(), &python.Video{Id: id})
 	if err != nil {
@@ -129,7 +128,7 @@ func (s *URLNormalizer) normalizeYoutube(url *url.URL) ([]*types.NormalizedConte
 		transcript += t.Text + " "
 	}
 
-	return []*types.NormalizedContent{
+	return []*content.Content{
 		{
 			NormalizerID: genapi.NormalizerID_URL_YOUTUBE_TRANSCRIPT,
 			Data:         transcript,
@@ -137,7 +136,7 @@ func (s *URLNormalizer) normalizeYoutube(url *url.URL) ([]*types.NormalizedConte
 	}, nil
 }
 
-func (s *URLNormalizer) normalizeGithub(url *url.URL) ([]*types.NormalizedContent, error) {
+func (s *URLNormalizer) normalizeGithub(url *url.URL) ([]*content.Content, error) {
 	user, repoName := content.ParseGitHubURL(url.String())
 	if user == "" || repoName == "" {
 		return nil, errors.Errorf("unable to parse github url %s", url)
@@ -164,7 +163,7 @@ func (s *URLNormalizer) normalizeGithub(url *url.URL) ([]*types.NormalizedConten
 		return nil, fmt.Errorf("error reading response body: %v", err)
 	}
 
-	return []*types.NormalizedContent{
+	return []*content.Content{
 		{
 			NormalizerID: genapi.NormalizerID_GITHUB_README,
 			Data:         string(body),
@@ -175,8 +174,8 @@ func (s *URLNormalizer) normalizeGithub(url *url.URL) ([]*types.NormalizedConten
 func NewURLNormalizer(
 	config Config,
 	client python.PythonClient,
-	scraper scrape.Scraper,
-	crawler scrape.Crawler,
+	scraper scrape2.Scraper,
+	crawler scrape2.Crawler,
 ) (*URLNormalizer, error) {
 	return &URLNormalizer{
 		config:  config.URL,

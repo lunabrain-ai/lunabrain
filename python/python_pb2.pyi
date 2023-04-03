@@ -8,6 +8,12 @@ BERT: Summarizer
 DESCRIPTOR: _descriptor.FileDescriptor
 LANGCHAIN: Summarizer
 
+class Categories(_message.Message):
+    __slots__ = ["categories"]
+    CATEGORIES_FIELD_NUMBER: _ClassVar[int]
+    categories: _containers.RepeatedScalarFieldContainer[str]
+    def __init__(self, categories: _Optional[_Iterable[str]] = ...) -> None: ...
+
 class SummarizeRequest(_message.Message):
     __slots__ = ["content", "summarizer"]
     CONTENT_FIELD_NUMBER: _ClassVar[int]

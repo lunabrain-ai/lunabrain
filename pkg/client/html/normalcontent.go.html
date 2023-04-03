@@ -1,80 +1,32 @@
 {{define "normalcontent"}}
     <style>
-        .tab-radio {
-            display: none;
-        }
-
-        .tabs {
-            font-size: 0;
-            margin: 0;
-        }
-
-        .labels {
-            overflow-y: auto;
-            white-space: nowrap;
-        }
-
-        .labels .tab-label {
-            background: #eee;
-            border: 1px solid #ccc;
-            display: inline-block;
+        .content {
             font-size: 1rem;
-            left: 1px;
-            margin-left: -1px;
-            padding: 5px;
-            position: relative;
-            vertical-align: bottom;
-        }
-
-        .tabs .tab-panel {
-            position: fixed;
-            display: inline-block;
-            overflow: hidden;
-            position: relative;
-            height: 0;
-            width: 0;
-        }
-
-        .tabs .tab-content {
-            display: block;
-            float: left;
-            font-size: 1rem;
-            width: 100%;
             white-space: normal;
         }
 
-        span:focus {
-            outline: none;
-        }
-
-        span:focus > .tab-label {
-            background: white;
-        }
-
-        .tabs .tab [type="radio"]:checked ~ .tab-panel {
-            display: inline;
+        .transformer-details {
+            margin: 1rem;
         }
     </style>
     <div class="wrapper">
-        <div class="labels">
-            {{ range $i, $v := .}}
-            <span tabindex="0">
-                <label class="tab-label" for="tab-{{$v.ContentID}}-{{$i}}">{{ .NormalizerID }}</label>
-            </span>
-            {{end}}
-        </div>
-        <div class="tabs">
-            {{ range $i, $v := .}}
-            <div class="tab">
-                <input class="tab-radio" type="radio" id="tab-{{$v.ContentID}}-{{$i}}" name="tabs-main">
-                <div class="tab-panel">
-                    <div class="tab-content">
+        {{ range $i, $v := .}}
+            <details>
+                <summary>{{ $v.NormalizerID }}</summary>
+                <span>
+                    {{ range $j, $w := $v.Transformed }}
+                        <details class="transformer-details">
+                            <summary>{{ $w.TransformerID }}</summary>
+                            <div class="content">
+                                {{ printf "%s" $w.Data | html }}
+                            </div>
+                        </details>
+                    {{end}}
+                    <div class="content">
                         {{ printf "%s" $v.Data | html }}
                     </div>
-                </div>
-            </div>
-            {{end}}
-        </div>
-
+                </span>
+            </details>
+        {{end}}
     </div>
 {{end}}

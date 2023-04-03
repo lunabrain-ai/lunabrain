@@ -3,10 +3,26 @@ package collect
 import (
 	"bufio"
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
 )
+
+// TODO breadchris move url page collection from normalizer to here
+type URLCollector interface {
+	Collect(u *url.URL) (string, error)
+}
+
+type URLCollect struct{}
+
+func (c *URLCollect) Collect(u *url.URL) (string, error) {
+	return "", nil
+}
+
+func NewURLCollect() *URLCollect {
+	return &URLCollect{}
+}
 
 func WatchForUrls(notesDir string) error {
 	urlRegex := regexp.MustCompile(`\[(.*?)\]\((http.*?)(\)|$)`) // regular expression to match Markdown URLs

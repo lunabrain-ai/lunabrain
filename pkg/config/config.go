@@ -3,8 +3,8 @@ package config
 import (
 	"github.com/lunabrain-ai/lunabrain/pkg/api"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/python"
+	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/rs/zerolog/log"
 	"go.uber.org/config"
 	"io/ioutil"

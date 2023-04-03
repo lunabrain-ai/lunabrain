@@ -22,6 +22,7 @@ type PythonClient interface {
 	Summarize(ctx context.Context, in *SummarizeRequest, opts ...grpc.CallOption) (*SummarizeResponse, error)
 	YoutubeTranscript(ctx context.Context, in *Video, opts ...grpc.CallOption) (*Transcript, error)
 	Normalize(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Text, error)
+	Categorize(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Categories, error)
 }
 
 type pythonClient struct {
@@ -68,6 +69,15 @@ func (c *pythonClient) Normalize(ctx context.Context, in *Text, opts ...grpc.Cal
 	return out, nil
 }
 
+func (c *pythonClient) Categorize(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Categories, error) {
+	out := new(Categories)
+	err := c.cc.Invoke(ctx, "/python.Python/Categorize", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PythonServer is the server API for Python service.
 // All implementations must embed UnimplementedPythonServer
 // for forward compatibility
@@ -76,6 +86,7 @@ type PythonServer interface {
 	Summarize(context.Context, *SummarizeRequest) (*SummarizeResponse, error)
 	YoutubeTranscript(context.Context, *Video) (*Transcript, error)
 	Normalize(context.Context, *Text) (*Text, error)
+	Categorize(context.Context, *Text) (*Categories, error)
 	mustEmbedUnimplementedPythonServer()
 }
 
@@ -94,6 +105,9 @@ func (UnimplementedPythonServer) YoutubeTranscript(context.Context, *Video) (*Tr
 }
 func (UnimplementedPythonServer) Normalize(context.Context, *Text) (*Text, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Normalize not implemented")
+}
+func (UnimplementedPythonServer) Categorize(context.Context, *Text) (*Categories, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Categorize not implemented")
 }
 func (UnimplementedPythonServer) mustEmbedUnimplementedPythonServer() {}
 
@@ -180,6 +194,24 @@ func _Python_Normalize_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Python_Categorize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Text)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PythonServer).Categorize(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/python.Python/Categorize",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PythonServer).Categorize(ctx, req.(*Text))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Python_ServiceDesc is the grpc.ServiceDesc for Python service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -202,6 +234,10 @@ var Python_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Normalize",
 			Handler:    _Python_Normalize_Handler,
+		},
+		{
+			MethodName: "Categorize",
+			Handler:    _Python_Categorize_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

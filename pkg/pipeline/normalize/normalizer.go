@@ -5,8 +5,8 @@ import (
 	"github.com/google/wire"
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
 	"github.com/lunabrain-ai/lunabrain/gen/python"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/types"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/scrape"
+	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/util"
 	"github.com/pkg/errors"
@@ -14,9 +14,9 @@ import (
 
 // Normalizer is an interface for normalizing data into text.
 type Normalizer interface {
-	NormalizeText(data string) (content []*types.NormalizedContent, err error)
-	NormalizeURL(url string, crawl bool) (content []*types.NormalizedContent, err error)
-	NormalizeFile(file, contentType string) (content []*types.NormalizedContent, err error)
+	NormalizeText(data string) (content []*content.Content, err error)
+	NormalizeURL(url string, crawl bool) (content []*content.Content, err error)
+	NormalizeFile(file, contentType string) (content []*content.Content, err error)
 }
 
 type normalizer struct {
@@ -35,7 +35,7 @@ var ProviderSet = wire.NewSet(
 	wire.Bind(new(Normalizer), new(*normalizer)),
 )
 
-func (n *normalizer) NormalizeText(data string) (content []*types.NormalizedContent, err error) {
+func (n *normalizer) NormalizeText(data string) ([]*content.Content, error) {
 	text, err := n.python.Normalize(context.Background(), &python.Text{
 		Text: data,
 	})
@@ -43,7 +43,7 @@ func (n *normalizer) NormalizeText(data string) (content []*types.NormalizedCont
 		return nil, errors.Wrapf(err, "unable to normalize text %s", data)
 	}
 
-	return []*types.NormalizedContent{
+	return []*content.Content{
 		{
 			NormalizerID: genapi.NormalizerID_TEXT_CLEAN,
 			Data:         text.Text,
@@ -51,11 +51,11 @@ func (n *normalizer) NormalizeText(data string) (content []*types.NormalizedCont
 	}, nil
 }
 
-func (n *normalizer) NormalizeURL(url string, crawl bool) (content []*types.NormalizedContent, err error) {
+func (n *normalizer) NormalizeURL(url string, crawl bool) (content []*content.Content, err error) {
 	return n.url.Normalize(url, crawl)
 }
 
-func (n *normalizer) NormalizeFile(file, contentType string) (content []*types.NormalizedContent, err error) {
+func (n *normalizer) NormalizeFile(file, contentType string) (content []*content.Content, err error) {
 	if contentType == "" {
 		var err error
 		contentType, err = util.DetectFileType(file)

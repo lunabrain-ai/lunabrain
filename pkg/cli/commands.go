@@ -7,7 +7,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/text"
+	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
 	"github.com/lunabrain-ai/lunabrain/pkg/util"
 	"github.com/urfave/cli/v2"
 	"path/filepath"
@@ -140,7 +140,7 @@ func NewNormalizeCommand(normalizer normalize.Normalizer) *cli.Command {
 	}
 }
 
-func NewTextCommand(summarizer text.Summarizer) *cli.Command {
+func NewTextCommand(summarizer transform.Summarizer) *cli.Command {
 	return &cli.Command{
 		Name:  "text",
 		Usage: "Process text.",

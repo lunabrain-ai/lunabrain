@@ -5,14 +5,14 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/text"
+	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
 	"github.com/urfave/cli/v2"
 )
 
 func NewApp(
 	httpServer client.HTTPServer,
 	normalizer normalize.Normalizer,
-	summarizer text.Summarizer,
+	summarizer transform.Summarizer,
 	workflow pipeline.Workflow,
 	discordCollect *collect.DiscordCollector,
 	hnCollect *collect.HNCollect,

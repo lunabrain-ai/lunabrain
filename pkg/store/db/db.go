@@ -7,13 +7,15 @@ import (
 	"github.com/google/wire"
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord/util"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/types"
+	normalcontent "github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
+	transformcontent "github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/store"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 var (
@@ -26,10 +28,12 @@ var (
 
 type Store interface {
 	SaveContent(contentType genapi.ContentType, data string, metadata json.RawMessage) (uuid.UUID, error)
-	SaveNormalizedContent(contentID uuid.UUID, normalContent []*types.NormalizedContent) ([]uuid.UUID, error)
+	SaveNormalizedContent(contentID uuid.UUID, normalContent []*normalcontent.Content) ([]uuid.UUID, error)
+	SaveTransformedContent(normalContentID uuid.UUID, transformedContent []*transformcontent.Content) ([]uuid.UUID, error)
 	SaveLocatedContent(contentID uuid.UUID, data string) (uuid.UUID, error)
 	GetAllContent(page, limit int) ([]model.Content, *Pagination, error)
 	GetContentByID(contentID uuid.UUID) (*model.Content, error)
+	GetNormalContentByData(data string) ([]model.NormalizedContent, error)
 	StoreDiscordMessages(msgs []*discordgo.Message) error
 	StoreHNStory(ID int, url string, contentID uuid.UUID) (*model.HNStory, error)
 	GetHNStory(ID int) (*model.HNStory, error)
@@ -52,6 +56,7 @@ func NewDB(cache *store.FolderCache) (*dbStore, error) {
 	err = db.AutoMigrate(
 		&model.Content{},
 		&model.NormalizedContent{},
+		&model.TransformedContent{},
 		&model.LocatedContent{},
 		&model.Index{},
 		&model.DiscordTranscript{},
@@ -65,7 +70,7 @@ func NewDB(cache *store.FolderCache) (*dbStore, error) {
 
 func (s *dbStore) GetContentByID(contentID uuid.UUID) (*model.Content, error) {
 	var content model.Content
-	res := s.db.Where("id = ?", contentID).Preload("NormalizedContent").First(&content)
+	res := s.db.Where("id = ?", contentID).Preload(clause.Associations).First(&content)
 	if res.Error != nil {
 		return nil, errors.Wrapf(res.Error, "could not get content: %v", res.Error)
 	}
@@ -128,15 +133,39 @@ func (s *dbStore) StoreDiscordMessages(msgs []*discordgo.Message) error {
 	return nil
 }
 
+func (s *dbStore) GetNormalContentByData(data string) ([]model.NormalizedContent, error) {
+	var content model.Content
+	resp := s.db.Where("data = ?", data).Preload(clause.Associations).Find(&content)
+	if resp.Error != nil {
+		return nil, errors.Wrapf(resp.Error, "could not get content: %v", resp.Error)
+	}
+	return content.NormalizedContent, nil
+}
+
 func (s *dbStore) GetAllContent(page, limit int) ([]model.Content, *Pagination, error) {
 	var content []model.Content
 	pagination := Pagination{
 		Limit: limit,
 		Page:  page,
 	}
-	res := s.db.Order("created_at desc").Scopes(paginate(content, &pagination, s.db)).Preload("NormalizedContent").Find(&content)
+	res := s.db.Order("created_at desc").
+		Scopes(paginate(content, &pagination, s.db)).
+		Preload(clause.Associations).
+		Find(&content)
 	if res.Error != nil {
 		return nil, nil, errors.Wrapf(res.Error, "could not get content: %v", res.Error)
+	}
+
+	// TODO breadchris this seems like a problem with gorm and preloading associations
+	for i, c := range content {
+		for j, nc := range c.NormalizedContent {
+			var transformedContent []model.TransformedContent
+			res = s.db.Find(&transformedContent, "normalized_content_id = ?", nc.ID)
+			if res.Error != nil {
+				return nil, nil, errors.Wrapf(res.Error, "could not get transformed content: %v", res.Error)
+			}
+			content[i].NormalizedContent[j].TransformedContent = transformedContent
+		}
 	}
 	return content, &pagination, nil
 }
@@ -155,22 +184,40 @@ func (s *dbStore) SaveContent(contentType genapi.ContentType, data string, metad
 	return content.ID, nil
 }
 
-func (s *dbStore) SaveNormalizedContent(contentID uuid.UUID, normalContent []*types.NormalizedContent) ([]uuid.UUID, error) {
+func (s *dbStore) SaveNormalizedContent(contentID uuid.UUID, normalContent []*normalcontent.Content) ([]uuid.UUID, error) {
 	var normalContentIDs []uuid.UUID
 	for _, c := range normalContent {
-		locatedContent := model.NormalizedContent{
+		nc := model.NormalizedContent{
 			Data:         c.Data,
 			NormalizerID: int32(c.NormalizerID),
 			ContentID:    contentID,
 		}
 
-		res := s.db.Create(&locatedContent)
+		res := s.db.Create(&nc)
 		if res.Error != nil {
 			return nil, errors.Wrapf(res.Error, "could not save normalContent: %v", res.Error)
 		}
-		normalContentIDs = append(normalContentIDs, locatedContent.ID)
+		normalContentIDs = append(normalContentIDs, nc.ID)
 	}
 	return normalContentIDs, nil
+}
+
+func (s *dbStore) SaveTransformedContent(normalContentID uuid.UUID, transformedContent []*transformcontent.Content) ([]uuid.UUID, error) {
+	var transformedContentIDs []uuid.UUID
+	for _, c := range transformedContent {
+		tc := model.TransformedContent{
+			Data:                c.Data,
+			TransformerID:       int32(c.TransformerID),
+			NormalizedContentID: normalContentID,
+		}
+
+		res := s.db.Create(&tc)
+		if res.Error != nil {
+			return nil, errors.Wrapf(res.Error, "could not save transformedContent: %v", res.Error)
+		}
+		transformedContentIDs = append(transformedContentIDs, tc.ID)
+	}
+	return transformedContentIDs, nil
 }
 
 func (s *dbStore) SaveLocatedContent(contentID uuid.UUID, data string) (uuid.UUID, error) {

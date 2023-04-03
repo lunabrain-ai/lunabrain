@@ -8,9 +8,10 @@ import (
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
 	"github.com/lunabrain-ai/lunabrain/gen/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/text"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/types"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/publish"
+	normcont "github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
+	transcont "github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/publish"
 	"github.com/lunabrain-ai/lunabrain/pkg/store"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/pkg/errors"
@@ -23,11 +24,12 @@ type Workflow interface {
 }
 
 type ContentWorkflow struct {
-	db         db.Store
-	normalizer normalize.Normalizer
-	summarizer text.Summarizer
-	fileStore  *store.Files
-	publisher  publish.Publisher
+	db          db.Store
+	normalizer  normalize.Normalizer
+	summarizer  transform.Summarizer
+	categorizer transform.Categorizer
+	fileStore   *store.Files
+	publisher   publish.Publisher
 }
 
 var ProviderSet = wire.NewSet(
@@ -59,7 +61,7 @@ func (s *ContentWorkflow) ProcessContent(ctx context.Context, content *genapi.Co
 	}
 
 	var (
-		normalContent []*types.NormalizedContent
+		normalContent []*normcont.Content
 	)
 
 	if content.Type == genapi.ContentType_TEXT {
@@ -88,8 +90,15 @@ func (s *ContentWorkflow) ProcessContent(ctx context.Context, content *genapi.Co
 		}
 	}
 
+	normalContentIDs, err := s.db.SaveNormalizedContent(contentID, normalContent)
+	if err != nil {
+		return uuid.UUID{}, errors.Wrapf(err, "unable to save normalized content")
+	}
+
 	// TODO breadchris what is this step called? post normalization? Is the indexer in charge of summarizing?
-	for _, c := range normalContent {
+	for i, c := range normalContent {
+		var transformedContent []*transcont.Content
+
 		switch c.NormalizerID {
 		case genapi.NormalizerID_URL_HTML:
 			_, err = s.db.SaveLocatedContent(contentID, c.Data)
@@ -107,13 +116,19 @@ func (s *ContentWorkflow) ProcessContent(ctx context.Context, content *genapi.Co
 			if err != nil {
 				return uuid.UUID{}, errors.Wrapf(err, "unable to summarize normalized content")
 			}
-			normalContent = append(normalContent, summary)
-		}
-	}
+			transformedContent = append(transformedContent, summary)
 
-	_, err = s.db.SaveNormalizedContent(contentID, normalContent)
-	if err != nil {
-		return uuid.UUID{}, errors.Wrapf(err, "unable to save normalized content")
+			categories, err := s.categorizer.CategorizeText(c.Data)
+			if err != nil {
+				return uuid.UUID{}, errors.Wrapf(err, "unable to categorize normalized content")
+			}
+			transformedContent = append(transformedContent, categories)
+		}
+
+		_, err = s.db.SaveTransformedContent(normalContentIDs[i], transformedContent)
+		if err != nil {
+			return uuid.UUID{}, errors.Wrapf(err, "unable to save transformed content")
+		}
 	}
 
 	err = s.publisher.Publish(contentID)
@@ -123,7 +138,7 @@ func (s *ContentWorkflow) ProcessContent(ctx context.Context, content *genapi.Co
 	return contentID, nil
 }
 
-func (s *ContentWorkflow) processURL(content *genapi.Content) ([]*types.NormalizedContent, error) {
+func (s *ContentWorkflow) processURL(content *genapi.Content) ([]*normcont.Content, error) {
 	url := string(content.Data)
 	log.Info().Str("url", url).Msg("normalizing url")
 
@@ -139,15 +154,17 @@ func (s *ContentWorkflow) processURL(content *genapi.Content) ([]*types.Normaliz
 func NewContentWorkflow(
 	db db.Store,
 	normalizer normalize.Normalizer,
-	summarizer text.Summarizer,
+	summarizer transform.Summarizer,
+	categorizer transform.Categorizer,
 	fileStore *store.Files,
 	publisher publish.Publisher,
 ) *ContentWorkflow {
 	return &ContentWorkflow{
-		db:         db,
-		normalizer: normalizer,
-		summarizer: summarizer,
-		fileStore:  fileStore,
-		publisher:  publisher,
+		db:          db,
+		normalizer:  normalizer,
+		summarizer:  summarizer,
+		categorizer: categorizer,
+		fileStore:   fileStore,
+		publisher:   publisher,
 	}
 }

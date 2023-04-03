@@ -18,8 +18,10 @@ type Discord struct {
 func formatMsg(content *model.Content) string {
 	formatted := "URL: " + content.Data
 	for _, normalContent := range content.NormalizedContent {
-		if normalContent.NormalizerID == int32(genapi.NormalizerID_TEXT_SUMMARY) {
-			formatted += "\nSummary: " + normalContent.Data
+		for _, transformedContent := range normalContent.TransformedContent {
+			if transformedContent.TransformerID == int32(genapi.TransformerID_SUMMARY) {
+				formatted += "\nSummary: " + normalContent.Data
+			}
 		}
 	}
 	return formatted

@@ -36,6 +36,7 @@ type Config struct {
 	Proxy          ProxyConfig `yaml:"proxy"`
 	Client         Client      `yaml:"client"`
 	Fallback       bool        `yaml:"fallback"`
+	UseCache       bool        `yaml:"use_cache"`
 }
 
 func NewConfig(provider config.Provider) (config Config, err error) {

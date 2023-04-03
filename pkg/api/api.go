@@ -39,10 +39,19 @@ func (s *Server) Search(ctx context.Context, query *genapi.Query) (*genapi.Resul
 	for _, c := range content {
 		var normalContent []*genapi.NormalizedContent
 		for _, n := range c.NormalizedContent {
+			var transformedContent []*genapi.TransformedContent
+			for _, t := range n.TransformedContent {
+				transformedContent = append(transformedContent, &genapi.TransformedContent{
+					Data:          t.Data,
+					TransformerID: genapi.TransformerID(t.TransformerID),
+				})
+			}
+
 			normalContent = append(normalContent, &genapi.NormalizedContent{
 				Data:         n.Data,
 				NormalizerID: genapi.NormalizerID(n.NormalizerID),
 				ContentID:    n.ContentID.String(),
+				Transformed:  transformedContent,
 			})
 		}
 

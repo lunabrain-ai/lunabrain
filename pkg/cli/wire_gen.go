@@ -15,10 +15,10 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/text"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/publish"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/scrape"
+	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
+	"github.com/lunabrain-ai/lunabrain/pkg/publish"
 	"github.com/lunabrain-ai/lunabrain/pkg/python"
+	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/store"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/urfave/cli/v2"
@@ -63,7 +63,7 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	scraper := scrape.NewScraper(scrapeConfig)
+	scraper := scrape.NewScraper(scrapeConfig, dbStore)
 	files, err := store.NewBucket(folderCache)
 	if err != nil {
 		return nil, err
@@ -77,7 +77,11 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	summarizer, err := text.NewSummarizer(pythonClient)
+	summarize, err := transform.NewSummarize(pythonClient)
+	if err != nil {
+		return nil, err
+	}
+	categorize, err := transform.NewCategorize(pythonClient)
 	if err != nil {
 		return nil, err
 	}
@@ -95,12 +99,12 @@ func Wire() (*cli.App, error) {
 	}
 	publishDiscord := publish.NewDiscord(session, publishConfig, dbStore)
 	publishPublish := publish.NewPublisher(publishDiscord)
-	contentWorkflow := pipeline.NewContentWorkflow(dbStore, normalizer, summarizer, files, publishPublish)
+	contentWorkflow := pipeline.NewContentWorkflow(dbStore, normalizer, summarize, categorize, files, publishPublish)
 	server := api.NewAPIServer(dbStore, contentWorkflow)
 	htmlHTML := html.NewHTML()
 	apihttpServer := client.NewAPIHTTPServer(apiConfig, server, htmlHTML)
 	discordCollector := collect.NewDiscordCollector(session, dbStore)
 	hnCollect := collect.NewHNCollector(session, dbStore, contentWorkflow)
-	app := NewApp(apihttpServer, normalizer, summarizer, contentWorkflow, discordCollector, hnCollect)
+	app := NewApp(apihttpServer, normalizer, summarize, contentWorkflow, discordCollector, hnCollect)
 	return app, nil
 }

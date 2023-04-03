@@ -44,6 +44,13 @@ message NormalizedContent {
   string data = 1;
   NormalizerID normalizerID = 2;
   string contentID = 3;
+  repeated TransformedContent transformed = 4;
+}
+
+message TransformedContent {
+  string data = 1;
+  TransformerID transformerID = 2;
+  string normalizedContentID = 3;
 }
 
 message File {
@@ -82,9 +89,13 @@ enum NormalizerID {
   URL_CLEAN = 3;
   TEXT_CLEAN = 4;
   AUDIO_TRANSCRIPT = 5;
-  TEXT_SUMMARY = 6;
   GITHUB_README = 7;
-  GPT_SUMMARY = 8;
+}
+
+// Should be in its own file
+enum TransformerID {
+  SUMMARY = 0;
+  CATEGORIES = 1;
 }
 
 // Should be in its own file
