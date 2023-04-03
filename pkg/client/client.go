@@ -7,6 +7,7 @@ import (
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
 	"github.com/lunabrain-ai/lunabrain/pkg/client/html"
 	"github.com/mingrammer/commonregex"
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
 	"net/http"
@@ -121,6 +122,30 @@ func (a *APIHTTPServer) getClientRoutes(r chi.Router) {
 	r.Get("/save", func(w http.ResponseWriter, r *http.Request) {
 		p := html.SaveParams{}
 		err := a.htmlContent.WriteSave(w, p)
+		if err != nil {
+			serverError(w, err)
+		}
+	})
+
+	r.Get("/view/{id}", func(w http.ResponseWriter, r *http.Request) {
+		id := chi.URLParam(r, "id")
+		content, err := a.apiServer.Search(r.Context(), &genapi.Query{
+			ContentID: id,
+		})
+		if err != nil {
+			serverError(w, err)
+			return
+		}
+
+		if len(content.StoredContent) == 0 {
+			serverError(w, errors.Wrapf(err, "no content found for id %s", id))
+			return
+		}
+
+		params := html.ViewParams{
+			StoredContent: content.StoredContent[0],
+		}
+		err = a.htmlContent.WriteView(w, params)
 		if err != nil {
 			serverError(w, err)
 		}

@@ -10,6 +10,11 @@
   weight = 20
 
 [[main]]
+  name = "ML Wiki"
+  url = "/wiki/"
+  weight = 20
+
+[[main]]
   name = "Get Started"
   weight = 30
   identifier = "get-started"

@@ -4,7 +4,7 @@ from typing import List
 
 from persistqueue import SQLiteAckQueue
 
-from data_source.api.basic_document import BasicDocument
+from basic_document import BasicDocument
 from paths import SQLITE_INDEXING_PATH
 
 

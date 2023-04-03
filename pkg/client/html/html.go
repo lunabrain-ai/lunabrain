@@ -36,7 +36,6 @@ type Page struct {
 }
 
 func NewPage(name string, params interface{}, patterns []string) *Page {
-
 	file := formatName(name)
 	patterns = append(patterns, file)
 
@@ -84,6 +83,10 @@ type SearchParams struct {
 	Results *genapi.Results
 }
 
+type ViewParams struct {
+	StoredContent *genapi.StoredContent
+}
+
 type ErrorParams struct {
 	Message string
 }
@@ -91,10 +94,15 @@ type ErrorParams struct {
 type HomeParams struct{}
 
 type HTML struct {
+	View   *Page
 	Search *Page
 	Save   *Page
 	Home   *Page
 	Error  *Page
+}
+
+func (h *HTML) WriteView(w io.Writer, params ViewParams) error {
+	return h.View.Execute(w, params)
 }
 
 func (h *HTML) WriteSearch(w io.Writer, params SearchParams) error {
@@ -111,6 +119,7 @@ func (h *HTML) WriteHome(w io.Writer, params HomeParams) error {
 
 func NewHTML() *HTML {
 	return &HTML{
+		View:   NewPage("view", ViewParams{}, patterns),
 		Search: NewPage("search", SearchParams{}, patterns),
 		Save:   NewPage("save", SaveParams{}, patterns),
 		Home:   NewPage("home", HomeParams{}, patterns),

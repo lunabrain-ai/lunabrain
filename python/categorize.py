@@ -4,9 +4,13 @@ import nltk
 
 class Categorizer:
     def __init__(self):
-        nltk.download("punkt")
         self.tokenizer = AutoTokenizer.from_pretrained("fabiochiu/t5-base-tag-generation")
         self.model = AutoModelForSeq2SeqLM.from_pretrained("fabiochiu/t5-base-tag-generation")
+
+    def build(self):
+        nltk.download("punkt")
+        AutoTokenizer.from_pretrained("fabiochiu/t5-base-tag-generation")
+        AutoModelForSeq2SeqLM.from_pretrained("fabiochiu/t5-base-tag-generation")
 
     def categorize(self, text: str) -> list[str]:
         inputs = self.tokenizer([text], max_length=512, truncation=True, return_tensors="pt")

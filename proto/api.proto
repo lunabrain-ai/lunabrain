@@ -15,6 +15,7 @@ message Contents {
 message Query {
   string query = 1;
   uint32 page = 2;
+  string contentID = 3;
 }
 
 message Results {

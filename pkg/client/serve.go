@@ -39,7 +39,11 @@ var (
 	)
 )
 
-func NewAPIHTTPServer(config api.Config, apiServer *api.Server, htmlContent *html.HTML) *APIHTTPServer {
+func NewAPIHTTPServer(
+	config api.Config,
+	apiServer *api.Server,
+	htmlContent *html.HTML,
+) *APIHTTPServer {
 	twirpServer := genapi.NewAPIServer(apiServer, api.NewLoggingServerHooks(), twirp.WithServerPathPrefix("/api"))
 
 	return &APIHTTPServer{

@@ -15,3 +15,15 @@
 
 - id: browse
   translation: "Browse"
+
+- id: "last_updated"
+  translation: "Last updated"
+
+- id: "backlinks"
+  translation: "Backlinks"
+
+- id: "no_backlinks"
+  translation: "No backlinks"
+
+- id: "toc"
+  translation: "Table of Contents"

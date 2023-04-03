@@ -7,6 +7,9 @@ import string
 
 class Normalizer:
     def __init__(self):
+        pass
+
+    def build(self):
         nltk.download("stopwords")
         nltk.download("punkt")
         nltk.download("wordnet")

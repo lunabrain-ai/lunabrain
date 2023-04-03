@@ -24,7 +24,7 @@ func (s *Categorize) CategorizeText(text string) (*content.Content, error) {
 		return nil, err
 	}
 
-	serCat, err := json.Marshal(categories)
+	serCat, err := json.Marshal(categories.Categories)
 	if err != nil {
 		return nil, err
 	}

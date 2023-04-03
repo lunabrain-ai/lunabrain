@@ -2,9 +2,11 @@ package api
 
 import (
 	"context"
+	"github.com/google/uuid"
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"github.com/pkg/errors"
 )
 
@@ -30,9 +32,25 @@ func (s *Server) Save(ctx context.Context, contents *genapi.Contents) (*genapi.C
 }
 
 func (s *Server) Search(ctx context.Context, query *genapi.Query) (*genapi.Results, error) {
-	content, _, err := s.db.GetAllContent(0, 10)
-	if err != nil {
-		return nil, errors.Wrapf(err, "unable to get stored content")
+	var (
+		err     error
+		content []model.Content
+	)
+	if query.ContentID != "" {
+		parsedID, err := uuid.Parse(query.ContentID)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to parse content id")
+		}
+		singleContent, err := s.db.GetContentByID(parsedID)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to get stored content")
+		}
+		content = append(content, *singleContent)
+	} else {
+		content, _, err = s.db.GetAllContent(0, 10)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to get stored content")
+		}
 	}
 
 	var storedContent []*genapi.StoredContent

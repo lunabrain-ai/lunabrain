@@ -2,8 +2,8 @@ import logging
 import threading
 from typing import List
 
-from queues.index_queue import IndexQueue
-from indexing.index_documents import Indexer
+from index_queue import IndexQueue
+from index_documents import Indexer
 
 
 logger = logging.getLogger()

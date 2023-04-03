@@ -1,0 +1,6 @@
+{{if .Date}}
+{{.Date.Format "Jan 2, 2006"}}
+{{else if .Lastmod}}
+{{.Lastmod.Format "Jan 2, 2006"}}
+{{else}}
+{{end}}
