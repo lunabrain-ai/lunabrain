@@ -22,12 +22,45 @@ LunaBrain is licensed under the Apache 2.0 license. See the `LICENSE` file for m
 
 To get started with LunaBrain, follow these steps:
 
+### Setup Repo
+
 ```shell
 git clone https://github.com/lunabrain-ai/lunabrain.git
 # TODO
 ```
 
-## Generating Code
+### Installing Golang Dependencies
+
+```shell
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+go install github.com/twitchtv/twirp/protoc-gen-twirp@latest
+```
+
+### Installing Python Dependencies
+
+Upgrade your Pip version, if necessary (or install Pip if this fails)
+```shell
+python -m pip install --upgrade pip
+```
+
+Setup Virtual Environment
+
+```shell
+python -m pip install virtualenv
+virtualenv venv
+source venv/bin/activate
+python -m pip install --upgrade pip
+```
+
+Install GRPC
+
+```shell
+python -m pip install grpcio
+python -m pip install grpcio-tools
+```
+
+### Generating Code
 This project uses grpc to communicate between different services. To keep them in sync after making changes, run the following:
 ```shell
 go generate -x ./...
