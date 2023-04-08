@@ -13,3 +13,4 @@ farm-haystack
 grpcio-reflection
 python-slugify
 faiss-cpu
+rank-bm25

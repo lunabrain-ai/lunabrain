@@ -1,4 +1,6 @@
 import os
+import re
+
 from slugify import slugify
 
 if os.environ.get("LUNABRAIN_DIR") is None:
@@ -38,3 +40,26 @@ def load_indexes(index_type_dir):
             print(f"Found index {file}")
             index_lookup[file] = indx
     return index_lookup
+
+
+def split_into_paragraphs(text, minimum_length=256):
+    """
+    split into paragraphs and batch small paragraphs together into the same paragraph
+    """
+    if text is None:
+        return []
+    paragraphs = []
+    current_paragraph = ''
+    for paragraph in re.split(r'\n\s*\n', text):
+        if len(current_paragraph) > 0:
+            current_paragraph += ' '
+        current_paragraph += paragraph.strip()
+
+        if len(current_paragraph) > minimum_length:
+            paragraphs.append(current_paragraph)
+            current_paragraph = ''
+
+    if len(current_paragraph) > 0:
+        paragraphs.append(current_paragraph)
+
+    return paragraphs

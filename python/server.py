@@ -10,6 +10,7 @@ import python_pb2
 import categorize
 from llama_indexer import LLamaIndexer
 from indexing.faiss_index import FaissIndexer
+from indexing.bm25_index import Bm25Indexer
 from python_pb2_grpc import PythonServicer
 import python_pb2_grpc
 
@@ -34,6 +35,7 @@ categorizer = categorize.Categorizer()
 
 llama_indexer = LLamaIndexer()
 faiss_indexer = FaissIndexer()
+bm25_indexer = Bm25Indexer()
 
 def question_generator():
     # https://github.com/AMontgomerie/question_generator
@@ -89,10 +91,10 @@ class PythonSerivce(PythonServicer):
         elif request.type == python_pb2.FAISS:
             index_id = faiss_indexer.create(request.path)
         elif request.type == python_pb2.BM25:
-            pass
+            index_id = bm25_indexer.create(request.path)
         else:
             raise Exception(f"Unknown index type: {request.type}")
-        return python_pb2.Index(id=index_id)
+        return python_pb2.Index(id=index_id, type=request.type)
 
     def QueryIndex(self, request: python_pb2.Query, context):
         print("Querying index", request.index)
@@ -102,7 +104,7 @@ class PythonSerivce(PythonServicer):
         elif request.type == python_pb2.FAISS:
             result = faiss_indexer.query(request.index, request.query)
         elif request.type == python_pb2.BM25:
-            pass
+            result = bm25_indexer.query(request.index, request.query)
         else:
             raise Exception(f"Unknown index type: {request.type}")
         return python_pb2.QueryResult(results=[str(result)])

@@ -6,7 +6,7 @@ import torch
 import faiss
 from slugify import slugify
 
-from indexing.indexes import index_dir, load_indexes, new_index_file, get_content_index_dir, make_if_not_exist
+from indexing.indexes import index_dir, load_indexes, new_index_file, get_content_index_dir, make_if_not_exist, split_into_paragraphs
 from indexing.models import bi_encoder
 
 MODEL_DIM = 384
@@ -35,29 +35,6 @@ def load_faiss_indexes(index_type_dir):
     return index_lookup
 
 
-def split_into_paragraphs(text, minimum_length=256):
-    """
-    split into paragraphs and batch small paragraphs together into the same paragraph
-    """
-    if text is None:
-        return []
-    paragraphs = []
-    current_paragraph = ''
-    for paragraph in re.split(r'\n\s*\n', text):
-        if len(current_paragraph) > 0:
-            current_paragraph += ' '
-        current_paragraph += paragraph.strip()
-
-        if len(current_paragraph) > minimum_length:
-            paragraphs.append(current_paragraph)
-            current_paragraph = ''
-
-    if len(current_paragraph) > 0:
-        paragraphs.append(current_paragraph)
-
-    return paragraphs
-
-
 def add_text_to_index(index, text) -> dict:
     paragraph_lookup = {}
 
@@ -79,7 +56,6 @@ def add_text_to_index(index, text) -> dict:
 
 
 class FaissIndexer:
-    instance = None
     index_lookup: dict = {}
 
     def __init__(self) -> None:

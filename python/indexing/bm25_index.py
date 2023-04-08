@@ -1,88 +1,126 @@
+import json
 import os
 import pickle
-from typing import List
 
 import nltk
 import numpy as np
 from rank_bm25 import BM25Okapi
+from slugify import slugify
 
-from db_engine import Session
-from paths import BM25_INDEX_PATH
-from schemas import Paragraph
+from indexing.indexes import index_dir, make_if_not_exist, new_index_file, get_content_index_dir, split_into_paragraphs
 
-
-def _add_metadata_for_indexing(paragraph: Paragraph) -> str:
-    result = paragraph.content
-    if paragraph.document.title is not None:
-        result += ' ' + paragraph.document.title
-    if paragraph.document.author is not None:
-        result += ' ' + paragraph.document.author
-    if data_source_name := paragraph.document.data_source.type.name:
-        result += ' ' + data_source_name
-    return result
+bm25_index_type_dir = "bm25"
+bm25_index_dir = os.path.join(index_dir, bm25_index_type_dir)
+bm25_index_filename = "index.pickle"
+paragraph_id_to_file_file = "paragraph_id_to_file.json"
 
 
-class Bm25Index:
-    instance = None
+def load_bm25_indexes(index_type_dir):
+    make_if_not_exist(index_type_dir)
 
-    @staticmethod
-    def create():
-        if Bm25Index.instance is not None:
-            raise RuntimeError("Index is already initialized")
+    print(f"Loading indexes from {index_type_dir}...")
+    index_lookup = {}
+    for folder in os.listdir(index_type_dir):
+        indx = os.path.join(index_type_dir, folder, bm25_index_filename)
+        paragraph_lookup = os.path.join(index_type_dir, folder, paragraph_id_to_file_file)
 
-        if os.path.exists(BM25_INDEX_PATH):
-            with open(BM25_INDEX_PATH, 'rb') as f:
-                Bm25Index.instance = pickle.load(f)
-        else:
-            Bm25Index.instance = Bm25Index()
+        if os.path.exists(indx) and os.path.exists(paragraph_lookup):
+            print(f"Found index {folder}")
+            p = json.load(open(paragraph_lookup))
+            index_lookup[folder] = {
+                "index": pickle.load(open(indx, "rb")),
+                "index_paragraph_ids": p["index_paragraph_ids"],
+                "paragraph_lookup": p["paragraph_lookup"]
+            }
 
-    @staticmethod
-    def get() -> 'Bm25Index':
-        if Bm25Index.instance is None:
-            raise RuntimeError("Index is not initialized")
-        return Bm25Index.instance
+    return index_lookup
 
-    def __init__(self) -> None:
-        self.index = None
-        self.id_map = []
 
-    def _update(self, session):
-        all_paragraphs = session.query(Paragraph).all()
-        if len(all_paragraphs) == 0:
-            self.index = None
-            self.id_map = []
-            return
+def get_paragraphs_and_lookup(text) -> [list, dict]:
+    paragraph_lookup = {}
 
-        corpus = [nltk.word_tokenize(_add_metadata_for_indexing(paragraph)) for paragraph in all_paragraphs]
-        id_map = [paragraph.id for paragraph in all_paragraphs]
-        self.index = BM25Okapi(corpus)
-        self.id_map = id_map
+    paragraphs = split_into_paragraphs(text)
 
-    def update(self, session=None):
-        if session is None:
-            with Session() as session:
-                self._update(session)
-        else:
-            self._update(session)
+    if len(paragraphs) == 0:
+        return paragraph_lookup
 
-        self._save()
+    ids = []
+    for paragraph in paragraphs:
+        ids += [hash(paragraph)]
+        paragraph_lookup[hash(paragraph)] = paragraph
 
-    def search(self, query: str, top_k: int) -> List[int]:
-        if self.index is None:
-            return []
+    return paragraph_lookup
+
+
+class Bm25Indexer:
+    index_lookup: dict = {}
+
+    def __init__(self):
+        self.index_lookup = load_bm25_indexes(bm25_index_dir)
+
+    def create(self, content_dir) -> str:
+        slug, content_index_dir = get_content_index_dir(bm25_index_dir, content_dir)
+        make_if_not_exist(content_index_dir)
+
+        index_file = os.path.join(content_index_dir, bm25_index_filename)
+
+        # Recursively crawl the directory and add all the files to the index
+        paragraph_id_to_file = {}
+        index_paragraphs = []
+        index_paragraph_ids = []
+        for root, dirs, files in os.walk(content_dir):
+            for file in files:
+                if file.endswith(".html"):
+                    file_path = os.path.join(root, file)
+                    print("Adding file to index", file_path)
+                    paragraph_lookup = get_paragraphs_and_lookup(open(file_path, "r").read())
+                    for paragraph_id, paragraph in paragraph_lookup.items():
+                        index_paragraphs += [nltk.word_tokenize(paragraph)]
+                        index_paragraph_ids += [paragraph_id]
+                        paragraph_id_to_file[str(paragraph_id)] = {
+                            "file": file_path,
+                            "paragraph": paragraph
+                        }
+
+        index = BM25Okapi(index_paragraphs)
+        pickle.dump(index, open(index_file, "wb"))
+
+        # Save the index
+        save_file = os.path.join(content_index_dir, paragraph_id_to_file_file)
+        p = {
+            "index_paragraph_ids": index_paragraph_ids,
+            "paragraph_lookup": paragraph_id_to_file
+        }
+        open(save_file, 'w+').write(json.dumps(p))
+
+        print(f"Created index {content_dir} at {index_file} (documents)")
+        self.index_lookup[slug] = {
+            "index": index,
+            **p,
+        }
+        return slug
+
+    def query(self, content_dir, query):
+        top_k = 10
+        slug = slugify(content_dir)
+
+        index_info = self.index_lookup[slug]
+        if index_info is None:
+            raise Exception(f"Index {slug} not found")
+
+        index = index_info["index"]
+
         tokenized_query = nltk.word_tokenize(query)
-        bm25_scores = self.index.get_scores(tokenized_query)
+        print(tokenized_query)
+        bm25_scores = index.get_scores(tokenized_query)
         top_k = min(top_k, len(bm25_scores))
         top_n = np.argpartition(bm25_scores, -top_k)[-top_k:]
-        bm25_hits = [{'id': self.id_map[idx], 'score': bm25_scores[idx]} for idx in top_n]
+        bm25_hits = [{'id': index_info["index_paragraph_ids"][idx], 'score': bm25_scores[idx]} for idx in top_n]
         bm25_hits = sorted(bm25_hits, key=lambda x: x['score'], reverse=True)
-        return [hit['id'] for hit in bm25_hits]
+        print(bm25_hits)
+        result_ids = [hit['id'] for hit in bm25_hits]
 
-    def clear(self):
-        self.index = None
-        self.id_map = []
-        self._save()
-
-    def _save(self):
-        with open(BM25_INDEX_PATH, 'wb') as f:
-            pickle.dump(self, f)
+        returned_results = []
+        for result_id in result_ids:
+            returned_results.append(index_info["paragraph_lookup"][str(result_id)])
+        return json.dumps(returned_results)
