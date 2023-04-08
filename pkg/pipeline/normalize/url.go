@@ -3,7 +3,6 @@ package normalize
 import (
 	"context"
 	"fmt"
-	"github.com/go-shiori/go-readability"
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
 	"github.com/lunabrain-ai/lunabrain/gen/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
@@ -79,7 +78,7 @@ func (s *URLNormalizer) Normalize(nurl string, crawl bool) ([]*content.Content, 
 		})
 	}
 
-	clean, err := cleanRawHTML(resp.Content)
+	clean, err := content.CleanRawHTML(resp.Content)
 	if err != nil {
 		log.Debug().Err(err).Str("url", nurl).Msg("unable to clean raw html")
 	} else {
@@ -89,7 +88,7 @@ func (s *URLNormalizer) Normalize(nurl string, crawl bool) ([]*content.Content, 
 		})
 	}
 
-	article, err := formatContentAsArticle(resp.Content, nurl)
+	article, err := content.FormatHTMLAsArticle(resp.Content, nurl)
 	if err != nil {
 		log.Debug().Err(err).Str("url", nurl).Msg("unable to format content as article")
 	} else {
@@ -99,21 +98,6 @@ func (s *URLNormalizer) Normalize(nurl string, crawl bool) ([]*content.Content, 
 		})
 	}
 	return c, nil
-}
-
-func (s *URLNormalizer) normalizePageArticle(purl *url.URL, page string) (string, error) {
-	reader := strings.NewReader(page)
-	article, err := readability.FromReader(reader, purl)
-	if err != nil {
-		return "", errors.Wrapf(err, "unable to parse page %s", page)
-	}
-
-	strContent, err := formatContentAsArticle(page, purl.String())
-	if err != nil {
-		log.Warn().Err(err).Msg("failed to convert reference to markdown")
-		strContent = article.TextContent
-	}
-	return strContent, nil
 }
 
 func (s *URLNormalizer) normalizeYoutube(url *url.URL) ([]*content.Content, error) {

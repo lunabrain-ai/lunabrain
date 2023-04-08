@@ -26,7 +26,7 @@ func NewDiscordSession(config Config) (*discordgo.Session, error) {
 	}
 
 	if t, err := ParseToken(token); err != nil {
-		log.Error().Err(err).Msg("failed to parse token")
+		log.Warn().Err(err).Msg("failed to parse discord token, verify token is correct in config")
 	} else {
 		log.Info().Str("url", GenerateOAuthURL(t)).Msg("OAuth URL")
 	}

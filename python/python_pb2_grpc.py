@@ -39,6 +39,16 @@ class PythonStub(object):
                 request_serializer=python__pb2.Text.SerializeToString,
                 response_deserializer=python__pb2.Categories.FromString,
                 )
+        self.IndexDirectory = channel.unary_unary(
+                '/python.Python/IndexDirectory',
+                request_serializer=python__pb2.IndexDirectoryRequest.SerializeToString,
+                response_deserializer=python__pb2.Index.FromString,
+                )
+        self.QueryIndex = channel.unary_unary(
+                '/python.Python/QueryIndex',
+                request_serializer=python__pb2.Query.SerializeToString,
+                response_deserializer=python__pb2.QueryResult.FromString,
+                )
 
 
 class PythonServicer(object):
@@ -74,6 +84,18 @@ class PythonServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def IndexDirectory(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def QueryIndex(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_PythonServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -101,6 +123,16 @@ def add_PythonServicer_to_server(servicer, server):
                     servicer.Categorize,
                     request_deserializer=python__pb2.Text.FromString,
                     response_serializer=python__pb2.Categories.SerializeToString,
+            ),
+            'IndexDirectory': grpc.unary_unary_rpc_method_handler(
+                    servicer.IndexDirectory,
+                    request_deserializer=python__pb2.IndexDirectoryRequest.FromString,
+                    response_serializer=python__pb2.Index.SerializeToString,
+            ),
+            'QueryIndex': grpc.unary_unary_rpc_method_handler(
+                    servicer.QueryIndex,
+                    request_deserializer=python__pb2.Query.FromString,
+                    response_serializer=python__pb2.QueryResult.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -194,5 +226,39 @@ class Python(object):
         return grpc.experimental.unary_unary(request, target, '/python.Python/Categorize',
             python__pb2.Text.SerializeToString,
             python__pb2.Categories.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def IndexDirectory(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/python.Python/IndexDirectory',
+            python__pb2.IndexDirectoryRequest.SerializeToString,
+            python__pb2.Index.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def QueryIndex(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/python.Python/QueryIndex',
+            python__pb2.Query.SerializeToString,
+            python__pb2.QueryResult.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -2,11 +2,9 @@ package db
 
 import (
 	"encoding/json"
-	"github.com/bwmarrin/discordgo"
 	"github.com/google/uuid"
 	"github.com/google/wire"
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
-	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord/util"
 	normalcontent "github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
 	transformcontent "github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/store"
@@ -34,10 +32,13 @@ type Store interface {
 	GetAllContent(page, limit int) ([]model.Content, *Pagination, error)
 	GetContentByID(contentID uuid.UUID) (*model.Content, error)
 	GetNormalContentByData(data string) ([]model.NormalizedContent, error)
-	StoreDiscordMessages(msgs []*discordgo.Message) error
+	StoreDiscordMessages(msgs []*model.DiscordMessage) error
+	StoreDiscordTranscript(chanID, startMsg, endMsg, transcript string) error
+	GetDiscordMessages(chanID string) ([]*model.DiscordMessage, error)
+	GetLatestDiscordTranscript() (*model.DiscordTranscript, error)
+	GetLatestDiscordMessage() (*model.DiscordMessage, error)
 	StoreHNStory(ID int, url string, contentID uuid.UUID) (*model.HNStory, error)
 	GetHNStory(ID int) (*model.HNStory, error)
-	GetLatestDiscordTranscript() (*model.DiscordTranscript, error)
 	AddContentToIndex(contentID uuid.UUID, indexID uuid.UUID) error
 }
 
@@ -59,6 +60,8 @@ func NewDB(cache *store.FolderCache) (*dbStore, error) {
 		&model.TransformedContent{},
 		&model.LocatedContent{},
 		&model.Index{},
+		&model.DiscordChannel{},
+		&model.DiscordMessage{},
 		&model.DiscordTranscript{},
 		&model.HNStory{},
 	)
@@ -68,11 +71,47 @@ func NewDB(cache *store.FolderCache) (*dbStore, error) {
 	return &dbStore{db: db}, nil
 }
 
+func (s *dbStore) GetAllContent(page, limit int) ([]model.Content, *Pagination, error) {
+	var content []model.Content
+	pagination := Pagination{
+		Limit: limit,
+		Page:  page,
+	}
+	res := s.db.Order("created_at desc").
+		Scopes(paginate(content, &pagination, s.db)).
+		Preload(clause.Associations).
+		Find(&content)
+	if res.Error != nil {
+		return nil, nil, errors.Wrapf(res.Error, "could not get content: %v", res.Error)
+	}
+
+	// TODO breadchris this seems like a problem with gorm and preloading associations
+	for i, c := range content {
+		for j, nc := range c.NormalizedContent {
+			var transformedContent []model.TransformedContent
+			res = s.db.Find(&transformedContent, "normalized_content_id = ?", nc.ID)
+			if res.Error != nil {
+				return nil, nil, errors.Wrapf(res.Error, "could not get transformed content: %v", res.Error)
+			}
+			content[i].NormalizedContent[j].TransformedContent = transformedContent
+		}
+	}
+	return content, &pagination, nil
+}
+
 func (s *dbStore) GetContentByID(contentID uuid.UUID) (*model.Content, error) {
 	var content model.Content
 	res := s.db.Where("id = ?", contentID).Preload(clause.Associations).First(&content)
 	if res.Error != nil {
 		return nil, errors.Wrapf(res.Error, "could not get content: %v", res.Error)
+	}
+	for j, nc := range content.NormalizedContent {
+		var transformedContent []model.TransformedContent
+		res = s.db.Find(&transformedContent, "normalized_content_id = ?", nc.ID)
+		if res.Error != nil {
+			return nil, errors.Wrapf(res.Error, "could not get transformed content: %v", res.Error)
+		}
+		content.NormalizedContent[j].TransformedContent = transformedContent
 	}
 	return &content, nil
 }
@@ -108,27 +147,54 @@ func (s *dbStore) AddContentToIndex(contentID uuid.UUID, indexID uuid.UUID) erro
 	return nil
 }
 
+func (s *dbStore) GetDiscordMessages(chanID string) ([]*model.DiscordMessage, error) {
+	var discordMessages []*model.DiscordMessage
+	res := s.db.Where("discord_channel_id = ?", chanID).Order("created_at DESC").Find(&discordMessages)
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not get discord messages: %v", res.Error)
+	}
+	return discordMessages, nil
+}
+
+func (s *dbStore) GetLatestDiscordMessage() (*model.DiscordMessage, error) {
+	var discordMessage model.DiscordMessage
+	res := s.db.Model(&discordMessage).Order("created_at DESC").First(&discordMessage)
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not get latest discord message: %v", res.Error)
+	}
+	return &discordMessage, nil
+}
+
 func (s *dbStore) GetLatestDiscordTranscript() (*model.DiscordTranscript, error) {
 	var discordTranscript model.DiscordTranscript
 	res := s.db.Model(&discordTranscript).Order("created_at DESC").First(&discordTranscript)
 	if res.Error != nil {
-		return nil, errors.Wrapf(res.Error, "could not get latest discord message: %v", res.Error)
+		return nil, errors.Wrapf(res.Error, "could not get latest discord transcript: %v", res.Error)
 	}
 	return &discordTranscript, nil
 }
 
-func (s *dbStore) StoreDiscordMessages(msgs []*discordgo.Message) error {
-	startMessage := msgs[0]
-	endMessage := msgs[len(msgs)-1]
-
+func (s *dbStore) StoreDiscordTranscript(chanID, startMsg, endMsg, transcript string) error {
 	res := s.db.Create(&model.DiscordTranscript{
-		DiscordChannelID: startMessage.ChannelID,
-		Transcript:       util.GenerateTranscript(msgs),
-		StartMessageID:   startMessage.ID,
-		EndMessageID:     endMessage.ID,
+		DiscordChannelID: chanID,
+		Transcript:       transcript,
+		StartMessageID:   startMsg,
+		EndMessageID:     endMsg,
 	})
 	if res.Error != nil {
 		return errors.Wrapf(res.Error, "could not save discord transcript: %v", res.Error)
+	}
+	return nil
+}
+
+func (s *dbStore) StoreDiscordMessages(msgs []*model.DiscordMessage) error {
+	for _, msg := range msgs {
+		res := s.db.Create(msg)
+		if res.Error != nil {
+			//return errors.Wrapf(res.Error, "could not save discord message: %v", msg.ID)
+			log.Warn().Str("msg_id", msg.MessageID).Err(res.Error).Msg("could not save discord message")
+			continue
+		}
 	}
 	return nil
 }
@@ -140,34 +206,6 @@ func (s *dbStore) GetNormalContentByData(data string) ([]model.NormalizedContent
 		return nil, errors.Wrapf(resp.Error, "could not get content: %v", resp.Error)
 	}
 	return content.NormalizedContent, nil
-}
-
-func (s *dbStore) GetAllContent(page, limit int) ([]model.Content, *Pagination, error) {
-	var content []model.Content
-	pagination := Pagination{
-		Limit: limit,
-		Page:  page,
-	}
-	res := s.db.Order("created_at desc").
-		Scopes(paginate(content, &pagination, s.db)).
-		Preload(clause.Associations).
-		Find(&content)
-	if res.Error != nil {
-		return nil, nil, errors.Wrapf(res.Error, "could not get content: %v", res.Error)
-	}
-
-	// TODO breadchris this seems like a problem with gorm and preloading associations
-	for i, c := range content {
-		for j, nc := range c.NormalizedContent {
-			var transformedContent []model.TransformedContent
-			res = s.db.Find(&transformedContent, "normalized_content_id = ?", nc.ID)
-			if res.Error != nil {
-				return nil, nil, errors.Wrapf(res.Error, "could not get transformed content: %v", res.Error)
-			}
-			content[i].NormalizedContent[j].TransformedContent = transformedContent
-		}
-	}
-	return content, &pagination, nil
 }
 
 func (s *dbStore) SaveContent(contentType genapi.ContentType, data string, metadata json.RawMessage) (uuid.UUID, error) {

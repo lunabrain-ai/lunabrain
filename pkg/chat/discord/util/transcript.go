@@ -1,15 +1,13 @@
 package util
 
-import "github.com/bwmarrin/discordgo"
+import (
+	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
+)
 
-func GenerateTranscript(msgs []*discordgo.Message) string {
+func GenerateTranscript(msgs []*model.DiscordMessage) string {
 	var transcript string
 	for _, msg := range msgs {
-		var author string
-		if msg.Author != nil {
-			author = msg.Author.Username
-		}
-		transcript += author + ": " + msg.Content + "\n"
+		transcript += msg.AuthorUsername + ": " + msg.Content + "\n"
 	}
 	return transcript
 }

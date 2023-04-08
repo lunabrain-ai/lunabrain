@@ -103,8 +103,8 @@ func Wire() (*cli.App, error) {
 	server := api.NewAPIServer(dbStore, contentWorkflow)
 	htmlHTML := html.NewHTML()
 	apihttpServer := client.NewAPIHTTPServer(apiConfig, server, htmlHTML)
-	discordCollector := collect.NewDiscordCollector(session, dbStore)
+	discordCollector := collect.NewDiscordCollector(session, dbStore, contentWorkflow)
 	hnCollect := collect.NewHNCollector(session, dbStore, contentWorkflow)
-	app := NewApp(apihttpServer, normalizer, summarize, contentWorkflow, discordCollector, hnCollect)
+	app := NewApp(apihttpServer, normalizer, summarize, discordCollector, hnCollect)
 	return app, nil
 }

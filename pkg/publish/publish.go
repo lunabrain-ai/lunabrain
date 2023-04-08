@@ -26,7 +26,7 @@ func (p *Publish) Publish(contentID uuid.UUID) error {
 	for _, publisher := range p.publishers {
 		log.Debug().
 			Str("contentID", contentID.String()).
-			Msg("publishing content")
+			Msg("attempting to publish content")
 		if err := publisher.Publish(contentID); err != nil {
 			return err
 		}

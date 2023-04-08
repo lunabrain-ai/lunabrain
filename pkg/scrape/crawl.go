@@ -1,10 +1,10 @@
 package scrape
 
 import (
-	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/geziyor/geziyor"
 	"github.com/geziyor/geziyor/client"
+	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/store"
 	"github.com/lunabrain-ai/lunabrain/pkg/util"
 	"github.com/pkg/errors"
@@ -47,16 +47,52 @@ func (c *crawler) Crawl(nurl string) error {
 	return nil
 }
 
+// resolveRelativeURL just correctly join a base domain to a relative path
+// to produce an absolute path to fetch on.
+// It returns a tuple, a string representing the absolute path with resolved
+// paths and a boolean representing the success or failure of the process.
+func resolveRelativeURL(baseURL string, relative string) (*url.URL, bool) {
+	u, err := url.Parse(relative)
+	if err != nil {
+		return nil, false
+	}
+	if u.Hostname() != "" {
+		return u, true
+	}
+	base, err := url.Parse(baseURL)
+	if err != nil {
+		return nil, false
+	}
+	return base.ResolveReference(u), true
+}
+
 func (c *crawler) linksParse(purl *url.URL) func(g *geziyor.Geziyor, r *client.Response) {
-	dir := path.Join(c.fileStore.Location, "sites")
+	rawDir := path.Join(c.fileStore.Location, "sites", "raw")
+	normalDir := path.Join(c.fileStore.Location, "sites", "normal")
 
 	return func(g *geziyor.Geziyor, r *client.Response) {
+		// Check if this is an html page, if not return
+		if !r.IsHTML() {
+			return
+		}
+
 		// TODO breadchris use bucket to store this file
-		err := util.SaveURLToFolder(dir, r.Request.URL, r.Body)
+		err := util.SaveURLToFolder(rawDir, r.Request.URL, r.Body)
 		if err != nil {
-			err = errors.Wrapf(err, "error: save URL %s\n", r.Request.URL.String())
+			err = errors.Wrapf(err, "error: save raw content for %s\n", r.Request.URL.String())
 			log.Error().Err(err).Msg("")
 			return
+		}
+
+		article, err := content.FormatHTMLAsArticle(string(r.Body), r.Request.URL.String())
+		if err == nil {
+			// TODO breadchris use bucket to store this file
+			err = util.SaveURLToFolder(normalDir, r.Request.URL, []byte(article))
+			if err != nil {
+				err = errors.Wrapf(err, "error: save article for %s\n", r.Request.URL.String())
+				log.Error().Err(err).Msg("")
+				return
+			}
 		}
 
 		if r == nil || r.HTMLDoc == nil {
@@ -68,25 +104,22 @@ func (c *crawler) linksParse(purl *url.URL) func(g *geziyor.Geziyor, r *client.R
 			return
 		}
 
+		requestURL := r.Request.URL
+
 		selection.Each(func(i int, s *goquery.Selection) {
 			val, _ := s.Attr("href")
 			u, err := url.Parse(val)
 			if err != nil {
-				fmt.Printf("error: resolve URL %s - %s\n", val, err)
+				log.Error().Err(err).Msg("unable to parse url")
 				return
 			}
 
-			if u.Scheme == "" {
-				u.Scheme = purl.Scheme
-			}
-
-			if u.Host == "" {
-				u.Host = purl.Host
-			}
-
-			if u.Host != purl.Host {
+			if u.Host != "" && u.Host != purl.Host {
 				return
 			}
+
+			u = requestURL.ResolveReference(u)
+			u.Fragment = ""
 
 			queue := false
 			lock.Lock()

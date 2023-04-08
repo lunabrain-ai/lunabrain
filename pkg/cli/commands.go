@@ -1,10 +1,7 @@
 package cli
 
 import (
-	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
-	dutil "github.com/lunabrain-ai/lunabrain/pkg/chat/discord/util"
 	"github.com/lunabrain-ai/lunabrain/pkg/client"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
@@ -51,7 +48,6 @@ func NewSyncCommand() *cli.Command {
 }
 
 func NewCollectCommand(
-	workflow pipeline.Workflow,
 	discordCollect *collect.DiscordCollector,
 	hnCollect *collect.HNCollect,
 ) *cli.Command {
@@ -86,17 +82,7 @@ func NewCollectCommand(
 				},
 				Action: func(ctx *cli.Context) error {
 					channel := ctx.String("channel")
-					msgs, err := discordCollect.Collect(channel)
-					if err != nil {
-						return err
-					}
-
-					// TODO breadchris this logic should be moved into collect?
-					transcript := dutil.GenerateTranscript(msgs)
-					_, err = workflow.ProcessContent(ctx.Context, &genapi.Content{
-						Data: []byte(transcript),
-						Type: genapi.ContentType_TEXT,
-					})
+					_, err := discordCollect.Collect(channel)
 					return err
 				},
 			},

@@ -9,6 +9,34 @@ service Python {
   rpc YoutubeTranscript(Video) returns (Transcript);
   rpc Normalize(Text) returns (Text);
   rpc Categorize(Text) returns (Categories);
+  rpc IndexDirectory(IndexDirectoryRequest) returns (Index);
+  rpc QueryIndex(Query) returns (QueryResult);
+}
+
+enum IndexType {
+  LLAMA = 0;
+  FAISS = 1;
+  BM25 = 2;
+}
+
+message Query {
+  string index = 1;
+  string query = 2;
+  IndexType type = 3;
+}
+
+message QueryResult {
+  repeated string results = 1;
+}
+
+message IndexDirectoryRequest {
+  string path = 1;
+  IndexType type = 2;
+}
+
+message Index {
+  string id = 1;
+  IndexType type = 2;
 }
 
 message Text {

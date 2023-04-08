@@ -19,9 +19,23 @@
           "target": "/Hugging-Face",
           "text": "Hugging Face"
         }
+      ],
+      "/Vector-Search": [
+        {
+          "source": "/Vector-Search",
+          "target": "/FAISS",
+          "text": "FAISS"
+        }
       ]
     },
     "backlinks": {
+      "/FAISS": [
+        {
+          "source": "/Vector-Search",
+          "target": "/FAISS",
+          "text": "FAISS"
+        }
+      ],
       "/Hugging-Face": [
         {
           "source": "/Models",
@@ -50,6 +64,11 @@
       "source": "/Models",
       "target": "/Hugging-Face",
       "text": "Hugging Face"
+    },
+    {
+      "source": "/Vector-Search",
+      "target": "/FAISS",
+      "text": "FAISS"
     },
     {
       "source": "/",

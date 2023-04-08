@@ -9,3 +9,7 @@ youtube_transcript_api==0.5.0
 bert-extractive-summarizer==0.10.1
 sentence-transformers
 nltk
+farm-haystack
+grpcio-reflection
+python-slugify
+faiss-cpu

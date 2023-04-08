@@ -6,12 +6,13 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"os"
+	"strings"
 )
 
 func main() {
 	// TODO (cthompson) this should be configured with an fx module
 	logLevel := zerolog.InfoLevel
-	if os.Getenv("LOG_LEVEL") == "debug" {
+	if strings.ToLower(os.Getenv("LOG_LEVEL")) == "debug" {
 		logLevel = zerolog.DebugLevel
 	}
 	log.Logger = zerolog.New(horizontal.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger().Level(logLevel)

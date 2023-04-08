@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_index.md",
+                "file": "Vector Search.md",
                 "mode": "source",
                 "source": false
               }
@@ -67,8 +67,7 @@
               }
             }
           }
-        ],
-        "currentTab": 4
+        ]
       }
     ],
     "direction": "vertical"
@@ -134,7 +133,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "News Sources.md",
+                "file": "Vector Search.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -151,7 +150,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "News Sources.md",
+                "file": "Vector Search.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -174,7 +173,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "News Sources.md"
+                "file": "Vector Search.md"
               }
             }
           }
@@ -195,12 +194,17 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "11160f2b3f2422ac",
+  "active": "86b5cdeaf5a94d71",
   "lastOpenFiles": [
-    "Models.md",
-    "Text Processing.md",
-    "Hugging Face.md",
+    "Testing.canvas",
     "_index.md",
-    "News Sources.md"
+    "Applications/Chat Bots.md",
+    "Models.md",
+    "FAISS.md",
+    "Vector Search.md",
+    "Applications",
+    "News Sources.md",
+    "Text Processing.md",
+    "Hugging Face.md"
   ]
 }

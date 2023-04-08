@@ -23,6 +23,8 @@ type PythonClient interface {
 	YoutubeTranscript(ctx context.Context, in *Video, opts ...grpc.CallOption) (*Transcript, error)
 	Normalize(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Text, error)
 	Categorize(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Categories, error)
+	IndexDirectory(ctx context.Context, in *IndexDirectoryRequest, opts ...grpc.CallOption) (*Index, error)
+	QueryIndex(ctx context.Context, in *Query, opts ...grpc.CallOption) (*QueryResult, error)
 }
 
 type pythonClient struct {
@@ -78,6 +80,24 @@ func (c *pythonClient) Categorize(ctx context.Context, in *Text, opts ...grpc.Ca
 	return out, nil
 }
 
+func (c *pythonClient) IndexDirectory(ctx context.Context, in *IndexDirectoryRequest, opts ...grpc.CallOption) (*Index, error) {
+	out := new(Index)
+	err := c.cc.Invoke(ctx, "/python.Python/IndexDirectory", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pythonClient) QueryIndex(ctx context.Context, in *Query, opts ...grpc.CallOption) (*QueryResult, error) {
+	out := new(QueryResult)
+	err := c.cc.Invoke(ctx, "/python.Python/QueryIndex", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PythonServer is the server API for Python service.
 // All implementations must embed UnimplementedPythonServer
 // for forward compatibility
@@ -87,6 +107,8 @@ type PythonServer interface {
 	YoutubeTranscript(context.Context, *Video) (*Transcript, error)
 	Normalize(context.Context, *Text) (*Text, error)
 	Categorize(context.Context, *Text) (*Categories, error)
+	IndexDirectory(context.Context, *IndexDirectoryRequest) (*Index, error)
+	QueryIndex(context.Context, *Query) (*QueryResult, error)
 	mustEmbedUnimplementedPythonServer()
 }
 
@@ -108,6 +130,12 @@ func (UnimplementedPythonServer) Normalize(context.Context, *Text) (*Text, error
 }
 func (UnimplementedPythonServer) Categorize(context.Context, *Text) (*Categories, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Categorize not implemented")
+}
+func (UnimplementedPythonServer) IndexDirectory(context.Context, *IndexDirectoryRequest) (*Index, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IndexDirectory not implemented")
+}
+func (UnimplementedPythonServer) QueryIndex(context.Context, *Query) (*QueryResult, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryIndex not implemented")
 }
 func (UnimplementedPythonServer) mustEmbedUnimplementedPythonServer() {}
 
@@ -212,6 +240,42 @@ func _Python_Categorize_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Python_IndexDirectory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IndexDirectoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PythonServer).IndexDirectory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/python.Python/IndexDirectory",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PythonServer).IndexDirectory(ctx, req.(*IndexDirectoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Python_QueryIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Query)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PythonServer).QueryIndex(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/python.Python/QueryIndex",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PythonServer).QueryIndex(ctx, req.(*Query))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Python_ServiceDesc is the grpc.ServiceDesc for Python service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -238,6 +302,14 @@ var Python_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Categorize",
 			Handler:    _Python_Categorize_Handler,
+		},
+		{
+			MethodName: "IndexDirectory",
+			Handler:    _Python_IndexDirectory_Handler,
+		},
+		{
+			MethodName: "QueryIndex",
+			Handler:    _Python_QueryIndex_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

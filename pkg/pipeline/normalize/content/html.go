@@ -1,4 +1,4 @@
-package normalize
+package content
 
 import (
 	md "github.com/JohannesKaufmann/html-to-markdown"
@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func formatContentAsArticle(input, nurl string) (content string, err error) {
+func FormatHTMLAsArticle(html, nurl string) (content string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = errors.Wrapf(err, "panic while parsing html: %v", r)
@@ -18,7 +18,7 @@ func formatContentAsArticle(input, nurl string) (content string, err error) {
 	g := goose.New()
 
 	// could panic
-	gArticle, err := g.ExtractFromRawHTML(input, nurl)
+	gArticle, err := g.ExtractFromRawHTML(html, nurl)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to parse html body")
 		return
@@ -29,7 +29,7 @@ func formatContentAsArticle(input, nurl string) (content string, err error) {
 	return
 }
 
-func cleanRawHTML(content string) (string, error) {
+func CleanRawHTML(content string) (string, error) {
 	contentReader := strings.NewReader(content)
 	doc, err := goquery.NewDocumentFromReader(contentReader)
 	if err == nil {

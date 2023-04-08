@@ -5,14 +5,49 @@ from google.protobuf import message as _message
 from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Mapping, Optional as _Optional, Union as _Union
 
 BERT: Summarizer
+BM25: IndexType
 DESCRIPTOR: _descriptor.FileDescriptor
+FAISS: IndexType
 LANGCHAIN: Summarizer
+LLAMA: IndexType
 
 class Categories(_message.Message):
     __slots__ = ["categories"]
     CATEGORIES_FIELD_NUMBER: _ClassVar[int]
     categories: _containers.RepeatedScalarFieldContainer[str]
     def __init__(self, categories: _Optional[_Iterable[str]] = ...) -> None: ...
+
+class Index(_message.Message):
+    __slots__ = ["id", "type"]
+    ID_FIELD_NUMBER: _ClassVar[int]
+    TYPE_FIELD_NUMBER: _ClassVar[int]
+    id: str
+    type: IndexType
+    def __init__(self, id: _Optional[str] = ..., type: _Optional[_Union[IndexType, str]] = ...) -> None: ...
+
+class IndexDirectoryRequest(_message.Message):
+    __slots__ = ["path", "type"]
+    PATH_FIELD_NUMBER: _ClassVar[int]
+    TYPE_FIELD_NUMBER: _ClassVar[int]
+    path: str
+    type: IndexType
+    def __init__(self, path: _Optional[str] = ..., type: _Optional[_Union[IndexType, str]] = ...) -> None: ...
+
+class Query(_message.Message):
+    __slots__ = ["index", "query", "type"]
+    INDEX_FIELD_NUMBER: _ClassVar[int]
+    QUERY_FIELD_NUMBER: _ClassVar[int]
+    TYPE_FIELD_NUMBER: _ClassVar[int]
+    index: str
+    query: str
+    type: IndexType
+    def __init__(self, index: _Optional[str] = ..., query: _Optional[str] = ..., type: _Optional[_Union[IndexType, str]] = ...) -> None: ...
+
+class QueryResult(_message.Message):
+    __slots__ = ["results"]
+    RESULTS_FIELD_NUMBER: _ClassVar[int]
+    results: _containers.RepeatedScalarFieldContainer[str]
+    def __init__(self, results: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class SummarizeRequest(_message.Message):
     __slots__ = ["content", "summarizer"]
@@ -67,6 +102,9 @@ class Video(_message.Message):
     ID_FIELD_NUMBER: _ClassVar[int]
     id: str
     def __init__(self, id: _Optional[str] = ...) -> None: ...
+
+class IndexType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = []
 
 class Summarizer(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = []

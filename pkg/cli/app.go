@@ -2,7 +2,6 @@ package cli
 
 import (
 	"github.com/lunabrain-ai/lunabrain/pkg/client"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
@@ -13,7 +12,6 @@ func NewApp(
 	httpServer client.HTTPServer,
 	normalizer normalize.Normalizer,
 	summarizer transform.Summarizer,
-	workflow pipeline.Workflow,
 	discordCollect *collect.DiscordCollector,
 	hnCollect *collect.HNCollect,
 ) *cli.App {
@@ -23,7 +21,7 @@ func NewApp(
 		Commands: []*cli.Command{
 			NewServeCommand(httpServer),
 			NewSyncCommand(),
-			NewCollectCommand(workflow, discordCollect, hnCollect),
+			NewCollectCommand(discordCollect, hnCollect),
 			NewNormalizeCommand(normalizer),
 			NewTextCommand(summarizer),
 		},

@@ -48,7 +48,6 @@ func (c *HNCollect) Collect() error {
 			log.Warn().Err(err).Msg("error processing content")
 			continue
 		}
-
 		_, err = c.db.StoreHNStory(*story.ID, *story.URL, id)
 		if err != nil {
 			log.Warn().Err(err).Msg("error storing hn story")

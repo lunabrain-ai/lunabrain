@@ -47,6 +47,7 @@ func (a *APIHTTPServer) getClientRoutes(r chi.Router) {
 
 		text := r.FormValue("text")
 		options := r.FormValue("options")
+		shouldCrawl := r.FormValue("crawl-urls") == "on"
 		_, fileData := getFileData(r)
 
 		var o genapi.URLOptions
@@ -62,6 +63,7 @@ func (a *APIHTTPServer) getClientRoutes(r chi.Router) {
 		if text != "" {
 			var textIsLink bool
 
+			// TODO breadchris this should be an extractor that can be configured to be run
 			linkList := commonregex.Links(text)
 			for _, link := range linkList {
 				if text == link {
@@ -74,6 +76,11 @@ func (a *APIHTTPServer) getClientRoutes(r chi.Router) {
 					content = append(content, &genapi.Content{
 						Type: genapi.ContentType_URL,
 						Data: []byte(link),
+						Options: &genapi.Content_UrlOptions{
+							UrlOptions: &genapi.URLOptions{
+								Crawl: shouldCrawl,
+							},
+						},
 					})
 				}
 			} else {
@@ -91,7 +98,9 @@ func (a *APIHTTPServer) getClientRoutes(r chi.Router) {
 			})
 		}
 
-		contentIDs, err := a.apiServer.Save(context.Background(), &genapi.Contents{Contents: content})
+		contentIDs, err := a.apiServer.Save(context.Background(), &genapi.Contents{
+			Contents: content,
+		})
 		if err != nil {
 			serverError(w, err)
 			return
