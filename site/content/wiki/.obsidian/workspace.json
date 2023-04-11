@@ -13,7 +13,19 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Vector Search.md",
+                "file": "_index.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "f50c202a0562d8fe",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Fundamentals.md",
                 "mode": "source",
                 "source": false
               }
@@ -67,7 +79,8 @@
               }
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -133,7 +146,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Vector Search.md",
+                "file": "Fundamentals.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -150,7 +163,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Vector Search.md",
+                "file": "Fundamentals.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -173,7 +186,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Vector Search.md"
+                "file": "Fundamentals.md"
               }
             }
           }
@@ -194,16 +207,17 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "86b5cdeaf5a94d71",
+  "active": "f50c202a0562d8fe",
   "lastOpenFiles": [
-    "Testing.canvas",
     "_index.md",
+    "Fundamentals.md",
+    "News Sources.md",
+    "Vector Search.md",
+    "Testing.canvas",
     "Applications/Chat Bots.md",
     "Models.md",
     "FAISS.md",
-    "Vector Search.md",
     "Applications",
-    "News Sources.md",
     "Text Processing.md",
     "Hugging Face.md"
   ]

@@ -4,7 +4,7 @@ import "regexp"
 
 func ParseGitHubURL(url string) (string, string) {
 	// Define the regular expression to match the user and repo name from the GitHub URL
-	re := regexp.MustCompile(`^https://github.com/([^/]+)/([^/]+)/`)
+	re := regexp.MustCompile(`^https://github.com/([^/]+)/([^/]+)`)
 
 	// Find the first match of the regular expression in the URL
 	match := re.FindStringSubmatch(url)

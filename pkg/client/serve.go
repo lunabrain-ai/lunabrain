@@ -10,6 +10,7 @@ import (
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
 	"github.com/lunabrain-ai/lunabrain/pkg/api"
 	"github.com/lunabrain-ai/lunabrain/pkg/client/html"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/rs/zerolog/log"
 	"github.com/twitchtv/twirp"
 	"net/http"
@@ -20,6 +21,7 @@ import (
 
 type APIHTTPServer struct {
 	config      api.Config
+	db          db.Store
 	apiServer   *api.Server
 	twirpServer genapi.TwirpServer
 	htmlContent *html.HTML
@@ -43,6 +45,7 @@ func NewAPIHTTPServer(
 	config api.Config,
 	apiServer *api.Server,
 	htmlContent *html.HTML,
+	db db.Store,
 ) *APIHTTPServer {
 	twirpServer := genapi.NewAPIServer(apiServer, api.NewLoggingServerHooks(), twirp.WithServerPathPrefix("/api"))
 
@@ -51,6 +54,7 @@ func NewAPIHTTPServer(
 		apiServer:   apiServer,
 		twirpServer: twirpServer,
 		htmlContent: htmlContent,
+		db:          db,
 	}
 }
 

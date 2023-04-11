@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"embed"
 	"github.com/Masterminds/sprig/v3"
+	"github.com/alexferrari88/gohn/pkg/gohn"
 	"github.com/jba/templatecheck"
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"html/template"
 	"io"
 )
@@ -30,8 +32,14 @@ var (
 	errorPage = NewPage("error", ErrorParams{}, patterns)
 )
 
+type Nav struct {
+	Name  string
+	Route string
+}
+
 type Page struct {
 	Title string
+	Nav   []Nav
 	tmpl  *template.Template
 }
 
@@ -44,35 +52,64 @@ func NewPage(name string, params interface{}, patterns []string) *Page {
 			Funcs(sprig.FuncMap()).
 			ParseFS(Files, patterns...))
 
-	if err := templatecheck.CheckHTML(tmpl, pageParams(name, params)); err != nil {
+	nav := []Nav{
+		{Name: "Home", Route: "/"},
+		{Name: "Save", Route: "/save"},
+		{Name: "Search", Route: "/search"},
+		{Name: "HN", Route: "/hn"},
+	}
+
+	if err := templatecheck.CheckHTML(tmpl, pageParams(name, nav, params)); err != nil {
 		panic(err)
 	}
 
 	return &Page{
 		Title: name,
+		Nav:   nav,
 		tmpl:  tmpl,
 	}
 }
 
-func pageParams(title string, params interface{}) interface{} {
+// TODO breadchris why was this written this way? it seems like you should be able to just use a struct
+func pageParams(title string, nav []Nav, params interface{}) interface{} {
 	type page struct {
 		Params interface{}
 		Title  string
+		Nav    []Nav
 	}
 	return page{
 		Params: params,
 		Title:  title,
+		Nav:    nav,
 	}
 }
 
 func (p *Page) Execute(w io.Writer, params interface{}) error {
 	out := bytes.Buffer{}
-	err := p.tmpl.Execute(&out, pageParams(p.Title, params))
+	err := p.tmpl.Execute(&out, pageParams(p.Title, p.Nav, params))
 	if err != nil {
 		return errorPage.Execute(w, ErrorParams{Message: err.Error()})
 	}
 	_, err = out.WriteTo(w)
 	return err
+}
+
+type Story struct {
+	model.HNStory
+	Item          *gohn.Item
+	URLDomain     string
+	Summary       string
+	Text          string
+	Categories    []string
+	CommentsCount int
+}
+
+type HNParams struct {
+	Stories []Story
+}
+
+type DiscordParams struct {
+	Channels []model.DiscordChannel
 }
 
 type SaveParams struct {
@@ -94,11 +131,21 @@ type ErrorParams struct {
 type HomeParams struct{}
 
 type HTML struct {
-	View   *Page
-	Search *Page
-	Save   *Page
-	Home   *Page
-	Error  *Page
+	Discord *Page
+	HN      *Page
+	View    *Page
+	Search  *Page
+	Save    *Page
+	Home    *Page
+	Error   *Page
+}
+
+func (h *HTML) WriteDiscord(w io.Writer, params DiscordParams) error {
+	return h.Discord.Execute(w, params)
+}
+
+func (h *HTML) WriteHN(w io.Writer, params HNParams) error {
+	return h.HN.Execute(w, params)
 }
 
 func (h *HTML) WriteView(w io.Writer, params ViewParams) error {
@@ -119,9 +166,11 @@ func (h *HTML) WriteHome(w io.Writer, params HomeParams) error {
 
 func NewHTML() *HTML {
 	return &HTML{
-		View:   NewPage("view", ViewParams{}, patterns),
-		Search: NewPage("search", SearchParams{}, patterns),
-		Save:   NewPage("save", SaveParams{}, patterns),
-		Home:   NewPage("home", HomeParams{}, patterns),
+		Discord: NewPage("discord", DiscordParams{}, patterns),
+		HN:      NewPage("hn", HNParams{}, patterns),
+		View:    NewPage("view", ViewParams{}, patterns),
+		Search:  NewPage("search", SearchParams{}, patterns),
+		Save:    NewPage("save", SaveParams{}, patterns),
+		Home:    NewPage("home", HomeParams{}, patterns),
 	}
 }

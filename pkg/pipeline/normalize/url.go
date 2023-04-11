@@ -3,14 +3,13 @@ package normalize
 import (
 	"context"
 	"fmt"
+	"github.com/google/go-github/v51/github"
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
 	"github.com/lunabrain-ai/lunabrain/gen/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
 	scrape2 "github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"io"
-	"net/http"
 	"net/url"
 	"strings"
 )
@@ -61,22 +60,34 @@ func (s *URLNormalizer) Normalize(nurl string, crawl bool) ([]*content.Content, 
 		}
 	}
 
-	// If we were able to normalize the url, return the content
+	// If we were not able to normalize the url, scrape it
 	if err == nil {
-		return c, nil
+		c = append(c, &content.Content{
+			NormalizerID: genapi.NormalizerID_URL_ARTICLE,
+			Data:         c[0].Data,
+		})
+	} else {
+		scrapedContents, err := s.scrapeURL(nurl)
+		if err != nil {
+			return nil, err
+		}
+		c = append(c, scrapedContents...)
 	}
+	return c, nil
+}
 
+func (s *URLNormalizer) scrapeURL(nurl string) ([]*content.Content, error) {
+	var c []*content.Content
 	resp, err := s.scraper.Scrape(nurl)
 	if err != nil {
 		log.Debug().Err(err).Str("url", nurl).Msg("unable to scrape url")
 
 		return nil, errors.Errorf("unable to scrape url %s", nurl)
-	} else {
-		c = append(c, &content.Content{
-			NormalizerID: genapi.NormalizerID_URL_HTML,
-			Data:         resp.Content,
-		})
 	}
+	c = append(c, &content.Content{
+		NormalizerID: genapi.NormalizerID_URL_HTML,
+		Data:         resp.Content,
+	})
 
 	clean, err := content.CleanRawHTML(resp.Content)
 	if err != nil {
@@ -126,31 +137,21 @@ func (s *URLNormalizer) normalizeGithub(url *url.URL) ([]*content.Content, error
 		return nil, errors.Errorf("unable to parse github url %s", url)
 	}
 
-	readmeURL := fmt.Sprintf("https://raw.githubusercontent.com/%s/%s/main/README.md", user, repoName)
-	log.Debug().
-		Str("url", readmeURL).
-		Msg("fetching github readme")
-
-	response, err := http.Get(readmeURL)
+	client := github.NewClient(nil)
+	readmeContent, _, err := client.Repositories.GetReadme(context.Background(), user, repoName, nil)
 	if err != nil {
-		return nil, fmt.Errorf("error making HTTP request: %v", err)
-	}
-	defer response.Body.Close()
-
-	if response.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected status code: %v", response.StatusCode)
+		return nil, fmt.Errorf("error getting github readme: %v", err)
 	}
 
-	// Read the contents of the response body into a byte slice
-	body, err := io.ReadAll(response.Body)
+	c, err := readmeContent.GetContent()
 	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %v", err)
+		return nil, fmt.Errorf("error getting github readme content: %v", err)
 	}
 
 	return []*content.Content{
 		{
 			NormalizerID: genapi.NormalizerID_GITHUB_README,
-			Data:         string(body),
+			Data:         c,
 		},
 	}, nil
 }

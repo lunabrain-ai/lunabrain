@@ -3,7 +3,11 @@ title: News Sources
 ---
 Places you can go to stay plugged in about AI advancements!
 
+## Awesome Lists
+- https://github.com/imaurer/awesome-decentralized-llm
+
 ## Feeds
+
 - [HackerNews](https://news.ycombinator.com/)
 
 ## Discord

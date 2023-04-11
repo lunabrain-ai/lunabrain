@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cpython.proto\x12\x06python\"F\n\x05Query\x12\r\n\x05index\x18\x01 \x01(\t\x12\r\n\x05query\x18\x02 \x01(\t\x12\x1f\n\x04type\x18\x03 \x01(\x0e\x32\x11.python.IndexType\"\x1e\n\x0bQueryResult\x12\x0f\n\x07results\x18\x01 \x03(\t\"F\n\x15IndexDirectoryRequest\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x1f\n\x04type\x18\x02 \x01(\x0e\x32\x11.python.IndexType\"4\n\x05Index\x12\n\n\x02id\x18\x01 \x01(\t\x12\x1f\n\x04type\x18\x02 \x01(\x0e\x32\x11.python.IndexType\"\x14\n\x04Text\x12\x0c\n\x04text\x18\x01 \x01(\t\" \n\nCategories\x12\x12\n\ncategories\x18\x01 \x03(\t\"K\n\x10SummarizeRequest\x12\x0f\n\x07\x63ontent\x18\x01 \x01(\t\x12&\n\nsummarizer\x18\x02 \x01(\x0e\x32\x12.python.Summarizer\"$\n\x11SummarizeResponse\x12\x0f\n\x07summary\x18\x01 \x01(\t\"!\n\x11TranscribeRequest\x12\x0c\n\x04\x66ile\x18\x01 \x01(\t\"+\n\x12TranscribeResponse\x12\x15\n\rtranscription\x18\x01 \x01(\t\"\x13\n\x05Video\x12\n\n\x02id\x18\x01 \x01(\t\"B\n\x11TranscriptSection\x12\x0c\n\x04text\x18\x01 \x01(\t\x12\r\n\x05start\x18\x02 \x01(\x02\x12\x10\n\x08\x64uration\x18\x03 \x01(\x02\";\n\nTranscript\x12-\n\ntranscript\x18\x01 \x03(\x0b\x32\x19.python.TranscriptSection*+\n\tIndexType\x12\t\n\x05LLAMA\x10\x00\x12\t\n\x05\x46\x41ISS\x10\x01\x12\x08\n\x04\x42M25\x10\x02*%\n\nSummarizer\x12\r\n\tLANGCHAIN\x10\x00\x12\x08\n\x04\x42\x45RT\x10\x01\x32\x92\x03\n\x06Python\x12\x43\n\nTranscribe\x12\x19.python.TranscribeRequest\x1a\x1a.python.TranscribeResponse\x12@\n\tSummarize\x12\x18.python.SummarizeRequest\x1a\x19.python.SummarizeResponse\x12\x36\n\x11YoutubeTranscript\x12\r.python.Video\x1a\x12.python.Transcript\x12\'\n\tNormalize\x12\x0c.python.Text\x1a\x0c.python.Text\x12.\n\nCategorize\x12\x0c.python.Text\x1a\x12.python.Categories\x12>\n\x0eIndexDirectory\x12\x1d.python.IndexDirectoryRequest\x1a\r.python.Index\x12\x30\n\nQueryIndex\x12\r.python.Query\x1a\x13.python.QueryResultB\x0eZ\x0c./gen/pythonb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0cpython.proto\x12\x06python\"F\n\x05Query\x12\r\n\x05index\x18\x01 \x01(\t\x12\r\n\x05query\x18\x02 \x01(\t\x12\x1f\n\x04type\x18\x03 \x01(\x0e\x32\x11.python.IndexType\"\x1e\n\x0bQueryResult\x12\x0f\n\x07results\x18\x01 \x03(\t\"F\n\x15IndexDirectoryRequest\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x1f\n\x04type\x18\x02 \x01(\x0e\x32\x11.python.IndexType\"4\n\x05Index\x12\n\n\x02id\x18\x01 \x01(\t\x12\x1f\n\x04type\x18\x02 \x01(\x0e\x32\x11.python.IndexType\"\x14\n\x04Text\x12\x0c\n\x04text\x18\x01 \x01(\t\" \n\nCategories\x12\x12\n\ncategories\x18\x01 \x03(\t\"K\n\x11\x43\x61tegorizeRequest\x12\x0c\n\x04text\x18\x01 \x01(\t\x12(\n\x0b\x63\x61tegorizer\x18\x02 \x01(\x0e\x32\x13.python.Categorizer\"K\n\x10SummarizeRequest\x12\x0f\n\x07\x63ontent\x18\x01 \x01(\t\x12&\n\nsummarizer\x18\x02 \x01(\x0e\x32\x12.python.Summarizer\"$\n\x11SummarizeResponse\x12\x0f\n\x07summary\x18\x01 \x01(\t\"!\n\x11TranscribeRequest\x12\x0c\n\x04\x66ile\x18\x01 \x01(\t\"+\n\x12TranscribeResponse\x12\x15\n\rtranscription\x18\x01 \x01(\t\"\x13\n\x05Video\x12\n\n\x02id\x18\x01 \x01(\t\"B\n\x11TranscriptSection\x12\x0c\n\x04text\x18\x01 \x01(\t\x12\r\n\x05start\x18\x02 \x01(\x02\x12\x10\n\x08\x64uration\x18\x03 \x01(\x02\";\n\nTranscript\x12-\n\ntranscript\x18\x01 \x03(\x0b\x32\x19.python.TranscriptSection*+\n\tIndexType\x12\t\n\x05LLAMA\x10\x00\x12\t\n\x05\x46\x41ISS\x10\x01\x12\x08\n\x04\x42M25\x10\x02*&\n\x0b\x43\x61tegorizer\x12\n\n\x06T5_TAG\x10\x00\x12\x0b\n\x07KEYBERT\x10\x01*%\n\nSummarizer\x12\r\n\tLANGCHAIN\x10\x00\x12\x08\n\x04\x42\x45RT\x10\x01\x32\x9f\x03\n\x06Python\x12\x43\n\nTranscribe\x12\x19.python.TranscribeRequest\x1a\x1a.python.TranscribeResponse\x12@\n\tSummarize\x12\x18.python.SummarizeRequest\x1a\x19.python.SummarizeResponse\x12\x36\n\x11YoutubeTranscript\x12\r.python.Video\x1a\x12.python.Transcript\x12\'\n\tNormalize\x12\x0c.python.Text\x1a\x0c.python.Text\x12;\n\nCategorize\x12\x19.python.CategorizeRequest\x1a\x12.python.Categories\x12>\n\x0eIndexDirectory\x12\x1d.python.IndexDirectoryRequest\x1a\r.python.Index\x12\x30\n\nQueryIndex\x12\r.python.Query\x1a\x13.python.QueryResultB\x0eZ\x0c./gen/pythonb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'python_pb2', globals())
@@ -21,10 +21,12 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'Z\014./gen/python'
-  _INDEXTYPE._serialized_start=655
-  _INDEXTYPE._serialized_end=698
-  _SUMMARIZER._serialized_start=700
-  _SUMMARIZER._serialized_end=737
+  _INDEXTYPE._serialized_start=732
+  _INDEXTYPE._serialized_end=775
+  _CATEGORIZER._serialized_start=777
+  _CATEGORIZER._serialized_end=815
+  _SUMMARIZER._serialized_start=817
+  _SUMMARIZER._serialized_end=854
   _QUERY._serialized_start=24
   _QUERY._serialized_end=94
   _QUERYRESULT._serialized_start=96
@@ -37,20 +39,22 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _TEXT._serialized_end=274
   _CATEGORIES._serialized_start=276
   _CATEGORIES._serialized_end=308
-  _SUMMARIZEREQUEST._serialized_start=310
-  _SUMMARIZEREQUEST._serialized_end=385
-  _SUMMARIZERESPONSE._serialized_start=387
-  _SUMMARIZERESPONSE._serialized_end=423
-  _TRANSCRIBEREQUEST._serialized_start=425
-  _TRANSCRIBEREQUEST._serialized_end=458
-  _TRANSCRIBERESPONSE._serialized_start=460
-  _TRANSCRIBERESPONSE._serialized_end=503
-  _VIDEO._serialized_start=505
-  _VIDEO._serialized_end=524
-  _TRANSCRIPTSECTION._serialized_start=526
-  _TRANSCRIPTSECTION._serialized_end=592
-  _TRANSCRIPT._serialized_start=594
-  _TRANSCRIPT._serialized_end=653
-  _PYTHON._serialized_start=740
-  _PYTHON._serialized_end=1142
+  _CATEGORIZEREQUEST._serialized_start=310
+  _CATEGORIZEREQUEST._serialized_end=385
+  _SUMMARIZEREQUEST._serialized_start=387
+  _SUMMARIZEREQUEST._serialized_end=462
+  _SUMMARIZERESPONSE._serialized_start=464
+  _SUMMARIZERESPONSE._serialized_end=500
+  _TRANSCRIBEREQUEST._serialized_start=502
+  _TRANSCRIBEREQUEST._serialized_end=535
+  _TRANSCRIBERESPONSE._serialized_start=537
+  _TRANSCRIBERESPONSE._serialized_end=580
+  _VIDEO._serialized_start=582
+  _VIDEO._serialized_end=601
+  _TRANSCRIPTSECTION._serialized_start=603
+  _TRANSCRIPTSECTION._serialized_end=669
+  _TRANSCRIPT._serialized_start=671
+  _TRANSCRIPT._serialized_end=730
+  _PYTHON._serialized_start=857
+  _PYTHON._serialized_end=1272
 # @@protoc_insertion_point(module_scope)

@@ -83,7 +83,6 @@ func (c *DiscordCollector) createTranscripts(channelID string, msgs []*model.Dis
 			if err != nil {
 				return err
 			}
-			// TODO breadchris this logic should be moved into collect?
 			_, err = c.workflow.ProcessContent(context.Background(), &genapi.Content{
 				Data: []byte(transcript),
 				Type: genapi.ContentType_TEXT,

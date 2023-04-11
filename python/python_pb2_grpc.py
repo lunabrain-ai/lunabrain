@@ -36,7 +36,7 @@ class PythonStub(object):
                 )
         self.Categorize = channel.unary_unary(
                 '/python.Python/Categorize',
-                request_serializer=python__pb2.Text.SerializeToString,
+                request_serializer=python__pb2.CategorizeRequest.SerializeToString,
                 response_deserializer=python__pb2.Categories.FromString,
                 )
         self.IndexDirectory = channel.unary_unary(
@@ -121,7 +121,7 @@ def add_PythonServicer_to_server(servicer, server):
             ),
             'Categorize': grpc.unary_unary_rpc_method_handler(
                     servicer.Categorize,
-                    request_deserializer=python__pb2.Text.FromString,
+                    request_deserializer=python__pb2.CategorizeRequest.FromString,
                     response_serializer=python__pb2.Categories.SerializeToString,
             ),
             'IndexDirectory': grpc.unary_unary_rpc_method_handler(
@@ -224,7 +224,7 @@ class Python(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/python.Python/Categorize',
-            python__pb2.Text.SerializeToString,
+            python__pb2.CategorizeRequest.SerializeToString,
             python__pb2.Categories.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

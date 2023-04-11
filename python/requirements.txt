@@ -14,3 +14,10 @@ grpcio-reflection
 python-slugify
 faiss-cpu
 rank-bm25
+torch
+transformers
+pyvis
+GoogleNews
+newspaper3k
+wikipedia
+keybert

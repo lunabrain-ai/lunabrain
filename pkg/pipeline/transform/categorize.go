@@ -10,15 +10,17 @@ import (
 
 type Categorizer interface {
 	CategorizeText(text string) (*content.Content, error)
+	CategorizeTextWithCategorizer(text string, categorizer python.Categorizer) (*content.Content, error)
 }
 
 type Categorize struct {
 	client python.PythonClient
 }
 
-func (s *Categorize) CategorizeText(text string) (*content.Content, error) {
-	categories, err := s.client.Categorize(context.Background(), &python.Text{
-		Text: text,
+func (s *Categorize) CategorizeTextWithCategorizer(text string, categorizer python.Categorizer) (*content.Content, error) {
+	categories, err := s.client.Categorize(context.Background(), &python.CategorizeRequest{
+		Text:        text,
+		Categorizer: categorizer,
 	})
 	if err != nil {
 		return nil, err
@@ -32,6 +34,10 @@ func (s *Categorize) CategorizeText(text string) (*content.Content, error) {
 		TransformerID: genapi.TransformerID_CATEGORIES,
 		Data:          string(serCat),
 	}, nil
+}
+
+func (s *Categorize) CategorizeText(text string) (*content.Content, error) {
+	return s.CategorizeTextWithCategorizer(text, python.Categorizer_T5_TAG)
 }
 
 func NewCategorize(client python.PythonClient) (*Categorize, error) {

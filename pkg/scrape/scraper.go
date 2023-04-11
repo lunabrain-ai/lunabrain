@@ -23,6 +23,7 @@ type scraper struct {
 	browserDomains []string
 	config         Config
 	db             db.Store
+	chromeCtx      context.Context
 }
 
 func NewScraper(config Config, db db.Store) *scraper {
@@ -34,11 +35,35 @@ func NewScraper(config Config, db db.Store) *scraper {
 
 	parsedBrowserDomains := strings.Split(strings.ReplaceAll(config.BrowserDomains, " ", ""), ",")
 
+	o := chromedp.DefaultExecAllocatorOptions[:]
+	if config.Proxy.Host != "" {
+		o = append(o,
+			chromedp.ProxyServer(config.Proxy.Host),
+		)
+	}
+
+	o = append(o,
+		chromedp.Flag("headless", true),
+		chromedp.Flag("disable-gpu", true),
+		chromedp.Flag("no-sandbox", true),
+	)
+
+	ctx, cancel := chromedp.NewExecAllocator(
+		context.Background(), o...)
+	defer cancel()
+
+	chromeCtx, cancel := chromedp.NewContext(
+		ctx,
+		chromedp.WithDebugf(log.Printf),
+	)
+	defer cancel()
+
 	return &scraper{
 		config:         config,
 		httpClient:     client,
 		browserDomains: parsedBrowserDomains,
 		db:             db,
+		chromeCtx:      chromeCtx,
 	}
 }
 
@@ -117,32 +142,9 @@ func (p *scraper) scrapeWithClient(url string) (*Response, error) {
 }
 
 func (p *scraper) scrapeWithChrome(url string) (*Response, error) {
-	o := chromedp.DefaultExecAllocatorOptions[:]
-	if p.config.Proxy.Host != "" {
-		o = append(o,
-			chromedp.ProxyServer(p.config.Proxy.Host),
-		)
-	}
-
-	o = append(o,
-		chromedp.Flag("headless", true),
-		chromedp.Flag("disable-gpu", true),
-		chromedp.Flag("no-sandbox", true),
-	)
-
-	cx, cancel := chromedp.NewExecAllocator(
-		context.Background(), o...)
-	defer cancel()
-
-	ctx, cancel := chromedp.NewContext(
-		cx,
-		chromedp.WithDebugf(log.Printf),
-	)
-	defer cancel()
-
 	//whenPromptedLoginToProxy(ctx, p.config.Proxy.Username, p.config.Proxy.Password)
 
-	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, 10*time.Second)
+	timeoutCtx, timeoutCancel := context.WithTimeout(p.chromeCtx, 10*time.Second)
 	defer timeoutCancel()
 
 	start := time.Now()

@@ -9,13 +9,17 @@ import (
 	"strings"
 )
 
-func main() {
-	// TODO (cthompson) this should be configured with an fx module
+func setupLogging() {
 	logLevel := zerolog.InfoLevel
 	if strings.ToLower(os.Getenv("LOG_LEVEL")) == "debug" {
 		logLevel = zerolog.DebugLevel
 	}
 	log.Logger = zerolog.New(horizontal.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger().Level(logLevel)
+}
+
+func main() {
+	// TODO breadchris find a nicer way to do this?
+	setupLogging()
 
 	app, err := cli.Wire()
 	if err != nil {

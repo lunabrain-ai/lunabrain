@@ -8,7 +8,7 @@ service Python {
   rpc Summarize(SummarizeRequest) returns (SummarizeResponse);
   rpc YoutubeTranscript(Video) returns (Transcript);
   rpc Normalize(Text) returns (Text);
-  rpc Categorize(Text) returns (Categories);
+  rpc Categorize(CategorizeRequest) returns (Categories);
   rpc IndexDirectory(IndexDirectoryRequest) returns (Index);
   rpc QueryIndex(Query) returns (QueryResult);
 }
@@ -45,6 +45,16 @@ message Text {
 
 message Categories {
   repeated string categories = 1;
+}
+
+enum Categorizer {
+  T5_TAG = 0;
+  KEYBERT = 1;
+}
+
+message CategorizeRequest {
+  string text = 1;
+  Categorizer categorizer = 2;
 }
 
 enum Summarizer {

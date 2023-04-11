@@ -69,6 +69,52 @@ func (IndexType) EnumDescriptor() ([]byte, []int) {
 	return file_python_proto_rawDescGZIP(), []int{0}
 }
 
+type Categorizer int32
+
+const (
+	Categorizer_T5_TAG  Categorizer = 0
+	Categorizer_KEYBERT Categorizer = 1
+)
+
+// Enum value maps for Categorizer.
+var (
+	Categorizer_name = map[int32]string{
+		0: "T5_TAG",
+		1: "KEYBERT",
+	}
+	Categorizer_value = map[string]int32{
+		"T5_TAG":  0,
+		"KEYBERT": 1,
+	}
+)
+
+func (x Categorizer) Enum() *Categorizer {
+	p := new(Categorizer)
+	*p = x
+	return p
+}
+
+func (x Categorizer) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Categorizer) Descriptor() protoreflect.EnumDescriptor {
+	return file_python_proto_enumTypes[1].Descriptor()
+}
+
+func (Categorizer) Type() protoreflect.EnumType {
+	return &file_python_proto_enumTypes[1]
+}
+
+func (x Categorizer) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Categorizer.Descriptor instead.
+func (Categorizer) EnumDescriptor() ([]byte, []int) {
+	return file_python_proto_rawDescGZIP(), []int{1}
+}
+
 type Summarizer int32
 
 const (
@@ -99,11 +145,11 @@ func (x Summarizer) String() string {
 }
 
 func (Summarizer) Descriptor() protoreflect.EnumDescriptor {
-	return file_python_proto_enumTypes[1].Descriptor()
+	return file_python_proto_enumTypes[2].Descriptor()
 }
 
 func (Summarizer) Type() protoreflect.EnumType {
-	return &file_python_proto_enumTypes[1]
+	return &file_python_proto_enumTypes[2]
 }
 
 func (x Summarizer) Number() protoreflect.EnumNumber {
@@ -112,7 +158,7 @@ func (x Summarizer) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Summarizer.Descriptor instead.
 func (Summarizer) EnumDescriptor() ([]byte, []int) {
-	return file_python_proto_rawDescGZIP(), []int{1}
+	return file_python_proto_rawDescGZIP(), []int{2}
 }
 
 type Query struct {
@@ -429,6 +475,61 @@ func (x *Categories) GetCategories() []string {
 	return nil
 }
 
+type CategorizeRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Text        string      `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
+	Categorizer Categorizer `protobuf:"varint,2,opt,name=categorizer,proto3,enum=python.Categorizer" json:"categorizer,omitempty"`
+}
+
+func (x *CategorizeRequest) Reset() {
+	*x = CategorizeRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_python_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CategorizeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CategorizeRequest) ProtoMessage() {}
+
+func (x *CategorizeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_python_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CategorizeRequest.ProtoReflect.Descriptor instead.
+func (*CategorizeRequest) Descriptor() ([]byte, []int) {
+	return file_python_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *CategorizeRequest) GetText() string {
+	if x != nil {
+		return x.Text
+	}
+	return ""
+}
+
+func (x *CategorizeRequest) GetCategorizer() Categorizer {
+	if x != nil {
+		return x.Categorizer
+	}
+	return Categorizer_T5_TAG
+}
+
 type SummarizeRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -441,7 +542,7 @@ type SummarizeRequest struct {
 func (x *SummarizeRequest) Reset() {
 	*x = SummarizeRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_python_proto_msgTypes[6]
+		mi := &file_python_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -454,7 +555,7 @@ func (x *SummarizeRequest) String() string {
 func (*SummarizeRequest) ProtoMessage() {}
 
 func (x *SummarizeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_python_proto_msgTypes[6]
+	mi := &file_python_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -467,7 +568,7 @@ func (x *SummarizeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SummarizeRequest.ProtoReflect.Descriptor instead.
 func (*SummarizeRequest) Descriptor() ([]byte, []int) {
-	return file_python_proto_rawDescGZIP(), []int{6}
+	return file_python_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *SummarizeRequest) GetContent() string {
@@ -495,7 +596,7 @@ type SummarizeResponse struct {
 func (x *SummarizeResponse) Reset() {
 	*x = SummarizeResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_python_proto_msgTypes[7]
+		mi := &file_python_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -508,7 +609,7 @@ func (x *SummarizeResponse) String() string {
 func (*SummarizeResponse) ProtoMessage() {}
 
 func (x *SummarizeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_python_proto_msgTypes[7]
+	mi := &file_python_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -521,7 +622,7 @@ func (x *SummarizeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SummarizeResponse.ProtoReflect.Descriptor instead.
 func (*SummarizeResponse) Descriptor() ([]byte, []int) {
-	return file_python_proto_rawDescGZIP(), []int{7}
+	return file_python_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *SummarizeResponse) GetSummary() string {
@@ -542,7 +643,7 @@ type TranscribeRequest struct {
 func (x *TranscribeRequest) Reset() {
 	*x = TranscribeRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_python_proto_msgTypes[8]
+		mi := &file_python_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -555,7 +656,7 @@ func (x *TranscribeRequest) String() string {
 func (*TranscribeRequest) ProtoMessage() {}
 
 func (x *TranscribeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_python_proto_msgTypes[8]
+	mi := &file_python_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -568,7 +669,7 @@ func (x *TranscribeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TranscribeRequest.ProtoReflect.Descriptor instead.
 func (*TranscribeRequest) Descriptor() ([]byte, []int) {
-	return file_python_proto_rawDescGZIP(), []int{8}
+	return file_python_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *TranscribeRequest) GetFile() string {
@@ -589,7 +690,7 @@ type TranscribeResponse struct {
 func (x *TranscribeResponse) Reset() {
 	*x = TranscribeResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_python_proto_msgTypes[9]
+		mi := &file_python_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -602,7 +703,7 @@ func (x *TranscribeResponse) String() string {
 func (*TranscribeResponse) ProtoMessage() {}
 
 func (x *TranscribeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_python_proto_msgTypes[9]
+	mi := &file_python_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -615,7 +716,7 @@ func (x *TranscribeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TranscribeResponse.ProtoReflect.Descriptor instead.
 func (*TranscribeResponse) Descriptor() ([]byte, []int) {
-	return file_python_proto_rawDescGZIP(), []int{9}
+	return file_python_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *TranscribeResponse) GetTranscription() string {
@@ -636,7 +737,7 @@ type Video struct {
 func (x *Video) Reset() {
 	*x = Video{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_python_proto_msgTypes[10]
+		mi := &file_python_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -649,7 +750,7 @@ func (x *Video) String() string {
 func (*Video) ProtoMessage() {}
 
 func (x *Video) ProtoReflect() protoreflect.Message {
-	mi := &file_python_proto_msgTypes[10]
+	mi := &file_python_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -662,7 +763,7 @@ func (x *Video) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Video.ProtoReflect.Descriptor instead.
 func (*Video) Descriptor() ([]byte, []int) {
-	return file_python_proto_rawDescGZIP(), []int{10}
+	return file_python_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *Video) GetId() string {
@@ -685,7 +786,7 @@ type TranscriptSection struct {
 func (x *TranscriptSection) Reset() {
 	*x = TranscriptSection{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_python_proto_msgTypes[11]
+		mi := &file_python_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -698,7 +799,7 @@ func (x *TranscriptSection) String() string {
 func (*TranscriptSection) ProtoMessage() {}
 
 func (x *TranscriptSection) ProtoReflect() protoreflect.Message {
-	mi := &file_python_proto_msgTypes[11]
+	mi := &file_python_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -711,7 +812,7 @@ func (x *TranscriptSection) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TranscriptSection.ProtoReflect.Descriptor instead.
 func (*TranscriptSection) Descriptor() ([]byte, []int) {
-	return file_python_proto_rawDescGZIP(), []int{11}
+	return file_python_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *TranscriptSection) GetText() string {
@@ -746,7 +847,7 @@ type Transcript struct {
 func (x *Transcript) Reset() {
 	*x = Transcript{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_python_proto_msgTypes[12]
+		mi := &file_python_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -759,7 +860,7 @@ func (x *Transcript) String() string {
 func (*Transcript) ProtoMessage() {}
 
 func (x *Transcript) ProtoReflect() protoreflect.Message {
-	mi := &file_python_proto_msgTypes[12]
+	mi := &file_python_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -772,7 +873,7 @@ func (x *Transcript) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Transcript.ProtoReflect.Descriptor instead.
 func (*Transcript) Descriptor() ([]byte, []int) {
-	return file_python_proto_rawDescGZIP(), []int{12}
+	return file_python_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *Transcript) GetTranscript() []*TranscriptSection {
@@ -808,7 +909,13 @@ var file_python_proto_rawDesc = []byte{
 	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x65, 0x78, 0x74, 0x22, 0x2c, 0x0a, 0x0a, 0x43,
 	0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x12, 0x1e, 0x0a, 0x0a, 0x63, 0x61, 0x74,
 	0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0a, 0x63,
-	0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x22, 0x60, 0x0a, 0x10, 0x53, 0x75, 0x6d,
+	0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x22, 0x5e, 0x0a, 0x11, 0x43, 0x61, 0x74,
+	0x65, 0x67, 0x6f, 0x72, 0x69, 0x7a, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12,
+	0x0a, 0x04, 0x74, 0x65, 0x78, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x65,
+	0x78, 0x74, 0x12, 0x35, 0x0a, 0x0b, 0x63, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x7a, 0x65,
+	0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x13, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e,
+	0x2e, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x7a, 0x65, 0x72, 0x52, 0x0b, 0x63, 0x61,
+	0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x7a, 0x65, 0x72, 0x22, 0x60, 0x0a, 0x10, 0x53, 0x75, 0x6d,
 	0x6d, 0x61, 0x72, 0x69, 0x7a, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x18, 0x0a,
 	0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07,
 	0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x12, 0x32, 0x0a, 0x0a, 0x73, 0x75, 0x6d, 0x6d, 0x61,
@@ -838,36 +945,40 @@ var file_python_proto_rawDesc = []byte{
 	0x52, 0x0a, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x2a, 0x2b, 0x0a, 0x09,
 	0x49, 0x6e, 0x64, 0x65, 0x78, 0x54, 0x79, 0x70, 0x65, 0x12, 0x09, 0x0a, 0x05, 0x4c, 0x4c, 0x41,
 	0x4d, 0x41, 0x10, 0x00, 0x12, 0x09, 0x0a, 0x05, 0x46, 0x41, 0x49, 0x53, 0x53, 0x10, 0x01, 0x12,
-	0x08, 0x0a, 0x04, 0x42, 0x4d, 0x32, 0x35, 0x10, 0x02, 0x2a, 0x25, 0x0a, 0x0a, 0x53, 0x75, 0x6d,
-	0x6d, 0x61, 0x72, 0x69, 0x7a, 0x65, 0x72, 0x12, 0x0d, 0x0a, 0x09, 0x4c, 0x41, 0x4e, 0x47, 0x43,
-	0x48, 0x41, 0x49, 0x4e, 0x10, 0x00, 0x12, 0x08, 0x0a, 0x04, 0x42, 0x45, 0x52, 0x54, 0x10, 0x01,
-	0x32, 0x92, 0x03, 0x0a, 0x06, 0x50, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x12, 0x43, 0x0a, 0x0a, 0x54,
-	0x72, 0x61, 0x6e, 0x73, 0x63, 0x72, 0x69, 0x62, 0x65, 0x12, 0x19, 0x2e, 0x70, 0x79, 0x74, 0x68,
-	0x6f, 0x6e, 0x2e, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x63, 0x72, 0x69, 0x62, 0x65, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x54, 0x72,
-	0x61, 0x6e, 0x73, 0x63, 0x72, 0x69, 0x62, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x12, 0x40, 0x0a, 0x09, 0x53, 0x75, 0x6d, 0x6d, 0x61, 0x72, 0x69, 0x7a, 0x65, 0x12, 0x18, 0x2e,
-	0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x53, 0x75, 0x6d, 0x6d, 0x61, 0x72, 0x69, 0x7a, 0x65,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e,
-	0x2e, 0x53, 0x75, 0x6d, 0x6d, 0x61, 0x72, 0x69, 0x7a, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x12, 0x36, 0x0a, 0x11, 0x59, 0x6f, 0x75, 0x74, 0x75, 0x62, 0x65, 0x54, 0x72, 0x61,
-	0x6e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x12, 0x0d, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e,
-	0x2e, 0x56, 0x69, 0x64, 0x65, 0x6f, 0x1a, 0x12, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e,
-	0x54, 0x72, 0x61, 0x6e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x12, 0x27, 0x0a, 0x09, 0x4e, 0x6f,
-	0x72, 0x6d, 0x61, 0x6c, 0x69, 0x7a, 0x65, 0x12, 0x0c, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e,
-	0x2e, 0x54, 0x65, 0x78, 0x74, 0x1a, 0x0c, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x54,
-	0x65, 0x78, 0x74, 0x12, 0x2e, 0x0a, 0x0a, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x7a,
-	0x65, 0x12, 0x0c, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x54, 0x65, 0x78, 0x74, 0x1a,
-	0x12, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72,
-	0x69, 0x65, 0x73, 0x12, 0x3e, 0x0a, 0x0e, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x44, 0x69, 0x72, 0x65,
-	0x63, 0x74, 0x6f, 0x72, 0x79, 0x12, 0x1d, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x49,
-	0x6e, 0x64, 0x65, 0x78, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x1a, 0x0d, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x49, 0x6e,
-	0x64, 0x65, 0x78, 0x12, 0x30, 0x0a, 0x0a, 0x51, 0x75, 0x65, 0x72, 0x79, 0x49, 0x6e, 0x64, 0x65,
-	0x78, 0x12, 0x0d, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79,
-	0x1a, 0x13, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x52,
-	0x65, 0x73, 0x75, 0x6c, 0x74, 0x42, 0x0e, 0x5a, 0x0c, 0x2e, 0x2f, 0x67, 0x65, 0x6e, 0x2f, 0x70,
-	0x79, 0x74, 0x68, 0x6f, 0x6e, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x08, 0x0a, 0x04, 0x42, 0x4d, 0x32, 0x35, 0x10, 0x02, 0x2a, 0x26, 0x0a, 0x0b, 0x43, 0x61, 0x74,
+	0x65, 0x67, 0x6f, 0x72, 0x69, 0x7a, 0x65, 0x72, 0x12, 0x0a, 0x0a, 0x06, 0x54, 0x35, 0x5f, 0x54,
+	0x41, 0x47, 0x10, 0x00, 0x12, 0x0b, 0x0a, 0x07, 0x4b, 0x45, 0x59, 0x42, 0x45, 0x52, 0x54, 0x10,
+	0x01, 0x2a, 0x25, 0x0a, 0x0a, 0x53, 0x75, 0x6d, 0x6d, 0x61, 0x72, 0x69, 0x7a, 0x65, 0x72, 0x12,
+	0x0d, 0x0a, 0x09, 0x4c, 0x41, 0x4e, 0x47, 0x43, 0x48, 0x41, 0x49, 0x4e, 0x10, 0x00, 0x12, 0x08,
+	0x0a, 0x04, 0x42, 0x45, 0x52, 0x54, 0x10, 0x01, 0x32, 0x9f, 0x03, 0x0a, 0x06, 0x50, 0x79, 0x74,
+	0x68, 0x6f, 0x6e, 0x12, 0x43, 0x0a, 0x0a, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x63, 0x72, 0x69, 0x62,
+	0x65, 0x12, 0x19, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x54, 0x72, 0x61, 0x6e, 0x73,
+	0x63, 0x72, 0x69, 0x62, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x70,
+	0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x63, 0x72, 0x69, 0x62, 0x65,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x40, 0x0a, 0x09, 0x53, 0x75, 0x6d, 0x6d,
+	0x61, 0x72, 0x69, 0x7a, 0x65, 0x12, 0x18, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x53,
+	0x75, 0x6d, 0x6d, 0x61, 0x72, 0x69, 0x7a, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x19, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x53, 0x75, 0x6d, 0x6d, 0x61, 0x72, 0x69,
+	0x7a, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x36, 0x0a, 0x11, 0x59, 0x6f,
+	0x75, 0x74, 0x75, 0x62, 0x65, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x12,
+	0x0d, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x56, 0x69, 0x64, 0x65, 0x6f, 0x1a, 0x12,
+	0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x54, 0x72, 0x61, 0x6e, 0x73, 0x63, 0x72, 0x69,
+	0x70, 0x74, 0x12, 0x27, 0x0a, 0x09, 0x4e, 0x6f, 0x72, 0x6d, 0x61, 0x6c, 0x69, 0x7a, 0x65, 0x12,
+	0x0c, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x54, 0x65, 0x78, 0x74, 0x1a, 0x0c, 0x2e,
+	0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x54, 0x65, 0x78, 0x74, 0x12, 0x3b, 0x0a, 0x0a, 0x43,
+	0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x7a, 0x65, 0x12, 0x19, 0x2e, 0x70, 0x79, 0x74, 0x68,
+	0x6f, 0x6e, 0x2e, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x7a, 0x65, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x43, 0x61,
+	0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x12, 0x3e, 0x0a, 0x0e, 0x49, 0x6e, 0x64, 0x65,
+	0x78, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x79, 0x12, 0x1d, 0x2e, 0x70, 0x79, 0x74,
+	0x68, 0x6f, 0x6e, 0x2e, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x44, 0x69, 0x72, 0x65, 0x63, 0x74, 0x6f,
+	0x72, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0d, 0x2e, 0x70, 0x79, 0x74, 0x68,
+	0x6f, 0x6e, 0x2e, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x12, 0x30, 0x0a, 0x0a, 0x51, 0x75, 0x65, 0x72,
+	0x79, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x12, 0x0d, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e,
+	0x51, 0x75, 0x65, 0x72, 0x79, 0x1a, 0x13, 0x2e, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x2e, 0x51,
+	0x75, 0x65, 0x72, 0x79, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x42, 0x0e, 0x5a, 0x0c, 0x2e, 0x2f,
+	0x67, 0x65, 0x6e, 0x2f, 0x70, 0x79, 0x74, 0x68, 0x6f, 0x6e, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
 var (
@@ -882,50 +993,53 @@ func file_python_proto_rawDescGZIP() []byte {
 	return file_python_proto_rawDescData
 }
 
-var file_python_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_python_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_python_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_python_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_python_proto_goTypes = []interface{}{
 	(IndexType)(0),                // 0: python.IndexType
-	(Summarizer)(0),               // 1: python.Summarizer
-	(*Query)(nil),                 // 2: python.Query
-	(*QueryResult)(nil),           // 3: python.QueryResult
-	(*IndexDirectoryRequest)(nil), // 4: python.IndexDirectoryRequest
-	(*Index)(nil),                 // 5: python.Index
-	(*Text)(nil),                  // 6: python.Text
-	(*Categories)(nil),            // 7: python.Categories
-	(*SummarizeRequest)(nil),      // 8: python.SummarizeRequest
-	(*SummarizeResponse)(nil),     // 9: python.SummarizeResponse
-	(*TranscribeRequest)(nil),     // 10: python.TranscribeRequest
-	(*TranscribeResponse)(nil),    // 11: python.TranscribeResponse
-	(*Video)(nil),                 // 12: python.Video
-	(*TranscriptSection)(nil),     // 13: python.TranscriptSection
-	(*Transcript)(nil),            // 14: python.Transcript
+	(Categorizer)(0),              // 1: python.Categorizer
+	(Summarizer)(0),               // 2: python.Summarizer
+	(*Query)(nil),                 // 3: python.Query
+	(*QueryResult)(nil),           // 4: python.QueryResult
+	(*IndexDirectoryRequest)(nil), // 5: python.IndexDirectoryRequest
+	(*Index)(nil),                 // 6: python.Index
+	(*Text)(nil),                  // 7: python.Text
+	(*Categories)(nil),            // 8: python.Categories
+	(*CategorizeRequest)(nil),     // 9: python.CategorizeRequest
+	(*SummarizeRequest)(nil),      // 10: python.SummarizeRequest
+	(*SummarizeResponse)(nil),     // 11: python.SummarizeResponse
+	(*TranscribeRequest)(nil),     // 12: python.TranscribeRequest
+	(*TranscribeResponse)(nil),    // 13: python.TranscribeResponse
+	(*Video)(nil),                 // 14: python.Video
+	(*TranscriptSection)(nil),     // 15: python.TranscriptSection
+	(*Transcript)(nil),            // 16: python.Transcript
 }
 var file_python_proto_depIdxs = []int32{
 	0,  // 0: python.Query.type:type_name -> python.IndexType
 	0,  // 1: python.IndexDirectoryRequest.type:type_name -> python.IndexType
 	0,  // 2: python.Index.type:type_name -> python.IndexType
-	1,  // 3: python.SummarizeRequest.summarizer:type_name -> python.Summarizer
-	13, // 4: python.Transcript.transcript:type_name -> python.TranscriptSection
-	10, // 5: python.Python.Transcribe:input_type -> python.TranscribeRequest
-	8,  // 6: python.Python.Summarize:input_type -> python.SummarizeRequest
-	12, // 7: python.Python.YoutubeTranscript:input_type -> python.Video
-	6,  // 8: python.Python.Normalize:input_type -> python.Text
-	6,  // 9: python.Python.Categorize:input_type -> python.Text
-	4,  // 10: python.Python.IndexDirectory:input_type -> python.IndexDirectoryRequest
-	2,  // 11: python.Python.QueryIndex:input_type -> python.Query
-	11, // 12: python.Python.Transcribe:output_type -> python.TranscribeResponse
-	9,  // 13: python.Python.Summarize:output_type -> python.SummarizeResponse
-	14, // 14: python.Python.YoutubeTranscript:output_type -> python.Transcript
-	6,  // 15: python.Python.Normalize:output_type -> python.Text
-	7,  // 16: python.Python.Categorize:output_type -> python.Categories
-	5,  // 17: python.Python.IndexDirectory:output_type -> python.Index
-	3,  // 18: python.Python.QueryIndex:output_type -> python.QueryResult
-	12, // [12:19] is the sub-list for method output_type
-	5,  // [5:12] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	1,  // 3: python.CategorizeRequest.categorizer:type_name -> python.Categorizer
+	2,  // 4: python.SummarizeRequest.summarizer:type_name -> python.Summarizer
+	15, // 5: python.Transcript.transcript:type_name -> python.TranscriptSection
+	12, // 6: python.Python.Transcribe:input_type -> python.TranscribeRequest
+	10, // 7: python.Python.Summarize:input_type -> python.SummarizeRequest
+	14, // 8: python.Python.YoutubeTranscript:input_type -> python.Video
+	7,  // 9: python.Python.Normalize:input_type -> python.Text
+	9,  // 10: python.Python.Categorize:input_type -> python.CategorizeRequest
+	5,  // 11: python.Python.IndexDirectory:input_type -> python.IndexDirectoryRequest
+	3,  // 12: python.Python.QueryIndex:input_type -> python.Query
+	13, // 13: python.Python.Transcribe:output_type -> python.TranscribeResponse
+	11, // 14: python.Python.Summarize:output_type -> python.SummarizeResponse
+	16, // 15: python.Python.YoutubeTranscript:output_type -> python.Transcript
+	7,  // 16: python.Python.Normalize:output_type -> python.Text
+	8,  // 17: python.Python.Categorize:output_type -> python.Categories
+	6,  // 18: python.Python.IndexDirectory:output_type -> python.Index
+	4,  // 19: python.Python.QueryIndex:output_type -> python.QueryResult
+	13, // [13:20] is the sub-list for method output_type
+	6,  // [6:13] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_python_proto_init() }
@@ -1007,7 +1121,7 @@ func file_python_proto_init() {
 			}
 		}
 		file_python_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SummarizeRequest); i {
+			switch v := v.(*CategorizeRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1019,7 +1133,7 @@ func file_python_proto_init() {
 			}
 		}
 		file_python_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SummarizeResponse); i {
+			switch v := v.(*SummarizeRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1031,7 +1145,7 @@ func file_python_proto_init() {
 			}
 		}
 		file_python_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*TranscribeRequest); i {
+			switch v := v.(*SummarizeResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1043,7 +1157,7 @@ func file_python_proto_init() {
 			}
 		}
 		file_python_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*TranscribeResponse); i {
+			switch v := v.(*TranscribeRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1055,7 +1169,7 @@ func file_python_proto_init() {
 			}
 		}
 		file_python_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Video); i {
+			switch v := v.(*TranscribeResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1067,7 +1181,7 @@ func file_python_proto_init() {
 			}
 		}
 		file_python_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*TranscriptSection); i {
+			switch v := v.(*Video); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1079,6 +1193,18 @@ func file_python_proto_init() {
 			}
 		}
 		file_python_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*TranscriptSection); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_python_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Transcript); i {
 			case 0:
 				return &v.state
@@ -1096,8 +1222,8 @@ func file_python_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_python_proto_rawDesc,
-			NumEnums:      2,
-			NumMessages:   13,
+			NumEnums:      3,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

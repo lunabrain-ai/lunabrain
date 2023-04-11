@@ -11,6 +11,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 )
@@ -38,6 +39,61 @@ func serverError(w http.ResponseWriter, err error) {
 }
 
 func (a *APIHTTPServer) getClientRoutes(r chi.Router) {
+	r.Get("/hn", func(w http.ResponseWriter, r *http.Request) {
+		stories, err := a.db.GetTopHNStories()
+		if err != nil {
+			serverError(w, err)
+			return
+		}
+
+		var htmlStories []html.Story
+		for _, story := range stories {
+			commentsCount := len(story.Comments.Data)
+
+			urlDomain := ""
+			if story.URL != "" {
+				storyURL, err := url.Parse(story.URL)
+				if err == nil {
+					urlDomain = storyURL.Host
+				}
+			}
+			s := html.Story{
+				HNStory:       story,
+				URLDomain:     urlDomain,
+				Item:          story.Data.Data,
+				CommentsCount: commentsCount,
+			}
+			if story.Data.Data != nil && story.Data.Data.Text != nil {
+				s.Text = *story.Data.Data.Text
+			}
+			for _, nc := range story.Content.NormalizedContent {
+				for _, tc := range nc.TransformedContent {
+					if tc.TransformerID == int32(genapi.TransformerID_SUMMARY) {
+						s.Summary = tc.Data
+					}
+					if tc.TransformerID == int32(genapi.TransformerID_CATEGORIES) {
+						err = json.Unmarshal([]byte(tc.Data), &s.Categories)
+						if err != nil {
+							log.Warn().Err(err).Msg("Failed to unmarshal categories")
+						}
+						if len(s.Categories) > 3 {
+							s.Categories = s.Categories[:3]
+						}
+					}
+				}
+			}
+			htmlStories = append(htmlStories, s)
+		}
+
+		p := html.HNParams{
+			Stories: htmlStories,
+		}
+		err = a.htmlContent.WriteHN(w, p)
+		if err != nil {
+			serverError(w, err)
+		}
+	})
+
 	r.Post("/save", func(w http.ResponseWriter, r *http.Request) {
 		err := r.ParseMultipartForm(10 << 20) // 10 MB
 		if err != nil {

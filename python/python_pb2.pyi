@@ -8,14 +8,24 @@ BERT: Summarizer
 BM25: IndexType
 DESCRIPTOR: _descriptor.FileDescriptor
 FAISS: IndexType
+KEYBERT: Categorizer
 LANGCHAIN: Summarizer
 LLAMA: IndexType
+T5_TAG: Categorizer
 
 class Categories(_message.Message):
     __slots__ = ["categories"]
     CATEGORIES_FIELD_NUMBER: _ClassVar[int]
     categories: _containers.RepeatedScalarFieldContainer[str]
     def __init__(self, categories: _Optional[_Iterable[str]] = ...) -> None: ...
+
+class CategorizeRequest(_message.Message):
+    __slots__ = ["categorizer", "text"]
+    CATEGORIZER_FIELD_NUMBER: _ClassVar[int]
+    TEXT_FIELD_NUMBER: _ClassVar[int]
+    categorizer: Categorizer
+    text: str
+    def __init__(self, text: _Optional[str] = ..., categorizer: _Optional[_Union[Categorizer, str]] = ...) -> None: ...
 
 class Index(_message.Message):
     __slots__ = ["id", "type"]
@@ -104,6 +114,9 @@ class Video(_message.Message):
     def __init__(self, id: _Optional[str] = ...) -> None: ...
 
 class IndexType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = []
+
+class Categorizer(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = []
 
 class Summarizer(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):

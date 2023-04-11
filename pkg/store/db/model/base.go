@@ -2,6 +2,7 @@ package model
 
 import (
 	"github.com/google/uuid"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"time"
 )
@@ -12,6 +13,11 @@ type Base struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt *time.Time `sql:"index"`
+}
+
+type BaseDoc[T any] struct {
+	Base
+	Doc datatypes.JSONType[T]
 }
 
 // BeforeCreate will set a UUID.

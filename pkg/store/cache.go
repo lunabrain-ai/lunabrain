@@ -7,7 +7,7 @@ import (
 	"path"
 )
 
-const name = ".lunabrain"
+const defaultName = ".lunabrain"
 
 type Cache interface {
 	GetFile(name string) (string, error)
@@ -24,31 +24,31 @@ func (c *FolderCache) GetFile(name string) (string, error) {
 
 func (c *FolderCache) GetFolder(name string) (string, error) {
 	p := path.Join(c.dir, name)
-	return p, ensureDirExists(p)
+	return p, ensureDirExists(p, name)
 }
 
-func ensureDirExists(p string) error {
+func ensureDirExists(p, dirName string) error {
 	if _, err := os.Stat(p); os.IsNotExist(err) {
 		if err := os.Mkdir(p, 0700); err != nil {
-			return errors.Wrapf(err, "could not create folder: %v", name)
+			return errors.Wrapf(err, "could not create folder: %v", dirName)
 		}
 	}
 	return nil
 }
 
-func createLocalDir() (string, error) {
+func createLocalDir(dirName string) (string, error) {
 	// Get the current user
 	u, err := user.Current()
 	if err != nil {
 		return "", errors.Wrapf(err, "could not get current user")
 	}
 
-	p := path.Join(u.HomeDir, "/", name)
-	return p, ensureDirExists(p)
+	p := path.Join(u.HomeDir, "/", dirName)
+	return p, ensureDirExists(p, dirName)
 }
 
-func NewFolderCache() (*FolderCache, error) {
-	folder, err := createLocalDir()
+func NewFolderCacheWithName(name string) (*FolderCache, error) {
+	folder, err := createLocalDir(name)
 	if err != nil {
 		return nil, err
 	}
@@ -56,4 +56,8 @@ func NewFolderCache() (*FolderCache, error) {
 	return &FolderCache{
 		dir: folder,
 	}, nil
+}
+
+func NewFolderCache() (*FolderCache, error) {
+	return NewFolderCacheWithName(defaultName)
 }

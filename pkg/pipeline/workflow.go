@@ -118,11 +118,17 @@ func (s *ContentWorkflow) ProcessContent(ctx context.Context, content *genapi.Co
 			}
 			transformedContent = append(transformedContent, summary)
 
-			categories, err := s.categorizer.CategorizeText(c.Data)
-			if err != nil {
-				return uuid.UUID{}, errors.Wrapf(err, "unable to categorize normalized content")
+			categorizers := []python.Categorizer{
+				python.Categorizer_T5_TAG,
+				python.Categorizer_KEYBERT,
 			}
-			transformedContent = append(transformedContent, categories)
+			for _, categorizer := range categorizers {
+				categories, err := s.categorizer.CategorizeTextWithCategorizer(c.Data, categorizer)
+				if err != nil {
+					return uuid.UUID{}, errors.Wrapf(err, "unable to categorize normalized content")
+				}
+				transformedContent = append(transformedContent, categories)
+			}
 		}
 
 		_, err = s.db.SaveTransformedContent(normalContentIDs[i], transformedContent)

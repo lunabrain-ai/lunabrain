@@ -47,6 +47,7 @@ require (
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.2.0 // indirect
+	github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8 // indirect
 	github.com/VividCortex/gohistogram v1.0.0 // indirect
 	github.com/alexferrari88/gohn v0.7.5 // indirect
 	github.com/andybalholm/cascadia v1.3.1 // indirect
@@ -56,6 +57,7 @@ require (
 	github.com/bwmarrin/dgvoice v0.0.0-20210225172318-caaac756e02e // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chromedp/sysutil v1.0.0 // indirect
+	github.com/cloudflare/circl v1.1.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dlclark/regexp2 v1.9.0 // indirect
@@ -69,6 +71,7 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/go-shiori/dom v0.0.0-20210627111528-4e4722cd0d65 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
+	github.com/gobeam/stringy v0.0.6 // indirect
 	github.com/gobwas/httphead v0.1.0 // indirect
 	github.com/gobwas/pool v0.2.1 // indirect
 	github.com/gobwas/ws v1.1.0 // indirect
@@ -79,6 +82,8 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/google/go-github/v51 v51.0.0 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/safehtml v0.1.0 // indirect
 	github.com/google/subcommands v1.0.1 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.3 // indirect

@@ -7,7 +7,9 @@ import (
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"github.com/rs/zerolog/log"
+	"gorm.io/datatypes"
 )
 
 // HNCollect collects messages from Hacker News
@@ -17,15 +19,24 @@ type HNCollect struct {
 	workflow pipeline.Workflow
 }
 
+type HNStory struct {
+	model.Base
+
+	Data datatypes.JSONType[*gohn.Story]
+}
+
 func (c *HNCollect) Collect() error {
 	hn := gohn.NewClient(nil)
 
 	ctx := context.Background()
-	topStoriesIds, _ := hn.Stories.GetTopIDs(ctx)
+	topStoriesIds, err := hn.Stories.GetTopIDs(ctx)
+	if err != nil {
+		return err
+	}
 
-	frontPageStories := topStoriesIds[:30]
+	frontPageStories := topStoriesIds[:5]
 
-	for _, storyID := range frontPageStories {
+	for i, storyID := range frontPageStories {
 		story, _ := hn.Items.Get(ctx, *storyID)
 		if story.URL == nil {
 			// TODO breadchris this only supports stories that have urls right now
@@ -33,8 +44,9 @@ func (c *HNCollect) Collect() error {
 			continue
 		}
 
-		if _, err := c.db.GetHNStory(*story.ID); err == nil {
-			log.Debug().Err(err).Msg("story already processed")
+		comments, err := hn.Items.FetchAllDescendants(ctx, story, nil)
+		if err != nil {
+			log.Warn().Err(err).Msg("error fetching hn comments")
 			continue
 		}
 
@@ -48,13 +60,13 @@ func (c *HNCollect) Collect() error {
 			log.Warn().Err(err).Msg("error processing content")
 			continue
 		}
-		_, err = c.db.StoreHNStory(*story.ID, *story.URL, id)
+
+		_, err = c.db.SaveHNStory(*story.ID, *story.URL, i, id, story, comments)
 		if err != nil {
 			log.Warn().Err(err).Msg("error storing hn story")
 			continue
 		}
 	}
-
 	return nil
 }
 

@@ -2,6 +2,7 @@ package db
 
 import (
 	"encoding/json"
+	"github.com/alexferrari88/gohn/pkg/gohn"
 	"github.com/google/uuid"
 	"github.com/google/wire"
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
@@ -37,8 +38,9 @@ type Store interface {
 	GetDiscordMessages(chanID string) ([]*model.DiscordMessage, error)
 	GetLatestDiscordTranscript() (*model.DiscordTranscript, error)
 	GetLatestDiscordMessage() (*model.DiscordMessage, error)
-	StoreHNStory(ID int, url string, contentID uuid.UUID) (*model.HNStory, error)
+	SaveHNStory(ID int, url string, position int, contentID uuid.UUID, story *gohn.Item, comments gohn.ItemsIndex) (*model.HNStory, error)
 	GetHNStory(ID int) (*model.HNStory, error)
+	GetTopHNStories() ([]model.HNStory, error)
 	AddContentToIndex(contentID uuid.UUID, indexID uuid.UUID) error
 }
 
@@ -46,8 +48,10 @@ type dbStore struct {
 	db *gorm.DB
 }
 
+var _ Store = (*dbStore)(nil)
+
 func NewDB(cache *store.FolderCache) (*dbStore, error) {
-	db, err := connect(cache)
+	db, err := Connect(cache)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not connect to database: %v", err)
 	}
@@ -82,7 +86,7 @@ func (s *dbStore) GetAllContent(page, limit int) ([]model.Content, *Pagination, 
 		Preload(clause.Associations).
 		Find(&content)
 	if res.Error != nil {
-		return nil, nil, errors.Wrapf(res.Error, "could not get content: %v", res.Error)
+		return nil, nil, errors.Wrapf(res.Error, "could not get content")
 	}
 
 	// TODO breadchris this seems like a problem with gorm and preloading associations
@@ -91,7 +95,7 @@ func (s *dbStore) GetAllContent(page, limit int) ([]model.Content, *Pagination, 
 			var transformedContent []model.TransformedContent
 			res = s.db.Find(&transformedContent, "normalized_content_id = ?", nc.ID)
 			if res.Error != nil {
-				return nil, nil, errors.Wrapf(res.Error, "could not get transformed content: %v", res.Error)
+				return nil, nil, errors.Wrapf(res.Error, "could not get transformed content")
 			}
 			content[i].NormalizedContent[j].TransformedContent = transformedContent
 		}
@@ -103,46 +107,82 @@ func (s *dbStore) GetContentByID(contentID uuid.UUID) (*model.Content, error) {
 	var content model.Content
 	res := s.db.Where("id = ?", contentID).Preload(clause.Associations).First(&content)
 	if res.Error != nil {
-		return nil, errors.Wrapf(res.Error, "could not get content: %v", res.Error)
+		return nil, errors.Wrapf(res.Error, "could not get content")
 	}
+
+	// TODO breadchris this seems like a problem with gorm and preloading associations
 	for j, nc := range content.NormalizedContent {
 		var transformedContent []model.TransformedContent
 		res = s.db.Find(&transformedContent, "normalized_content_id = ?", nc.ID)
 		if res.Error != nil {
-			return nil, errors.Wrapf(res.Error, "could not get transformed content: %v", res.Error)
+			return nil, errors.Wrapf(res.Error, "could not get transformed content")
 		}
 		content.NormalizedContent[j].TransformedContent = transformedContent
 	}
 	return &content, nil
 }
 
-func (s *dbStore) StoreHNStory(ID int, url string, contentID uuid.UUID) (*model.HNStory, error) {
-	var hnStory model.HNStory
-
-	res := s.db.Create(&model.HNStory{
+func (s *dbStore) SaveHNStory(ID int, url string, position int, contentID uuid.UUID, story *gohn.Item, comments gohn.ItemsIndex) (*model.HNStory, error) {
+	hnStory := &model.HNStory{
 		ID:        ID,
 		URL:       url,
+		Position:  position + 1,
 		ContentID: contentID,
-	})
-	if res.Error != nil {
-		return nil, errors.Wrapf(res.Error, "could not save hn story: %v", res.Error)
+		Data: datatypes.JSONType[*gohn.Item]{
+			Data: story,
+		},
+		Comments: datatypes.JSONType[gohn.ItemsIndex]{
+			Data: comments,
+		},
 	}
-	return &hnStory, nil
+
+	var existingStory model.HNStory
+	res := s.db.First(&existingStory, ID)
+	if res.Error != nil {
+		if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			return nil, errors.Wrapf(res.Error, "could not get hn story")
+		}
+		res = s.db.Create(hnStory)
+		if res.Error != nil {
+			return nil, errors.Wrapf(res.Error, "could not create hn story")
+		}
+		return hnStory, nil
+	}
+
+	res = s.db.Model(&model.HNStory{}).Where("position = ?", position).Update("position", nil)
+	if res.Error != nil && !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		return nil, errors.Wrapf(res.Error, "could not update hn story position")
+	}
+
+	res = s.db.Model(&existingStory).Where(ID).Updates(hnStory)
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not update hn story")
+	}
+	return hnStory, nil
 }
 
 func (s *dbStore) GetHNStory(ID int) (*model.HNStory, error) {
 	var hnStory model.HNStory
 	res := s.db.Where("id = ?", ID).First(&hnStory)
 	if res.Error != nil {
-		return nil, errors.Wrapf(res.Error, "could not get hn story: %v", res.Error)
+		return nil, errors.Wrapf(res.Error, "could not get hn story")
 	}
 	return &hnStory, nil
+}
+
+func (s *dbStore) GetTopHNStories() ([]model.HNStory, error) {
+	var hnStories []model.HNStory
+	res := s.db.Where("position IS NOT NULL").Order("position asc").Limit(30).Preload("Content").Preload("Content.NormalizedContent").Preload("Content.NormalizedContent.TransformedContent").Find(&hnStories)
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not get hn stories")
+	}
+	return hnStories, nil
 }
 
 func (s *dbStore) AddContentToIndex(contentID uuid.UUID, indexID uuid.UUID) error {
 	res := s.db.Model(&model.Content{}).Where("id = ?", contentID).Update("index_id", indexID)
 	if res.Error != nil {
-		return errors.Wrapf(res.Error, "could not add content to index: %v", res.Error)
+		return errors.Wrapf(res.Error, "could not add content to index")
 	}
 	return nil
 }
@@ -151,7 +191,7 @@ func (s *dbStore) GetDiscordMessages(chanID string) ([]*model.DiscordMessage, er
 	var discordMessages []*model.DiscordMessage
 	res := s.db.Where("discord_channel_id = ?", chanID).Order("created_at DESC").Find(&discordMessages)
 	if res.Error != nil {
-		return nil, errors.Wrapf(res.Error, "could not get discord messages: %v", res.Error)
+		return nil, errors.Wrapf(res.Error, "could not get discord messages")
 	}
 	return discordMessages, nil
 }
@@ -160,7 +200,7 @@ func (s *dbStore) GetLatestDiscordMessage() (*model.DiscordMessage, error) {
 	var discordMessage model.DiscordMessage
 	res := s.db.Model(&discordMessage).Order("created_at DESC").First(&discordMessage)
 	if res.Error != nil {
-		return nil, errors.Wrapf(res.Error, "could not get latest discord message: %v", res.Error)
+		return nil, errors.Wrapf(res.Error, "could not get latest discord message")
 	}
 	return &discordMessage, nil
 }
@@ -169,7 +209,7 @@ func (s *dbStore) GetLatestDiscordTranscript() (*model.DiscordTranscript, error)
 	var discordTranscript model.DiscordTranscript
 	res := s.db.Model(&discordTranscript).Order("created_at DESC").First(&discordTranscript)
 	if res.Error != nil {
-		return nil, errors.Wrapf(res.Error, "could not get latest discord transcript: %v", res.Error)
+		return nil, errors.Wrapf(res.Error, "could not get latest discord transcript")
 	}
 	return &discordTranscript, nil
 }
@@ -182,7 +222,7 @@ func (s *dbStore) StoreDiscordTranscript(chanID, startMsg, endMsg, transcript st
 		EndMessageID:     endMsg,
 	})
 	if res.Error != nil {
-		return errors.Wrapf(res.Error, "could not save discord transcript: %v", res.Error)
+		return errors.Wrapf(res.Error, "could not save discord transcript")
 	}
 	return nil
 }
@@ -217,7 +257,7 @@ func (s *dbStore) SaveContent(contentType genapi.ContentType, data string, metad
 	res := s.db.Create(&content)
 
 	if res.Error != nil {
-		return uuid.UUID{}, errors.Wrapf(res.Error, "could not save content: %v", res.Error)
+		return uuid.UUID{}, errors.Wrapf(res.Error, "could not save content")
 	}
 	return content.ID, nil
 }
@@ -233,7 +273,7 @@ func (s *dbStore) SaveNormalizedContent(contentID uuid.UUID, normalContent []*no
 
 		res := s.db.Create(&nc)
 		if res.Error != nil {
-			return nil, errors.Wrapf(res.Error, "could not save normalContent: %v", res.Error)
+			return nil, errors.Wrapf(res.Error, "could not save normalContent")
 		}
 		normalContentIDs = append(normalContentIDs, nc.ID)
 	}
@@ -251,7 +291,7 @@ func (s *dbStore) SaveTransformedContent(normalContentID uuid.UUID, transformedC
 
 		res := s.db.Create(&tc)
 		if res.Error != nil {
-			return nil, errors.Wrapf(res.Error, "could not save transformedContent: %v", res.Error)
+			return nil, errors.Wrapf(res.Error, "could not save transformedContent")
 		}
 		transformedContentIDs = append(transformedContentIDs, tc.ID)
 	}
@@ -265,7 +305,7 @@ func (s *dbStore) SaveLocatedContent(contentID uuid.UUID, data string) (uuid.UUI
 	}
 	res := s.db.Create(&locContent)
 	if res.Error != nil {
-		return uuid.UUID{}, errors.Wrapf(res.Error, "could not save locContent: %v", res.Error)
+		return uuid.UUID{}, errors.Wrapf(res.Error, "could not save locContent")
 	}
 	return locContent.ID, nil
 }

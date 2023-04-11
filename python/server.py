@@ -21,6 +21,7 @@ import grpc
 import whisper
 from youtube_transcript_api import YouTubeTranscriptApi
 import normalize
+from keybert import KeyBERT
 
 if os.environ.get('LOG_LEVEL') is not None and os.environ.get('LOG_LEVEL').lower() == "debug":
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -29,6 +30,7 @@ if os.environ.get('LOG_LEVEL') is not None and os.environ.get('LOG_LEVEL').lower
 llm = OpenAI(temperature=0.9)
 
 model = whisper.load_model("base")
+kw_model = KeyBERT()
 
 normalizer = normalize.Normalizer()
 categorizer = categorize.Categorizer()
@@ -79,8 +81,15 @@ class PythonSerivce(PythonServicer):
         normalized = normalizer.normalize(request.text)
         return python_pb2.Text(text=normalized)
 
-    def Categorize(self, request: python_pb2.Text, context):
-        categories = categorizer.categorize(request.text)
+    def Categorize(self, request: python_pb2.CategorizeRequest, context):
+        print("Categorizing with", request.categorizer)
+        if request.categorizer == python_pb2.T5_TAG:
+            categories = categorizer.categorize(request.text)
+        elif request.categorizer == python_pb2.KEYBERT:
+            keywords = kw_model.extract_keywords(request.text, keyphrase_ngram_range=(1, 2))
+            categories = [k[0] for k in keywords]
+        else:
+            raise Exception(f"Unknown categorizer: {request.categorizer}")
         return python_pb2.Categories(categories=categories)
 
     def IndexDirectory(self, request: python_pb2.IndexDirectoryRequest, context):

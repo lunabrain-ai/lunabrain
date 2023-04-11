@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-bs-theme="dark">
 
 <head>
     <title>{{.Title}}</title>
-    <link rel="stylesheet" href="/css/sakura.css">
+    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css">
     <style>
         nav ul {
             display: flex;
@@ -25,13 +25,15 @@
 
 <body>
 <nav>
-    <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/save">Save</a></li>
-        <li><a href="/search">Search</a></li>
+    <ul class="nav">
+        {{ range $i, $nav := .Nav}}
+        <li class="nav-item"><a class="nav-link" href="{{$nav.Route}}">{{$nav.Name}}</a></li>
+        {{end}}
     </ul>
 </nav>
-{{block "slot" .}}{{end}}
+<div class="container">
+    {{block "slot" .}}{{end}}
+</div>
 </body>
 
 </html>

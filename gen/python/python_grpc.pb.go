@@ -22,7 +22,7 @@ type PythonClient interface {
 	Summarize(ctx context.Context, in *SummarizeRequest, opts ...grpc.CallOption) (*SummarizeResponse, error)
 	YoutubeTranscript(ctx context.Context, in *Video, opts ...grpc.CallOption) (*Transcript, error)
 	Normalize(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Text, error)
-	Categorize(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Categories, error)
+	Categorize(ctx context.Context, in *CategorizeRequest, opts ...grpc.CallOption) (*Categories, error)
 	IndexDirectory(ctx context.Context, in *IndexDirectoryRequest, opts ...grpc.CallOption) (*Index, error)
 	QueryIndex(ctx context.Context, in *Query, opts ...grpc.CallOption) (*QueryResult, error)
 }
@@ -71,7 +71,7 @@ func (c *pythonClient) Normalize(ctx context.Context, in *Text, opts ...grpc.Cal
 	return out, nil
 }
 
-func (c *pythonClient) Categorize(ctx context.Context, in *Text, opts ...grpc.CallOption) (*Categories, error) {
+func (c *pythonClient) Categorize(ctx context.Context, in *CategorizeRequest, opts ...grpc.CallOption) (*Categories, error) {
 	out := new(Categories)
 	err := c.cc.Invoke(ctx, "/python.Python/Categorize", in, out, opts...)
 	if err != nil {
@@ -106,7 +106,7 @@ type PythonServer interface {
 	Summarize(context.Context, *SummarizeRequest) (*SummarizeResponse, error)
 	YoutubeTranscript(context.Context, *Video) (*Transcript, error)
 	Normalize(context.Context, *Text) (*Text, error)
-	Categorize(context.Context, *Text) (*Categories, error)
+	Categorize(context.Context, *CategorizeRequest) (*Categories, error)
 	IndexDirectory(context.Context, *IndexDirectoryRequest) (*Index, error)
 	QueryIndex(context.Context, *Query) (*QueryResult, error)
 	mustEmbedUnimplementedPythonServer()
@@ -128,7 +128,7 @@ func (UnimplementedPythonServer) YoutubeTranscript(context.Context, *Video) (*Tr
 func (UnimplementedPythonServer) Normalize(context.Context, *Text) (*Text, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Normalize not implemented")
 }
-func (UnimplementedPythonServer) Categorize(context.Context, *Text) (*Categories, error) {
+func (UnimplementedPythonServer) Categorize(context.Context, *CategorizeRequest) (*Categories, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Categorize not implemented")
 }
 func (UnimplementedPythonServer) IndexDirectory(context.Context, *IndexDirectoryRequest) (*Index, error) {
@@ -223,7 +223,7 @@ func _Python_Normalize_Handler(srv interface{}, ctx context.Context, dec func(in
 }
 
 func _Python_Categorize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Text)
+	in := new(CategorizeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -235,7 +235,7 @@ func _Python_Categorize_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: "/python.Python/Categorize",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PythonServer).Categorize(ctx, req.(*Text))
+		return srv.(PythonServer).Categorize(ctx, req.(*CategorizeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

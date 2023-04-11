@@ -5,13 +5,14 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	goose "github.com/advancedlogic/GoOse"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"strings"
 )
 
-func FormatHTMLAsArticle(html, nurl string) (content string, err error) {
+func FormatHTMLAsArticle(html, nurl string) (string, error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = errors.Wrapf(err, "panic while parsing html: %v", r)
+			log.Warn().Msgf("panic while parsing html: %v", r)
 		}
 	}()
 
@@ -21,12 +22,12 @@ func FormatHTMLAsArticle(html, nurl string) (content string, err error) {
 	gArticle, err := g.ExtractFromRawHTML(html, nurl)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to parse html body")
-		return
+		return "", err
 	}
 
 	converter := md.NewConverter("", true, nil)
-	content = "# " + gArticle.Title + "\n\n" + converter.Convert(gArticle.TopNode)
-	return
+	content := "# " + gArticle.Title + "\n\n" + converter.Convert(gArticle.TopNode)
+	return content, nil
 }
 
 func CleanRawHTML(content string) (string, error) {

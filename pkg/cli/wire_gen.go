@@ -102,7 +102,7 @@ func Wire() (*cli.App, error) {
 	contentWorkflow := pipeline.NewContentWorkflow(dbStore, normalizer, summarize, categorize, files, publishPublish)
 	server := api.NewAPIServer(dbStore, contentWorkflow)
 	htmlHTML := html.NewHTML()
-	apihttpServer := client.NewAPIHTTPServer(apiConfig, server, htmlHTML)
+	apihttpServer := client.NewAPIHTTPServer(apiConfig, server, htmlHTML, dbStore)
 	discordCollector := collect.NewDiscordCollector(session, dbStore, contentWorkflow)
 	hnCollect := collect.NewHNCollector(session, dbStore, contentWorkflow)
 	app := NewApp(apihttpServer, normalizer, summarize, discordCollector, hnCollect)

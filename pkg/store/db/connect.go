@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-func connect(cache *store.FolderCache) (*gorm.DB, error) {
+func Connect(cache *store.FolderCache) (*gorm.DB, error) {
 	dbType := os.Getenv("DB_TYPE")
 	dsn := os.Getenv("DB_DSN")
 
@@ -20,7 +20,7 @@ func connect(cache *store.FolderCache) (*gorm.DB, error) {
 		if err != nil {
 			return nil, err
 		}
-		openedDb = sqlite.Open(dbPath + "?cache=shared&mode=rwc")
+		openedDb = sqlite.Open(dbPath + "?cache=shared&mode=rwc&_journal_mode=WAL")
 	}
 
 	db, err := gorm.Open(openedDb, &gorm.Config{
