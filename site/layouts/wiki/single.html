@@ -3,7 +3,12 @@
     <article>
       <div class="row justify-content-center">
         <div class="col-md-12">
-          {{if .Title}}<h1>{{ .Title }}</h1>{{end}}
+          {{if .Title}}
+            <h1>{{ .Title }}</h1>
+          {{else}}
+            {{ $title := path.Base .File.BaseFileName }}
+            <h1>{{ $title }}</h1>
+          {{end}}
           <p class="meta">
               {{ i18n "last_updated" }} {{ partial "date-fmt.html" .}}
               {{ partial "github.html" . }}
