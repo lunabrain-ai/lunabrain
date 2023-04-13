@@ -1,12 +1,23 @@
 package cli
 
 import (
+	"github.com/google/wire"
 	"github.com/lunabrain-ai/lunabrain/pkg/client"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
 	"github.com/urfave/cli/v2"
 )
+
+type Commands struct {
+	Serve *cli.Command
+	Sync  *cli.Command
+}
+
+var Set = wire.NewSet(
+	NewNormalizeCommand,
+	NewTextCommand,
+	wire.Struct(new(Commands), "MyFoo", "MyBar"))
 
 func NewApp(
 	httpServer client.HTTPServer,

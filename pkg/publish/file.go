@@ -10,20 +10,19 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type DiscordConfig struct {
+type FileConfig struct {
 	Enabled bool `yaml:"enabled"`
 
-	// TODO breadchris make this configurable outside of a static config
-	ChannelID string `yaml:"channel_id"`
+	Type string `yaml:"type"`
 }
 
-type Discord struct {
+type File struct {
 	session *discordgo.Session
-	config  DiscordConfig
+	config  FileConfig
 	db      db.Store
 }
 
-func formatMsg(content *model.Content) string {
+func formatForFile(content *model.Content) string {
 	// TODO breadchris for message summaries, this will be too much data
 	formatted := "" // "Data: " + content.Data + "\n"
 	for _, normalContent := range content.NormalizedContent {
@@ -39,42 +38,34 @@ func formatMsg(content *model.Content) string {
 	return formatted
 }
 
-func (d *Discord) Publish(contentID uuid.UUID) error {
-	if !d.config.Enabled {
+func (f *File) Publish(contentID uuid.UUID) error {
+	if !f.config.Enabled {
 		log.Debug().
 			Str("contentID", contentID.String()).
-			Msg("content publishing to discord disabled")
+			Msg("content publishing to file disabled")
 		return nil
 	}
 
 	log.Debug().
 		Str("contentID", contentID.String()).
-		Msg("publishing content to discord")
+		Msg("publishing content to file")
 
-	content, err := d.db.GetContentByID(contentID)
+	content, err := f.db.GetContentByID(contentID)
 	if err != nil {
 		return errors.Wrapf(err, "failed to get content by id %s", contentID)
 	}
 
-	msg := formatMsg(content)
-	log.Debug().Str("msg", msg).Msg("publishing discord message")
-
-	_, err = d.session.ChannelMessageSend(d.config.ChannelID, msg)
-	if err != nil {
-		return errors.Wrapf(err, "failed to send message to channel %s", d.config.ChannelID)
+	// TODO breadchris this is a POC for publishing to a file
+	if f.config.Type == "logseq" {
+		msg := formatForFile(content)
+		log.Debug().Str("msg", msg).Msg("publishing to file")
 	}
 	return nil
 }
 
-func NewDiscord(session *discordgo.Session, config Config, db db.Store) *Discord {
-	if config.Discord.ChannelID == "" {
-		log.Warn().Msg("discord channel id not set, publishing to discord disabled")
-		config.Discord.Enabled = false
-	}
-
-	return &Discord{
-		session: session,
-		config:  config.Discord,
-		db:      db,
+func NewFile(config Config, db db.Store) *File {
+	return &File{
+		config: config.File,
+		db:     db,
 	}
 }

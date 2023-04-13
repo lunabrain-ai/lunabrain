@@ -14,7 +14,7 @@ import (
 
 const configDir = "config/lunabrain/"
 
-const lunabrainConfigDir = ".lunabrain.yaml"
+const lunabrainConfigFile = ".lunabrain.yaml"
 
 type Config struct {
 	Python python.Config `yaml:"python"`
@@ -58,9 +58,9 @@ func NewConfigProvider() (config.Provider, error) {
 		log.Warn().Str("config directory", configDir).Msg("unable to locate config directory")
 	}
 
-	if f, ferr := os.Stat(lunabrainConfigDir); ferr == nil {
+	if f, ferr := os.Stat(lunabrainConfigFile); ferr == nil {
 		log.Info().
-			Str("config file", lunabrainConfigDir).
+			Str("config file", lunabrainConfigFile).
 			Msg("using local config file")
 		opts = append(opts, config.File(path.Join(f.Name())))
 	}
