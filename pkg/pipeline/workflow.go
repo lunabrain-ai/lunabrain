@@ -28,7 +28,7 @@ type ContentWorkflow struct {
 	normalizer  normalize.Normalizer
 	summarizer  transform.Summarizer
 	categorizer transform.Categorizer
-	fileStore   *store.Files
+	fileStore   *store.Bucket
 	publisher   publish.Publisher
 }
 
@@ -162,7 +162,7 @@ func NewContentWorkflow(
 	normalizer normalize.Normalizer,
 	summarizer transform.Summarizer,
 	categorizer transform.Categorizer,
-	fileStore *store.Files,
+	fileStore *store.Bucket,
 	publisher publish.Publisher,
 ) *ContentWorkflow {
 	return &ContentWorkflow{

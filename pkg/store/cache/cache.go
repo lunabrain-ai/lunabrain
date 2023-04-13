@@ -1,28 +1,33 @@
-package store
+package cache
 
 import (
+	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"os"
 	"os/user"
 	"path"
 )
 
-const defaultName = ".lunabrain"
-
 type Cache interface {
 	GetFile(name string) (string, error)
 	GetFolder(name string) (string, error)
 }
 
-type FolderCache struct {
+type LocalCache struct {
 	dir string
 }
 
-func (c *FolderCache) GetFile(name string) (string, error) {
+var ProviderSet = wire.NewSet(
+	NewConfig,
+	NewLocalCache,
+	wire.Bind(new(Cache), new(*LocalCache)),
+)
+
+func (c *LocalCache) GetFile(name string) (string, error) {
 	return path.Join(c.dir, name), nil
 }
 
-func (c *FolderCache) GetFolder(name string) (string, error) {
+func (c *LocalCache) GetFolder(name string) (string, error) {
 	p := path.Join(c.dir, name)
 	return p, ensureDirExists(p, name)
 }
@@ -47,17 +52,13 @@ func createLocalDir(dirName string) (string, error) {
 	return p, ensureDirExists(p, dirName)
 }
 
-func NewFolderCacheWithName(name string) (*FolderCache, error) {
-	folder, err := createLocalDir(name)
+func NewLocalCache(c Config) (*LocalCache, error) {
+	folder, err := createLocalDir(c.Name)
 	if err != nil {
 		return nil, err
 	}
 
-	return &FolderCache{
+	return &LocalCache{
 		dir: folder,
 	}, nil
-}
-
-func NewFolderCache() (*FolderCache, error) {
-	return NewFolderCacheWithName(defaultName)
 }

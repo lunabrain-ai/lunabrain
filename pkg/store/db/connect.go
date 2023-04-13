@@ -2,13 +2,13 @@ package db
 
 import (
 	"github.com/glebarez/sqlite"
-	"github.com/lunabrain-ai/lunabrain/pkg/store"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/cache"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"os"
 )
 
-func Connect(cache *store.FolderCache) (*gorm.DB, error) {
+func Connect(cache cache.Cache) (*gorm.DB, error) {
 	dbType := os.Getenv("DB_TYPE")
 	dsn := os.Getenv("DB_DSN")
 

@@ -1,7 +1,7 @@
 package docs
 
 import (
-	"github.com/lunabrain-ai/lunabrain/pkg/store"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/cache"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"github.com/pkg/errors"
@@ -49,7 +49,7 @@ func typeString[T any](t T) string {
 
 var _ DocStore[interface{}] = (*docStore[interface{}])(nil)
 
-func NewDocStore[T any](cache *store.FolderCache) (*docStore[T], error) {
+func NewDocStore[T any](cache cache.Cache) (*docStore[T], error) {
 	db, err := db.Connect(cache)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not connect to database: %v", err)

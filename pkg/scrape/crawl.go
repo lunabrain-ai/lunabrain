@@ -24,10 +24,10 @@ type Crawler interface {
 }
 
 type crawler struct {
-	fileStore *store.Files
+	fileStore *store.Bucket
 }
 
-func NewCrawler(fileStore *store.Files) *crawler {
+func NewCrawler(fileStore *store.Bucket) *crawler {
 	return &crawler{
 		fileStore: fileStore,
 	}

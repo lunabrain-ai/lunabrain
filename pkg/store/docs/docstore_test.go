@@ -19,7 +19,7 @@ func TestTableName(t *testing.T) {
 }
 
 func TestNewDocStore(t *testing.T) {
-	cache, err := store.NewFolderCache()
+	cache, err := store.NewLocalCache()
 	if err != nil {
 		t.Fatal(err)
 	}

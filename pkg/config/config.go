@@ -5,6 +5,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/lunabrain-ai/lunabrain/pkg/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/cache"
 	"github.com/rs/zerolog/log"
 	"go.uber.org/config"
 	"io/ioutil"
@@ -17,6 +18,7 @@ const configDir = "config/lunabrain/"
 const lunabrainConfigFile = ".lunabrain.yaml"
 
 type Config struct {
+	Cache  cache.Config  `yaml:"cache"`
 	Python python.Config `yaml:"python"`
 	OpenAI openai.Config `yaml:"openai"`
 	API    api.Config    `yaml:"api"`
@@ -25,6 +27,9 @@ type Config struct {
 
 func newDefaultConfig() Config {
 	return Config{
+		Cache: cache.Config{
+			Name: "lunabrain",
+		},
 		Python: python.Config{
 			Host: "localhost:50051",
 		},

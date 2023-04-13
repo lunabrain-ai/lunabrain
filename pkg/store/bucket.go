@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/cache"
 	"github.com/pkg/errors"
 	"gocloud.dev/blob"
 	_ "gocloud.dev/blob/fileblob"
@@ -12,12 +13,12 @@ import (
 
 const dir = "bucket"
 
-type Files struct {
+type Bucket struct {
 	*blob.Bucket
 	Location string
 }
 
-func NewBucket(cache Cache) (*Files, error) {
+func NewLocalBucket(cache cache.Cache) (*Bucket, error) {
 	folder, err := cache.GetFolder(dir)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not get file store folder: %v", dir)
@@ -36,7 +37,7 @@ func NewBucket(cache Cache) (*Files, error) {
 		return nil, errors.Wrapf(err, "could not open bucket: %v", dirpath)
 	}
 
-	return &Files{
+	return &Bucket{
 		Bucket:   bucket,
 		Location: dirpath,
 	}, nil

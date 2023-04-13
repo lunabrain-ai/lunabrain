@@ -8,7 +8,7 @@ import (
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
 	normalcontent "github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
 	transformcontent "github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform/content"
-	"github.com/lunabrain-ai/lunabrain/pkg/store"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/cache"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
@@ -50,7 +50,7 @@ type dbStore struct {
 
 var _ Store = (*dbStore)(nil)
 
-func NewDB(cache *store.FolderCache) (*dbStore, error) {
+func NewDB(cache cache.Cache) (*dbStore, error) {
 	db, err := Connect(cache)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not connect to database: %v", err)

@@ -1,11 +1,13 @@
 package store
 
-import "github.com/google/wire"
+import (
+	"github.com/google/wire"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/cache"
+)
 
 var (
 	ProviderSet = wire.NewSet(
-		NewFolderCache,
-		wire.Bind(new(Cache), new(*FolderCache)),
-		NewBucket,
+		cache.ProviderSet,
+		NewLocalBucket,
 	)
 )

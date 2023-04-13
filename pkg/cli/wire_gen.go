@@ -20,6 +20,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/store"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/cache"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/urfave/cli/v2"
 )
@@ -35,11 +36,15 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	folderCache, err := store.NewFolderCache()
+	cacheConfig, err := cache.NewConfig(provider)
 	if err != nil {
 		return nil, err
 	}
-	dbStore, err := db.NewDB(folderCache)
+	localCache, err := cache.NewLocalCache(cacheConfig)
+	if err != nil {
+		return nil, err
+	}
+	dbStore, err := db.NewDB(localCache)
 	if err != nil {
 		return nil, err
 	}
@@ -64,11 +69,11 @@ func Wire() (*cli.App, error) {
 		return nil, err
 	}
 	scraper := scrape.NewScraper(scrapeConfig, dbStore)
-	files, err := store.NewBucket(folderCache)
+	bucket, err := store.NewLocalBucket(localCache)
 	if err != nil {
 		return nil, err
 	}
-	crawler := scrape.NewCrawler(files)
+	crawler := scrape.NewCrawler(bucket)
 	urlNormalizer, err := normalize.NewURLNormalizer(normalizeConfig, pythonClient, scraper, crawler)
 	if err != nil {
 		return nil, err
@@ -99,7 +104,7 @@ func Wire() (*cli.App, error) {
 	}
 	publishDiscord := publish.NewDiscord(session, publishConfig, dbStore)
 	publishPublish := publish.NewPublisher(publishDiscord)
-	contentWorkflow := pipeline.NewContentWorkflow(dbStore, normalizer, summarize, categorize, files, publishPublish)
+	contentWorkflow := pipeline.NewContentWorkflow(dbStore, normalizer, summarize, categorize, bucket, publishPublish)
 	server := api.NewAPIServer(dbStore, contentWorkflow)
 	htmlHTML := html.NewHTML()
 	apihttpServer := client.NewAPIHTTPServer(apiConfig, server, htmlHTML, dbStore)
