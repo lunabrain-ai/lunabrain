@@ -22,7 +22,6 @@ enum IndexType {
 message Query {
   string index = 1;
   string query = 2;
-  IndexType type = 3;
 }
 
 message QueryResult {

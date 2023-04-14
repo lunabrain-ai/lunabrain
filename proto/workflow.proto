@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package workflow;
+option go_package = "./gen/workflow";
+
+message Workflow {
+  string id = 1;
+  string name = 2;
+  repeated Node nodes = 3;
+  repeated Edge edges = 4;
+}
+
+message CodeNode {
+  string id = 1;
+  string name = 2;
+}
+
+message Node {
+  string id = 1;
+  string name = 2;
+  oneof block {
+    CodeNode code = 3;
+  }
+}
+
+message Edge {
+  string id = 1;
+  string source = 2;
+  string target = 3;
+}
