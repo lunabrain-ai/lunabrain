@@ -56,19 +56,13 @@ jobs:
 
       - name: "make static "
 
-      - name: Build Link Index
-        uses: jackyzha0/hugo-obsidian@v2.20
-        with:
-          index: true
-          input: site/content/wiki
-          output: site/assets/indices
-          root: site/
-
       - name: install hugo-obsidian
-        run: go install github.com/breadchris/hugo-obsidian@latest
+        run: |
+          go install github.com/breadchris/hugo-obsidian@latest
 
       - name: run hugo-obsidian
-        run: hugo-obsidian -input=site/content/wiki -output=site/assets/indices -index -root=site
+        run: |
+          hugo-obsidian -input=site/content/wiki -output=site/assets/indices -index -root=site
 
       - name: Build with Hugo
         env:
