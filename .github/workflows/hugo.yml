@@ -33,14 +33,24 @@ jobs:
     env:
       HUGO_VERSION: 0.108.0
     steps:
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.20
+
+      - name: install hugo-obsidian
+        run: |
+          go mod tidy
+          go install github.com/breadchris/hugo-obsidian@latest
+
+      - name: run hugo-obsidian
+        run: |
+          hugo-obsidian -input=site/content/wiki -output=site/assets/indices -index -root=site
+
       - name: Install Hugo CLI
         run: |
           wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
-      - name: Setup Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.20
       - name: Install Dart Sass Embedded
         run: sudo snap install dart-sass-embedded
       - name: Checkout
@@ -53,15 +63,6 @@ jobs:
       - name: Install Node.js dependencies
         run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
         working-directory: site
-
-      - name: install hugo-obsidian
-        run: |
-          go mod tidy
-          go install github.com/breadchris/hugo-obsidian@latest
-
-      - name: run hugo-obsidian
-        run: |
-          hugo-obsidian -input=site/content/wiki -output=site/assets/indices -index -root=site
 
       - name: Build with Hugo
         env:
