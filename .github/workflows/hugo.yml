@@ -33,6 +33,10 @@ jobs:
     env:
       HUGO_VERSION: 0.108.0
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
@@ -53,10 +57,6 @@ jobs:
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
       - name: Install Dart Sass Embedded
         run: sudo snap install dart-sass-embedded
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v3
