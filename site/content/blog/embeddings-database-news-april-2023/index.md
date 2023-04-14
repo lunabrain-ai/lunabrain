@@ -160,8 +160,8 @@ This is by no means an exhaustive list, but here are the most popular ones that 
 - [Chroma](https://github.com/chroma-core/chroma) (Open Source)
 - [Qdrant](https://qdrant.tech/) (Open Source)
 
-For an up-to-date list of Vector Databases, check out the [Awesome List](#TODO) that we've created to track these.
-TODO: Add a link to an up-to-date Awesome List of Vector Databases
+For an up-to-date list of Vector Databases... Well, there isn't one that I could find yet, so check back and I'll add
+an Awesome List here to bookmark.
 
 ### How do Vector Databases work with AI?
 
@@ -262,7 +262,7 @@ They're siblings, in a sense, and, when combined, they make a powerful duo!
 ### How to use BERT to generate Embeddings
 
 To get started, you'll want to setup a Python environment and install the `sentence-transformers` library. Feel free to
-follow along here in your own environment or you can clone this code from [GitHub](#TODO) directly. (This is
+follow along here in your own environment, but I'll paste the outputs here for you to view also. (This is
 basically just a modified version of the tutorial from
 [sentence-transformers](https://www.sbert.net/examples/applications/computing-embeddings/README.html?highlight=embedding).)
 
