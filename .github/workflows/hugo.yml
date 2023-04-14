@@ -25,7 +25,6 @@ concurrency:
 defaults:
   run:
     shell: bash
-    working-directory: site/
 
 jobs:
   # Build job
@@ -38,6 +37,10 @@ jobs:
         run: |
           wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.20
       - name: Install Dart Sass Embedded
         run: sudo snap install dart-sass-embedded
       - name: Checkout
@@ -49,14 +52,23 @@ jobs:
         uses: actions/configure-pages@v3
       - name: Install Node.js dependencies
         run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
+        working-directory: site
+
+      - name: "make static "
 
       - name: Build Link Index
         uses: jackyzha0/hugo-obsidian@v2.20
         with:
           index: true
-          input: content/wiki
-          output: assets/indices
-          root: .
+          input: site/content/wiki
+          output: site/assets/indices
+          root: site/
+
+      - name: install hugo-obsidian
+        run: go install github.com/breadchris/hugo-obsidian@latest
+
+      - name: run hugo-obsidian
+        run: hugo-obsidian -input=site/content/wiki -output=site/assets/indices -index -root=site
 
       - name: Build with Hugo
         env:
@@ -65,10 +77,11 @@ jobs:
           HUGO_ENV: production
         run: |
           npm run build
+        working-directory: site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: public
+          path: ./site/public
 
   # Deployment job
   deploy:
