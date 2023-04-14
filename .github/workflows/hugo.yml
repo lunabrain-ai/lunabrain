@@ -54,8 +54,6 @@ jobs:
         run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
         working-directory: site
 
-      - name: "make static "
-
       - name: install hugo-obsidian
         run: |
           go install github.com/breadchris/hugo-obsidian@latest
