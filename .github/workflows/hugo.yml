@@ -56,7 +56,7 @@ jobs:
           index: true
           input: site/content/wiki
           output: site/assets/indices
-          root: site/content/wiki
+          root: site/
 
       - name: Build with Hugo
         env:
