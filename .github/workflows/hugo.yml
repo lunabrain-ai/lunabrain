@@ -44,7 +44,6 @@ jobs:
 
       - name: install hugo-obsidian
         run: |
-          go mod tidy
           go install github.com/breadchris/hugo-obsidian@latest
 
       - name: run hugo-obsidian
