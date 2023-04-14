@@ -372,7 +372,7 @@ I'm going to stop short of showing you how to use a dedicated Vector Database si
 than what I'd intended for this post. (This already is much longer than I'd planned for!)
 
 To help nudge you in the right direction though here is a guide on
-[how to use Chrome with Sentence Transformers](https://docs.trychroma.com/usage-guide) which should get you pretty close.
+[how to use Chroma with Sentence Transformers](https://docs.trychroma.com/usage-guide) which should get you pretty close.
 
 If you *would* like me to write a follow-up post on how to setup and use a Vector Database for an embeddings search
 engine though, please drop me a line on the [LunaBrain Discord](https://discord.gg/2EbHdAR5w7) with some of your thoughts!
