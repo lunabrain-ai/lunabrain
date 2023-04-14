@@ -25,6 +25,7 @@ concurrency:
 defaults:
   run:
     shell: bash
+    working-directory: site/
 
 jobs:
   # Build job
@@ -48,15 +49,14 @@ jobs:
         uses: actions/configure-pages@v3
       - name: Install Node.js dependencies
         run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
-        working-directory: site
 
       - name: Build Link Index
         uses: jackyzha0/hugo-obsidian@v2.20
         with:
           index: true
-          input: site/content/wiki
-          output: site/assets/indices
-          root: site/
+          input: content/wiki
+          output: assets/indices
+          root: .
 
       - name: Build with Hugo
         env:
@@ -65,11 +65,10 @@ jobs:
           HUGO_ENV: production
         run: |
           npm run build
-        working-directory: site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./site/public
+          path: public
 
   # Deployment job
   deploy:
