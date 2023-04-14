@@ -1,12 +1,12 @@
 ---
-title: "Embeddings Databases in April 2023"
+title: "How do embeddings databases work?"
 description: "Comparing the real-world performance of GPT-like AI models with public weights"
 slug: what-are-vector-databases-and-embeddings
 date: 2023-04-13T19:00:00.000Z
 keywords: [gpt, embeddings, ai]
 tags: [gpt, ai, open-source, embeddings]
 contributors: [free]
-images: [cerebras-wse-nvidia-v100-featured-image.jpg]
+images: [laptop11-hi.png]
 ---
 
 <!--
@@ -44,6 +44,8 @@ are fueling their development and rapid growth.
 
 ### Riding the AI Wave
 
+![Surfboard floating in the AI ocean](wave1-hi-crop.png)
+
 The Venture Capital (VC) firms of the world have been busy throwing money at several Vector Database companies with
 Weaviate, a company built around [an Open Source product](https://github.com/weaviate/weaviate), closing a
 [$16 million Series A round](https://www.prnewswire.com/news-releases/semi-technologies-16m-series-a-round-highlights-a-new-wave-of-ai-first-database-tech-301486766.html)
@@ -78,15 +80,21 @@ They're really just arrays of numbers though and the only real difference with a
   - For example, a `vector3` is a 3-element array of floating point numbers. A `vector4` is (you guessed it!) a 4-element
     array of floating point numbers. Simple!
 - There are special functions to operate on them like `normalize`, `dot`, `cross`, etc.
-  - These are just helpers though
-    and you can always just write your own functions to do the same thing.
+  - These are just helpers though, and you can always just write your own functions to do the same thing.
 
 The term "vector" itself comes from linear algebra, which is a branch of mathematics that deals primarily with matrices,
 tensors, and other array-like structures, but at the end of the day, they're just fancy float arrays!
 
 That does beg the question though: If they're just float arrays, and since databases can already store arrays, do we
-*really* need a whole new database just for them? (Are VCs trying to start another bubble like they did with NoSQL
-databases?)
+*really* need a whole new database just for them?
+
+-----
+
+![Hype Cycle](Gartner_Hype_Cycle.svg)
+
+*Are VCs creating another bubble like they did with [NoSQL databases](https://stackoverflow.blog/2021/01/14/have-the-tables-turned-on-nosql/)?*
+
+-----
 
 ### Why are Vector Databases necessary?
 
@@ -106,6 +114,12 @@ Here are some of the features that Vector Databases provide:
   SQL databases in particular take more effort to scale out)
 
 ### Relational vs Document vs Vector Databases
+
+-----
+
+![Logos of the 3 top databases in each category](3databases.png)
+
+-----
 
 #### Relational Databases (SQL)
 
@@ -141,6 +155,7 @@ This is by no means an exhaustive list, but here are the most popular ones that 
 
 - [Weaviate](https://github.com/weaviate/weaviate) (Open Source)
 - [Milvus](https://github.com/milvus-io/milvus) (Open Source)
+- [FAISS](https://www.pinecone.io/learn/faiss/) (Open Source)
 - [Pinecone](https://www.pinecone.io/) (Cloud Only)
 - [Chroma](https://github.com/chroma-core/chroma) (Open Source)
 - [Qdrant](https://qdrant.tech/) (Open Source)
@@ -163,15 +178,17 @@ If you need to squeeze in more, tough luck! You've either got to fine-tune the m
 you can't do with ChatGPT, only the older GPT-3 model) or, what is usually the better option, you need to extract
 *only the relevant text* for your specific prompt.
 
-To give an example: If you want to have an answer to the question "What's the best way to cook a steak?" you can't just
-feed ChatGPT an entire cookbook all at once. You've got to feed it only pages that talk about steak!
+To give an example: If you want to have an answer to the question "What's the best way to grill a steak?" you can't just
+feed ChatGPT an entire cookbook all at once. These models can only understand 3000-6000 words at once, so you've got to
+be clever about which content you feed it.
 
-But if you just were to run a regex for "steak", you'll miss all the pages that talk about "beef", "red meat", "burgers",
-and many other similarly related concepts. It's easy as a human reading through the index to relate these items, but
-it's very difficult to write a program to exhaustively map every related concept (without a significant time investment).
+Of course, a naive approach would be to just run a regex for "steak" and include those pages, but you'll miss out on all
+the pages that talk about "beef", "red meat", "burgers", and many other similarly related concepts. It's easy as a human
+reading through the index to relate these items, but it's very difficult to write a program to exhaustively map every
+related concept (without a significant time investment).
 
 And that's where embeddings come in. They're a clever way to slice up the cookbook into smaller, more manageable chunks
-that can be fed into the limited context of a language model like ChatGPT.And
+that can be fed into the limited context of a language model like ChatGPT.
 
 ### What is an Embedding?
 
@@ -182,6 +199,18 @@ That's a lot to unpack, so let me explain it in pieces.
 
 (If you're already familiar with embeddings, feel free to skip ahead. And if you'd like a more rigorous definition, check
 out this [blog post](https://huggingface.co/blog/getting-started-with-embeddings).)
+
+-----
+
+<div style="text-align: center">
+{{<image
+   src="vector-clustering1.png"
+   alt="Visual image showing data clustering" >}}
+</div>
+
+*A visual representation of how embeddings are used to cluster data*
+
+-----
 
 Going back to our analogy: Beef, steak, and burger all have a similar "Semantic Meaning" to each other in the context of
 a recipe. They're technically different words, but they all refer to the same thing: A piece of meat that you can cook
@@ -203,16 +232,20 @@ that have since taken over the NLP scene.
 
 ### What is a Transformer?
 
-TODO: Put a photo of a Transformer here
-
-*NLP Goes Mainstream With Transformers*
-
 A Transformer is a type of neural network that's designed to process sequential data, usually text but not always, and
 figure out which parts of it are the most important (they're modeled after how human "attention" works).
 
+-----
+
+![Source: https://news.tfw2005.com/wp-content/uploads/sites/10/2014/12/3A-Transformers-Bumblebee-010_1417704751.jpg](transformer-crop-full-sm.jpg)
+
+*NLP Goes Mainstream With Transformers*
+
+-----
+
 They're important to be aware of because they're the backbone of many of the most popular NLP models today, including
 generative models like GPT-3 and ChatGPT, as well as the modern Embeddings models that replace Word2Vec
-(models such as [BERT](https://en.wikipedia.org/wiki/BERT_(language_model) (2018) and
+(models such as [BERT](https://en.wikipedia.org/wiki/BERT_(language_model)) (2018) and
 [T5](https://huggingface.co/docs/transformers/model_doc/t5) (2020)).
 
 (If you've ever wondered what the "T" in GPT-3 stands for... it's "Transformer". The full name being
@@ -256,17 +289,17 @@ model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # The sentences that we wish to generate embeddings for
 sentences = ['Here’s a cheffy way to cook steak that really makes the most of a good cut!',
-    'These burger patties are made with ground beef and an easy bread crumb mixture.',
-    'You can use any cut of beef for this sausage recipe, but a rib-eye is the best.']
+  'These burger patties are made with ground beef and an easy bread crumb mixture.',
+  'You can use any cut of beef for this sausage recipe, but a rib-eye is the best.']
 
 # Generate the embeddings for our sentences
 embeddings = model.encode(sentences)
 
 # Print out the embeddings/vectors
 for sentence, embedding in zip(sentences, embeddings):
-    print("Sentence:", sentence)
-    print("Embedding:", embedding)
-    print("")
+  print("Sentence:", sentence)
+  print("Embedding:", embedding)
+  print("")
 ```
 
 Notice that I chose specific sentences without overlapping words, but with similar semantic meanings. (Steak, burgers, and beef)
@@ -301,8 +334,8 @@ model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # The sentences that we wish to generate embeddings for
 sentences = ['Here’s a cheffy way to cook steak that really makes the most of a good cut!',
-    'These burger patties are made with ground beef and an easy bread crumb mixture.',
-    'You can use any cut of beef for this sausage recipe, but a rib-eye is the best.']
+  'These burger patties are made with ground beef and an easy bread crumb mixture.',
+  'You can use any cut of beef for this sausage recipe, but a rib-eye is the best.']
 
 # The question we want to ask
 question = 'What is the best cut of beef for sausage?'
@@ -318,7 +351,7 @@ print("Question: " + question)
 
 # Output the pairs with their score
 for i in range(len(sentence_embeddings)):
-    print("\t Score: {:.4f}\t \"{}\"".format(cosine_scores[0][i], sentences[i]))
+  print("\t Score: {:.4f}\t \"{}\"".format(cosine_scores[0][i], sentences[i]))
 ```
 
 The output should look like:
@@ -326,9 +359,9 @@ The output should look like:
 ```shell
 $ python 2_cosine-distance.py
 Question: What is the best cut of beef for sausage?
-	 Score: 0.5419	 "Here’s a cheffy way to cook steak that really makes the most of a good cut!"
-	 Score: 0.3654	 "These burger patties are made with ground beef and an easy bread crumb mixture."
-	 Score: 0.8067	 "You can use any cut of beef for this sausage recipe, but a rib-eye is the best."
+  Score: 0.541  "Here’s a cheffy way to cook steak that really makes the most of a good cut!"
+  Score: 0.365  "These burger patties are made with ground beef and an easy bread crumb mixture."
+  Score: 0.806  "You can use any cut of beef for this sausage recipe, but a rib-eye is the best."
 ```
 
 As you can see, the sentence that is most similar to the question is the last one, which is exactly what we'd expect!
