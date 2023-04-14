@@ -1,10 +1,10 @@
 ---
-title: "How do embeddings databases work?"
-description: "Comparing the real-world performance of GPT-like AI models with public weights"
-slug: what-are-vector-databases-and-embeddings
-date: 2023-04-13T19:00:00.000Z
-keywords: [gpt, embeddings, ai]
-tags: [gpt, ai, open-source, embeddings]
+title: "Riding the AI Wave with Vector Databases: How they work (and why VCs love them)"
+description: "Discover how Vector Databases enhance AI models like ChatGPT, keeping them up-to-date and relevant in a rapidly evolving world. Dive into the hype of the Vector Database landscape, how they work, and its impact on machine learning."
+slug: riding-the-ai-wave-with-vector-databases
+date: 2023-04-14T03:04:00.000Z
+keywords: [gpt, embeddings, ai, vector-databases]
+tags: [gpt, ai, open-source, embeddings, vector-databases]
 contributors: [free]
 images: [laptop11-hi.png]
 ---
