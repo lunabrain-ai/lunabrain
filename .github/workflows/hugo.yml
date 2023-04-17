@@ -73,6 +73,7 @@ jobs:
         working-directory: site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
+        if: success() && steps.branch-name.outputs.current_branch == 'main'
         with:
           path: ./site/public
 
@@ -86,4 +87,5 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
+        if: success() && steps.branch-name.outputs.current_branch == 'main'
         uses: actions/deploy-pages@v2
