@@ -73,11 +73,13 @@ jobs:
         working-directory: site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
+        if: success() && steps.branch-name.outputs.current_branch == 'main'
         with:
           path: ./site/public
 
   # Deployment job
   deploy:
+    if: github.ref == 'refs/heads/master'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

@@ -68,7 +68,7 @@ jobs:
       - run: sleep 10
 
       - name: Invoke deploy on new commit
-        if: steps.branch-name.outputs.current_branch == 'main'
+        if: success() && steps.branch-name.outputs.current_branch == 'main'
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: Kompose
