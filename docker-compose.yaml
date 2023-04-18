@@ -1,0 +1,36 @@
+version: '3.6'
+services:
+  lunabrain:
+    image: ghcr.io/lunabrain/lunabrain
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config:/app/config
+
+  lunabrain-python:
+    image: ghcr.io/lunabrain/lunabrain-python
+    ports:
+      - "50051:50051"
+    volumes:
+      - ./data:/data
+    environment:
+      OPENAI_API_KEY: "test"
+      LUNABRAIN_DIR: "/data/lunabrain"
+      TORCH_HOME: "/data/torch"
+
+  postgres:
+    # Special image with vectorized postgres
+    image: ankane/pgvector:v0.4.0
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+    - db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    labels:
+      kompose.service.type: clusterip
+      kompose.volume.type: persistentVolumeClaim
+volumes:
+  db:

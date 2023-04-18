@@ -3,13 +3,13 @@ package workflowmanager
 import (
 	"database/sql"
 	"encoding/json"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/temporal/dsl"
 	"io/ioutil"
 	"log"
 	"os"
 
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/refinery-labs/refinery/golang/pkg/dsl"
 )
 
 type WorkflowStore interface {

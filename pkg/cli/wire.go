@@ -6,7 +6,6 @@ package cli
 import (
 	"github.com/google/wire"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
-	"github.com/lunabrain-ai/lunabrain/pkg/client"
 	"github.com/lunabrain-ai/lunabrain/pkg/config"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
@@ -14,6 +13,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
 	"github.com/lunabrain-ai/lunabrain/pkg/publish"
 	"github.com/lunabrain-ai/lunabrain/pkg/python"
+	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/lunabrain-ai/lunabrain/pkg/store"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/urfave/cli/v2"
@@ -23,7 +23,7 @@ func Wire() (*cli.App, error) {
 	panic(wire.Build(
 		NewApp,
 		config.ProviderSet,
-		client.ProviderSet,
+		server.ProviderSet,
 		python.ProviderSet,
 		store.ProviderSet,
 		db.ProviderSet,

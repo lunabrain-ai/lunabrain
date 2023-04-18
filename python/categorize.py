@@ -12,7 +12,7 @@ class Categorizer:
         AutoTokenizer.from_pretrained("fabiochiu/t5-base-tag-generation")
         AutoModelForSeq2SeqLM.from_pretrained("fabiochiu/t5-base-tag-generation")
 
-    def categorize(self, text: str) -> list[str]:
+    def categorize(self, text):
         inputs = self.tokenizer([text], max_length=512, truncation=True, return_tensors="pt")
         output = self.model.generate(**inputs, num_beams=8, do_sample=True, min_length=10,
                                 max_length=64)

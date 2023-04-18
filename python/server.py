@@ -44,7 +44,6 @@ def question_generator():
     # https://huggingface.co/iarfmoose/t5-base-question-generator?text=This+model+is+a+sequence-to-sequence+question+generator+which+takes+an+answer+and+context+as+an+input%2C+and+generates+a+question+as+an+output.+It+is+based+on+a+pretrained+t5-base+model.
     pass
 
-
 class PythonSerivce(PythonServicer):
     def Transcribe(self, req: python_pb2.TranscribeRequest, context):
         result = model.transcribe(req.file)

@@ -24,12 +24,12 @@ type TemplatePage interface {
 }
 
 var (
-	patterns = []string{
+	basePatterns = []string{
 		"layout.go.html",
 		"content.go.html",
 		"normalcontent.go.html",
 	}
-	errorPage = NewPage("error", ErrorParams{}, patterns)
+	errorPage = NewPage("error", ErrorParams{}, basePatterns)
 )
 
 type Nav struct {
@@ -166,11 +166,11 @@ func (h *HTML) WriteHome(w io.Writer, params HomeParams) error {
 
 func NewHTML() *HTML {
 	return &HTML{
-		Discord: NewPage("discord", DiscordParams{}, patterns),
-		HN:      NewPage("hn", HNParams{}, patterns),
-		View:    NewPage("view", ViewParams{}, patterns),
-		Search:  NewPage("search", SearchParams{}, patterns),
-		Save:    NewPage("save", SaveParams{}, patterns),
-		Home:    NewPage("home", HomeParams{}, patterns),
+		Discord: NewPage("discord", DiscordParams{}, basePatterns),
+		HN:      NewPage("hn", HNParams{}, basePatterns),
+		View:    NewPage("view", ViewParams{}, basePatterns),
+		Search:  NewPage("search", SearchParams{}, basePatterns),
+		Save:    NewPage("save", SaveParams{}, basePatterns),
+		Home:    NewPage("home", HomeParams{}, basePatterns),
 	}
 }

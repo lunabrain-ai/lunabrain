@@ -1,11 +1,11 @@
-package client
+package server
 
 import (
 	"context"
 	"encoding/json"
 	"github.com/go-chi/chi"
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
-	"github.com/lunabrain-ai/lunabrain/pkg/client/html"
+	"github.com/lunabrain-ai/lunabrain/pkg/server/html"
 	"github.com/mingrammer/commonregex"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
