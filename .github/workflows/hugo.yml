@@ -73,7 +73,7 @@ jobs:
         working-directory: site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
-        if: success() && steps.branch-name.outputs.current_branch == 'main'
+        if: success() && github.ref == 'refs/heads/main'
         with:
           path: ./site/public
 
