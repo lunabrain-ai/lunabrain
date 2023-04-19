@@ -22,7 +22,6 @@ require (
 	github.com/go-shiori/go-readability v0.0.0-20220215145315-dd6828d2f09b
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
-	github.com/gordonklaus/portaudio v0.0.0-20221027163845-7c3b689db3cc
 	github.com/jba/templatecheck v0.6.0
 	github.com/makiuchi-d/arelo v1.12.0
 	github.com/pion/rtp v1.7.13
@@ -91,6 +90,7 @@ require (
 	github.com/google/subcommands v1.0.1 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.3 // indirect
 	github.com/googleapis/gax-go/v2 v2.8.0 // indirect
+	github.com/gordonklaus/portaudio v0.0.0-20221027163845-7c3b689db3cc // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 // indirect
 	github.com/huandu/xstrings v1.4.0 // indirect
