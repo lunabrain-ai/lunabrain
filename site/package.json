@@ -35,7 +35,8 @@
     "check": "exec-bin node_modules/.bin/hugo/hugo version",
     "copy:katex-fonts": "shx cp ./node_modules/katex/dist/fonts/* ./static/fonts/",
     "postinstall": "hugo-installer --version otherDependencies.hugo --extended --destination node_modules/.bin/hugo",
-    "version": "auto-changelog -p && git add CHANGELOG.md"
+    "version": "auto-changelog -p && git add CHANGELOG.md",
+    "hugo": "exec-bin node_modules/.bin/hugo/hugo"
   },
   "devDependencies": {
     "@babel/cli": "^7.18",
@@ -63,9 +64,7 @@
     "purgecss-whitelister": "^2.4",
     "shx": "^0.3",
     "stylelint": "^14.9",
-    "stylelint-config-standard-scss": "^4.0"
-  },
-  "otherDependencies": {
-    "hugo": "0.101.0"
+    "stylelint-config-standard-scss": "^4.0",
+    "hugo": "^0.0.3"
   }
 }
