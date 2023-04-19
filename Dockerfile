@@ -1,5 +1,10 @@
 # build stage
 FROM golang:1.20 AS builder
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		portaudio; \
+    rm -rf /var/lib/apt/lists/*
 WORKDIR /src
 COPY . .
 RUN go build -o lunabrain cmd/main.go
