@@ -19,6 +19,7 @@ if deploy == 'docker-compose':
         only=['build/lunabrain', 'Dockerfile', '.lunabrain.yaml'],
         live_update=[
             sync('build/lunabrain', '/app/build/lunabrain'),
+            sync('config/lunabrain', '/app/config/lunabrain'),
             restart_container()
         ],
     )
@@ -29,6 +30,7 @@ if deploy == 'docker-compose':
             sync('./python', '/app/python/'),
             run('cd /app/ && pip install -r requirements.txt',
                 trigger='./requirements.txt'),
+            restart_container()
         ]
     )
 

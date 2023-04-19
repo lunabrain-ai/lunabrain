@@ -5,6 +5,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
+      - ./data:/data
       - ./config:/app/config
 
   lunabrain-python:
@@ -13,10 +14,15 @@ services:
       - "50051:50051"
     volumes:
       - ./data:/data
+      - ./config:/app/config
     environment:
-      OPENAI_API_KEY: "test"
       LUNABRAIN_DIR: "/data/lunabrain"
       TORCH_HOME: "/data/torch"
+      TRANSFORMERS_CACHE: "/data/transformers"
+      PYTORCH_TRANSFORMERS_CACHE: "/data/transformers"
+      SENTENCE_TRANSFORMERS_HOME: "/data/transformers"
+      HF_DATASETS_OFFLINE: 1
+      TRANSFORMERS_OFFLINE: 1
 
   postgres:
     # Special image with vectorized postgres

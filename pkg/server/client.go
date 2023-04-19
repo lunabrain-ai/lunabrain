@@ -19,7 +19,7 @@ import (
 func getFileData(r *http.Request) (string, []byte) {
 	formFile, header, err := r.FormFile("file")
 	if err != nil {
-		log.Warn().Msg("Failed to get audio file")
+		log.Warn().Msg("no audio file available")
 		return "", nil
 	}
 	defer formFile.Close()
