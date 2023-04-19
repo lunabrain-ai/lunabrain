@@ -3,7 +3,7 @@ FROM golang:1.20 AS builder
 RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		portaudio; \
+		libportaudio2 portaudio19-dev; \
     rm -rf /var/lib/apt/lists/*
 WORKDIR /src
 COPY . .
