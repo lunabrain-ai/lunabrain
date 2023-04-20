@@ -1,5 +1,5 @@
 ---
-title: "Using ChatGPT to clean scraped data, plus how to handle any big document with ChatGPT"
+title: "Using ChatGPT to clean scraped data, and how to handle any big document with ChatGPT"
 description: "Improving upon existing scraping tools using ChatGPT"
 slug: chatgpt-scraper
 date: 2023-04-18T07:00:00.000Z
@@ -26,7 +26,8 @@ images: [scraper-banner.jpg]
 In this article we:
 
 * Discuss cleaning up scraped webpage text, and what the existing solutions are
-* Show how to use ChatGPT to do a much better job
+* Show that ChatGPT does a great job at cleaning up page text and providing other useful metrics simultaneously
+* Show how to use ChatGPT to handle documents longer than its maximum token context length
 
 ### Why we needed to scrape
 When we discovered how powerful ChatGPT was, we decided to build a software security chat-bot so that people
@@ -72,12 +73,21 @@ You could do something similar in any language with any scraping tool. Fully ren
 and Puppeteer is good at that.
 
 Now we have everything that's showing on the page. Maybe a few hidden elements or other junk, but for the most part, 
-these few lines will get you the page text. Unfortunately, this will get every button, sidebar, footer, etc, and 
-it's amazing how many of those there are. 
-For our purposes, those are garbage that will pollute the vector space and the final prompt, too.
+these few lines will get you the page text. Unfortunately, this 
+will get every button, sidebar, footer, etc, and it's amazing how many of those there are.
+
+ For our purposes, all that non-article text is garbage that will 
+pollute the vector space and the final prompt, too. Different pages will have different garbage, maybe in the middle,
+on the sidebar, the footer, the middle of the usable text, etc.
 
 #### Clean it up
-Since none of the existing tools are good enough for the job, let's use ChatGPT. It won't be the fastest, or the 
+Since none of the existing tools are as good, let's use ChatGPT. 
+
+![screenshot of chatgpt cleaning text](scrape-gpt.png)
+
+Here we can see that, of course, ChatGPT can clean up that text just as well as you can. 
+
+It won't be the fastest, or the 
 cheapest, but the result is incredibly good. Also, it can produce other metrics such as a short summary or some kind 
 of "rank" relevance score as its cleaning the data. Very useful. For a complete working code example, you can follow 
 along in [**this 
@@ -85,8 +95,6 @@ script**](https://github.com/lunasec-io/lunasec/blob/master/lunatrace/bsl/ml/pyt
 
 Let's make a call to ChatGPT. Below is the template I wrote. It could probably be a lot shorter with some 
 optimization, but this works fine. 
-
-Note that we also ask for a summary of the page, because that's going to help us search through these documents later.
 
 
 #### The Prompt:
@@ -129,17 +137,24 @@ slim this down quite a bit and still get a good result. Note that we give it a s
 that we can regex out the multiple fields. This is also helpful to keep ChatGPT from saying sentences we can't use 
 like "Sure, let me help you with that." before it gives its response. It's very polite, but we can't parse polite.
 
+#### The power of ChatGPT to provide arbitrary metrics is extremely useful
+
+Note that we also ask for a summary of the page, because that's going to help us search through these documents later.
+In [another experiment](https://www.youtube.com/watch?v=XssIIoHfBSM), we had GPT-4 generate a question it wanted an 
+answer to, such as "When was the
+Log4Shell vulnerability first published by LunaSec?", and then passed that question over to a similar ChatGPT prompt.
+This time, we asked it for the answer to the question, a summary , and also a score from 0 to 100 of how well the 
+page answered the question. We noted that it did an incredibly good job at subjectively rating the pages on their 
+usefulness.
+
 #### A note on LangChain and Python
 
 To render this template, parse the response, and handle the actual calls to ChatGPT, we
 use [LangChain](https://python.langchain.com/en/latest/index.htm). You could really use just about any library in
 any language to do this, if you're not a fan of python. There's a pretty good [Javascript implementation of 
 LangChain](https://github.com/hwchase17/langchainjs),
-too. OpenAI libraries are 
-coming 
-out in just 
-about every
-popular language now, or you could easily write your own client. Nothing in here is very complicated or qualifies as
+too. OpenAI libraries are coming out in just about every popular language now, or you could easily write your own 
+client. Nothing in here is very complicated or qualifies as
 real "machine learning". To be honest, sometimes it doesn't even feel like programming. It's that easy.
 
 
@@ -173,7 +188,8 @@ about 500 tokens, let's just use a size of 1500 as our splitter. You can use
  visualization is nice as well and gives you a feel for how tokens work.
 
 To split the documents in an intelligent way, we are using Langchain's `TokenTextSplitter` to give us an array of 
-chunks of the proper size. 
+chunks of the proper size. There are various splitters that will try to split on a complete sentence just before the 
+token limit reached, and so on. This simple splitter seemed to work fine, though.
 
 ```python
 from langchain.text_splitter import TokenTextSplitter
@@ -187,8 +203,9 @@ stitch them together without grammar issues.
 
 #### How much does it cost
 
-Well, we scraped about 10,000 pages before we got bored and started a different project. That took around 24 hours 
-and cost around $100. Slow, expensive, but extremely effective.
+Well, we scraped about 10,000 pages before we hit our quota and needed to increase it. That took around 24 hours 
+and cost around $100. Slow, expensive, but extremely effective. If you're going to do this, make sure to have a high 
+OpenAI quota first, since that takes a few days and a human approval.
 
 ### Other uses
 This approach can be used for just about any long-form of text that exceeds the token limit. Most of the code we wrote
@@ -207,14 +224,12 @@ Unfortunately, it's not public and there is no API to use it. *Open*AI, huh?
 ##### [LMQL](https://lmql.ai/)
 LMQL is a new DSL for prompting LLMs and parsing results. It also does an extremely clever thing called "token-level 
 prediction masks" which helps to deal with the off-prompt responses that you often get with langchain. Something 
-like this is clearly the future for these more complex prompts the LLMs, and it really exposes my (LangChain's) string
+like this is clearly the future for these more complex prompts, and it really exposes my (LangChain's) string
 templating and Regex parsing for the spaghetti it is. Hopefully we'll have a full post up about LMQL soon. 
 
 ### Conclusion
 
 Thanks for reading and be sure to join us in our machine learning discord if you'd like to chat about this stuff. 
-W've managed to get some pretty smart folks in there. You may also want to check out [LunaBrain](https://github.
-com/lunabrain-ai/lunabrain), a framework we 
-wrote to make all of this stuff a lot easier. It'll be getting some better docs and examples over the next week or two. 
-
-
+We've managed to get some pretty smart folks in there. You may also want to check out 
+[LunaBrain](https://github.com/lunabrain-ai/lunabrain),
+a framework we wrote to make all of this stuff a lot easier. It'll be getting some better docs and examples over the next week or two. 
