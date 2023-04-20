@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lunabrain
+  labels:
+    app: lunabrain
+spec:
+  selector:
+    matchLabels:
+      app: lunabrain
+  template:
+    metadata:
+      labels:
+        app: lunabrain
+    spec:
+      containers:
+      - name: lunabrain
+        image: lunabrain-image
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+          - mountPath: /app/config/lunabrain
+            name: config-volume
+      volumes:
+        - name: config-volume
+          configMap:
+            name: lunabrain-config

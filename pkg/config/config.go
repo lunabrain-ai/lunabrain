@@ -56,6 +56,10 @@ func NewConfigProvider() (config.Provider, error) {
 	files, err := ioutil.ReadDir(configDir)
 	if err == nil {
 		for _, file := range files {
+			// do not add to opts if file is not *.yaml
+			if path.Ext(file.Name()) != ".yaml" {
+				continue
+			}
 			opts = append(opts, config.File(path.Join(configDir, file.Name())))
 		}
 	}

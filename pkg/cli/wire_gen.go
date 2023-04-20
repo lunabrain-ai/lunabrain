@@ -9,8 +9,6 @@ package cli
 import (
 	"github.com/lunabrain-ai/lunabrain/pkg/api"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
-	"github.com/lunabrain-ai/lunabrain/pkg/client"
-	"github.com/lunabrain-ai/lunabrain/pkg/client/html"
 	"github.com/lunabrain-ai/lunabrain/pkg/config"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
@@ -19,6 +17,8 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/publish"
 	"github.com/lunabrain-ai/lunabrain/pkg/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
+	"github.com/lunabrain-ai/lunabrain/pkg/server"
+	"github.com/lunabrain-ai/lunabrain/pkg/server/html"
 	"github.com/lunabrain-ai/lunabrain/pkg/store"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/cache"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
@@ -105,9 +105,9 @@ func Wire() (*cli.App, error) {
 	publishDiscord := publish.NewDiscord(session, publishConfig, dbStore)
 	publishPublish := publish.NewPublisher(publishDiscord)
 	contentWorkflow := pipeline.NewContentWorkflow(dbStore, normalizer, summarize, categorize, bucket, publishPublish)
-	server := api.NewAPIServer(dbStore, contentWorkflow)
+	apiServer := api.NewAPIServer(dbStore, contentWorkflow)
 	htmlHTML := html.NewHTML()
-	apihttpServer := client.NewAPIHTTPServer(apiConfig, server, htmlHTML, dbStore)
+	apihttpServer := server.NewAPIHTTPServer(apiConfig, apiServer, htmlHTML, dbStore)
 	discordCollector := collect.NewDiscordCollector(session, dbStore, contentWorkflow)
 	hnCollect := collect.NewHNCollector(session, dbStore, contentWorkflow)
 	app := NewApp(apihttpServer, normalizer, summarize, discordCollector, hnCollect)

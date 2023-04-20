@@ -1,15 +1,16 @@
-package client
+package server
 
 import (
 	"context"
 	"fmt"
+	"gitea.com/go-chi/session"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/google/wire"
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
 	"github.com/lunabrain-ai/lunabrain/pkg/api"
-	"github.com/lunabrain-ai/lunabrain/pkg/client/html"
+	"github.com/lunabrain-ai/lunabrain/pkg/server/html"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/rs/zerolog/log"
 	"github.com/twitchtv/twirp"
@@ -65,11 +66,11 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	muxRoot.Use(middleware.RealIP)
 
 	muxRoot.Use(middleware.Logger)
-	//muxRoot.Use(session.Sessioner(session.Options{
-	//	Provider:           "file",
-	//	CookieName:         "session",
-	//	FlashEncryptionKey: "SomethingSuperSecretThatShouldChange",
-	//}))
+	muxRoot.Use(session.Sessioner(session.Options{
+		Provider:           "file",
+		CookieName:         "session",
+		FlashEncryptionKey: "SomethingSuperSecretThatShouldChange",
+	}))
 
 	// Use the CORS middleware with your router
 	muxRoot.Use(cors.AllowAll().Handler)

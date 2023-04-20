@@ -32,30 +32,52 @@ Python is ubiquitous in ML. There is a Python service which serves as a bridge b
 
 ```bash
 git clone https://github.com/lunabrain-ai/lunabrain.git
+cd lunabrain
+```
+
+### Docker Compose
+The fastest way to bring up LunaBrain is with `docker-compose`:
+
+```
+docker-compose up
 ```
 
 ### Run the backend
+If you want to roll up your sleves and dig around, you can bring up the services manually.
+
+Note: These might fall out of date quickly! We are working on a better local dev experience with [tilt](https://tilt.dev/).
 
 ```bash
 go run cmd/main.go api serve
 ```
 
 {{<details "What can I configure?" >}}
-Create a `.lunabrain.yaml` file in the root directory of the project and add the following config:
+Create a `config/lunabrain/config.yaml` file and add the following config (changing TODO with the relevant details):
 
 ```yaml
 openai:
-  api_key: test
+  api_key: TODO
 api:
   local: true
 scrape:
   client: chrome
   fallback: true
-youtube: # optional
+  use_cache: false
+python:
+  host: 'lunabrain-python:50051'
+normalize:
+  url:
+    domain_content: true
+youtube:
   api_key: TODO
-discord: # optional
+discord:
   application_id: TODO
   token: TODO
+publish:
+  discord:
+    enabled: false
+    channel_id: TODO
+
 ```
 {{< /details >}}
 
@@ -69,5 +91,10 @@ cd python
 python -m venv env
 source env/bin/activate
 pip install -r requirements.txt
-python start.py
+LUNABRAIN_DIR=data/lunabrain python start.py
+```
+
+If you want to explore what this service can do, you can use [grpcui](https://github.com/fullstorydev/grpcui):
+```bash
+grpcui -plaintext localhost:50051
 ```

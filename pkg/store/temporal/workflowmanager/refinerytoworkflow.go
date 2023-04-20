@@ -1,7 +1,7 @@
 package workflowmanager
 
 import (
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/workflow/dsl"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/temporal/dsl"
 	"log"
 
 	"github.com/google/uuid"
