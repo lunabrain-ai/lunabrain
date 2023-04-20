@@ -31,12 +31,19 @@ cat README.md | lunapipe -t markdown "Write me a short section of a blog post th
 >
 > If you're a developer looking to speed up your workflow, I highly recommend giving lunapipe a try.
 
-I mean, yeah, that is pretty much it. Kind of bland though, do you think? Unfortunately GPT models aren't known
+I mean, yeah, that is pretty much it. Kind of bland though, don't you think? Unfortunately GPT models aren't known
 for their "writer's voice".
 
-## Ultimate Code Flow
-I always have a chatgpt tab to help me cope with writer's block or to give me some insight into a problem I am looking at.
-Simon Wilison wrote an [nice post](https://simonwillison.net/2023/Mar/27/ai-enhanced-development/) explaining this effect as well.
+## Finding answers to questions is fun
+I always have a ChatGPT tab open to help me with writer's block or to give me some external insight into a problem I am looking at.
+Unlike your typical Google search, which has been eternally plagued by SEO spam, a ChatGPT response is probably going to give you
+something worth reading right off the bat.
+Simon Willison wrote an [nice post](https://simonwillison.net/2023/Mar/27/ai-enhanced-development/) explaining how ChatGPT has enhanced their
+workflow:
+
+> The thing I’m most excited about in our weird new AI-enhanced reality is the way it allows me to be more ambitious with my projects.
+
+
 They have also written a CLI tool of [their own](https://github.com/simonw/llm) which I imagine emerged from a similar need of mine.
 
 I hate context switching. It derails me faster than a train running over TNT.
@@ -116,7 +123,7 @@ lunapipe "How do I run server.rs?"
 
 ## Templates
 By passing `-t` to lunapipe, you can use templates that are already created, or ones of your own. Here is what the template for `function` looks like:
-```
+```gotemplate
 {{$lang := param "language"}}
 You are a developer who writes code. Write the code of a function{{if $lang}}, written in {{$lang}},{{end}} based on the following description:
 ```
@@ -124,7 +131,7 @@ You are a developer who writes code. Write the code of a function{{if $lang}}, w
 The templates are written using go templates which are pretty [easy to understand](https://www.digitalocean.com/community/tutorials/how-to-use-templates-in-go).
 Since it is easy to expose functions written in Go inside of templates, you could write something like this:
 
-```
+```gotemplate
 Given the following git state, write a short description of what the state of the repo is:
 
 git status:
@@ -132,7 +139,7 @@ git status:
 ```
 
 ```shell
-lunapipe -t gitinfo "talk to me"
+lunapipe -t gitinfo "help me!"
 ```
 > The repo is on the "main" branch and is up-to-date with the remote "origin/main" branch. There are several modified files (including .gitignore, go.mod, and go.sum) and some untracked files. The changes have not been staged for commit, but the suggested commands to update the changes and discard them are provided.
 
@@ -142,7 +149,7 @@ will get a bunch of errors. Like I said before, this is a tool for unblocking yo
 rubber ducky.
 
 ## Try it yourself!
-Go forth and try it for yourself! https://github.com/lunabrain-ai/lunapipe
+Go forth and [try it for yourself](https://github.com/lunabrain-ai/lunapipe)!
 
 Run this command for a quick install:
 ```shell
