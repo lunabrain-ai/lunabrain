@@ -1,11 +1,11 @@
 openai:
-  api_key: test
+  api_key: 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
 api:
   local: true
 scrape:
   client: chrome
   fallback: true
-  use_cache: true
+  use_cache: false
 python:
   host: 'lunabrain-python:50051'
 normalize:
@@ -15,7 +15,7 @@ youtube:
   api_key: TODO
 discord:
   application_id: 1090552222460424204
-  token: MTA5MDU1MjIyMjQ2MDQyNDIwNA.GK-s90.OHvvW-HvtOnJzYrWmKzKTvKcfSMXqX1O3QbGXY
+  token: MTA5MDU1MjIyMjQ2MDQyNDIwNA.GWJ2lA.8GiPrDL9AQZEmLtsRGf7r2eNQhF-X5NYkBM8fI
 publish:
   discord:
     enabled: false
