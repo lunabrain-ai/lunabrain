@@ -2,10 +2,10 @@ package cli
 
 import (
 	"github.com/google/wire"
-	"github.com/lunabrain-ai/lunabrain/pkg/client"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
+	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/urfave/cli/v2"
 )
 
@@ -20,7 +20,7 @@ var Set = wire.NewSet(
 	wire.Struct(new(Commands), "MyFoo", "MyBar"))
 
 func NewApp(
-	httpServer client.HTTPServer,
+	httpServer server.HTTPServer,
 	normalizer normalize.Normalizer,
 	summarizer transform.Summarizer,
 	discordCollect *collect.DiscordCollector,

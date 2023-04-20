@@ -11,8 +11,8 @@ message Workflow {
 }
 
 message CodeNode {
-  string id = 1;
-  string name = 2;
+  string service = 1;
+  string method = 2;
 }
 
 message Node {

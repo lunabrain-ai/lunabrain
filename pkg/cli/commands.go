@@ -1,16 +1,15 @@
 package cli
 
 import (
-	"github.com/lunabrain-ai/lunabrain/pkg/client"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
-	"github.com/lunabrain-ai/lunabrain/pkg/util"
+	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/urfave/cli/v2"
 	"path/filepath"
 )
 
-func NewServeCommand(httpServer client.HTTPServer) *cli.Command {
+func NewServeCommand(httpServer server.HTTPServer) *cli.Command {
 	return &cli.Command{
 		Name:  "api",
 		Usage: "API server",
@@ -55,17 +54,6 @@ func NewCollectCommand(
 		Name:  "collect",
 		Usage: "Collect some data.",
 		Subcommands: []*cli.Command{
-			{
-				Name: "audio",
-				Action: func(ctx *cli.Context) error {
-					fileName := util.GenerateFilename("recording", "aiff")
-					err := collect.Record(fileName)
-					if err != nil {
-						return err
-					}
-					return nil
-				},
-			},
 			{
 				Name: "hn",
 				Action: func(ctx *cli.Context) error {

@@ -61,7 +61,7 @@ func (c *HNCollect) Collect() error {
 			continue
 		}
 
-		_, err = c.db.SaveHNStory(*story.ID, *story.URL, i, id, story, comments)
+		_, err = c.db.SaveHNStory(*story.ID, *story.URL, &i, id, story, comments)
 		if err != nil {
 			log.Warn().Err(err).Msg("error storing hn story")
 			continue

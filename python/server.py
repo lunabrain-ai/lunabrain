@@ -1,5 +1,16 @@
-import logging
 import os
+import yaml
+
+
+def get_openai_api_key():
+    with open('config/lunabrain/config.yaml', 'r') as f:
+        config = yaml.load(f, Loader=yaml.FullLoader)
+    return config['openai']['api_key']
+
+
+os.environ['OPENAI_API_KEY'] = get_openai_api_key()
+
+import logging
 import sys
 from concurrent import futures
 from grpc_reflection.v1alpha import reflection
@@ -22,6 +33,9 @@ import whisper
 from youtube_transcript_api import YouTubeTranscriptApi
 import normalize
 from keybert import KeyBERT
+from sentence_transformers import SentenceTransformer
+
+sentence_model = SentenceTransformer("all-MiniLM-L6-v2")
 
 if os.environ.get('LOG_LEVEL') is not None and os.environ.get('LOG_LEVEL').lower() == "debug":
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -30,7 +44,7 @@ if os.environ.get('LOG_LEVEL') is not None and os.environ.get('LOG_LEVEL').lower
 llm = OpenAI(temperature=0.9)
 
 model = whisper.load_model("base")
-kw_model = KeyBERT()
+kw_model = KeyBERT(model=sentence_model)
 
 normalizer = normalize.Normalizer()
 categorizer = categorize.Categorizer()
@@ -43,7 +57,6 @@ def question_generator():
     # https://github.com/AMontgomerie/question_generator
     # https://huggingface.co/iarfmoose/t5-base-question-generator?text=This+model+is+a+sequence-to-sequence+question+generator+which+takes+an+answer+and+context+as+an+input%2C+and+generates+a+question+as+an+output.+It+is+based+on+a+pretrained+t5-base+model.
     pass
-
 
 class PythonSerivce(PythonServicer):
     def Transcribe(self, req: python_pb2.TranscribeRequest, context):
