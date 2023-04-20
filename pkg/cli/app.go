@@ -26,7 +26,6 @@ func NewApp(
 	discordCollect *collect.DiscordCollector,
 	hnCollect *collect.HNCollect,
 ) *cli.App {
-	println("hello")
 	return &cli.App{
 		Name:  "lunabrain",
 		Usage: "Save and search for information.",
