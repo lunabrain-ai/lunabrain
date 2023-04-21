@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-func Connect(cache cache.Cache) (*gorm.DB, error) {
+func NewGormDB(cache cache.Cache) (*gorm.DB, error) {
 	dbType := os.Getenv("DB_TYPE")
 	dsn := os.Getenv("DB_DSN")
 

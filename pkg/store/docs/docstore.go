@@ -50,7 +50,7 @@ func typeString[T any](t T) string {
 var _ DocStore[interface{}] = (*docStore[interface{}])(nil)
 
 func NewDocStore[T any](cache cache.Cache) (*docStore[T], error) {
-	db, err := db.Connect(cache)
+	db, err := db.NewGormDB(cache)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not connect to database: %v", err)
 	}

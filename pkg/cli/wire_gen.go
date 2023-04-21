@@ -44,7 +44,7 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	dbStore, err := db.NewDB(localCache)
+	dbStore, err := db.New(localCache)
 	if err != nil {
 		return nil, err
 	}

@@ -1,7 +1,7 @@
 package docs
 
 import (
-	"github.com/lunabrain-ai/lunabrain/pkg/store"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/cache"
 	"gorm.io/datatypes"
 	"testing"
 )
@@ -19,7 +19,9 @@ func TestTableName(t *testing.T) {
 }
 
 func TestNewDocStore(t *testing.T) {
-	cache, err := store.NewLocalCache()
+	c, err := cache.NewLocalCache(cache.Config{
+		Name: ".test",
+	})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,7 +30,7 @@ func TestNewDocStore(t *testing.T) {
 		Name string
 	}
 
-	docstore, err := NewDocStore[data](cache)
+	docstore, err := NewDocStore[data](c)
 	if err != nil {
 		t.Fatal(err)
 	}
