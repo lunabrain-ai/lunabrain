@@ -250,4 +250,5 @@
   {{ $trimmedURL := trim (index (split .Site.BaseURL "://") 1) "/" }}
   <script defer data-domain="{{$trimmedURL}}" src="https://plausible.io/js/script.js"></script>
   <script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
+  <script async defer src="https://sa.lunasec.io/latest.js"></script><noscript><img src="https://sa.lunasec.io/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade" /></noscript>
 </head>

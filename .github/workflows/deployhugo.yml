@@ -4,7 +4,7 @@ name: Deploy Hugo site to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["*"]
+    branches: ["main"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -73,11 +73,13 @@ jobs:
         working-directory: site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
+        if: success() && github.ref == 'refs/heads/main'
         with:
           path: ./site/public
 
   # Deployment job
   deploy:
+    if: github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

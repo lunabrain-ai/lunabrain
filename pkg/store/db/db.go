@@ -38,7 +38,7 @@ type Store interface {
 	GetDiscordMessages(chanID string) ([]*model.DiscordMessage, error)
 	GetLatestDiscordTranscript() (*model.DiscordTranscript, error)
 	GetLatestDiscordMessage() (*model.DiscordMessage, error)
-	SaveHNStory(ID int, url string, position int, contentID uuid.UUID, story *gohn.Item, comments gohn.ItemsIndex) (*model.HNStory, error)
+	SaveHNStory(ID int, url string, position *int, contentID uuid.UUID, story *gohn.Item, comments gohn.ItemsIndex) (*model.HNStory, error)
 	GetHNStory(ID int) (*model.HNStory, error)
 	GetTopHNStories() ([]model.HNStory, error)
 	AddContentToIndex(contentID uuid.UUID, indexID uuid.UUID) error
@@ -122,11 +122,10 @@ func (s *dbStore) GetContentByID(contentID uuid.UUID) (*model.Content, error) {
 	return &content, nil
 }
 
-func (s *dbStore) SaveHNStory(ID int, url string, position int, contentID uuid.UUID, story *gohn.Item, comments gohn.ItemsIndex) (*model.HNStory, error) {
+func (s *dbStore) SaveHNStory(ID int, url string, position *int, contentID uuid.UUID, story *gohn.Item, comments gohn.ItemsIndex) (*model.HNStory, error) {
 	hnStory := &model.HNStory{
 		ID:        ID,
 		URL:       url,
-		Position:  position + 1,
 		ContentID: contentID,
 		Data: datatypes.JSONType[*gohn.Item]{
 			Data: story,
@@ -134,6 +133,10 @@ func (s *dbStore) SaveHNStory(ID int, url string, position int, contentID uuid.U
 		Comments: datatypes.JSONType[gohn.ItemsIndex]{
 			Data: comments,
 		},
+	}
+
+	if position != nil {
+		hnStory.Position = *position
 	}
 
 	var existingStory model.HNStory
@@ -149,9 +152,11 @@ func (s *dbStore) SaveHNStory(ID int, url string, position int, contentID uuid.U
 		return hnStory, nil
 	}
 
-	res = s.db.Model(&model.HNStory{}).Where("position = ?", position).Update("position", nil)
-	if res.Error != nil && !errors.Is(res.Error, gorm.ErrRecordNotFound) {
-		return nil, errors.Wrapf(res.Error, "could not update hn story position")
+	if position != nil {
+		res = s.db.Model(&model.HNStory{}).Where("position = ?", position).Update("position", nil)
+		if res.Error != nil && !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			return nil, errors.Wrapf(res.Error, "could not update hn story position")
+		}
 	}
 
 	res = s.db.Model(&existingStory).Where(ID).Updates(hnStory)
