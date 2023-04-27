@@ -34,7 +34,7 @@ func (c *LocalCache) GetFolder(name string) (string, error) {
 
 func ensureDirExists(p, dirName string) error {
 	if _, err := os.Stat(p); os.IsNotExist(err) {
-		if err := os.Mkdir(p, 0700); err != nil {
+		if err := os.MkdirAll(p, 0700); err != nil {
 			return errors.Wrapf(err, "could not create folder: %v", dirName)
 		}
 	}

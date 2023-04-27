@@ -27,8 +27,8 @@ services:
       TRANSFORMERS_CACHE: "/data/transformers"
       PYTORCH_TRANSFORMERS_CACHE: "/data/transformers"
       SENTENCE_TRANSFORMERS_HOME: "/data/transformers"
-      #HF_DATASETS_OFFLINE: 1
-      #TRANSFORMERS_OFFLINE: 1
+      HF_DATASETS_OFFLINE: 1
+      TRANSFORMERS_OFFLINE: 1
 
 #  postgres:
 #    # Special image with vectorized postgres

@@ -44,7 +44,11 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	dbStore, err := db.New(localCache)
+	gormDB, err := db.NewGormDB(localCache)
+	if err != nil {
+		return nil, err
+	}
+	dbStore, err := db.New(gormDB)
 	if err != nil {
 		return nil, err
 	}
