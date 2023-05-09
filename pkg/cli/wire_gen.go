@@ -19,8 +19,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/lunabrain-ai/lunabrain/pkg/server/html"
-	"github.com/lunabrain-ai/lunabrain/pkg/store"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/cache"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/urfave/cli/v2"
 )
@@ -36,15 +35,15 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	cacheConfig, err := cache.NewConfig(provider)
+	bucketConfig, err := bucket.NewConfig(provider)
 	if err != nil {
 		return nil, err
 	}
-	localCache, err := cache.NewLocalCache(cacheConfig)
+	bucketBucket, err := bucket.New(bucketConfig)
 	if err != nil {
 		return nil, err
 	}
-	gormDB, err := db.NewGormDB(localCache)
+	gormDB, err := db.NewGormDB(bucketBucket)
 	if err != nil {
 		return nil, err
 	}
@@ -73,16 +72,12 @@ func Wire() (*cli.App, error) {
 		return nil, err
 	}
 	scraper := scrape.NewScraper(scrapeConfig, dbStore)
-	bucket, err := store.NewLocalBucket(localCache)
-	if err != nil {
-		return nil, err
-	}
-	crawler := scrape.NewCrawler(bucket)
+	crawler := scrape.NewCrawler(bucketBucket)
 	urlNormalizer, err := normalize.NewURLNormalizer(normalizeConfig, pythonClient, scraper, crawler)
 	if err != nil {
 		return nil, err
 	}
-	normalizer, err := normalize.NewNormalizer(audioNormalizer, urlNormalizer, dbStore, pythonClient)
+	normalizer, err := normalize.NewNormalizer(audioNormalizer, urlNormalizer, dbStore, pythonClient, bucketBucket)
 	if err != nil {
 		return nil, err
 	}
@@ -108,10 +103,10 @@ func Wire() (*cli.App, error) {
 	}
 	publishDiscord := publish.NewDiscord(session, publishConfig, dbStore)
 	publishPublish := publish.NewPublisher(publishDiscord)
-	contentWorkflow := pipeline.NewContentWorkflow(dbStore, normalizer, summarize, categorize, bucket, publishPublish)
+	contentWorkflow := pipeline.NewContentWorkflow(dbStore, normalizer, summarize, categorize, bucketBucket, publishPublish)
 	apiServer := api.NewAPIServer(dbStore, contentWorkflow)
 	htmlHTML := html.NewHTML()
-	apihttpServer := server.NewAPIHTTPServer(apiConfig, apiServer, htmlHTML, dbStore)
+	apihttpServer := server.NewAPIHTTPServer(apiConfig, apiServer, htmlHTML, dbStore, bucketBucket)
 	discordCollector := collect.NewDiscordCollector(session, dbStore, contentWorkflow)
 	hnCollect := collect.NewHNCollector(session, dbStore, contentWorkflow)
 	app := NewApp(apihttpServer, normalizer, summarize, discordCollector, hnCollect)

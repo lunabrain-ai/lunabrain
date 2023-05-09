@@ -1,17 +1,18 @@
-package cache
+package bucket
 
 import (
 	"github.com/rs/zerolog/log"
 	"go.uber.org/config"
 )
 
-const ConfigurationKey = "cache"
+const ConfigurationKey = "bucket"
 
 type Config struct {
-	Name string `yaml:"name"`
+	LocalName string `yaml:"local_name"`
+	Path      string `yaml:"path"`
+	URLBase   string `yaml:"url_base"`
 }
 
-// TODO breadchris break up this config
 func NewConfig(config config.Provider) (cfg Config, err error) {
 	err = config.Get(ConfigurationKey).Populate(&cfg)
 	if err != nil {

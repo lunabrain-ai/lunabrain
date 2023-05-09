@@ -1,10 +1,8 @@
 version: '3.6'
 services:
   lunabrain:
-    # image: ghcr.io/lunabrain/lunabrain
+    image: ghcr.io/lunabrain/lunabrain
     hostname: lunabrain
-    build:
-      context: .
     ports:
       - "8080:8080"
     volumes:
@@ -12,10 +10,8 @@ services:
       - ./config:/app/config
 
   lunabrain-python:
-    # image: ghcr.io/lunabrain/lunabrain-python
+    image: ghcr.io/lunabrain/lunabrain-python
     hostname: lunabrain-python
-    build:
-      context: ./python
     ports:
       - "50051:50051"
     volumes:
@@ -27,22 +23,22 @@ services:
       TRANSFORMERS_CACHE: "/data/transformers"
       PYTORCH_TRANSFORMERS_CACHE: "/data/transformers"
       SENTENCE_TRANSFORMERS_HOME: "/data/transformers"
-      HF_DATASETS_OFFLINE: 1
-      TRANSFORMERS_OFFLINE: 1
+      #HF_DATASETS_OFFLINE: 1
+      #TRANSFORMERS_OFFLINE: 1
 
-#  postgres:
-#    # Special image with vectorized postgres
-#    image: ankane/pgvector:v0.4.0
-#    restart: always
-#    ports:
-#      - "5432:5432"
-#    volumes:
-#    - db:/var/lib/postgresql/data
-#    environment:
-#      POSTGRES_PASSWORD: password
-#      POSTGRES_DB: postgres
-#    labels:
-#      kompose.service.type: clusterip
-#      kompose.volume.type: persistentVolumeClaim
+  postgres:
+    # Special image with vectorized postgres
+    image: ankane/pgvector:v0.4.0
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+    - db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    labels:
+      kompose.service.type: clusterip
+      kompose.volume.type: persistentVolumeClaim
 volumes:
   db:

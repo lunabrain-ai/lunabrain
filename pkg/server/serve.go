@@ -11,6 +11,7 @@ import (
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
 	"github.com/lunabrain-ai/lunabrain/pkg/api"
 	"github.com/lunabrain-ai/lunabrain/pkg/server/html"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/rs/zerolog/log"
 	"github.com/twitchtv/twirp"
@@ -26,6 +27,7 @@ type APIHTTPServer struct {
 	apiServer   *api.Server
 	twirpServer genapi.TwirpServer
 	htmlContent *html.HTML
+	bucket      *bucket.Bucket
 }
 
 type HTTPServer interface {
@@ -47,6 +49,7 @@ func NewAPIHTTPServer(
 	apiServer *api.Server,
 	htmlContent *html.HTML,
 	db db.Store,
+	bucket *bucket.Bucket,
 ) *APIHTTPServer {
 	twirpServer := genapi.NewAPIServer(apiServer, api.NewLoggingServerHooks(), twirp.WithServerPathPrefix("/api"))
 
@@ -56,6 +59,7 @@ func NewAPIHTTPServer(
 		twirpServer: twirpServer,
 		htmlContent: htmlContent,
 		db:          db,
+		bucket:      bucket,
 	}
 }
 
@@ -80,6 +84,10 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 
 	muxRoot.Handle(a.twirpServer.PathPrefix(), a.twirpServer)
 	muxRoot.Route("/", a.getClientRoutes)
+
+	// TODO breadchris enable/disable based on if we are in dev mode
+	//bucketRoute, handler := a.bucket.HandleSignedURLs()
+	//muxRoot.Handle(bucketRoute, handler)
 	return muxRoot
 }
 

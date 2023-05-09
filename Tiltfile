@@ -3,7 +3,7 @@
 load('ext://restart_process', 'docker_build_with_restart')
 load('ext://configmap', 'configmap_create')
 
-deploy = os.getenv('DEPLOY', 'dev')
+deploy = os.getenv('DEPLOY', 'docker-compose')
 
 if deploy == 'docker-compose':
     local_resource(
@@ -26,6 +26,7 @@ if deploy == 'docker-compose':
 
     docker_build(
         'ghcr.io/lunabrain/lunabrain-python', 'python',
+        only=['.'],
         live_update=[
             sync('./python', '/app/python/'),
             run('cd /app/ && pip install -r requirements.txt',

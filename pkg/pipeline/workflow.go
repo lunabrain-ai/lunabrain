@@ -12,11 +12,10 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
 	transcont "github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/publish"
-	"github.com/lunabrain-ai/lunabrain/pkg/store"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
-	"path"
 )
 
 type Workflow interface {
@@ -28,7 +27,7 @@ type ContentWorkflow struct {
 	normalizer  normalize.Normalizer
 	summarizer  transform.Summarizer
 	categorizer transform.Categorizer
-	fileStore   *store.Bucket
+	fileStore   *bucket.Bucket
 	publisher   publish.Publisher
 }
 
@@ -77,7 +76,7 @@ func (s *ContentWorkflow) ProcessContent(ctx context.Context, content *genapi.Co
 			return uuid.UUID{}, errors.Wrapf(err, "unable to save audio content to bucket")
 		}
 
-		normalContent, err = s.normalizer.NormalizeFile(path.Join(s.fileStore.Location, contentID.String()), "audio")
+		normalContent, err = s.normalizer.NormalizeFile(contentID.String(), "audio")
 		if err != nil {
 			return uuid.UUID{}, errors.Wrapf(err, "unable to normalize audio content")
 		}
@@ -162,7 +161,7 @@ func NewContentWorkflow(
 	normalizer normalize.Normalizer,
 	summarizer transform.Summarizer,
 	categorizer transform.Categorizer,
-	fileStore *store.Bucket,
+	fileStore *bucket.Bucket,
 	publisher publish.Publisher,
 ) *ContentWorkflow {
 	return &ContentWorkflow{

@@ -5,7 +5,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/lunabrain-ai/lunabrain/pkg/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/cache"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/rs/zerolog/log"
 	"go.uber.org/config"
 	"io/ioutil"
@@ -13,12 +13,14 @@ import (
 	"path"
 )
 
-const configDir = "config/lunabrain/"
-
-const lunabrainConfigFile = ".lunabrain.yaml"
+const (
+	userConfigDir = ".lunabrain"
+	configDir     = "config/lunabrain/"
+	configFile    = ".lunabrain.yaml"
+)
 
 type Config struct {
-	Cache  cache.Config  `yaml:"cache"`
+	Bucket bucket.Config `yaml:"bucket"`
 	Python python.Config `yaml:"python"`
 	OpenAI openai.Config `yaml:"openai"`
 	API    api.Config    `yaml:"api"`
@@ -27,8 +29,11 @@ type Config struct {
 
 func newDefaultConfig() Config {
 	return Config{
-		Cache: cache.Config{
-			Name: "lunabrain",
+		Bucket: bucket.Config{
+			LocalName: userConfigDir,
+			Path:      "",
+			// TODO breadchris this will break if the port is changed in the API config
+			URLBase: "localhost:8080/bucket",
 		},
 		Python: python.Config{
 			Host: "localhost:50051",
@@ -37,8 +42,7 @@ func newDefaultConfig() Config {
 			APIKey: "${LUNABRAIN_OPENAI_API_KEY}",
 		},
 		API: api.Config{
-			Port:  "8080",
-			Local: false,
+			Port: "8080",
 		},
 		Scrape: scrape.Config{
 			Client: scrape.ClientHTTP,
@@ -67,9 +71,9 @@ func NewConfigProvider() (config.Provider, error) {
 		log.Warn().Str("config directory", configDir).Msg("unable to locate config directory")
 	}
 
-	if f, ferr := os.Stat(lunabrainConfigFile); ferr == nil {
+	if f, ferr := os.Stat(configFile); ferr == nil {
 		log.Info().
-			Str("config file", lunabrainConfigFile).
+			Str("config file", configFile).
 			Msg("using local config file")
 		opts = append(opts, config.File(path.Join(f.Name())))
 	}

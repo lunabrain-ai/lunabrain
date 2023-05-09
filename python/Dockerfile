@@ -1,5 +1,8 @@
 FROM python:3.8
 
+RUN apt-get update \
+    && apt-get install -y ffmpeg
+
 RUN mkdir /app
 ADD requirements.txt /app
 

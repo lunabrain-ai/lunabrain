@@ -5,15 +5,17 @@ import (
 	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
 	"github.com/lunabrain-ai/lunabrain/gen/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
+	"github.com/rs/zerolog/log"
 )
 
 type AudioNormalizer struct {
 	client python.PythonClient
 }
 
-func (s *AudioNormalizer) Normalize(fileName string) ([]*content.Content, error) {
+func (s *AudioNormalizer) Normalize(filepath string) ([]*content.Content, error) {
+	log.Debug().Str("filepath", filepath).Msg("normalizing audio file")
 	resp, err := s.client.Transcribe(context.Background(), &python.TranscribeRequest{
-		File: fileName,
+		File: filepath,
 	})
 	if err != nil {
 		return nil, err

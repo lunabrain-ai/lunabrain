@@ -1,16 +1,18 @@
 package scrape
 
 import (
+	"context"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/geziyor/geziyor"
 	"github.com/geziyor/geziyor/client"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
-	"github.com/lunabrain-ai/lunabrain/pkg/store"
-	"github.com/lunabrain-ai/lunabrain/pkg/util"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
+	"gocloud.dev/blob"
 	"net/url"
 	"path"
+	"path/filepath"
 	"sync"
 )
 
@@ -24,10 +26,10 @@ type Crawler interface {
 }
 
 type crawler struct {
-	fileStore *store.Bucket
+	fileStore *bucket.Bucket
 }
 
-func NewCrawler(fileStore *store.Bucket) *crawler {
+func NewCrawler(fileStore *bucket.Bucket) *crawler {
 	return &crawler{
 		fileStore: fileStore,
 	}
@@ -67,8 +69,8 @@ func resolveRelativeURL(baseURL string, relative string) (*url.URL, bool) {
 }
 
 func (c *crawler) linksParse(purl *url.URL) func(g *geziyor.Geziyor, r *client.Response) {
-	rawDir := path.Join(c.fileStore.Location, "sites", "raw")
-	normalDir := path.Join(c.fileStore.Location, "sites", "normal")
+	rawDir := path.Join("sites", "raw")
+	normalDir := path.Join("sites", "normal")
 
 	return func(g *geziyor.Geziyor, r *client.Response) {
 		// Check if this is an html page, if not return
@@ -77,7 +79,7 @@ func (c *crawler) linksParse(purl *url.URL) func(g *geziyor.Geziyor, r *client.R
 		}
 
 		// TODO breadchris use bucket to store this file
-		err := util.SaveURLToFolder(rawDir, r.Request.URL, r.Body)
+		err := c.saveURLToFolder(rawDir, r.Request.URL, r.Body)
 		if err != nil {
 			err = errors.Wrapf(err, "error: save raw content for %s\n", r.Request.URL.String())
 			log.Error().Err(err).Msg("")
@@ -87,7 +89,7 @@ func (c *crawler) linksParse(purl *url.URL) func(g *geziyor.Geziyor, r *client.R
 		article, err := content.FormatHTMLAsArticle(string(r.Body), r.Request.URL.String())
 		if err == nil {
 			// TODO breadchris use bucket to store this file
-			err = util.SaveURLToFolder(normalDir, r.Request.URL, []byte(article))
+			err = c.saveURLToFolder(normalDir, r.Request.URL, []byte(article))
 			if err != nil {
 				err = errors.Wrapf(err, "error: save article for %s\n", r.Request.URL.String())
 				log.Error().Err(err).Msg("")
@@ -135,4 +137,31 @@ func (c *crawler) linksParse(purl *url.URL) func(g *geziyor.Geziyor, r *client.R
 			}
 		})
 	}
+}
+
+func (c *crawler) saveURLToFolder(dir string, u *url.URL, body []byte) error {
+	// Extract the host name from the URL
+	host := u.Hostname()
+
+	// Create a folder with the host name if it doesn't exist
+	folderPath := filepath.Join(dir, host, u.Path)
+
+	filename := filepath.Base(u.Path)
+	if filename == "" || filename == "." {
+		filename = "index.html"
+	}
+
+	ext := filepath.Ext(filename)
+	if ext == "" {
+		filename += ".html"
+	}
+
+	// Write the body to a file in the folder with the URL path as the filename
+	filePath := filepath.Join(folderPath, filename)
+	err := c.fileStore.WriteAll(context.Background(), filePath, body, &blob.WriterOptions{})
+	if err != nil {
+		return errors.Wrapf(err, "error: write file %s\n", filePath)
+	}
+
+	return nil
 }

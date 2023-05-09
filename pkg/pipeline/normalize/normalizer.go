@@ -7,9 +7,10 @@ import (
 	"github.com/lunabrain-ai/lunabrain/gen/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
-	"github.com/lunabrain-ai/lunabrain/pkg/util"
 	"github.com/pkg/errors"
+	"net/http"
 )
 
 // Normalizer is an interface for normalizing data into text.
@@ -24,6 +25,7 @@ type normalizer struct {
 	url    *URLNormalizer
 	python python.PythonClient
 	db     db.Store
+	bucket *bucket.Bucket
 }
 
 var ProviderSet = wire.NewSet(
@@ -57,15 +59,19 @@ func (n *normalizer) NormalizeURL(url string, crawl bool) (content []*content.Co
 
 func (n *normalizer) NormalizeFile(file, contentType string) (content []*content.Content, err error) {
 	if contentType == "" {
-		var err error
-		contentType, err = util.DetectFileType(file)
+		fileContent, err := n.bucket.ReadAll(context.Background(), file)
 		if err != nil {
-			return nil, errors.Wrapf(err, "unable to detect file type for %s", file)
+			return nil, errors.Wrapf(err, "unable to read file %s", file)
 		}
+		contentType = http.DetectContentType(fileContent)
 	}
 
 	if contentType == "audio" {
-		return n.audio.Normalize(file)
+		filepath, err := n.bucket.NewFile(file)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to create new file %s", file)
+		}
+		return n.audio.Normalize(filepath)
 	}
 	return nil, errors.Errorf("unable to normalize file %s with content type %s", file, contentType)
 }
@@ -76,11 +82,13 @@ func NewNormalizer(
 	url *URLNormalizer,
 	db db.Store,
 	p python.PythonClient,
+	bucket *bucket.Bucket,
 ) (*normalizer, error) {
 	return &normalizer{
 		python: p,
 		db:     db,
 		audio:  audio,
 		url:    url,
+		bucket: bucket,
 	}, nil
 }

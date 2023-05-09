@@ -14,7 +14,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/publish"
 	"github.com/lunabrain-ai/lunabrain/pkg/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
-	"github.com/lunabrain-ai/lunabrain/pkg/store"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/urfave/cli/v2"
 )
@@ -25,8 +25,8 @@ func Wire() (*cli.App, error) {
 		config.ProviderSet,
 		server.ProviderSet,
 		python.ProviderSet,
-		store.ProviderSet,
 		db.ProviderSet,
+		bucket.ProviderSet,
 		normalize.ProviderSet,
 		transform.ProviderSet,
 		discord.ProviderSet,

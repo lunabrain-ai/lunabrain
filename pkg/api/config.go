@@ -6,8 +6,7 @@ import (
 )
 
 type Config struct {
-	Port  string `yaml:"port"`
-	Local bool   `yaml:"local"`
+	Port string `yaml:"port"`
 }
 
 func NewConfig(provider config.Provider) (config Config, err error) {
