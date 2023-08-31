@@ -46,7 +46,7 @@ class PythonStub(object):
                 )
         self.QueryIndex = channel.unary_unary(
                 '/python.Python/QueryIndex',
-                request_serializer=python__pb2.Query.SerializeToString,
+                request_serializer=python__pb2.IndexQuery.SerializeToString,
                 response_deserializer=python__pb2.QueryResult.FromString,
                 )
 
@@ -131,7 +131,7 @@ def add_PythonServicer_to_server(servicer, server):
             ),
             'QueryIndex': grpc.unary_unary_rpc_method_handler(
                     servicer.QueryIndex,
-                    request_deserializer=python__pb2.Query.FromString,
+                    request_deserializer=python__pb2.IndexQuery.FromString,
                     response_serializer=python__pb2.QueryResult.SerializeToString,
             ),
     }
@@ -258,7 +258,7 @@ class Python(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/python.Python/QueryIndex',
-            python__pb2.Query.SerializeToString,
+            python__pb2.IndexQuery.SerializeToString,
             python__pb2.QueryResult.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

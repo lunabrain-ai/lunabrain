@@ -3,31 +3,33 @@ package server
 import (
 	"context"
 	"fmt"
-	"gitea.com/go-chi/session"
-	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
-	"github.com/go-chi/cors"
+	"github.com/bufbuild/connect-go"
+	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
+	"github.com/go-chi/chi/v5"
 	"github.com/google/wire"
-	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
+	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/api"
+	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
+	code "github.com/lunabrain-ai/lunabrain/pkg/protoflow"
 	"github.com/lunabrain-ai/lunabrain/pkg/server/html"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
+	"github.com/protoflow-labs/protoflow/pkg/protoflow"
 	"github.com/rs/zerolog/log"
-	"github.com/twitchtv/twirp"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 	"net/http"
-	"os"
-	"os/signal"
-	"time"
 )
 
 type APIHTTPServer struct {
-	config      api.Config
-	db          db.Store
-	apiServer   *api.Server
-	twirpServer genapi.TwirpServer
-	htmlContent *html.HTML
-	bucket      *bucket.Bucket
+	config           api.Config
+	db               db.Store
+	apiServer        *api.Server
+	htmlContent      *html.HTML
+	bucket           *bucket.Bucket
+	discordService   *discord.DiscordService
+	protoflowService *code.Protoflow
+	p                *protoflow.Protoflow
 }
 
 type HTTPServer interface {
@@ -50,40 +52,65 @@ func NewAPIHTTPServer(
 	htmlContent *html.HTML,
 	db db.Store,
 	bucket *bucket.Bucket,
+	d *discord.DiscordService,
+	protoflowService *code.Protoflow,
+	p *protoflow.Protoflow,
 ) *APIHTTPServer {
-	twirpServer := genapi.NewAPIServer(apiServer, api.NewLoggingServerHooks(), twirp.WithServerPathPrefix("/api"))
-
 	return &APIHTTPServer{
-		config:      config,
-		apiServer:   apiServer,
-		twirpServer: twirpServer,
-		htmlContent: htmlContent,
-		db:          db,
-		bucket:      bucket,
+		config:           config,
+		apiServer:        apiServer,
+		htmlContent:      htmlContent,
+		db:               db,
+		bucket:           bucket,
+		discordService:   d,
+		protoflowService: protoflowService,
+		p:                p,
 	}
 }
 
+func NewLogInterceptor() connect.UnaryInterceptorFunc {
+	interceptor := func(next connect.UnaryFunc) connect.UnaryFunc {
+		return func(
+			ctx context.Context,
+			req connect.AnyRequest,
+		) (connect.AnyResponse, error) {
+			resp, err := next(ctx, req)
+			if err != nil {
+				log.Error().Msgf("connect error: %+v\n", err)
+			}
+			return resp, err
+		}
+	}
+	return interceptor
+}
+
 func (a *APIHTTPServer) NewAPIHandler() http.Handler {
-	muxRoot := chi.NewRouter()
+	muxRoot := http.NewServeMux()
+	interceptors := connect.WithInterceptors(NewLogInterceptor())
 
-	muxRoot.Use(middleware.RequestID)
-	muxRoot.Use(middleware.RealIP)
+	r := chi.NewRouter()
+	a.getClientRoutes(r)
 
-	muxRoot.Use(middleware.Logger)
-	muxRoot.Use(session.Sessioner(session.Options{
-		Provider:           "file",
-		CookieName:         "session",
-		FlashEncryptionKey: "SomethingSuperSecretThatShouldChange",
-	}))
-
-	// Use the CORS middleware with your router
-	muxRoot.Use(cors.AllowAll().Handler)
-
-	//muxRoot.Use(middleware.Recoverer)
-	muxRoot.Use(middleware.Timeout(time.Second * 5))
-
-	muxRoot.Handle(a.twirpServer.PathPrefix(), a.twirpServer)
-	muxRoot.Route("/", a.getClientRoutes)
+	muxRoot.Handle(genconnect.NewAPIHandler(a.apiServer, interceptors))
+	muxRoot.Handle(genconnect.NewDiscordServiceHandler(a.discordService, interceptors))
+	muxRoot.Handle(genconnect.NewProtoflowServiceHandler(a.protoflowService, interceptors))
+	reflector := grpcreflect.NewStaticReflector(
+		"lunabrain.API",
+		"lunabrain.DiscordService",
+		"protoflow.ProtoflowService",
+	)
+	recoverCall := func(_ context.Context, spec connect.Spec, _ http.Header, p any) error {
+		log.Error().Msgf("%+v\n", p)
+		if err, ok := p.(error); ok {
+			return err
+		}
+		return fmt.Errorf("panic: %v", p)
+	}
+	muxRoot.Handle(grpcreflect.NewHandlerV1(reflector, connect.WithRecover(recoverCall)))
+	// Many tools still expect the older version of the server reflection API, so
+	// most servers should mount both handlers.
+	muxRoot.Handle(grpcreflect.NewHandlerV1Alpha(reflector, connect.WithRecover(recoverCall)))
+	muxRoot.Handle("/", r)
 
 	// TODO breadchris enable/disable based on if we are in dev mode
 	//bucketRoute, handler := a.bucket.HandleSignedURLs()
@@ -96,24 +123,17 @@ func (a *APIHTTPServer) Start() error {
 
 	addr := fmt.Sprintf(":%s", a.config.Port)
 
-	httpServer := &http.Server{
-		Addr:    addr,
-		Handler: httpApiHandler,
-	}
-
-	signals := make(chan os.Signal, 1)
-	signal.Notify(signals, os.Interrupt)
-
 	log.Info().Str("addr", addr).Msg("starting http server")
 
-	go func(server *http.Server) {
-		if err := server.ListenAndServe(); err != nil {
-			log.Error().Err(err).Msg("could not start http server")
-		}
-	}(httpServer)
+	//go func() {
+	//	log.Debug().Msg("starting protoflow server")
+	// // TODO listen for interupt
+	//	// TODO breadchris configure port
+	//	err := a.p.HTTPServer.Serve(8080)
+	//	if err != nil {
+	//		log.Error().Err(err).Msg("failed to start protoflow server")
+	//	}
+	//}()
 
-	<-signals
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*9)
-	defer cancel()
-	return httpServer.Shutdown(ctx)
+	return http.ListenAndServe(addr, h2c.NewHandler(httpApiHandler, &http2.Server{}))
 }

@@ -2,8 +2,10 @@ package api
 
 import (
 	"context"
+	connect_go "github.com/bufbuild/connect-go"
 	"github.com/google/uuid"
-	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
+	gen "github.com/lunabrain-ai/lunabrain/gen"
+	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
@@ -15,29 +17,29 @@ type Server struct {
 	workflow pipeline.Workflow
 }
 
-func (s *Server) Save(ctx context.Context, contents *genapi.Contents) (*genapi.ContentIDs, error) {
-	var ids []*genapi.ContentID
-	for _, c := range contents.Contents {
+var _ genconnect.APIHandler = (*Server)(nil)
+
+func (s *Server) Save(ctx context.Context, c *connect_go.Request[gen.Contents]) (*connect_go.Response[gen.ContentIDs], error) {
+	var ids []*gen.ContentID
+	for _, c := range c.Msg.Contents {
 		id, err := s.workflow.ProcessContent(ctx, c)
 		if err != nil {
 			return nil, err
 		}
-		ids = append(ids, &genapi.ContentID{
+		ids = append(ids, &gen.ContentID{
 			Id: id.String(),
 		})
 	}
-	return &genapi.ContentIDs{
-		ContentIDs: ids,
-	}, nil
+	return connect_go.NewResponse(&gen.ContentIDs{ContentIDs: ids}), nil
 }
 
-func (s *Server) Search(ctx context.Context, query *genapi.Query) (*genapi.Results, error) {
+func (s *Server) Search(ctx context.Context, c *connect_go.Request[gen.Query]) (*connect_go.Response[gen.Results], error) {
 	var (
 		err     error
 		content []model.Content
 	)
-	if query.ContentID != "" {
-		parsedID, err := uuid.Parse(query.ContentID)
+	if c.Msg.ContentID != "" {
+		parsedID, err := uuid.Parse(c.Msg.ContentID)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to parse content id")
 		}
@@ -53,40 +55,38 @@ func (s *Server) Search(ctx context.Context, query *genapi.Query) (*genapi.Resul
 		}
 	}
 
-	var storedContent []*genapi.StoredContent
+	var storedContent []*gen.StoredContent
 	for _, c := range content {
-		var normalContent []*genapi.NormalizedContent
+		var normalContent []*gen.NormalizedContent
 		for _, n := range c.NormalizedContent {
-			var transformedContent []*genapi.TransformedContent
+			var transformedContent []*gen.TransformedContent
 			for _, t := range n.TransformedContent {
-				transformedContent = append(transformedContent, &genapi.TransformedContent{
+				transformedContent = append(transformedContent, &gen.TransformedContent{
 					Data:          t.Data,
-					TransformerID: genapi.TransformerID(t.TransformerID),
+					TransformerID: gen.TransformerID(t.TransformerID),
 				})
 			}
 
-			normalContent = append(normalContent, &genapi.NormalizedContent{
+			normalContent = append(normalContent, &gen.NormalizedContent{
 				Data:         n.Data,
-				NormalizerID: genapi.NormalizerID(n.NormalizerID),
+				NormalizerID: gen.NormalizerID(n.NormalizerID),
 				ContentID:    n.ContentID.String(),
 				Transformed:  transformedContent,
 			})
 		}
 
-		storedContent = append(storedContent, &genapi.StoredContent{
-			Content: &genapi.Content{
+		storedContent = append(storedContent, &gen.StoredContent{
+			Content: &gen.Content{
 				Id:        c.ID.String(),
 				Data:      []byte(c.Data),
-				Type:      genapi.ContentType(c.Type),
+				Type:      gen.ContentType(c.Type),
 				Metadata:  nil,
 				CreatedAt: c.CreatedAt.String(),
 			},
 			Normalized: normalContent,
 		})
 	}
-	return &genapi.Results{
-		StoredContent: storedContent,
-	}, nil
+	return connect_go.NewResponse(&gen.Results{StoredContent: storedContent}), nil
 }
 
 func NewAPIServer(

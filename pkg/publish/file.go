@@ -3,7 +3,7 @@ package publish
 import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/google/uuid"
-	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
+	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"github.com/pkg/errors"

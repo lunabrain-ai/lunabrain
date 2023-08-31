@@ -14,7 +14,7 @@ func createPionRTPPacket(p *discordgo.Packet) *rtp.Packet {
 	return &rtp.Packet{
 		Header: rtp.Header{
 			Version: 2,
-			// Taken from Discord voice docs
+			// Taken from DiscordService voice docs
 			PayloadType:    0x78,
 			SequenceNumber: p.Sequence,
 			Timestamp:      p.Timestamp,
@@ -58,7 +58,7 @@ func NewListener(
 ) {
 	s, err := discordgo.New("Bot " + Token)
 	if err != nil {
-		fmt.Println("error creating Discord session:", err)
+		fmt.Println("error creating DiscordService session:", err)
 		return
 	}
 	defer s.Close()

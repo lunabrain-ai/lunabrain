@@ -29,6 +29,29 @@ git clone https://github.com/lunabrain-ai/lunabrain.git
 # TODO
 ```
 
+### Installing System Dependencies
+
+All
+```shell
+# TODO breadchris make go bindings for stream so that the binary isn't required
+# will need to adopt the bindings https://github.com/ggerganov/whisper.cpp/tree/master/bindings/go
+# Make the binary `stream` available on PATH https://github.com/ggerganov/whisper.cpp/tree/master/examples/stream
+```
+
+Mac
+```shell
+brew install tesseract
+
+# TODO breadchris figure out why these are needed
+export LIBRARY_PATH=/opt/homebrew/lib
+export CPATH=/opt/homebrew/include
+```
+
+Ubuntu & WSL
+```shell
+sudo apt-get install tesseract-ocr
+```
+
 ### Installing Golang Dependencies
 
 ```shell

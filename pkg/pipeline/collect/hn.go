@@ -3,8 +3,7 @@ package collect
 import (
 	"context"
 	"github.com/alexferrari88/gohn/pkg/gohn"
-	"github.com/bwmarrin/discordgo"
-	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
+	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
@@ -14,7 +13,6 @@ import (
 
 // HNCollect collects messages from Hacker News
 type HNCollect struct {
-	session  *discordgo.Session
 	db       db.Store
 	workflow pipeline.Workflow
 }
@@ -71,12 +69,10 @@ func (c *HNCollect) Collect() error {
 }
 
 func NewHNCollector(
-	session *discordgo.Session,
 	db db.Store,
 	workflow pipeline.Workflow,
 ) *HNCollect {
 	return &HNCollect{
-		session:  session,
 		db:       db,
 		workflow: workflow,
 	}

@@ -14,6 +14,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
+	"github.com/lunabrain-ai/lunabrain/pkg/protoflow"
 	"github.com/lunabrain-ai/lunabrain/pkg/publish"
 	"github.com/lunabrain-ai/lunabrain/pkg/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
@@ -21,6 +22,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/server/html"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
+	"github.com/protoflow-labs/protoflow/pkg/openai"
 	"github.com/urfave/cli/v2"
 )
 
@@ -35,6 +37,10 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
+	dbConfig, err := db.NewConfig(provider)
+	if err != nil {
+		return nil, err
+	}
 	bucketConfig, err := bucket.NewConfig(provider)
 	if err != nil {
 		return nil, err
@@ -43,7 +49,7 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	gormDB, err := db.NewGormDB(bucketBucket)
+	gormDB, err := db.NewGormDB(dbConfig, bucketBucket)
 	if err != nil {
 		return nil, err
 	}
@@ -97,18 +103,36 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
+	discordSession, err := discord.NewSession(discordConfig, session)
+	if err != nil {
+		return nil, err
+	}
 	publishConfig, err := publish.NewConfig(provider)
 	if err != nil {
 		return nil, err
 	}
-	publishDiscord := publish.NewDiscord(session, publishConfig, dbStore)
+	publishDiscord := publish.NewDiscord(discordSession, publishConfig, dbStore)
 	publishPublish := publish.NewPublisher(publishDiscord)
 	contentWorkflow := pipeline.NewContentWorkflow(dbStore, normalizer, summarize, categorize, bucketBucket, publishPublish)
 	apiServer := api.NewAPIServer(dbStore, contentWorkflow)
 	htmlHTML := html.NewHTML()
-	apihttpServer := server.NewAPIHTTPServer(apiConfig, apiServer, htmlHTML, dbStore, bucketBucket)
+	discordService := discord.New(discordSession)
+	openaiConfig, err := openai.NewConfig(provider)
+	if err != nil {
+		return nil, err
+	}
+	openAIQAClient, err := openai.NewOpenAIQAClient(openaiConfig)
+	if err != nil {
+		return nil, err
+	}
+	protoflowProtoflow := protoflow.New(openAIQAClient)
+	protoflow2, err := protoflow.NewProtoflow()
+	if err != nil {
+		return nil, err
+	}
+	apihttpServer := server.NewAPIHTTPServer(apiConfig, apiServer, htmlHTML, dbStore, bucketBucket, discordService, protoflowProtoflow, protoflow2)
 	discordCollector := collect.NewDiscordCollector(session, dbStore, contentWorkflow)
-	hnCollect := collect.NewHNCollector(session, dbStore, contentWorkflow)
+	hnCollect := collect.NewHNCollector(dbStore, contentWorkflow)
 	app := NewApp(apihttpServer, normalizer, summarize, discordCollector, hnCollect)
 	return app, nil
 }

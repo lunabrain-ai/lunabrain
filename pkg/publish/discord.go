@@ -1,9 +1,9 @@
 package publish
 
 import (
-	"github.com/bwmarrin/discordgo"
 	"github.com/google/uuid"
-	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
+	genapi "github.com/lunabrain-ai/lunabrain/gen"
+	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"github.com/pkg/errors"
@@ -18,7 +18,7 @@ type DiscordConfig struct {
 }
 
 type Discord struct {
-	session *discordgo.Session
+	session *discord.Session
 	config  DiscordConfig
 	db      db.Store
 }
@@ -66,15 +66,15 @@ func (d *Discord) Publish(contentID uuid.UUID) error {
 	return nil
 }
 
-func NewDiscord(session *discordgo.Session, config Config, db db.Store) *Discord {
+func NewDiscord(session *discord.Session, config Config, db db.Store) *Discord {
 	if config.Discord.ChannelID == "" {
 		log.Warn().Msg("discord channel id not set, publishing to discord disabled")
 		config.Discord.Enabled = false
 	}
-
-	return &Discord{
+	d := &Discord{
 		session: session,
 		config:  config.Discord,
 		db:      db,
 	}
+	return d
 }

@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package python;
-option go_package = "./gen/python";
+option go_package = "./gen";
 
 service Python {
   rpc Transcribe(TranscribeRequest) returns (TranscribeResponse);
@@ -10,7 +10,7 @@ service Python {
   rpc Normalize(Text) returns (Text);
   rpc Categorize(CategorizeRequest) returns (Categories);
   rpc IndexDirectory(IndexDirectoryRequest) returns (Index);
-  rpc QueryIndex(Query) returns (QueryResult);
+  rpc QueryIndex(IndexQuery) returns (QueryResult);
 }
 
 enum IndexType {
@@ -19,7 +19,7 @@ enum IndexType {
   BM25 = 2;
 }
 
-message Query {
+message IndexQuery {
   string index = 1;
   string query = 2;
 }

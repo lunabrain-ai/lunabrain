@@ -3,7 +3,7 @@ package collect
 import (
 	"context"
 	"github.com/bwmarrin/discordgo"
-	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
+	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	util2 "github.com/lunabrain-ai/lunabrain/pkg/chat/discord/util"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"

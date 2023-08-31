@@ -1,7 +1,9 @@
 package main
 
+//go:generate protoc --go_out=./ --go-grpc_out=./ -I./proto "./proto/python.proto"
+//go:generate buf generate proto
+
 import (
-	"github.com/UnnoTed/horizontal"
 	"github.com/lunabrain-ai/lunabrain/pkg/cli"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -14,7 +16,7 @@ func setupLogging() {
 	if strings.ToLower(os.Getenv("LOG_LEVEL")) == "debug" {
 		logLevel = zerolog.DebugLevel
 	}
-	log.Logger = zerolog.New(horizontal.ConsoleWriter{Out: os.Stderr}).With().Timestamp().Logger().Level(logLevel)
+	log.Logger = log.With().Caller().Logger().Output(zerolog.ConsoleWriter{Out: os.Stderr}).Level(logLevel)
 }
 
 func main() {

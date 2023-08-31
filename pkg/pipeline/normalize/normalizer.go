@@ -3,8 +3,7 @@ package normalize
 import (
 	"context"
 	"github.com/google/wire"
-	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
-	"github.com/lunabrain-ai/lunabrain/gen/python"
+	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
@@ -23,7 +22,7 @@ type Normalizer interface {
 type normalizer struct {
 	audio  *AudioNormalizer
 	url    *URLNormalizer
-	python python.PythonClient
+	python genapi.PythonClient
 	db     db.Store
 	bucket *bucket.Bucket
 }
@@ -38,7 +37,7 @@ var ProviderSet = wire.NewSet(
 )
 
 func (n *normalizer) NormalizeText(data string) ([]*content.Content, error) {
-	text, err := n.python.Normalize(context.Background(), &python.Text{
+	text, err := n.python.Normalize(context.Background(), &genapi.Text{
 		Text: data,
 	})
 	if err != nil {
@@ -81,7 +80,7 @@ func NewNormalizer(
 	audio *AudioNormalizer,
 	url *URLNormalizer,
 	db db.Store,
-	p python.PythonClient,
+	p genapi.PythonClient,
 	bucket *bucket.Bucket,
 ) (*normalizer, error) {
 	return &normalizer{

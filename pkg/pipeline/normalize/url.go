@@ -4,8 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/google/go-github/v51/github"
-	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
-	"github.com/lunabrain-ai/lunabrain/gen/python"
+	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
 	scrape2 "github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/pkg/errors"
@@ -16,7 +15,7 @@ import (
 
 type URLNormalizer struct {
 	config  URLConfig
-	client  python.PythonClient
+	client  genapi.PythonClient
 	scraper scrape2.Scraper
 	crawler scrape2.Crawler
 }
@@ -113,7 +112,7 @@ func (s *URLNormalizer) scrapeURL(nurl string) ([]*content.Content, error) {
 
 func (s *URLNormalizer) normalizeYoutube(url *url.URL) ([]*content.Content, error) {
 	id := content.ExtractVideoID(url)
-	resp, err := s.client.YoutubeTranscript(context.Background(), &python.Video{Id: id})
+	resp, err := s.client.YoutubeTranscript(context.Background(), &genapi.Video{Id: id})
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to get youtube transcript for url %s", url)
 	}
@@ -158,7 +157,7 @@ func (s *URLNormalizer) normalizeGithub(url *url.URL) ([]*content.Content, error
 
 func NewURLNormalizer(
 	config Config,
-	client python.PythonClient,
+	client genapi.PythonClient,
 	scraper scrape2.Scraper,
 	crawler scrape2.Crawler,
 ) (*URLNormalizer, error) {

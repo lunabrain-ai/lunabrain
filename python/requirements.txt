@@ -21,3 +21,6 @@ rank-bm25
 #newspaper3k
 #wikipedia
 keybert
+# git+https://github.com/linto-ai/whisper-timestamped
+# pyannote.core
+# diart

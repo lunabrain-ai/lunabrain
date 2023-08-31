@@ -26,7 +26,7 @@ var (
 )
 
 func (b *Bucket) NewFile(name string) (string, error) {
-	return path.Join(b.config.Path, name), nil
+	return path.Join(b.config.Path, name), EnsureDirExists(b.config.Path)
 }
 
 func (b *Bucket) NewDir(name string) (string, error) {

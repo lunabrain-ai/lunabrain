@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package protoflow;
+
+option go_package = "./gen";
+
+service ProtoflowService {
+  rpc DownloadYouTubeVideo(YouTubeVideo) returns (FilePath);
+  rpc Chat(ChatRequest) returns (stream ChatResponse);
+  rpc ConvertFile(ConvertFileRequest) returns (FilePath);
+  rpc OCR (FilePath) returns (OCRText);
+  rpc Transcribe (TranscriptionRequest) returns (Transcription);
+  rpc LiveTranscribe (TranscriptionRequest) returns (stream Segment);
+}
+
+message Token {
+  uint32 id = 1;
+  uint64 start_time = 2;
+  uint64 end_time = 3;
+  string text = 4;
+}
+
+message Segment {
+  uint32 num = 1;
+  repeated Token tokens = 2;
+  string text = 3;
+}
+
+message TranscriptionRequest {
+  string file_path = 14;
+  string model = 1;                        // Path to the model file
+  string language = 2;                     // Spoken language
+  bool translate = 3;                      // Translate from source language to English
+  int64 offset = 4;                        // Time offset in nanoseconds to match Go's time.Duration
+  int64 duration = 5;                      // Duration of audio to process in nanoseconds
+  uint32 threads = 6;                      // Number of threads to use
+  bool speedup = 7;                        // Enable speedup
+  uint32 max_len = 8;                      // Maximum segment length in characters
+  uint32 max_tokens = 9;                   // Maximum tokens per segment
+  double word_threshold = 10;                  // Maximum segment score
+  bool tokens = 11;                        // Display tokens
+  bool colorize = 12;                      // Colorize tokens
+  string out = 13;                         // Output format (srt, none or leave as empty string)
+}
+
+message RegisterFlags {
+}
+
+message Transcription {
+  repeated string text = 1;
+}
+
+message OCRText {
+  string text = 1;
+}
+
+message Image {
+  bytes image = 1;
+}
+
+message ConvertFileRequest {
+  string from = 1;
+  string to = 2;
+}
+
+message ChatRequest {
+}
+
+message ChatResponse {
+  string message = 1;
+}
+
+message YouTubeVideo {
+  string id = 1;
+}
+
+message FilePath {
+  string file = 1;
+}
