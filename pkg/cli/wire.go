@@ -17,6 +17,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
+	"github.com/protoflow-labs/protoflow/pkg/log"
 	"github.com/protoflow-labs/protoflow/pkg/openai"
 	"github.com/urfave/cli/v2"
 )
@@ -24,6 +25,7 @@ import (
 func Wire() (*cli.App, error) {
 	panic(wire.Build(
 		NewApp,
+		log.ProviderSet,
 		config.ProviderSet,
 		server.ProviderSet,
 		python.ProviderSet,

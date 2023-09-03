@@ -1,6 +1,6 @@
 module github.com/lunabrain-ai/lunabrain
 
-go 1.20
+go 1.21
 
 replace github.com/protoflow-labs/protoflow => /Users/hacked/Documents/GitHub/protoflow
 
@@ -37,12 +37,11 @@ require (
 	github.com/pion/rtp v1.7.13
 	github.com/pion/webrtc/v3 v3.1.58
 	github.com/pkg/errors v0.9.1
-	github.com/protoflow-labs/protoflow v0.0.0-20230722070505-86f7dee27575
+	github.com/protoflow-labs/protoflow v0.0.0-20230821235041-65880dbf27ad
 	github.com/reactivex/rxgo/v2 v2.5.0
 	github.com/rs/zerolog v1.30.0
 	github.com/samber/go-gpt-3-encoder v0.3.1
 	github.com/samber/lo v1.38.1
-	github.com/sashabaranov/go-openai v1.14.0
 	github.com/twitchtv/twirp v8.1.3+incompatible
 	github.com/u2takey/ffmpeg-go v0.4.1
 	github.com/urfave/cli/v2 v2.25.1
@@ -71,6 +70,7 @@ require (
 	github.com/aws/aws-sdk-go v1.44.302 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bitly/go-simplejson v0.5.1 // indirect
+	github.com/bmatcuk/doublestar v1.3.4 // indirect
 	github.com/bmatcuk/doublestar/v4 v4.6.0 // indirect
 	github.com/bufbuild/protocompile v0.5.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
@@ -153,6 +153,7 @@ require (
 	github.com/robertkrimen/otto v0.2.1 // indirect
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/sashabaranov/go-openai v1.14.0 // indirect
 	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/spf13/cast v1.5.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
@@ -161,6 +162,7 @@ require (
 	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/teivah/onecontext v1.3.0 // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
+	github.com/texttheater/golang-levenshtein/levenshtein v0.0.0-20200805054039-cae8b0eaed6c // indirect
 	github.com/u2takey/go-utils v0.3.1 // indirect
 	github.com/unknwon/com v1.0.1 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect

@@ -1,12 +1,12 @@
 package whisper
 
-/*
-#cgo CPPFLAGS: -I/opt/homebrew/include/SDL2 -I/Users/hacked/Documents/GitHub/whisper.cpp
-#cgo LDFLAGS: -lwhisper -lm -lsdl2 -lstdc++ -L/opt/homebrew/lib -L/Users/hacked/Documents/GitHub/whisper.cpp
-#cgo darwin LDFLAGS: -framework Accelerate
-#include "wrap_stream.hxx"
-*/
-import "C"
+///*
+//#cgo CPPFLAGS: `sdl2-config --cflags` -I/Users/hacked/Documents/GitHub/whisper.cpp
+//#cgo LDFLAGS: -lwhisper -lm -lstdc++ -L/opt/homebrew/lib `sdl2-config --libs" -L/Users/hacked/Documents/GitHub/whisper.cpp
+//#cgo darwin LDFLAGS: -framework Accelerate
+//#include "wrap_stream.hxx"
+//*/
+//import "C"
 
 import (
 	"fmt"
@@ -20,10 +20,6 @@ import (
 
 	wav "github.com/go-audio/wav"
 )
-
-func Stream() {
-	C.stream()
-}
 
 // TODO breadchris this should be RegisterFlags, but the protoflow UI has a bug with fields that have messages (the input loses focus when you click on it)
 func Process(model whisper2.Model, path string, flags *gen.TranscriptionRequest) (rxgo.Observable, error) {

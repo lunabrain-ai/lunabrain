@@ -3,6 +3,7 @@ package protoflow
 import (
 	"bufio"
 	"context"
+	"encoding/json"
 	"github.com/breadchris/gosseract"
 	connect_go "github.com/bufbuild/connect-go"
 	whisper2 "github.com/ggerganov/whisper.cpp/bindings/go/pkg/whisper"
@@ -24,7 +25,6 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"strings"
 )
 
 type Protoflow struct {
@@ -102,11 +102,32 @@ func (p *Protoflow) DownloadYouTubeVideo(ctx context.Context, c *connect_go.Requ
 	return connect_go.NewResponse(&genapi.FilePath{}), nil
 }
 
+type Token struct {
+	ID        uint32 `json:"id"`
+	StartTime uint64 `json:"start_time"`
+	EndTime   uint64 `json:"end_time"`
+	Text      string `json:"text"`
+}
+
+type Segment struct {
+	Num       uint32  `json:"num"`
+	Tokens    []Token `json:"tokens"`
+	Text      string  `json:"text"`
+	StartTime uint64  `json:"start_time"`
+	EndTime   uint64  `json:"end_time"`
+}
+
 // StreamObservable runs the binary "stream" and returns an Observable of its output lines.
 func StreamObservable(ctx context.Context) rxgo.Observable {
 	return rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
-		cmd := exec.Command("stream")
-		cmd.Args = append(cmd.Args, "-m", "/Users/hacked/Documents/GitHub/whisper.cpp/models/ggml-base.en.bin")
+		cmd := exec.Command("third_party/whisper.cpp/stream")
+		cmd.Args = append(
+			cmd.Args,
+			"-m", "third_party/whisper.cpp/models/ggml-base.en.bin",
+			//"-t", "8",
+			//"--step", "500",
+			//"--length", "5000",
+		)
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
 			next <- rxgo.Error(err)
@@ -121,16 +142,20 @@ func StreamObservable(ctx context.Context) rxgo.Observable {
 		stdoutScan := bufio.NewScanner(stdout)
 		go func() {
 			for stdoutScan.Scan() {
-				// TODO breadchris check if the context has been cancelled
-				next <- rxgo.Of(stdoutScan.Text())
+				var seg genapi.Segment
+				if err := json.Unmarshal([]byte(stdoutScan.Text()), &seg); err != nil {
+					next <- rxgo.Error(err)
+					continue
+				}
+				next <- rxgo.Of(&seg)
 			}
 		}()
 
 		stderrScan := bufio.NewScanner(stderr)
 		go func() {
 			for stderrScan.Scan() {
-				// TODO breadchris check if the context has been cancelled
-				next <- rxgo.Of(stderrScan.Text())
+				// next <- rxgo.Of(stderrScan.Text())
+				log.Debug().Str("stderr", stderrScan.Text()).Msg("stream")
 			}
 		}()
 
@@ -139,6 +164,12 @@ func StreamObservable(ctx context.Context) rxgo.Observable {
 			next <- rxgo.Error(err)
 			return
 		}
+
+		go func() {
+			<-ctx.Done()
+			log.Info().Msg("killing stream")
+			cmd.Process.Kill()
+		}()
 
 		err = cmd.Wait()
 		if err != nil {
@@ -149,34 +180,34 @@ func StreamObservable(ctx context.Context) rxgo.Observable {
 }
 
 func (p *Protoflow) Chat(ctx context.Context, c *connect_go.Request[genapi.ChatRequest], c2 *connect_go.ServerStream[genapi.ChatResponse]) error {
-	observable := StreamObservable(ctx)
-	listening := false
-	for item := range observable.Observe() {
-		if item.Error() {
-			continue
-		}
-		if item.V == nil {
-			continue
+	obs := StreamObservable(ctx)
+
+	<-obs.ForEach(func(item any) {
+		t, ok := item.(*genapi.Segment)
+		if !ok {
+			return
 		}
 
-		if strings.HasPrefix(item.V.(string), "main:") {
-			listening = true
-			continue
-		}
-		if strings.Contains(item.V.(string), "BLANK_AUDIO") {
-			continue
-		}
-		if !listening {
-			log.Info().Str("message", item.V.(string)).Msg("not listening")
-			continue
-		}
-		log.Info().Str("message", item.V.(string)).Msg("listening")
+		// TODO breadchris make sure that the previous segment is not too close to this one
+		//log.Info().
+		//	Int("diff", int(t.StartTime-prevSeg.StartTime)).
+		//	Int("prev", int(prevSeg.StartTime)).
+		//	Int("current", int(t.StartTime)).
+		//	Msg("diff")
+		//if prevSeg != nil && t.StartTime-prevSeg.StartTime < 500 {
+		//	prevSeg = t
+		//	return
+		//}
+
 		if err := c2.Send(&genapi.ChatResponse{
-			Message: item.V.(string),
+			Segment: t,
 		}); err != nil {
-			return err
+			log.Error().Err(err).Msg("error sending token")
 		}
-	}
+	}, func(err error) {
+		log.Error().Err(err).Msg("error in observable")
+	}, func() {
+	})
 	return nil
 }
 
@@ -235,6 +266,7 @@ func (p *Protoflow) LiveTranscribe(ctx context.Context, c *connect_go.Request[ge
 		if !ok {
 			return
 		}
+
 		err = c2.Send(t)
 		if err != nil {
 			log.Error().Err(err).Msg("error sending token")
@@ -247,6 +279,5 @@ func (p *Protoflow) LiveTranscribe(ctx context.Context, c *connect_go.Request[ge
 }
 
 func (p *Protoflow) Transcribe(ctx context.Context, c *connect_go.Request[genapi.TranscriptionRequest]) (*connect_go.Response[genapi.Transcription], error) {
-	whisper.Stream()
 	return nil, nil
 }

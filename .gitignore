@@ -3,6 +3,7 @@ tmp/
 .lunabrain.yaml
 .idea/
 data/
+node_modules/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

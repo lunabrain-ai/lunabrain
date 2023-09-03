@@ -16,15 +16,16 @@ INCLUDE_PATH := "$(realpath third_party/whisper.cpp):/opt/homebrew/include/SDL2"
 LIBRARY_PATH := "$(realpath third_party/whisper.cpp):/opt/homebrew/lib"
 
 # Targets
-all: clean whisper cmd
+all: clean third_party/whisper cmd
 
 submodule:
 	@echo Update submodules
-	@${GIT} submodule update --init --recursive --remote --force
+	#@${GIT} submodule update --init --recursive --remote --force
 
 whisper: submodule
 	@echo Build whisper
 	@make -C third_party/whisper.cpp libwhisper.a
+	@make -C third_party/whisper.cpp stream
 
 model-downloader: submodule mkdir
 	@echo Build model-downloader
@@ -35,7 +36,7 @@ models: model-downloader
 	@echo Downloading models
 	@${BUILD_DIR}/go-model-download -out ${MODEL_DIR}
 
-cmd: whisper $(wildcard cmd/*)
+cmd: third_party/whisper $(wildcard cmd/*)
 
 $(CMD_DIR): dependencies mkdir
 	@echo Build cmd $(notdir $@)

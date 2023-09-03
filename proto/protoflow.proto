@@ -18,12 +18,15 @@ message Token {
   uint64 start_time = 2;
   uint64 end_time = 3;
   string text = 4;
+  string p = 5;
 }
 
 message Segment {
   uint32 num = 1;
   repeated Token tokens = 2;
   string text = 3;
+  uint64 start_time = 4;
+  uint64 end_time = 5;
 }
 
 message TranscriptionRequest {
@@ -67,7 +70,7 @@ message ChatRequest {
 }
 
 message ChatResponse {
-  string message = 1;
+  Segment segment = 1;
 }
 
 message YouTubeVideo {

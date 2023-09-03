@@ -14,11 +14,16 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/server/html"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
+	"github.com/lunabrain-ai/lunabrain/studio/public"
 	"github.com/protoflow-labs/protoflow/pkg/protoflow"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
+	"os"
+	"strings"
 )
 
 type APIHTTPServer struct {
@@ -110,7 +115,56 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	// Many tools still expect the older version of the server reflection API, so
 	// most servers should mount both handlers.
 	muxRoot.Handle(grpcreflect.NewHandlerV1Alpha(reflector, connect.WithRecover(recoverCall)))
-	muxRoot.Handle("/", r)
+
+	//muxRoot.Handle("/", r)
+
+	assets := public.Assets
+	fs := http.FS(public.Assets)
+	httpFileServer := http.FileServer(fs)
+
+	u, err := url.Parse(a.config.StudioProxy)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to parse studio proxy")
+		return nil
+	}
+	proxy := httputil.NewSingleHostReverseProxy(u)
+
+	muxRoot.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/" {
+			// redirect to /studio
+			http.Redirect(w, r, "/studio", http.StatusFound)
+			return
+		}
+		if r.URL.Path == "/studio" || strings.HasPrefix(r.URL.Path, "/studio/") || r.URL.Path == "/esbuild" {
+			r.URL.Path = strings.Replace(r.URL.Path, "/studio", "", 1)
+
+			if a.config.StudioProxy != "" {
+				log.Debug().Msgf("proxying request: %s", r.URL.Path)
+				proxy.ServeHTTP(w, r)
+			} else {
+				filePath := r.URL.Path
+				if strings.Index(r.URL.Path, "/") == 0 {
+					filePath = r.URL.Path[1:]
+				}
+
+				f, err := assets.Open(filePath)
+				if os.IsNotExist(err) {
+					r.URL.Path = "/"
+				}
+				if err == nil {
+					f.Close()
+				}
+				log.Debug().Msgf("serving file: %s", filePath)
+				httpFileServer.ServeHTTP(w, r)
+			}
+			return
+		}
+		if strings.HasPrefix(r.URL.Path, "/api/") {
+			r.URL.Path = strings.Replace(r.URL.Path, "/api", "", 1)
+		}
+		muxRoot.ServeHTTP(w, r)
+		return
+	})
 
 	// TODO breadchris enable/disable based on if we are in dev mode
 	//bucketRoute, handler := a.bucket.HandleSignedURLs()
