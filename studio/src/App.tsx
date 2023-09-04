@@ -22,24 +22,28 @@ const AppRoutes = () => {
 
     const element = useRoutes([...commonRoutes]);
 
-    return <>{element}</>;
+    return <>
+        {element}
+    </>;
 };
 
 export default function App() {
   return (
-      <FluentProvider theme={webDarkTheme}>
-        <ErrorBoundary
-          FallbackComponent={FallbackError}
-        >
-          <HotkeysProvider initiallyActiveScopes={["editor"]}>
-            <ProjectProvider>
-              <BrowserRouter>
-                <AppRoutes/>
-              </BrowserRouter>
-              <Toaster/>
-            </ProjectProvider>
-          </HotkeysProvider>
-        </ErrorBoundary>
-      </FluentProvider>
+          <FluentProvider theme={webDarkTheme}>
+              <ErrorBoundary
+                  FallbackComponent={FallbackError}
+              >
+                  <HotkeysProvider initiallyActiveScopes={["editor"]}>
+                      <ProjectProvider>
+                          <BrowserRouter>
+                              <ProjectProvider>
+                                  <AppRoutes/>
+                              </ProjectProvider>
+                          </BrowserRouter>
+                          <Toaster/>
+                      </ProjectProvider>
+                  </HotkeysProvider>
+              </ErrorBoundary>
+          </FluentProvider>
   )
 }

@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ChatRequest, ChatResponse, ConvertFileRequest, FilePath, OCRText, Segment, Transcription, TranscriptionRequest, YouTubeVideo } from "./protoflow_pb.js";
+import { ChatRequest, ChatResponse, ConvertFileRequest, FilePath, GetSessionRequest, GetSessionResponse, GetSessionsRequest, GetSessionsResponse, OCRText, Segment, Transcription, TranscriptionRequest, YouTubeVideo } from "./protoflow_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -19,6 +19,24 @@ export const ProtoflowService = {
       name: "DownloadYouTubeVideo",
       I: YouTubeVideo,
       O: FilePath,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc protoflow.ProtoflowService.GetSessions
+     */
+    getSessions: {
+      name: "GetSessions",
+      I: GetSessionsRequest,
+      O: GetSessionsResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc protoflow.ProtoflowService.GetSession
+     */
+    getSession: {
+      name: "GetSession",
+      I: GetSessionRequest,
+      O: GetSessionResponse,
       kind: MethodKind.Unary,
     },
     /**

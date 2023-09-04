@@ -23,6 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProtoflowServiceClient interface {
 	DownloadYouTubeVideo(ctx context.Context, in *YouTubeVideo, opts ...grpc.CallOption) (*FilePath, error)
+	GetSessions(ctx context.Context, in *GetSessionsRequest, opts ...grpc.CallOption) (*GetSessionsResponse, error)
+	GetSession(ctx context.Context, in *GetSessionRequest, opts ...grpc.CallOption) (*GetSessionResponse, error)
 	Chat(ctx context.Context, in *ChatRequest, opts ...grpc.CallOption) (ProtoflowService_ChatClient, error)
 	ConvertFile(ctx context.Context, in *ConvertFileRequest, opts ...grpc.CallOption) (*FilePath, error)
 	OCR(ctx context.Context, in *FilePath, opts ...grpc.CallOption) (*OCRText, error)
@@ -41,6 +43,24 @@ func NewProtoflowServiceClient(cc grpc.ClientConnInterface) ProtoflowServiceClie
 func (c *protoflowServiceClient) DownloadYouTubeVideo(ctx context.Context, in *YouTubeVideo, opts ...grpc.CallOption) (*FilePath, error) {
 	out := new(FilePath)
 	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/DownloadYouTubeVideo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *protoflowServiceClient) GetSessions(ctx context.Context, in *GetSessionsRequest, opts ...grpc.CallOption) (*GetSessionsResponse, error) {
+	out := new(GetSessionsResponse)
+	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/GetSessions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *protoflowServiceClient) GetSession(ctx context.Context, in *GetSessionRequest, opts ...grpc.CallOption) (*GetSessionResponse, error) {
+	out := new(GetSessionResponse)
+	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/GetSession", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -143,6 +163,8 @@ func (x *protoflowServiceLiveTranscribeClient) Recv() (*Segment, error) {
 // for forward compatibility
 type ProtoflowServiceServer interface {
 	DownloadYouTubeVideo(context.Context, *YouTubeVideo) (*FilePath, error)
+	GetSessions(context.Context, *GetSessionsRequest) (*GetSessionsResponse, error)
+	GetSession(context.Context, *GetSessionRequest) (*GetSessionResponse, error)
 	Chat(*ChatRequest, ProtoflowService_ChatServer) error
 	ConvertFile(context.Context, *ConvertFileRequest) (*FilePath, error)
 	OCR(context.Context, *FilePath) (*OCRText, error)
@@ -156,6 +178,12 @@ type UnimplementedProtoflowServiceServer struct {
 
 func (UnimplementedProtoflowServiceServer) DownloadYouTubeVideo(context.Context, *YouTubeVideo) (*FilePath, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DownloadYouTubeVideo not implemented")
+}
+func (UnimplementedProtoflowServiceServer) GetSessions(context.Context, *GetSessionsRequest) (*GetSessionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSessions not implemented")
+}
+func (UnimplementedProtoflowServiceServer) GetSession(context.Context, *GetSessionRequest) (*GetSessionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSession not implemented")
 }
 func (UnimplementedProtoflowServiceServer) Chat(*ChatRequest, ProtoflowService_ChatServer) error {
 	return status.Errorf(codes.Unimplemented, "method Chat not implemented")
@@ -198,6 +226,42 @@ func _ProtoflowService_DownloadYouTubeVideo_Handler(srv interface{}, ctx context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProtoflowServiceServer).DownloadYouTubeVideo(ctx, req.(*YouTubeVideo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProtoflowService_GetSessions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSessionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProtoflowServiceServer).GetSessions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protoflow.ProtoflowService/GetSessions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProtoflowServiceServer).GetSessions(ctx, req.(*GetSessionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProtoflowService_GetSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSessionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProtoflowServiceServer).GetSession(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protoflow.ProtoflowService/GetSession",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProtoflowServiceServer).GetSession(ctx, req.(*GetSessionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -308,6 +372,14 @@ var ProtoflowService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DownloadYouTubeVideo",
 			Handler:    _ProtoflowService_DownloadYouTubeVideo_Handler,
+		},
+		{
+			MethodName: "GetSessions",
+			Handler:    _ProtoflowService_GetSessions_Handler,
+		},
+		{
+			MethodName: "GetSession",
+			Handler:    _ProtoflowService_GetSession_Handler,
 		},
 		{
 			MethodName: "ConvertFile",

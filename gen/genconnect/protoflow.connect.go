@@ -36,6 +36,12 @@ const (
 	// ProtoflowServiceDownloadYouTubeVideoProcedure is the fully-qualified name of the
 	// ProtoflowService's DownloadYouTubeVideo RPC.
 	ProtoflowServiceDownloadYouTubeVideoProcedure = "/protoflow.ProtoflowService/DownloadYouTubeVideo"
+	// ProtoflowServiceGetSessionsProcedure is the fully-qualified name of the ProtoflowService's
+	// GetSessions RPC.
+	ProtoflowServiceGetSessionsProcedure = "/protoflow.ProtoflowService/GetSessions"
+	// ProtoflowServiceGetSessionProcedure is the fully-qualified name of the ProtoflowService's
+	// GetSession RPC.
+	ProtoflowServiceGetSessionProcedure = "/protoflow.ProtoflowService/GetSession"
 	// ProtoflowServiceChatProcedure is the fully-qualified name of the ProtoflowService's Chat RPC.
 	ProtoflowServiceChatProcedure = "/protoflow.ProtoflowService/Chat"
 	// ProtoflowServiceConvertFileProcedure is the fully-qualified name of the ProtoflowService's
@@ -54,6 +60,8 @@ const (
 // ProtoflowServiceClient is a client for the protoflow.ProtoflowService service.
 type ProtoflowServiceClient interface {
 	DownloadYouTubeVideo(context.Context, *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.FilePath], error)
+	GetSessions(context.Context, *connect_go.Request[gen.GetSessionsRequest]) (*connect_go.Response[gen.GetSessionsResponse], error)
+	GetSession(context.Context, *connect_go.Request[gen.GetSessionRequest]) (*connect_go.Response[gen.GetSessionResponse], error)
 	Chat(context.Context, *connect_go.Request[gen.ChatRequest]) (*connect_go.ServerStreamForClient[gen.ChatResponse], error)
 	ConvertFile(context.Context, *connect_go.Request[gen.ConvertFileRequest]) (*connect_go.Response[gen.FilePath], error)
 	OCR(context.Context, *connect_go.Request[gen.FilePath]) (*connect_go.Response[gen.OCRText], error)
@@ -74,6 +82,16 @@ func NewProtoflowServiceClient(httpClient connect_go.HTTPClient, baseURL string,
 		downloadYouTubeVideo: connect_go.NewClient[gen.YouTubeVideo, gen.FilePath](
 			httpClient,
 			baseURL+ProtoflowServiceDownloadYouTubeVideoProcedure,
+			opts...,
+		),
+		getSessions: connect_go.NewClient[gen.GetSessionsRequest, gen.GetSessionsResponse](
+			httpClient,
+			baseURL+ProtoflowServiceGetSessionsProcedure,
+			opts...,
+		),
+		getSession: connect_go.NewClient[gen.GetSessionRequest, gen.GetSessionResponse](
+			httpClient,
+			baseURL+ProtoflowServiceGetSessionProcedure,
 			opts...,
 		),
 		chat: connect_go.NewClient[gen.ChatRequest, gen.ChatResponse](
@@ -107,6 +125,8 @@ func NewProtoflowServiceClient(httpClient connect_go.HTTPClient, baseURL string,
 // protoflowServiceClient implements ProtoflowServiceClient.
 type protoflowServiceClient struct {
 	downloadYouTubeVideo *connect_go.Client[gen.YouTubeVideo, gen.FilePath]
+	getSessions          *connect_go.Client[gen.GetSessionsRequest, gen.GetSessionsResponse]
+	getSession           *connect_go.Client[gen.GetSessionRequest, gen.GetSessionResponse]
 	chat                 *connect_go.Client[gen.ChatRequest, gen.ChatResponse]
 	convertFile          *connect_go.Client[gen.ConvertFileRequest, gen.FilePath]
 	oCR                  *connect_go.Client[gen.FilePath, gen.OCRText]
@@ -117,6 +137,16 @@ type protoflowServiceClient struct {
 // DownloadYouTubeVideo calls protoflow.ProtoflowService.DownloadYouTubeVideo.
 func (c *protoflowServiceClient) DownloadYouTubeVideo(ctx context.Context, req *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.FilePath], error) {
 	return c.downloadYouTubeVideo.CallUnary(ctx, req)
+}
+
+// GetSessions calls protoflow.ProtoflowService.GetSessions.
+func (c *protoflowServiceClient) GetSessions(ctx context.Context, req *connect_go.Request[gen.GetSessionsRequest]) (*connect_go.Response[gen.GetSessionsResponse], error) {
+	return c.getSessions.CallUnary(ctx, req)
+}
+
+// GetSession calls protoflow.ProtoflowService.GetSession.
+func (c *protoflowServiceClient) GetSession(ctx context.Context, req *connect_go.Request[gen.GetSessionRequest]) (*connect_go.Response[gen.GetSessionResponse], error) {
+	return c.getSession.CallUnary(ctx, req)
 }
 
 // Chat calls protoflow.ProtoflowService.Chat.
@@ -147,6 +177,8 @@ func (c *protoflowServiceClient) LiveTranscribe(ctx context.Context, req *connec
 // ProtoflowServiceHandler is an implementation of the protoflow.ProtoflowService service.
 type ProtoflowServiceHandler interface {
 	DownloadYouTubeVideo(context.Context, *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.FilePath], error)
+	GetSessions(context.Context, *connect_go.Request[gen.GetSessionsRequest]) (*connect_go.Response[gen.GetSessionsResponse], error)
+	GetSession(context.Context, *connect_go.Request[gen.GetSessionRequest]) (*connect_go.Response[gen.GetSessionResponse], error)
 	Chat(context.Context, *connect_go.Request[gen.ChatRequest], *connect_go.ServerStream[gen.ChatResponse]) error
 	ConvertFile(context.Context, *connect_go.Request[gen.ConvertFileRequest]) (*connect_go.Response[gen.FilePath], error)
 	OCR(context.Context, *connect_go.Request[gen.FilePath]) (*connect_go.Response[gen.OCRText], error)
@@ -163,6 +195,16 @@ func NewProtoflowServiceHandler(svc ProtoflowServiceHandler, opts ...connect_go.
 	protoflowServiceDownloadYouTubeVideoHandler := connect_go.NewUnaryHandler(
 		ProtoflowServiceDownloadYouTubeVideoProcedure,
 		svc.DownloadYouTubeVideo,
+		opts...,
+	)
+	protoflowServiceGetSessionsHandler := connect_go.NewUnaryHandler(
+		ProtoflowServiceGetSessionsProcedure,
+		svc.GetSessions,
+		opts...,
+	)
+	protoflowServiceGetSessionHandler := connect_go.NewUnaryHandler(
+		ProtoflowServiceGetSessionProcedure,
+		svc.GetSession,
 		opts...,
 	)
 	protoflowServiceChatHandler := connect_go.NewServerStreamHandler(
@@ -194,6 +236,10 @@ func NewProtoflowServiceHandler(svc ProtoflowServiceHandler, opts ...connect_go.
 		switch r.URL.Path {
 		case ProtoflowServiceDownloadYouTubeVideoProcedure:
 			protoflowServiceDownloadYouTubeVideoHandler.ServeHTTP(w, r)
+		case ProtoflowServiceGetSessionsProcedure:
+			protoflowServiceGetSessionsHandler.ServeHTTP(w, r)
+		case ProtoflowServiceGetSessionProcedure:
+			protoflowServiceGetSessionHandler.ServeHTTP(w, r)
 		case ProtoflowServiceChatProcedure:
 			protoflowServiceChatHandler.ServeHTTP(w, r)
 		case ProtoflowServiceConvertFileProcedure:
@@ -215,6 +261,14 @@ type UnimplementedProtoflowServiceHandler struct{}
 
 func (UnimplementedProtoflowServiceHandler) DownloadYouTubeVideo(context.Context, *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.FilePath], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.DownloadYouTubeVideo is not implemented"))
+}
+
+func (UnimplementedProtoflowServiceHandler) GetSessions(context.Context, *connect_go.Request[gen.GetSessionsRequest]) (*connect_go.Response[gen.GetSessionsResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.GetSessions is not implemented"))
+}
+
+func (UnimplementedProtoflowServiceHandler) GetSession(context.Context, *connect_go.Request[gen.GetSessionRequest]) (*connect_go.Response[gen.GetSessionResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.GetSession is not implemented"))
 }
 
 func (UnimplementedProtoflowServiceHandler) Chat(context.Context, *connect_go.Request[gen.ChatRequest], *connect_go.ServerStream[gen.ChatResponse]) error {

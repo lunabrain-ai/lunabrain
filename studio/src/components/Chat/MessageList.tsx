@@ -24,92 +24,18 @@ import {
     useTableSelection,
     createTableColumn,
 } from "@fluentui/react-components";
-import {Message} from "@bufbuild/protobuf";
+import {Segment} from '@/rpc/protoflow_pb'
+import {useEffect, useRef} from "react";
 
-type FileCell = {
-    label: string;
-    icon: JSX.Element;
-};
-
-type LastUpdatedCell = {
-    label: string;
-    timestamp: number;
-};
-
-type LastUpdateCell = {
-    label: string;
-    icon: JSX.Element;
-};
-
-type AuthorCell = {
-    label: string;
-    status: PresenceBadgeStatus;
-};
-
-type Item = {
-    file: FileCell;
-    author: AuthorCell;
-    lastUpdated: LastUpdatedCell;
-    lastUpdate: LastUpdateCell;
-};
-
-export const testItems: Item[] = [
-    {
-        file: { label: "Meeting notes", icon: <DocumentRegular /> },
-        author: { label: "Max Mustermann", status: "available" },
-        lastUpdated: { label: "7h ago", timestamp: 3 },
-        lastUpdate: {
-            label: "You edited this",
-            icon: <EditRegular />,
-        },
-    },
-    {
-        file: { label: "Thursday presentation", icon: <FolderRegular /> },
-        author: { label: "Erika Mustermann", status: "busy" },
-        lastUpdated: { label: "Yesterday at 1:45 PM", timestamp: 2 },
-        lastUpdate: {
-            label: "You recently opened this",
-            icon: <OpenRegular />,
-        },
-    },
-    {
-        file: { label: "Training recording", icon: <VideoRegular /> },
-        author: { label: "John Doe", status: "away" },
-        lastUpdated: { label: "Yesterday at 1:45 PM", timestamp: 2 },
-        lastUpdate: {
-            label: "You recently opened this",
-            icon: <OpenRegular />,
-        },
-    },
-    {
-        file: { label: "Purchase order", icon: <DocumentPdfRegular /> },
-        author: { label: "Jane Doe", status: "offline" },
-        lastUpdated: { label: "Tue at 9:30 AM", timestamp: 1 },
-        lastUpdate: {
-            label: "You shared this in a Teams chat",
-            icon: <PeopleRegular />,
-        },
-    },
-];
+export interface Message {
+    text: string;
+    sender: 'user' | 'bot';
+    segment: Segment;
+}
 
 export const messageColumns: TableColumnDefinition<Message>[] = [
     createTableColumn<Message>({
         columnId: "text",
-    }),
-];
-
-export const testColumns: TableColumnDefinition<Item>[] = [
-    createTableColumn<Item>({
-        columnId: "file",
-    }),
-    createTableColumn<Item>({
-        columnId: "author",
-    }),
-    createTableColumn<Item>({
-        columnId: "lastUpdated",
-    }),
-    createTableColumn<Item>({
-        columnId: "lastUpdate",
     }),
 ];
 
@@ -120,6 +46,16 @@ interface SubtleSelectionProps {
 }
 
 export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, columns }) => {
+    const messagesEndRef = useRef(null);
+    const audioRef = useRef(null);
+
+    useEffect(() => {
+        if (messagesEndRef.current) {
+            //@ts-ignore
+            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [items]);
+
     const {
         getRows,
         selection: {
@@ -137,7 +73,7 @@ export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, 
         [
             useTableSelection({
                 selectionMode: "multiselect",
-                defaultSelectedItems: new Set([0, 1]),
+                defaultSelectedItems: new Set([]),
             }),
         ]
     );
@@ -167,6 +103,12 @@ export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, 
         },
         [toggleAllRows]
     );
+    const changeCurrentTime = (t: number) => {
+        if (audioRef.current) {
+            // @ts-ignore
+            audioRef.current.currentTime = t; // Change to any time in seconds
+        }
+    };
 
     return (
         <Table style={style} aria-label="Table with subtle selection">
@@ -180,17 +122,13 @@ export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, 
                         onKeyDown={toggleAllKeydown}
                         checkboxIndicator={{ "aria-label": "Select all rows " }}
                     />
-
-                    <TableHeaderCell>File</TableHeaderCell>
-                    <TableHeaderCell>Author</TableHeaderCell>
-                    <TableHeaderCell>Last updated</TableHeaderCell>
-                    <TableHeaderCell>Last update</TableHeaderCell>
+                    <TableHeaderCell>Message</TableHeaderCell>
                 </TableRow>
             </TableHeader>
-            <TableBody>
-                {rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
+            <TableBody style={{overflowY: 'auto'}}>
+                {rows.map(({ item, selected, onClick, onKeyDown, appearance, rowId }) => (
                     <TableRow
-                        key={item.}
+                        key={rowId}
                         onClick={onClick}
                         onKeyDown={onKeyDown}
                         aria-selected={selected}
@@ -202,31 +140,20 @@ export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, 
                             checkboxIndicator={{ "aria-label": "Select row" }}
                         />
                         <TableCell>
-                            <TableCellLayout media={item.file.icon}>
-                                {item.file.label}
-                            </TableCellLayout>
-                        </TableCell>
-                        <TableCell>
-                            <TableCellLayout
-                                media={
-                                    <Avatar
-                                        aria-label={item.author.label}
-                                        name={item.author.label}
-                                        badge={{ status: item.author.status }}
-                                    />
-                                }
-                            >
-                                {item.author.label}
-                            </TableCellLayout>
-                        </TableCell>
-                        <TableCell>{item.lastUpdated.label}</TableCell>
-                        <TableCell>
-                            <TableCellLayout media={item.lastUpdate.icon}>
-                                {item.lastUpdate.label}
-                            </TableCellLayout>
+                            {item.segment.tokens.map((t) => {
+                                return (
+                                    <span onClick={() => changeCurrentTime(t.startTime / 1000)}>{t.text}</span>
+                                )
+                            })}
                         </TableCell>
                     </TableRow>
                 ))}
+                <div ref={messagesEndRef}></div>
+                <audio
+                    ref={audioRef}
+                    src="/media/presentation.wav"
+                    controls
+                />
             </TableBody>
         </Table>
     );

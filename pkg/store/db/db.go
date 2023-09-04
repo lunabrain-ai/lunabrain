@@ -21,6 +21,7 @@ var (
 		NewConfig,
 		NewGormDB,
 		New,
+		NewSession,
 		wire.Bind(new(Store), new(*dbStore)),
 	)
 )

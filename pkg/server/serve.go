@@ -90,15 +90,16 @@ func NewLogInterceptor() connect.UnaryInterceptorFunc {
 }
 
 func (a *APIHTTPServer) NewAPIHandler() http.Handler {
-	muxRoot := http.NewServeMux()
 	interceptors := connect.WithInterceptors(NewLogInterceptor())
 
 	r := chi.NewRouter()
 	a.getClientRoutes(r)
 
-	muxRoot.Handle(genconnect.NewAPIHandler(a.apiServer, interceptors))
-	muxRoot.Handle(genconnect.NewDiscordServiceHandler(a.discordService, interceptors))
-	muxRoot.Handle(genconnect.NewProtoflowServiceHandler(a.protoflowService, interceptors))
+	apiRoot := http.NewServeMux()
+
+	apiRoot.Handle(genconnect.NewAPIHandler(a.apiServer, interceptors))
+	apiRoot.Handle(genconnect.NewDiscordServiceHandler(a.discordService, interceptors))
+	apiRoot.Handle(genconnect.NewProtoflowServiceHandler(a.protoflowService, interceptors))
 	reflector := grpcreflect.NewStaticReflector(
 		"lunabrain.API",
 		"lunabrain.DiscordService",
@@ -111,16 +112,19 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 		}
 		return fmt.Errorf("panic: %v", p)
 	}
-	muxRoot.Handle(grpcreflect.NewHandlerV1(reflector, connect.WithRecover(recoverCall)))
+	apiRoot.Handle(grpcreflect.NewHandlerV1(reflector, connect.WithRecover(recoverCall)))
 	// Many tools still expect the older version of the server reflection API, so
 	// most servers should mount both handlers.
-	muxRoot.Handle(grpcreflect.NewHandlerV1Alpha(reflector, connect.WithRecover(recoverCall)))
+	apiRoot.Handle(grpcreflect.NewHandlerV1Alpha(reflector, connect.WithRecover(recoverCall)))
 
 	//muxRoot.Handle("/", r)
 
 	assets := public.Assets
 	fs := http.FS(public.Assets)
 	httpFileServer := http.FileServer(fs)
+
+	f := http.FS(os.DirFS("data"))
+	mediaFileServer := http.FileServer(f)
 
 	u, err := url.Parse(a.config.StudioProxy)
 	if err != nil {
@@ -129,10 +133,16 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	}
 	proxy := httputil.NewSingleHostReverseProxy(u)
 
+	muxRoot := http.NewServeMux()
 	muxRoot.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
 			// redirect to /studio
 			http.Redirect(w, r, "/studio", http.StatusFound)
+			return
+		}
+		if r.URL.Path == "/media" || strings.HasPrefix(r.URL.Path, "/media/") {
+			r.URL.Path = strings.Replace(r.URL.Path, "/media", "", 1)
+			mediaFileServer.ServeHTTP(w, r)
 			return
 		}
 		if r.URL.Path == "/studio" || strings.HasPrefix(r.URL.Path, "/studio/") || r.URL.Path == "/esbuild" {
@@ -162,7 +172,7 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 		if strings.HasPrefix(r.URL.Path, "/api/") {
 			r.URL.Path = strings.Replace(r.URL.Path, "/api", "", 1)
 		}
-		muxRoot.ServeHTTP(w, r)
+		apiRoot.ServeHTTP(w, r)
 		return
 	})
 

@@ -12,6 +12,8 @@ import (
 	"github.com/kkdai/youtube/v2"
 	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/pkg/errors"
 	"github.com/protoflow-labs/protoflow/gen"
@@ -21,6 +23,7 @@ import (
 	"github.com/reactivex/rxgo/v2"
 	"github.com/rs/zerolog/log"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
+	"gorm.io/datatypes"
 	"image"
 	"io"
 	"os"
@@ -28,7 +31,8 @@ import (
 )
 
 type Protoflow struct {
-	openai openai.QAClient
+	openai       openai.QAClient
+	sessionStore *db.Session
 }
 
 var ProviderSet = wire.NewSet(
@@ -52,9 +56,10 @@ func NewProtoflow() (*protoflow.Protoflow, error) {
 	})
 }
 
-func New(openai openai.QAClient) *Protoflow {
+func New(openai openai.QAClient, sessionStore *db.Session) *Protoflow {
 	return &Protoflow{
-		openai: openai,
+		openai:       openai,
+		sessionStore: sessionStore,
 	}
 }
 
@@ -102,31 +107,14 @@ func (p *Protoflow) DownloadYouTubeVideo(ctx context.Context, c *connect_go.Requ
 	return connect_go.NewResponse(&genapi.FilePath{}), nil
 }
 
-type Token struct {
-	ID        uint32 `json:"id"`
-	StartTime uint64 `json:"start_time"`
-	EndTime   uint64 `json:"end_time"`
-	Text      string `json:"text"`
-}
-
-type Segment struct {
-	Num       uint32  `json:"num"`
-	Tokens    []Token `json:"tokens"`
-	Text      string  `json:"text"`
-	StartTime uint64  `json:"start_time"`
-	EndTime   uint64  `json:"end_time"`
-}
-
-// StreamObservable runs the binary "stream" and returns an Observable of its output lines.
-func StreamObservable(ctx context.Context) rxgo.Observable {
+func (p *Protoflow) StreamTranscription(ctx context.Context) rxgo.Observable {
 	return rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
 		cmd := exec.Command("third_party/whisper.cpp/stream")
 		cmd.Args = append(
 			cmd.Args,
 			"-m", "third_party/whisper.cpp/models/ggml-base.en.bin",
-			//"-t", "8",
-			//"--step", "500",
-			//"--length", "5000",
+			// TODO breadchris offer selection for input stream
+			"-c", "4",
 		)
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
@@ -179,25 +167,62 @@ func StreamObservable(ctx context.Context) rxgo.Observable {
 	}}, rxgo.WithContext(ctx))
 }
 
-func (p *Protoflow) Chat(ctx context.Context, c *connect_go.Request[genapi.ChatRequest], c2 *connect_go.ServerStream[genapi.ChatResponse]) error {
-	obs := StreamObservable(ctx)
+func (p *Protoflow) GetSessions(ctx context.Context, c *connect_go.Request[genapi.GetSessionsRequest]) (*connect_go.Response[genapi.GetSessionsResponse], error) {
+	// TODO breadchris handle page
+	sessions, _, err := p.sessionStore.All(int(c.Msg.Page), int(c.Msg.Limit))
+	if err != nil {
+		return nil, err
+	}
+	var sessionsProto []*genapi.Session
+	for _, s := range sessions {
+		d := s.Data.Data
+		d.Id = s.ID.String()
+		sessionsProto = append(sessionsProto, d)
+	}
+	return connect_go.NewResponse(&genapi.GetSessionsResponse{
+		Sessions: sessionsProto,
+	}), nil
+}
 
+func (p *Protoflow) GetSession(ctx context.Context, c *connect_go.Request[genapi.GetSessionRequest]) (*connect_go.Response[genapi.GetSessionResponse], error) {
+	m, err := p.sessionStore.Get(c.Msg.Id)
+	if err != nil {
+		return nil, err
+	}
+	s := m.Data.Data
+	for _, seg := range m.Segments {
+		s.Segments = append(s.Segments, seg.Data.Data)
+	}
+	return connect_go.NewResponse(&genapi.GetSessionResponse{
+		Session: m.Data.Data,
+	}), nil
+}
+
+func (p *Protoflow) Chat(ctx context.Context, c *connect_go.Request[genapi.ChatRequest], c2 *connect_go.ServerStream[genapi.ChatResponse]) error {
+	obs := p.StreamTranscription(ctx)
+
+	ps := &genapi.Session{
+		Name: "test",
+	}
+	s, err := p.sessionStore.NewSession(ps)
+	if err != nil {
+		return err
+	}
 	<-obs.ForEach(func(item any) {
 		t, ok := item.(*genapi.Segment)
 		if !ok {
 			return
 		}
 
-		// TODO breadchris make sure that the previous segment is not too close to this one
-		//log.Info().
-		//	Int("diff", int(t.StartTime-prevSeg.StartTime)).
-		//	Int("prev", int(prevSeg.StartTime)).
-		//	Int("current", int(t.StartTime)).
-		//	Msg("diff")
-		//if prevSeg != nil && t.StartTime-prevSeg.StartTime < 500 {
-		//	prevSeg = t
-		//	return
-		//}
+		err = p.sessionStore.SaveSegment(&model.Segment{
+			SessionID: s.ID,
+			Data: datatypes.JSONType[*genapi.Segment]{
+				Data: t,
+			},
+		})
+		if err != nil {
+			log.Error().Err(err).Msg("error saving segment")
+		}
 
 		if err := c2.Send(&genapi.ChatResponse{
 			Segment: t,
@@ -207,6 +232,7 @@ func (p *Protoflow) Chat(ctx context.Context, c *connect_go.Request[genapi.ChatR
 	}, func(err error) {
 		log.Error().Err(err).Msg("error in observable")
 	}, func() {
+		log.Info().Msg("transcription complete")
 	})
 	return nil
 }

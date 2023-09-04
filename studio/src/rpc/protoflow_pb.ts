@@ -7,6 +7,209 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { Message, proto3, protoInt64 } from "@bufbuild/protobuf";
 
 /**
+ * @generated from message protoflow.GetSessionRequest
+ */
+export class GetSessionRequest extends Message<GetSessionRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<GetSessionRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.GetSessionRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSessionRequest {
+    return new GetSessionRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSessionRequest {
+    return new GetSessionRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSessionRequest {
+    return new GetSessionRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSessionRequest | PlainMessage<GetSessionRequest> | undefined, b: GetSessionRequest | PlainMessage<GetSessionRequest> | undefined): boolean {
+    return proto3.util.equals(GetSessionRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message protoflow.GetSessionResponse
+ */
+export class GetSessionResponse extends Message<GetSessionResponse> {
+  /**
+   * @generated from field: protoflow.Session session = 1;
+   */
+  session?: Session;
+
+  constructor(data?: PartialMessage<GetSessionResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.GetSessionResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "session", kind: "message", T: Session },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSessionResponse {
+    return new GetSessionResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSessionResponse {
+    return new GetSessionResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSessionResponse {
+    return new GetSessionResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSessionResponse | PlainMessage<GetSessionResponse> | undefined, b: GetSessionResponse | PlainMessage<GetSessionResponse> | undefined): boolean {
+    return proto3.util.equals(GetSessionResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message protoflow.GetSessionsRequest
+ */
+export class GetSessionsRequest extends Message<GetSessionsRequest> {
+  /**
+   * @generated from field: uint64 page = 1;
+   */
+  page = protoInt64.zero;
+
+  /**
+   * @generated from field: uint64 limit = 2;
+   */
+  limit = protoInt64.zero;
+
+  constructor(data?: PartialMessage<GetSessionsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.GetSessionsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "page", kind: "scalar", T: 4 /* ScalarType.UINT64 */ },
+    { no: 2, name: "limit", kind: "scalar", T: 4 /* ScalarType.UINT64 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSessionsRequest {
+    return new GetSessionsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSessionsRequest {
+    return new GetSessionsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSessionsRequest {
+    return new GetSessionsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSessionsRequest | PlainMessage<GetSessionsRequest> | undefined, b: GetSessionsRequest | PlainMessage<GetSessionsRequest> | undefined): boolean {
+    return proto3.util.equals(GetSessionsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message protoflow.GetSessionsResponse
+ */
+export class GetSessionsResponse extends Message<GetSessionsResponse> {
+  /**
+   * @generated from field: repeated protoflow.Session sessions = 1;
+   */
+  sessions: Session[] = [];
+
+  constructor(data?: PartialMessage<GetSessionsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.GetSessionsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "sessions", kind: "message", T: Session, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSessionsResponse {
+    return new GetSessionsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSessionsResponse {
+    return new GetSessionsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSessionsResponse {
+    return new GetSessionsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSessionsResponse | PlainMessage<GetSessionsResponse> | undefined, b: GetSessionsResponse | PlainMessage<GetSessionsResponse> | undefined): boolean {
+    return proto3.util.equals(GetSessionsResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message protoflow.Session
+ */
+export class Session extends Message<Session> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string name = 2;
+   */
+  name = "";
+
+  /**
+   * @generated from field: repeated protoflow.Segment segments = 3;
+   */
+  segments: Segment[] = [];
+
+  constructor(data?: PartialMessage<Session>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.Session";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "segments", kind: "message", T: Segment, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Session {
+    return new Session().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Session {
+    return new Session().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Session {
+    return new Session().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Session | PlainMessage<Session> | undefined, b: Session | PlainMessage<Session> | undefined): boolean {
+    return proto3.util.equals(Session, a, b);
+  }
+}
+
+/**
  * @generated from message protoflow.Token
  */
 export class Token extends Message<Token> {
@@ -16,19 +219,24 @@ export class Token extends Message<Token> {
   id = 0;
 
   /**
-   * @generated from field: uint64 start_time = 2;
+   * @generated from field: uint32 start_time = 2;
    */
-  startTime = protoInt64.zero;
+  startTime = 0;
 
   /**
-   * @generated from field: uint64 end_time = 3;
+   * @generated from field: uint32 end_time = 3;
    */
-  endTime = protoInt64.zero;
+  endTime = 0;
 
   /**
    * @generated from field: string text = 4;
    */
   text = "";
+
+  /**
+   * @generated from field: string p = 5;
+   */
+  p = "";
 
   constructor(data?: PartialMessage<Token>) {
     super();
@@ -39,9 +247,10 @@ export class Token extends Message<Token> {
   static readonly typeName = "protoflow.Token";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
-    { no: 2, name: "start_time", kind: "scalar", T: 4 /* ScalarType.UINT64 */ },
-    { no: 3, name: "end_time", kind: "scalar", T: 4 /* ScalarType.UINT64 */ },
+    { no: 2, name: "start_time", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 3, name: "end_time", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
     { no: 4, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "p", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Token {

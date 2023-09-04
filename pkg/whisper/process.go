@@ -65,8 +65,8 @@ func Process(model whisper2.Model, path string, flags *gen.TranscriptionRequest)
 			log.Debug().Str("token", token.Text).Msg("token")
 			tokens = append(tokens, &gen.Token{
 				Id:        uint32(token.Id),
-				StartTime: uint64(token.Start),
-				EndTime:   uint64(token.End),
+				StartTime: uint32(token.Start),
+				EndTime:   uint32(token.End),
 				Text:      token.Text,
 			})
 		}

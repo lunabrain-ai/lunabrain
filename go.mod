@@ -42,7 +42,7 @@ require (
 	github.com/rs/zerolog v1.30.0
 	github.com/samber/go-gpt-3-encoder v0.3.1
 	github.com/samber/lo v1.38.1
-	github.com/twitchtv/twirp v8.1.3+incompatible
+	github.com/slack-go/slack v0.12.3
 	github.com/u2takey/ffmpeg-go v0.4.1
 	github.com/urfave/cli/v2 v2.25.1
 	go.uber.org/config v1.4.0
@@ -162,7 +162,6 @@ require (
 	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/teivah/onecontext v1.3.0 // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
-	github.com/texttheater/golang-levenshtein/levenshtein v0.0.0-20200805054039-cae8b0eaed6c // indirect
 	github.com/u2takey/go-utils v0.3.1 // indirect
 	github.com/unknwon/com v1.0.1 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect

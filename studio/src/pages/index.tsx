@@ -5,7 +5,7 @@ import {ChatPage} from "@/components/Chat/Chat";
 
 export default function Home() {
   return (
-    <main className="flex">
+    <main>
       <ChatPage />
     </main>
   );

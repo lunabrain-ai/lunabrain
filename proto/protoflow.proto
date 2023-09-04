@@ -6,6 +6,8 @@ option go_package = "./gen";
 
 service ProtoflowService {
   rpc DownloadYouTubeVideo(YouTubeVideo) returns (FilePath);
+  rpc GetSessions(GetSessionsRequest) returns (GetSessionsResponse);
+  rpc GetSession(GetSessionRequest) returns (GetSessionResponse);
   rpc Chat(ChatRequest) returns (stream ChatResponse);
   rpc ConvertFile(ConvertFileRequest) returns (FilePath);
   rpc OCR (FilePath) returns (OCRText);
@@ -13,10 +15,33 @@ service ProtoflowService {
   rpc LiveTranscribe (TranscriptionRequest) returns (stream Segment);
 }
 
+message GetSessionRequest {
+  string id = 1;
+}
+
+message GetSessionResponse {
+  Session session = 1;
+}
+
+message GetSessionsRequest {
+  uint64 page = 1;
+  uint64 limit = 2;
+}
+
+message GetSessionsResponse {
+  repeated Session sessions = 1;
+}
+
+message Session {
+  string id = 1;
+  string name = 2;
+  repeated Segment segments = 3;
+}
+
 message Token {
   uint32 id = 1;
-  uint64 start_time = 2;
-  uint64 end_time = 3;
+  uint32 start_time = 2;
+  uint32 end_time = 3;
   string text = 4;
   string p = 5;
 }

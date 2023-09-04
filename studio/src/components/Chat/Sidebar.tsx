@@ -1,20 +1,44 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Switch, Tab, TabList} from "@fluentui/react-components";
+import {projectService} from "@/lib/api";
+import toast from "react-hot-toast";
+import {Session} from "@/rpc/protoflow_pb";
+import {Button, SelectTabData, SelectTabEvent, Tab, TabList, TabValue} from "@fluentui/react-components";
+import {Icon} from "@fluentui/react";
 import {useProjectContext} from "@/providers/ProjectProvider";
 
 interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({  }) => {
-    const [tab, setTab] = useState<string>('providers');
+    const [sessions, setSessions] = useState<Session[]>([]);
+    const { setSelectedValue, selectedValue, isRecording, setIsRecording } = useProjectContext();
+
+    const onTabSelect = (event: SelectTabEvent, data: SelectTabData) => {
+        setSelectedValue(data.value);
+    };
+
+    useEffect(() => {
+        (
+            async () => {
+                try {
+                    const sessions = await projectService.getSessions({})
+                    setSessions(sessions.sessions);
+                } catch (e: any) {
+                    toast.error('Failed to load sessions: ' + e.message)
+                    console.error(e)
+                }
+            }
+        )()
+    }, [setSessions]);
 
     return (
         <div>
-            {/*<TabList vertical size={"medium"}>*/}
-            {/*    {previousChats.map((chat) => {*/}
-            {/*        return <Tab key={chat.key} value={chat.key} icon={<Icon iconName={chat.icon} />}>{chat.name}</Tab>*/}
-            {/*    })}*/}
-            {/*</TabList>*/}
+            <Button onClick={() => setIsRecording(true)}>Live Transcribe</Button>
+            <TabList vertical size={"medium"} selectedValue={selectedValue} onTabSelect={onTabSelect}>
+                {sessions.map((s) => {
+                    return <Tab key={s.id} value={s.id}>{s.name}</Tab>
+                })}
+            </TabList>
         </div>
     );
 }
