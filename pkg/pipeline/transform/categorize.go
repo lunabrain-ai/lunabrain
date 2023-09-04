@@ -3,22 +3,21 @@ package transform
 import (
 	"context"
 	"encoding/json"
-	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
-	"github.com/lunabrain-ai/lunabrain/gen/python"
+	"github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform/content"
 )
 
 type Categorizer interface {
 	CategorizeText(text string) (*content.Content, error)
-	CategorizeTextWithCategorizer(text string, categorizer python.Categorizer) (*content.Content, error)
+	CategorizeTextWithCategorizer(text string, categorizer gen.Categorizer) (*content.Content, error)
 }
 
 type Categorize struct {
-	client python.PythonClient
+	client gen.PythonClient
 }
 
-func (s *Categorize) CategorizeTextWithCategorizer(text string, categorizer python.Categorizer) (*content.Content, error) {
-	categories, err := s.client.Categorize(context.Background(), &python.CategorizeRequest{
+func (s *Categorize) CategorizeTextWithCategorizer(text string, categorizer gen.Categorizer) (*content.Content, error) {
+	categories, err := s.client.Categorize(context.Background(), &gen.CategorizeRequest{
 		Text:        text,
 		Categorizer: categorizer,
 	})
@@ -31,16 +30,16 @@ func (s *Categorize) CategorizeTextWithCategorizer(text string, categorizer pyth
 		return nil, err
 	}
 	return &content.Content{
-		TransformerID: genapi.TransformerID_CATEGORIES,
+		TransformerID: gen.TransformerID_CATEGORIES,
 		Data:          string(serCat),
 	}, nil
 }
 
 func (s *Categorize) CategorizeText(text string) (*content.Content, error) {
-	return s.CategorizeTextWithCategorizer(text, python.Categorizer_T5_TAG)
+	return s.CategorizeTextWithCategorizer(text, gen.Categorizer_T5_TAG)
 }
 
-func NewCategorize(client python.PythonClient) (*Categorize, error) {
+func NewCategorize(client gen.PythonClient) (*Categorize, error) {
 	return &Categorize{
 		client: client,
 	}, nil

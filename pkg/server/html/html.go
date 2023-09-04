@@ -6,7 +6,7 @@ import (
 	"github.com/Masterminds/sprig/v3"
 	"github.com/alexferrari88/gohn/pkg/gohn"
 	"github.com/jba/templatecheck"
-	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
+	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"html/template"
 	"io"
@@ -71,7 +71,7 @@ func NewPage(name string, params interface{}, patterns []string) *Page {
 }
 
 // TODO breadchris why was this written this way? it seems like you should be able to just use a struct
-func pageParams(title string, nav []Nav, params interface{}) interface{} {
+func pageParams(title string, nav []Nav, params any) any {
 	type page struct {
 		Params interface{}
 		Title  string

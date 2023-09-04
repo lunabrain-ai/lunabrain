@@ -9,6 +9,7 @@ import (
 const ConfigurationKey = "discord"
 
 type Config struct {
+	Enabled       bool             `yaml:"enabled"`
 	ApplicationID string           `yaml:"application_id"`
 	Token         string           `yaml:"token"`
 	Intent        discordgo.Intent `yaml:"intent"`

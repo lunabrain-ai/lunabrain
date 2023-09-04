@@ -3,8 +3,9 @@ package server
 import (
 	"context"
 	"encoding/json"
-	"github.com/go-chi/chi"
-	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
+	connect_go "github.com/bufbuild/connect-go"
+	"github.com/go-chi/chi/v5"
+	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/pkg/server/html"
 	"github.com/mingrammer/commonregex"
 	"github.com/pkg/errors"
@@ -148,22 +149,24 @@ func (a *APIHTTPServer) getClientRoutes(r chi.Router) {
 		}
 
 		if fileData != nil {
+			// TODO breadchris this assumes that the file uploaded is an audio file
+			// really what should happen here is the mime type should be checked
 			content = append(content, &genapi.Content{
 				Type: genapi.ContentType_AUDIO,
 				Data: fileData,
 			})
 		}
 
-		contentIDs, err := a.apiServer.Save(context.Background(), &genapi.Contents{
+		contentIDs, err := a.apiServer.Save(context.Background(), connect_go.NewRequest(&genapi.Contents{
 			Contents: content,
-		})
+		}))
 		if err != nil {
 			serverError(w, err)
 			return
 		}
 
 		var contentIDStrs []string
-		for _, id := range contentIDs.ContentIDs {
+		for _, id := range contentIDs.Msg.ContentIDs {
 			contentIDStrs = append(contentIDStrs, id.Id)
 		}
 
@@ -194,21 +197,21 @@ func (a *APIHTTPServer) getClientRoutes(r chi.Router) {
 
 	r.Get("/view/{id}", func(w http.ResponseWriter, r *http.Request) {
 		id := chi.URLParam(r, "id")
-		content, err := a.apiServer.Search(r.Context(), &genapi.Query{
+		content, err := a.apiServer.Search(r.Context(), connect_go.NewRequest(&genapi.Query{
 			ContentID: id,
-		})
+		}))
 		if err != nil {
 			serverError(w, err)
 			return
 		}
 
-		if len(content.StoredContent) == 0 {
+		if len(content.Msg.StoredContent) == 0 {
 			serverError(w, errors.Wrapf(err, "no content found for id %s", id))
 			return
 		}
 
 		params := html.ViewParams{
-			StoredContent: content.StoredContent[0],
+			StoredContent: content.Msg.StoredContent[0],
 		}
 		err = a.htmlContent.WriteView(w, params)
 		if err != nil {
@@ -217,17 +220,17 @@ func (a *APIHTTPServer) getClientRoutes(r chi.Router) {
 	})
 
 	r.Get("/search", func(w http.ResponseWriter, r *http.Request) {
-		content, err := a.apiServer.Search(r.Context(), &genapi.Query{
+		content, err := a.apiServer.Search(r.Context(), connect_go.NewRequest(&genapi.Query{
 			Query: "",
 			Page:  0,
-		})
+		}))
 		if err != nil {
 			serverError(w, err)
 			return
 		}
 
 		p := html.SearchParams{
-			Results: content,
+			Results: content.Msg,
 		}
 
 		err = a.htmlContent.WriteSearch(w, p)

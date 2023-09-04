@@ -5,8 +5,7 @@ import (
 	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/google/wire"
-	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
-	"github.com/lunabrain-ai/lunabrain/gen/python"
+	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
 	normcont "github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
@@ -111,15 +110,15 @@ func (s *ContentWorkflow) ProcessContent(ctx context.Context, content *genapi.Co
 		case genapi.NormalizerID_AUDIO_TRANSCRIPT:
 			fallthrough
 		case genapi.NormalizerID_URL_YOUTUBE_TRANSCRIPT:
-			summary, err := s.summarizer.SummarizeTextWithSummarizer(c.Data, python.Summarizer_LANGCHAIN)
+			summary, err := s.summarizer.SummarizeTextWithSummarizer(c.Data, genapi.Summarizer_LANGCHAIN)
 			if err != nil {
 				return uuid.UUID{}, errors.Wrapf(err, "unable to summarize normalized content")
 			}
 			transformedContent = append(transformedContent, summary)
 
-			categorizers := []python.Categorizer{
-				python.Categorizer_T5_TAG,
-				python.Categorizer_KEYBERT,
+			categorizers := []genapi.Categorizer{
+				genapi.Categorizer_T5_TAG,
+				genapi.Categorizer_KEYBERT,
 			}
 			for _, categorizer := range categorizers {
 				categories, err := s.categorizer.CategorizeTextWithCategorizer(c.Data, categorizer)

@@ -60,11 +60,14 @@ def question_generator():
 
 class PythonSerivce(PythonServicer):
     def Transcribe(self, req: python_pb2.TranscribeRequest, context):
-        result = model.transcribe(req.file)
+        print("starting transcription")
+        result = model.transcribe(req.file, verbose=True)
+        print("transcription done")
         return python_pb2.TranscribeResponse(transcription=result['text'])
 
     def Summarize(self, req: python_pb2.SummarizeRequest, context):
         print("Summarizing with", req.summarizer)
+        print(req.content)
 
         if req.summarizer == python_pb2.LANGCHAIN:
 
@@ -118,7 +121,7 @@ class PythonSerivce(PythonServicer):
             raise Exception(f"Unknown index type: {request.type}")
         return python_pb2.Index(id=index_id, type=request.type)
 
-    def QueryIndex(self, request: python_pb2.Query, context):
+    def QueryIndex(self, request: python_pb2.IndexQuery, context):
         print("Querying index", request.index)
         result = None
         if request.type == python_pb2.LLAMA:

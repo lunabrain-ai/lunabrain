@@ -2,10 +2,11 @@ package config
 
 import (
 	"github.com/lunabrain-ai/lunabrain/pkg/api"
-	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/lunabrain-ai/lunabrain/pkg/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
+	"github.com/protoflow-labs/protoflow/pkg/openai"
 	"github.com/rs/zerolog/log"
 	"go.uber.org/config"
 	"io/ioutil"
@@ -22,9 +23,10 @@ const (
 type Config struct {
 	Bucket bucket.Config `yaml:"bucket"`
 	Python python.Config `yaml:"python"`
-	OpenAI openai.Config `yaml:"openai"`
 	API    api.Config    `yaml:"api"`
 	Scrape scrape.Config `yaml:"scrape"`
+	DB     db.Config     `yaml:"db"`
+	OpenAI openai.Config `yaml:"openai"`
 }
 
 func newDefaultConfig() Config {
@@ -38,15 +40,14 @@ func newDefaultConfig() Config {
 		Python: python.Config{
 			Host: "localhost:50051",
 		},
-		OpenAI: openai.Config{
-			APIKey: "${LUNABRAIN_OPENAI_API_KEY}",
-		},
 		API: api.Config{
 			Port: "8080",
 		},
 		Scrape: scrape.Config{
 			Client: scrape.ClientHTTP,
 		},
+		DB:     db.NewDefaultConfig(),
+		OpenAI: openai.NewDefaultConfig(),
 	}
 }
 

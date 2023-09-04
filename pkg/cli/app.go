@@ -1,11 +1,11 @@
 package cli
 
 import (
-	"github.com/google/wire"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
+	"github.com/protoflow-labs/protoflow/pkg/log"
 	"github.com/urfave/cli/v2"
 )
 
@@ -14,12 +14,9 @@ type Commands struct {
 	Sync  *cli.Command
 }
 
-var Set = wire.NewSet(
-	NewNormalizeCommand,
-	NewTextCommand,
-	wire.Struct(new(Commands), "MyFoo", "MyBar"))
-
 func NewApp(
+	// TODO breadchris needed so wire will pick it up as a dep
+	log *log.Log,
 	httpServer server.HTTPServer,
 	normalizer normalize.Normalizer,
 	summarizer transform.Summarizer,

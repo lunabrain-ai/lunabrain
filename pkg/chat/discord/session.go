@@ -10,9 +10,21 @@ var ProviderSet = wire.NewSet(
 	NewConfig,
 	NewDiscordSession,
 	NewHandler,
+	NewSession,
+	New,
 )
 
+type Session struct {
+	*discordgo.Session
+	Messages *PubSub
+}
+
 func NewDiscordSession(config Config) (*discordgo.Session, error) {
+	if !config.Enabled {
+		log.Warn().Msg("discord is not enabled")
+		return nil, nil
+	}
+
 	token := "Bot " + config.Token
 
 	s, err := discordgo.New(token)
@@ -33,31 +45,54 @@ func NewDiscordSession(config Config) (*discordgo.Session, error) {
 	return s, nil
 }
 
-func LogSessionEvents(s *discordgo.Session) {
-	//s.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
-	//	log.Info().
-	//		Interface("event", m).
-	//		Msg("message create")
-	//})
-	//d.session.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
-	//	log.Info().
-	//		Str("username", s.State.User.Username).
-	//		Str("discriminator", s.State.User.Discriminator).
-	//		Msg("connected")
-	//})
-	//d.session.AddHandler(func(s *discordgo.Session, m *discordgo.MessageEdit) {
-	//	log.Info().
-	//		Interface("event", m).
-	//		Msg("message edit")
-	//})
-	//d.session.AddHandler(func(s *discordgo.Session, m *discordgo.MessageDelete) {
-	//	log.Info().
-	//		Interface("event", m).
-	//		Msg("message delete")
-	//})
-	//d.session.AddHandler(func(s *discordgo.Session, m *discordgo.PresenceUpdate) {
-	//	log.Info().
-	//		Interface("event", m).
-	//		Msg("presence update")
-	//})
+func NewSession(config Config, s *discordgo.Session) (*Session, error) {
+	if !config.Enabled {
+		log.Warn().Msg("discord is not enabled")
+		return nil, nil
+	}
+
+	msgs := NewPubSub()
+
+	err := s.Open()
+	if err != nil {
+		log.Error().Err(err).Msg("failed to open discord session")
+		return nil, err
+	}
+
+	sess := &Session{
+		Session:  s,
+		Messages: msgs,
+	}
+	sess.LogSessionEvents()
+	return sess, nil
+}
+
+func (s *Session) LogSessionEvents() {
+	s.AddHandler(func(sess *discordgo.Session, m *discordgo.MessageCreate) {
+		log.Info().
+			Interface("event", m).
+			Msg("message create")
+		s.Messages.Publish(MessageTopic, m)
+	})
+	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
+		log.Info().
+			Str("username", s.State.User.Username).
+			Str("discriminator", s.State.User.Discriminator).
+			Msg("connected")
+	})
+	s.AddHandler(func(s *discordgo.Session, m *discordgo.MessageEdit) {
+		log.Info().
+			Interface("event", m).
+			Msg("message edit")
+	})
+	s.AddHandler(func(s *discordgo.Session, m *discordgo.MessageDelete) {
+		log.Info().
+			Interface("event", m).
+			Msg("message delete")
+	})
+	s.AddHandler(func(s *discordgo.Session, m *discordgo.PresenceUpdate) {
+		log.Info().
+			Interface("event", m).
+			Msg("presence update")
+	})
 }

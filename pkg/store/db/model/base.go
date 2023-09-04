@@ -22,7 +22,9 @@ type BaseDoc[T any] struct {
 
 // BeforeCreate will set a UUID.
 func (b *Base) BeforeCreate(tx *gorm.DB) error {
-	b.ID = uuid.New()
+	if b.ID == uuid.Nil {
+		b.ID = uuid.New()
+	}
 	return nil
 }
 

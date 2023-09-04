@@ -5,24 +5,40 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
+	"github.com/protoflow-labs/protoflow/pkg/util/reload"
 	"github.com/urfave/cli/v2"
 	"path/filepath"
 )
 
 func NewServeCommand(httpServer server.HTTPServer) *cli.Command {
 	return &cli.Command{
-		Name:  "api",
-		Usage: "API server",
-		Flags: []cli.Flag{},
-		Subcommands: []*cli.Command{
-			{
-				Name: "serve",
-				Action: func(context *cli.Context) error {
-					return httpServer.Start()
-				},
+		Name:  "start",
+		Usage: "start the server",
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name: "dev",
 			},
 		},
+		Action: func(context *cli.Context) error {
+			if context.Bool("dev") {
+				return liveReload()
+			}
+			return httpServer.Start()
+		},
 	}
+}
+
+func liveReload() error {
+	// TODO breadchris makes this a config that can be set
+	c := reload.Config{
+		Cmd: []string{"go", "run", "main.go", "start"},
+		// TODO breadchris the patterns and ignores are not quite working
+		// ideally we use tilt here
+		Patterns: []string{"pkg/**/*.go", "templates/**"},
+		Ignores:  []string{"studio/**", "node_modules/**", ".git/**", "examples/**", "third_party/**", "env/**", "site/**", "data/**"},
+	}
+	// TODO breadchris this code needs to be refactored to use observability
+	return reload.Reload(c)
 }
 
 func NewSyncCommand() *cli.Command {

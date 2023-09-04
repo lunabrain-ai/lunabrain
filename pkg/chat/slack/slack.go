@@ -1,8 +1,5 @@
 package slack
 
-
-package providers
-
 import (
 	"github.com/slack-go/slack"
 )
@@ -31,7 +28,6 @@ type SlackMessageCollector struct {
 func (c *SlackMessageCollector) Collect() ([]string, error) {
 	params := &slack.GetConversationHistoryParameters{
 		ChannelID: c.Channel,
-		Count:     100,
 	}
 	history, err := c.Client.GetConversationHistory(params)
 	if err != nil {

@@ -6,7 +6,8 @@ import (
 )
 
 type Config struct {
-	Port string `yaml:"port"`
+	Port        string `yaml:"port"`
+	StudioProxy string `yaml:"studio_proxy"`
 }
 
 func NewConfig(provider config.Provider) (config Config, err error) {

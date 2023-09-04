@@ -5,7 +5,7 @@ import (
 	"github.com/alexferrari88/gohn/pkg/gohn"
 	"github.com/google/uuid"
 	"github.com/google/wire"
-	genapi "github.com/lunabrain-ai/lunabrain/gen/api"
+	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	normalcontent "github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
 	transformcontent "github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
@@ -21,6 +21,7 @@ var (
 		NewConfig,
 		NewGormDB,
 		New,
+		NewSession,
 		wire.Bind(new(Store), new(*dbStore)),
 	)
 )

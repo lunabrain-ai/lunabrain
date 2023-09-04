@@ -49,8 +49,8 @@ func typeString[T any](t T) string {
 
 var _ DocStore[interface{}] = (*docStore[interface{}])(nil)
 
-func NewDocStore[T any](bucket *bucket.Bucket) (*docStore[T], error) {
-	db, err := db.NewGormDB(bucket)
+func NewDocStore[T any](c db.Config, bucket *bucket.Bucket) (*docStore[T], error) {
+	db, err := db.NewGormDB(c, bucket)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not connect to database: %v", err)
 	}

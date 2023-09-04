@@ -10,6 +10,13 @@ type Config struct {
 	Type string `yaml:"type"`
 }
 
+func NewDefaultConfig() Config {
+	return Config{
+		DSN:  "lunabrain.db",
+		Type: "sqlite3",
+	}
+}
+
 func NewConfig(provider config.Provider) (config Config, err error) {
 	value := provider.Get("db")
 

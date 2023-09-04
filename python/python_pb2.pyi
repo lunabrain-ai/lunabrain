@@ -43,7 +43,7 @@ class IndexDirectoryRequest(_message.Message):
     type: IndexType
     def __init__(self, path: _Optional[str] = ..., type: _Optional[_Union[IndexType, str]] = ...) -> None: ...
 
-class Query(_message.Message):
+class IndexQuery(_message.Message):
     __slots__ = ["index", "query"]
     INDEX_FIELD_NUMBER: _ClassVar[int]
     QUERY_FIELD_NUMBER: _ClassVar[int]
