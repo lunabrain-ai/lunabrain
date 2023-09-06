@@ -30,6 +30,9 @@ func NewSession(db *gorm.DB) (*Session, error) {
 
 func (s *Session) NewSession(ps *genapi.Session) (*model.Session, error) {
 	session := &model.Session{
+		Base: model.Base{
+			ID: uuid.New(),
+		},
 		Data: datatypes.JSONType[*genapi.Session]{
 			Data: ps,
 		},

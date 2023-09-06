@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ChatRequest, ChatResponse, ConvertFileRequest, FilePath, GetSessionRequest, GetSessionResponse, GetSessionsRequest, GetSessionsResponse, OCRText, Segment, Transcription, TranscriptionRequest, YouTubeVideo } from "./protoflow_pb.js";
+import { ChatRequest, ChatResponse, ConvertFileRequest, FilePath, GetSessionRequest, GetSessionResponse, GetSessionsRequest, GetSessionsResponse, InferRequest, InferResponse, OCRText, UploadContentRequest, YouTubeVideo } from "./protoflow_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -40,6 +40,24 @@ export const ProtoflowService = {
       kind: MethodKind.Unary,
     },
     /**
+     * @generated from rpc protoflow.ProtoflowService.UploadContent
+     */
+    uploadContent: {
+      name: "UploadContent",
+      I: UploadContentRequest,
+      O: ChatResponse,
+      kind: MethodKind.ServerStreaming,
+    },
+    /**
+     * @generated from rpc protoflow.ProtoflowService.Infer
+     */
+    infer: {
+      name: "Infer",
+      I: InferRequest,
+      O: InferResponse,
+      kind: MethodKind.ServerStreaming,
+    },
+    /**
      * @generated from rpc protoflow.ProtoflowService.Chat
      */
     chat: {
@@ -65,24 +83,6 @@ export const ProtoflowService = {
       I: FilePath,
       O: OCRText,
       kind: MethodKind.Unary,
-    },
-    /**
-     * @generated from rpc protoflow.ProtoflowService.Transcribe
-     */
-    transcribe: {
-      name: "Transcribe",
-      I: TranscriptionRequest,
-      O: Transcription,
-      kind: MethodKind.Unary,
-    },
-    /**
-     * @generated from rpc protoflow.ProtoflowService.LiveTranscribe
-     */
-    liveTranscribe: {
-      name: "LiveTranscribe",
-      I: TranscriptionRequest,
-      O: Segment,
-      kind: MethodKind.ServerStreaming,
     },
   }
 } as const;

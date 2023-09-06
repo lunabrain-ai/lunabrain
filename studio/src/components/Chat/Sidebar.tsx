@@ -5,40 +5,29 @@ import {Session} from "@/rpc/protoflow_pb";
 import {Button, SelectTabData, SelectTabEvent, Tab, TabList, TabValue} from "@fluentui/react-components";
 import {Icon} from "@fluentui/react";
 import {useProjectContext} from "@/providers/ProjectProvider";
+import {CollectPanel} from "@/components/Chat/CollectPanel";
+import {PromptPanel} from "@/components/Chat/PromptPanel";
 
 interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({  }) => {
-    const [sessions, setSessions] = useState<Session[]>([]);
-    const { setSelectedValue, selectedValue, isRecording, setIsRecording } = useProjectContext();
+    const [selectedValue, setSelectedValue] = useState<TabValue>('collect');
 
     const onTabSelect = (event: SelectTabEvent, data: SelectTabData) => {
         setSelectedValue(data.value);
     };
 
-    useEffect(() => {
-        (
-            async () => {
-                try {
-                    const sessions = await projectService.getSessions({})
-                    setSessions(sessions.sessions);
-                } catch (e: any) {
-                    toast.error('Failed to load sessions: ' + e.message)
-                    console.error(e)
-                }
-            }
-        )()
-    }, [setSessions]);
-
     return (
-        <div>
-            <Button onClick={() => setIsRecording(true)}>Live Transcribe</Button>
-            <TabList vertical size={"medium"} selectedValue={selectedValue} onTabSelect={onTabSelect}>
-                {sessions.map((s) => {
-                    return <Tab key={s.id} value={s.id}>{s.name}</Tab>
-                })}
+        <>
+            <TabList selectedValue={selectedValue} onTabSelect={onTabSelect}>
+                <Tab value="collect">Collect</Tab>
+                <Tab value="prompts">Prompts</Tab>
             </TabList>
-        </div>
+            <div>
+                {selectedValue === 'collect' && <CollectPanel />}
+                {selectedValue === 'prompts' && <PromptPanel />}
+            </div>
+        </>
     );
 }

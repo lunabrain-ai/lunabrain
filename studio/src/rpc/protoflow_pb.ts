@@ -5,6 +5,161 @@
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
 import { Message, proto3, protoInt64 } from "@bufbuild/protobuf";
+import { Content } from "./api_pb.js";
+
+/**
+ * @generated from message protoflow.InferRequest
+ */
+export class InferRequest extends Message<InferRequest> {
+  /**
+   * @generated from field: string prompt = 1;
+   */
+  prompt = "";
+
+  /**
+   * @generated from field: repeated string text = 2;
+   */
+  text: string[] = [];
+
+  constructor(data?: PartialMessage<InferRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.InferRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "prompt", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): InferRequest {
+    return new InferRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): InferRequest {
+    return new InferRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): InferRequest {
+    return new InferRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: InferRequest | PlainMessage<InferRequest> | undefined, b: InferRequest | PlainMessage<InferRequest> | undefined): boolean {
+    return proto3.util.equals(InferRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message protoflow.InferResponse
+ */
+export class InferResponse extends Message<InferResponse> {
+  /**
+   * @generated from field: string text = 1;
+   */
+  text = "";
+
+  constructor(data?: PartialMessage<InferResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.InferResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): InferResponse {
+    return new InferResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): InferResponse {
+    return new InferResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): InferResponse {
+    return new InferResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: InferResponse | PlainMessage<InferResponse> | undefined, b: InferResponse | PlainMessage<InferResponse> | undefined): boolean {
+    return proto3.util.equals(InferResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message protoflow.UploadContentRequest
+ */
+export class UploadContentRequest extends Message<UploadContentRequest> {
+  /**
+   * @generated from field: lunabrain.Content content = 1;
+   */
+  content?: Content;
+
+  constructor(data?: PartialMessage<UploadContentRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.UploadContentRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "content", kind: "message", T: Content },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UploadContentRequest {
+    return new UploadContentRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UploadContentRequest {
+    return new UploadContentRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UploadContentRequest {
+    return new UploadContentRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UploadContentRequest | PlainMessage<UploadContentRequest> | undefined, b: UploadContentRequest | PlainMessage<UploadContentRequest> | undefined): boolean {
+    return proto3.util.equals(UploadContentRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message protoflow.UploadContentResponse
+ */
+export class UploadContentResponse extends Message<UploadContentResponse> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<UploadContentResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.UploadContentResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UploadContentResponse {
+    return new UploadContentResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UploadContentResponse {
+    return new UploadContentResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UploadContentResponse {
+    return new UploadContentResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UploadContentResponse | PlainMessage<UploadContentResponse> | undefined, b: UploadContentResponse | PlainMessage<UploadContentResponse> | undefined): boolean {
+    return proto3.util.equals(UploadContentResponse, a, b);
+  }
+}
 
 /**
  * @generated from message protoflow.GetSessionRequest
@@ -219,14 +374,14 @@ export class Token extends Message<Token> {
   id = 0;
 
   /**
-   * @generated from field: uint32 start_time = 2;
+   * @generated from field: uint64 start_time = 2;
    */
-  startTime = 0;
+  startTime = protoInt64.zero;
 
   /**
-   * @generated from field: uint32 end_time = 3;
+   * @generated from field: uint64 end_time = 3;
    */
-  endTime = 0;
+  endTime = protoInt64.zero;
 
   /**
    * @generated from field: string text = 4;
@@ -247,8 +402,8 @@ export class Token extends Message<Token> {
   static readonly typeName = "protoflow.Token";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
-    { no: 2, name: "start_time", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
-    { no: 3, name: "end_time", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 2, name: "start_time", kind: "scalar", T: 4 /* ScalarType.UINT64 */ },
+    { no: 3, name: "end_time", kind: "scalar", T: 4 /* ScalarType.UINT64 */ },
     { no: 4, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "p", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
@@ -500,43 +655,6 @@ export class RegisterFlags extends Message<RegisterFlags> {
 
   static equals(a: RegisterFlags | PlainMessage<RegisterFlags> | undefined, b: RegisterFlags | PlainMessage<RegisterFlags> | undefined): boolean {
     return proto3.util.equals(RegisterFlags, a, b);
-  }
-}
-
-/**
- * @generated from message protoflow.Transcription
- */
-export class Transcription extends Message<Transcription> {
-  /**
-   * @generated from field: repeated string text = 1;
-   */
-  text: string[] = [];
-
-  constructor(data?: PartialMessage<Transcription>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "protoflow.Transcription";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Transcription {
-    return new Transcription().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Transcription {
-    return new Transcription().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Transcription {
-    return new Transcription().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: Transcription | PlainMessage<Transcription> | undefined, b: Transcription | PlainMessage<Transcription> | undefined): boolean {
-    return proto3.util.equals(Transcription, a, b);
   }
 }
 

@@ -135,7 +135,7 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	protoflowProtoflow := protoflow.New(openAIQAClient, dbSession)
+	protoflowProtoflow := protoflow.New(openAIQAClient, dbSession, bucketBucket)
 	protoflow2, err := protoflow.NewProtoflow()
 	if err != nil {
 		return nil, err

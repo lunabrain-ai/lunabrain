@@ -62,18 +62,19 @@ func Process(model whisper2.Model, path string, flags *gen.TranscriptionRequest)
 	cb := func(segment whisper2.Segment) {
 		var tokens []*gen.Token
 		for _, token := range segment.Tokens {
-			log.Debug().Str("token", token.Text).Msg("token")
 			tokens = append(tokens, &gen.Token{
 				Id:        uint32(token.Id),
-				StartTime: uint32(token.Start),
-				EndTime:   uint32(token.End),
+				StartTime: uint64(token.Start.Milliseconds()),
+				EndTime:   uint64(token.End.Milliseconds()),
 				Text:      token.Text,
 			})
 		}
 		segmentCh <- rxgo.Of(&gen.Segment{
-			Num:    uint32(segment.Num),
-			Text:   segment.Text,
-			Tokens: tokens,
+			Num:       uint32(segment.Num),
+			StartTime: uint64(segment.Start.Milliseconds()),
+			EndTime:   uint64(segment.End.Milliseconds()),
+			Text:      segment.Text,
+			Tokens:    tokens,
 		})
 	}
 

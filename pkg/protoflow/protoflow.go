@@ -1,9 +1,7 @@
 package protoflow
 
 import (
-	"bufio"
 	"context"
-	"encoding/json"
 	"github.com/breadchris/gosseract"
 	connect_go "github.com/bufbuild/connect-go"
 	whisper2 "github.com/ggerganov/whisper.cpp/bindings/go/pkg/whisper"
@@ -12,27 +10,30 @@ import (
 	"github.com/kkdai/youtube/v2"
 	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
+	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/pkg/errors"
 	"github.com/protoflow-labs/protoflow/gen"
-	"github.com/protoflow-labs/protoflow/pkg/bucket"
+	pbucket "github.com/protoflow-labs/protoflow/pkg/bucket"
 	"github.com/protoflow-labs/protoflow/pkg/openai"
 	"github.com/protoflow-labs/protoflow/pkg/protoflow"
 	"github.com/reactivex/rxgo/v2"
 	"github.com/rs/zerolog/log"
+	gopenai "github.com/sashabaranov/go-openai"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"gorm.io/datatypes"
 	"image"
 	"io"
 	"os"
-	"os/exec"
+	"path"
 )
 
 type Protoflow struct {
 	openai       openai.QAClient
 	sessionStore *db.Session
+	fileStore    *bucket.Bucket
 }
 
 var ProviderSet = wire.NewSet(
@@ -44,7 +45,7 @@ var _ genconnect.ProtoflowServiceHandler = (*Protoflow)(nil)
 
 func NewProtoflow() (*protoflow.Protoflow, error) {
 	// TODO breadchris pass a config provider in here
-	return protoflow.Wire(bucket.Config{
+	return protoflow.Wire(pbucket.Config{
 		Name: ".lunabrain",
 	}, &gen.Project{
 		Id:   uuid.NewString(),
@@ -56,11 +57,51 @@ func NewProtoflow() (*protoflow.Protoflow, error) {
 	})
 }
 
-func New(openai openai.QAClient, sessionStore *db.Session) *Protoflow {
+func New(
+	openai openai.QAClient,
+	sessionStore *db.Session,
+	fileStore *bucket.Bucket,
+) *Protoflow {
 	return &Protoflow{
 		openai:       openai,
 		sessionStore: sessionStore,
+		fileStore:    fileStore,
 	}
+}
+
+func (p *Protoflow) Infer(ctx context.Context, c *connect_go.Request[genapi.InferRequest], c2 *connect_go.ServerStream[genapi.InferResponse]) error {
+	var chat []gopenai.ChatCompletionMessage
+
+	for _, t := range c.Msg.Text {
+		chat = append(chat, gopenai.ChatCompletionMessage{
+			Role:    "user",
+			Content: t,
+		})
+	}
+	chat = append(chat, gopenai.ChatCompletionMessage{
+		Role:    "user",
+		Content: c.Msg.Prompt,
+	})
+
+	obs, err := p.openai.StreamResponse(chat)
+	if err != nil {
+		return err
+	}
+	<-obs.ForEach(func(item any) {
+		t, ok := item.(string)
+		if !ok {
+			return
+		}
+		if err := c2.Send(&genapi.InferResponse{
+			Text: t,
+		}); err != nil {
+			log.Error().Err(err).Msg("error sending token")
+		}
+	}, func(err error) {
+		log.Error().Err(err).Msg("error in observable")
+	}, func() {
+	})
+	return nil
 }
 
 func (p *Protoflow) DownloadYouTubeVideo(ctx context.Context, c *connect_go.Request[genapi.YouTubeVideo]) (*connect_go.Response[genapi.FilePath], error) {
@@ -107,66 +148,6 @@ func (p *Protoflow) DownloadYouTubeVideo(ctx context.Context, c *connect_go.Requ
 	return connect_go.NewResponse(&genapi.FilePath{}), nil
 }
 
-func (p *Protoflow) StreamTranscription(ctx context.Context) rxgo.Observable {
-	return rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
-		cmd := exec.Command("third_party/whisper.cpp/stream")
-		cmd.Args = append(
-			cmd.Args,
-			"-m", "third_party/whisper.cpp/models/ggml-base.en.bin",
-			// TODO breadchris offer selection for input stream
-			"-c", "4",
-		)
-		stdout, err := cmd.StdoutPipe()
-		if err != nil {
-			next <- rxgo.Error(err)
-			return
-		}
-		stderr, err := cmd.StderrPipe()
-		if err != nil {
-			next <- rxgo.Error(err)
-			return
-		}
-
-		stdoutScan := bufio.NewScanner(stdout)
-		go func() {
-			for stdoutScan.Scan() {
-				var seg genapi.Segment
-				if err := json.Unmarshal([]byte(stdoutScan.Text()), &seg); err != nil {
-					next <- rxgo.Error(err)
-					continue
-				}
-				next <- rxgo.Of(&seg)
-			}
-		}()
-
-		stderrScan := bufio.NewScanner(stderr)
-		go func() {
-			for stderrScan.Scan() {
-				// next <- rxgo.Of(stderrScan.Text())
-				log.Debug().Str("stderr", stderrScan.Text()).Msg("stream")
-			}
-		}()
-
-		err = cmd.Start()
-		if err != nil {
-			next <- rxgo.Error(err)
-			return
-		}
-
-		go func() {
-			<-ctx.Done()
-			log.Info().Msg("killing stream")
-			cmd.Process.Kill()
-		}()
-
-		err = cmd.Wait()
-		if err != nil {
-			next <- rxgo.Error(err)
-			return
-		}
-	}}, rxgo.WithContext(ctx))
-}
-
 func (p *Protoflow) GetSessions(ctx context.Context, c *connect_go.Request[genapi.GetSessionsRequest]) (*connect_go.Response[genapi.GetSessionsResponse], error) {
 	// TODO breadchris handle page
 	sessions, _, err := p.sessionStore.All(int(c.Msg.Page), int(c.Msg.Limit))
@@ -190,6 +171,7 @@ func (p *Protoflow) GetSession(ctx context.Context, c *connect_go.Request[genapi
 		return nil, err
 	}
 	s := m.Data.Data
+	s.Id = m.ID.String()
 	for _, seg := range m.Segments {
 		s.Segments = append(s.Segments, seg.Data.Data)
 	}
@@ -198,23 +180,18 @@ func (p *Protoflow) GetSession(ctx context.Context, c *connect_go.Request[genapi
 	}), nil
 }
 
-func (p *Protoflow) Chat(ctx context.Context, c *connect_go.Request[genapi.ChatRequest], c2 *connect_go.ServerStream[genapi.ChatResponse]) error {
-	obs := p.StreamTranscription(ctx)
-
-	ps := &genapi.Session{
-		Name: "test",
-	}
-	s, err := p.sessionStore.NewSession(ps)
-	if err != nil {
-		return err
-	}
+func (p *Protoflow) observeSegments(
+	s *model.Session,
+	obs rxgo.Observable,
+	c2 *connect_go.ServerStream[genapi.ChatResponse],
+) {
 	<-obs.ForEach(func(item any) {
 		t, ok := item.(*genapi.Segment)
 		if !ok {
 			return
 		}
 
-		err = p.sessionStore.SaveSegment(&model.Segment{
+		err := p.sessionStore.SaveSegment(&model.Segment{
 			SessionID: s.ID,
 			Data: datatypes.JSONType[*genapi.Segment]{
 				Data: t,
@@ -234,12 +211,74 @@ func (p *Protoflow) Chat(ctx context.Context, c *connect_go.Request[genapi.ChatR
 	}, func() {
 		log.Info().Msg("transcription complete")
 	})
+}
+
+func (p *Protoflow) Chat(ctx context.Context, c *connect_go.Request[genapi.ChatRequest], c2 *connect_go.ServerStream[genapi.ChatResponse]) error {
+	obs := p.StreamTranscription(ctx)
+	s, err := p.sessionStore.NewSession(&genapi.Session{
+		Name: "live chat",
+	})
+	if err != nil {
+		return err
+	}
+	p.observeSegments(s, obs, c2)
+	return nil
+}
+
+func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[genapi.UploadContentRequest], c2 *connect_go.ServerStream[genapi.ChatResponse]) error {
+	name := c.Msg.Content.Metadata["name"]
+
+	s, err := p.sessionStore.NewSession(&genapi.Session{
+		Name: name,
+	})
+	if err != nil {
+		return err
+	}
+	err = p.fileStore.Bucket.WriteAll(ctx, s.ID.String(), c.Msg.Content.Data, nil)
+	filepath, err := p.fileStore.NewFile(s.ID.String())
+	if err != nil {
+		return err
+	}
+
+	// TODO breadchris figure out what type of file this content is and try to convert it
+	// use a more robust way of determining file type
+	if path.Ext(name) == ".m4a" {
+		converted := filepath + ".wav"
+		_, err = p.ConvertFile(ctx, &connect_go.Request[genapi.ConvertFileRequest]{
+			Msg: &genapi.ConvertFileRequest{
+				From: filepath,
+				To:   converted,
+			},
+		})
+		if err != nil {
+			return err
+		}
+		// TODO breadchris moving the file back to the original file name until
+		// file chain of custody is implemented
+		err = os.Rename(converted, filepath)
+		if err != nil {
+			return err
+		}
+	}
+
+	m, err := whisper2.New("third_party/whisper.cpp/models/ggml-base.en.bin")
+	if err != nil {
+		return err
+	}
+	defer m.Close()
+
+	obs, err := whisper.Process(m, filepath, &genapi.TranscriptionRequest{})
+	if err != nil {
+		return err
+	}
+
+	p.observeSegments(s, obs, c2)
 	return nil
 }
 
 func (p *Protoflow) ConvertFile(ctx context.Context, c *connect_go.Request[genapi.ConvertFileRequest]) (*connect_go.Response[genapi.FilePath], error) {
 	err := ffmpeg.Input(c.Msg.From).
-		Output(c.Msg.To, ffmpeg.KwArgs{"ar": "16000", "ac": "1"}).
+		Output(c.Msg.To, ffmpeg.KwArgs{"ar": "16000", "ac": "1", "f": "wav"}).
 		OverWriteOutput().ErrorToStdOut().Run()
 	if err != nil {
 		return nil, err
@@ -274,36 +313,4 @@ func (p *Protoflow) OCR(ctx context.Context, c *connect_go.Request[genapi.FilePa
 	return connect_go.NewResponse(&genapi.OCRText{
 		Text: text,
 	}), nil
-}
-
-func (p *Protoflow) LiveTranscribe(ctx context.Context, c *connect_go.Request[genapi.TranscriptionRequest], c2 *connect_go.ServerStream[genapi.Segment]) error {
-	model, err := whisper2.New(c.Msg.Model)
-	if err != nil {
-		return err
-	}
-	defer model.Close()
-
-	obs, err := whisper.Process(model, c.Msg.FilePath, c.Msg)
-	if err != nil {
-		return err
-	}
-	<-obs.ForEach(func(item any) {
-		t, ok := item.(*genapi.Segment)
-		if !ok {
-			return
-		}
-
-		err = c2.Send(t)
-		if err != nil {
-			log.Error().Err(err).Msg("error sending token")
-		}
-	}, func(err error) {
-		log.Error().Err(err).Msg("error in observable")
-	}, func() {
-	})
-	return nil
-}
-
-func (p *Protoflow) Transcribe(ctx context.Context, c *connect_go.Request[genapi.TranscriptionRequest]) (*connect_go.Response[genapi.Transcription], error) {
-	return nil, nil
 }

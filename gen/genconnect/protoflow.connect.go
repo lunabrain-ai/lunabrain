@@ -42,6 +42,11 @@ const (
 	// ProtoflowServiceGetSessionProcedure is the fully-qualified name of the ProtoflowService's
 	// GetSession RPC.
 	ProtoflowServiceGetSessionProcedure = "/protoflow.ProtoflowService/GetSession"
+	// ProtoflowServiceUploadContentProcedure is the fully-qualified name of the ProtoflowService's
+	// UploadContent RPC.
+	ProtoflowServiceUploadContentProcedure = "/protoflow.ProtoflowService/UploadContent"
+	// ProtoflowServiceInferProcedure is the fully-qualified name of the ProtoflowService's Infer RPC.
+	ProtoflowServiceInferProcedure = "/protoflow.ProtoflowService/Infer"
 	// ProtoflowServiceChatProcedure is the fully-qualified name of the ProtoflowService's Chat RPC.
 	ProtoflowServiceChatProcedure = "/protoflow.ProtoflowService/Chat"
 	// ProtoflowServiceConvertFileProcedure is the fully-qualified name of the ProtoflowService's
@@ -49,12 +54,6 @@ const (
 	ProtoflowServiceConvertFileProcedure = "/protoflow.ProtoflowService/ConvertFile"
 	// ProtoflowServiceOCRProcedure is the fully-qualified name of the ProtoflowService's OCR RPC.
 	ProtoflowServiceOCRProcedure = "/protoflow.ProtoflowService/OCR"
-	// ProtoflowServiceTranscribeProcedure is the fully-qualified name of the ProtoflowService's
-	// Transcribe RPC.
-	ProtoflowServiceTranscribeProcedure = "/protoflow.ProtoflowService/Transcribe"
-	// ProtoflowServiceLiveTranscribeProcedure is the fully-qualified name of the ProtoflowService's
-	// LiveTranscribe RPC.
-	ProtoflowServiceLiveTranscribeProcedure = "/protoflow.ProtoflowService/LiveTranscribe"
 )
 
 // ProtoflowServiceClient is a client for the protoflow.ProtoflowService service.
@@ -62,11 +61,11 @@ type ProtoflowServiceClient interface {
 	DownloadYouTubeVideo(context.Context, *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.FilePath], error)
 	GetSessions(context.Context, *connect_go.Request[gen.GetSessionsRequest]) (*connect_go.Response[gen.GetSessionsResponse], error)
 	GetSession(context.Context, *connect_go.Request[gen.GetSessionRequest]) (*connect_go.Response[gen.GetSessionResponse], error)
+	UploadContent(context.Context, *connect_go.Request[gen.UploadContentRequest]) (*connect_go.ServerStreamForClient[gen.ChatResponse], error)
+	Infer(context.Context, *connect_go.Request[gen.InferRequest]) (*connect_go.ServerStreamForClient[gen.InferResponse], error)
 	Chat(context.Context, *connect_go.Request[gen.ChatRequest]) (*connect_go.ServerStreamForClient[gen.ChatResponse], error)
 	ConvertFile(context.Context, *connect_go.Request[gen.ConvertFileRequest]) (*connect_go.Response[gen.FilePath], error)
 	OCR(context.Context, *connect_go.Request[gen.FilePath]) (*connect_go.Response[gen.OCRText], error)
-	Transcribe(context.Context, *connect_go.Request[gen.TranscriptionRequest]) (*connect_go.Response[gen.Transcription], error)
-	LiveTranscribe(context.Context, *connect_go.Request[gen.TranscriptionRequest]) (*connect_go.ServerStreamForClient[gen.Segment], error)
 }
 
 // NewProtoflowServiceClient constructs a client for the protoflow.ProtoflowService service. By
@@ -94,6 +93,16 @@ func NewProtoflowServiceClient(httpClient connect_go.HTTPClient, baseURL string,
 			baseURL+ProtoflowServiceGetSessionProcedure,
 			opts...,
 		),
+		uploadContent: connect_go.NewClient[gen.UploadContentRequest, gen.ChatResponse](
+			httpClient,
+			baseURL+ProtoflowServiceUploadContentProcedure,
+			opts...,
+		),
+		infer: connect_go.NewClient[gen.InferRequest, gen.InferResponse](
+			httpClient,
+			baseURL+ProtoflowServiceInferProcedure,
+			opts...,
+		),
 		chat: connect_go.NewClient[gen.ChatRequest, gen.ChatResponse](
 			httpClient,
 			baseURL+ProtoflowServiceChatProcedure,
@@ -109,16 +118,6 @@ func NewProtoflowServiceClient(httpClient connect_go.HTTPClient, baseURL string,
 			baseURL+ProtoflowServiceOCRProcedure,
 			opts...,
 		),
-		transcribe: connect_go.NewClient[gen.TranscriptionRequest, gen.Transcription](
-			httpClient,
-			baseURL+ProtoflowServiceTranscribeProcedure,
-			opts...,
-		),
-		liveTranscribe: connect_go.NewClient[gen.TranscriptionRequest, gen.Segment](
-			httpClient,
-			baseURL+ProtoflowServiceLiveTranscribeProcedure,
-			opts...,
-		),
 	}
 }
 
@@ -127,11 +126,11 @@ type protoflowServiceClient struct {
 	downloadYouTubeVideo *connect_go.Client[gen.YouTubeVideo, gen.FilePath]
 	getSessions          *connect_go.Client[gen.GetSessionsRequest, gen.GetSessionsResponse]
 	getSession           *connect_go.Client[gen.GetSessionRequest, gen.GetSessionResponse]
+	uploadContent        *connect_go.Client[gen.UploadContentRequest, gen.ChatResponse]
+	infer                *connect_go.Client[gen.InferRequest, gen.InferResponse]
 	chat                 *connect_go.Client[gen.ChatRequest, gen.ChatResponse]
 	convertFile          *connect_go.Client[gen.ConvertFileRequest, gen.FilePath]
 	oCR                  *connect_go.Client[gen.FilePath, gen.OCRText]
-	transcribe           *connect_go.Client[gen.TranscriptionRequest, gen.Transcription]
-	liveTranscribe       *connect_go.Client[gen.TranscriptionRequest, gen.Segment]
 }
 
 // DownloadYouTubeVideo calls protoflow.ProtoflowService.DownloadYouTubeVideo.
@@ -149,6 +148,16 @@ func (c *protoflowServiceClient) GetSession(ctx context.Context, req *connect_go
 	return c.getSession.CallUnary(ctx, req)
 }
 
+// UploadContent calls protoflow.ProtoflowService.UploadContent.
+func (c *protoflowServiceClient) UploadContent(ctx context.Context, req *connect_go.Request[gen.UploadContentRequest]) (*connect_go.ServerStreamForClient[gen.ChatResponse], error) {
+	return c.uploadContent.CallServerStream(ctx, req)
+}
+
+// Infer calls protoflow.ProtoflowService.Infer.
+func (c *protoflowServiceClient) Infer(ctx context.Context, req *connect_go.Request[gen.InferRequest]) (*connect_go.ServerStreamForClient[gen.InferResponse], error) {
+	return c.infer.CallServerStream(ctx, req)
+}
+
 // Chat calls protoflow.ProtoflowService.Chat.
 func (c *protoflowServiceClient) Chat(ctx context.Context, req *connect_go.Request[gen.ChatRequest]) (*connect_go.ServerStreamForClient[gen.ChatResponse], error) {
 	return c.chat.CallServerStream(ctx, req)
@@ -164,26 +173,16 @@ func (c *protoflowServiceClient) OCR(ctx context.Context, req *connect_go.Reques
 	return c.oCR.CallUnary(ctx, req)
 }
 
-// Transcribe calls protoflow.ProtoflowService.Transcribe.
-func (c *protoflowServiceClient) Transcribe(ctx context.Context, req *connect_go.Request[gen.TranscriptionRequest]) (*connect_go.Response[gen.Transcription], error) {
-	return c.transcribe.CallUnary(ctx, req)
-}
-
-// LiveTranscribe calls protoflow.ProtoflowService.LiveTranscribe.
-func (c *protoflowServiceClient) LiveTranscribe(ctx context.Context, req *connect_go.Request[gen.TranscriptionRequest]) (*connect_go.ServerStreamForClient[gen.Segment], error) {
-	return c.liveTranscribe.CallServerStream(ctx, req)
-}
-
 // ProtoflowServiceHandler is an implementation of the protoflow.ProtoflowService service.
 type ProtoflowServiceHandler interface {
 	DownloadYouTubeVideo(context.Context, *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.FilePath], error)
 	GetSessions(context.Context, *connect_go.Request[gen.GetSessionsRequest]) (*connect_go.Response[gen.GetSessionsResponse], error)
 	GetSession(context.Context, *connect_go.Request[gen.GetSessionRequest]) (*connect_go.Response[gen.GetSessionResponse], error)
+	UploadContent(context.Context, *connect_go.Request[gen.UploadContentRequest], *connect_go.ServerStream[gen.ChatResponse]) error
+	Infer(context.Context, *connect_go.Request[gen.InferRequest], *connect_go.ServerStream[gen.InferResponse]) error
 	Chat(context.Context, *connect_go.Request[gen.ChatRequest], *connect_go.ServerStream[gen.ChatResponse]) error
 	ConvertFile(context.Context, *connect_go.Request[gen.ConvertFileRequest]) (*connect_go.Response[gen.FilePath], error)
 	OCR(context.Context, *connect_go.Request[gen.FilePath]) (*connect_go.Response[gen.OCRText], error)
-	Transcribe(context.Context, *connect_go.Request[gen.TranscriptionRequest]) (*connect_go.Response[gen.Transcription], error)
-	LiveTranscribe(context.Context, *connect_go.Request[gen.TranscriptionRequest], *connect_go.ServerStream[gen.Segment]) error
 }
 
 // NewProtoflowServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -207,6 +206,16 @@ func NewProtoflowServiceHandler(svc ProtoflowServiceHandler, opts ...connect_go.
 		svc.GetSession,
 		opts...,
 	)
+	protoflowServiceUploadContentHandler := connect_go.NewServerStreamHandler(
+		ProtoflowServiceUploadContentProcedure,
+		svc.UploadContent,
+		opts...,
+	)
+	protoflowServiceInferHandler := connect_go.NewServerStreamHandler(
+		ProtoflowServiceInferProcedure,
+		svc.Infer,
+		opts...,
+	)
 	protoflowServiceChatHandler := connect_go.NewServerStreamHandler(
 		ProtoflowServiceChatProcedure,
 		svc.Chat,
@@ -222,16 +231,6 @@ func NewProtoflowServiceHandler(svc ProtoflowServiceHandler, opts ...connect_go.
 		svc.OCR,
 		opts...,
 	)
-	protoflowServiceTranscribeHandler := connect_go.NewUnaryHandler(
-		ProtoflowServiceTranscribeProcedure,
-		svc.Transcribe,
-		opts...,
-	)
-	protoflowServiceLiveTranscribeHandler := connect_go.NewServerStreamHandler(
-		ProtoflowServiceLiveTranscribeProcedure,
-		svc.LiveTranscribe,
-		opts...,
-	)
 	return "/protoflow.ProtoflowService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ProtoflowServiceDownloadYouTubeVideoProcedure:
@@ -240,16 +239,16 @@ func NewProtoflowServiceHandler(svc ProtoflowServiceHandler, opts ...connect_go.
 			protoflowServiceGetSessionsHandler.ServeHTTP(w, r)
 		case ProtoflowServiceGetSessionProcedure:
 			protoflowServiceGetSessionHandler.ServeHTTP(w, r)
+		case ProtoflowServiceUploadContentProcedure:
+			protoflowServiceUploadContentHandler.ServeHTTP(w, r)
+		case ProtoflowServiceInferProcedure:
+			protoflowServiceInferHandler.ServeHTTP(w, r)
 		case ProtoflowServiceChatProcedure:
 			protoflowServiceChatHandler.ServeHTTP(w, r)
 		case ProtoflowServiceConvertFileProcedure:
 			protoflowServiceConvertFileHandler.ServeHTTP(w, r)
 		case ProtoflowServiceOCRProcedure:
 			protoflowServiceOCRHandler.ServeHTTP(w, r)
-		case ProtoflowServiceTranscribeProcedure:
-			protoflowServiceTranscribeHandler.ServeHTTP(w, r)
-		case ProtoflowServiceLiveTranscribeProcedure:
-			protoflowServiceLiveTranscribeHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -271,6 +270,14 @@ func (UnimplementedProtoflowServiceHandler) GetSession(context.Context, *connect
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.GetSession is not implemented"))
 }
 
+func (UnimplementedProtoflowServiceHandler) UploadContent(context.Context, *connect_go.Request[gen.UploadContentRequest], *connect_go.ServerStream[gen.ChatResponse]) error {
+	return connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.UploadContent is not implemented"))
+}
+
+func (UnimplementedProtoflowServiceHandler) Infer(context.Context, *connect_go.Request[gen.InferRequest], *connect_go.ServerStream[gen.InferResponse]) error {
+	return connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.Infer is not implemented"))
+}
+
 func (UnimplementedProtoflowServiceHandler) Chat(context.Context, *connect_go.Request[gen.ChatRequest], *connect_go.ServerStream[gen.ChatResponse]) error {
 	return connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.Chat is not implemented"))
 }
@@ -281,12 +288,4 @@ func (UnimplementedProtoflowServiceHandler) ConvertFile(context.Context, *connec
 
 func (UnimplementedProtoflowServiceHandler) OCR(context.Context, *connect_go.Request[gen.FilePath]) (*connect_go.Response[gen.OCRText], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.OCR is not implemented"))
-}
-
-func (UnimplementedProtoflowServiceHandler) Transcribe(context.Context, *connect_go.Request[gen.TranscriptionRequest]) (*connect_go.Response[gen.Transcription], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.Transcribe is not implemented"))
-}
-
-func (UnimplementedProtoflowServiceHandler) LiveTranscribe(context.Context, *connect_go.Request[gen.TranscriptionRequest], *connect_go.ServerStream[gen.Segment]) error {
-	return connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.LiveTranscribe is not implemented"))
 }

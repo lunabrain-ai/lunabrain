@@ -10,7 +10,9 @@ import (
 	"path/filepath"
 )
 
-func NewServeCommand(httpServer server.HTTPServer) *cli.Command {
+func NewServeCommand(
+	httpServer server.HTTPServer,
+) *cli.Command {
 	return &cli.Command{
 		Name:  "start",
 		Usage: "start the server",
@@ -23,6 +25,13 @@ func NewServeCommand(httpServer server.HTTPServer) *cli.Command {
 			if context.Bool("dev") {
 				return liveReload()
 			}
+			// TODO breadchris the protoflow server can be embedded here to help with debugging
+			//go func() {
+			//	err := protoflowServer.Start()
+			//	if err != nil {
+			//		log.Err(err).Msg("failed to start protoflow server")
+			//	}
+			//}()
 			return httpServer.Start()
 		},
 	}

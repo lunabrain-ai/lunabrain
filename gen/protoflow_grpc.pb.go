@@ -25,11 +25,11 @@ type ProtoflowServiceClient interface {
 	DownloadYouTubeVideo(ctx context.Context, in *YouTubeVideo, opts ...grpc.CallOption) (*FilePath, error)
 	GetSessions(ctx context.Context, in *GetSessionsRequest, opts ...grpc.CallOption) (*GetSessionsResponse, error)
 	GetSession(ctx context.Context, in *GetSessionRequest, opts ...grpc.CallOption) (*GetSessionResponse, error)
+	UploadContent(ctx context.Context, in *UploadContentRequest, opts ...grpc.CallOption) (ProtoflowService_UploadContentClient, error)
+	Infer(ctx context.Context, in *InferRequest, opts ...grpc.CallOption) (ProtoflowService_InferClient, error)
 	Chat(ctx context.Context, in *ChatRequest, opts ...grpc.CallOption) (ProtoflowService_ChatClient, error)
 	ConvertFile(ctx context.Context, in *ConvertFileRequest, opts ...grpc.CallOption) (*FilePath, error)
 	OCR(ctx context.Context, in *FilePath, opts ...grpc.CallOption) (*OCRText, error)
-	Transcribe(ctx context.Context, in *TranscriptionRequest, opts ...grpc.CallOption) (*Transcription, error)
-	LiveTranscribe(ctx context.Context, in *TranscriptionRequest, opts ...grpc.CallOption) (ProtoflowService_LiveTranscribeClient, error)
 }
 
 type protoflowServiceClient struct {
@@ -67,8 +67,72 @@ func (c *protoflowServiceClient) GetSession(ctx context.Context, in *GetSessionR
 	return out, nil
 }
 
+func (c *protoflowServiceClient) UploadContent(ctx context.Context, in *UploadContentRequest, opts ...grpc.CallOption) (ProtoflowService_UploadContentClient, error) {
+	stream, err := c.cc.NewStream(ctx, &ProtoflowService_ServiceDesc.Streams[0], "/protoflow.ProtoflowService/UploadContent", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &protoflowServiceUploadContentClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type ProtoflowService_UploadContentClient interface {
+	Recv() (*ChatResponse, error)
+	grpc.ClientStream
+}
+
+type protoflowServiceUploadContentClient struct {
+	grpc.ClientStream
+}
+
+func (x *protoflowServiceUploadContentClient) Recv() (*ChatResponse, error) {
+	m := new(ChatResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *protoflowServiceClient) Infer(ctx context.Context, in *InferRequest, opts ...grpc.CallOption) (ProtoflowService_InferClient, error) {
+	stream, err := c.cc.NewStream(ctx, &ProtoflowService_ServiceDesc.Streams[1], "/protoflow.ProtoflowService/Infer", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &protoflowServiceInferClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type ProtoflowService_InferClient interface {
+	Recv() (*InferResponse, error)
+	grpc.ClientStream
+}
+
+type protoflowServiceInferClient struct {
+	grpc.ClientStream
+}
+
+func (x *protoflowServiceInferClient) Recv() (*InferResponse, error) {
+	m := new(InferResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *protoflowServiceClient) Chat(ctx context.Context, in *ChatRequest, opts ...grpc.CallOption) (ProtoflowService_ChatClient, error) {
-	stream, err := c.cc.NewStream(ctx, &ProtoflowService_ServiceDesc.Streams[0], "/protoflow.ProtoflowService/Chat", opts...)
+	stream, err := c.cc.NewStream(ctx, &ProtoflowService_ServiceDesc.Streams[2], "/protoflow.ProtoflowService/Chat", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -117,47 +181,6 @@ func (c *protoflowServiceClient) OCR(ctx context.Context, in *FilePath, opts ...
 	return out, nil
 }
 
-func (c *protoflowServiceClient) Transcribe(ctx context.Context, in *TranscriptionRequest, opts ...grpc.CallOption) (*Transcription, error) {
-	out := new(Transcription)
-	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/Transcribe", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *protoflowServiceClient) LiveTranscribe(ctx context.Context, in *TranscriptionRequest, opts ...grpc.CallOption) (ProtoflowService_LiveTranscribeClient, error) {
-	stream, err := c.cc.NewStream(ctx, &ProtoflowService_ServiceDesc.Streams[1], "/protoflow.ProtoflowService/LiveTranscribe", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &protoflowServiceLiveTranscribeClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type ProtoflowService_LiveTranscribeClient interface {
-	Recv() (*Segment, error)
-	grpc.ClientStream
-}
-
-type protoflowServiceLiveTranscribeClient struct {
-	grpc.ClientStream
-}
-
-func (x *protoflowServiceLiveTranscribeClient) Recv() (*Segment, error) {
-	m := new(Segment)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 // ProtoflowServiceServer is the server API for ProtoflowService service.
 // All implementations should embed UnimplementedProtoflowServiceServer
 // for forward compatibility
@@ -165,11 +188,11 @@ type ProtoflowServiceServer interface {
 	DownloadYouTubeVideo(context.Context, *YouTubeVideo) (*FilePath, error)
 	GetSessions(context.Context, *GetSessionsRequest) (*GetSessionsResponse, error)
 	GetSession(context.Context, *GetSessionRequest) (*GetSessionResponse, error)
+	UploadContent(*UploadContentRequest, ProtoflowService_UploadContentServer) error
+	Infer(*InferRequest, ProtoflowService_InferServer) error
 	Chat(*ChatRequest, ProtoflowService_ChatServer) error
 	ConvertFile(context.Context, *ConvertFileRequest) (*FilePath, error)
 	OCR(context.Context, *FilePath) (*OCRText, error)
-	Transcribe(context.Context, *TranscriptionRequest) (*Transcription, error)
-	LiveTranscribe(*TranscriptionRequest, ProtoflowService_LiveTranscribeServer) error
 }
 
 // UnimplementedProtoflowServiceServer should be embedded to have forward compatible implementations.
@@ -185,6 +208,12 @@ func (UnimplementedProtoflowServiceServer) GetSessions(context.Context, *GetSess
 func (UnimplementedProtoflowServiceServer) GetSession(context.Context, *GetSessionRequest) (*GetSessionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSession not implemented")
 }
+func (UnimplementedProtoflowServiceServer) UploadContent(*UploadContentRequest, ProtoflowService_UploadContentServer) error {
+	return status.Errorf(codes.Unimplemented, "method UploadContent not implemented")
+}
+func (UnimplementedProtoflowServiceServer) Infer(*InferRequest, ProtoflowService_InferServer) error {
+	return status.Errorf(codes.Unimplemented, "method Infer not implemented")
+}
 func (UnimplementedProtoflowServiceServer) Chat(*ChatRequest, ProtoflowService_ChatServer) error {
 	return status.Errorf(codes.Unimplemented, "method Chat not implemented")
 }
@@ -193,12 +222,6 @@ func (UnimplementedProtoflowServiceServer) ConvertFile(context.Context, *Convert
 }
 func (UnimplementedProtoflowServiceServer) OCR(context.Context, *FilePath) (*OCRText, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OCR not implemented")
-}
-func (UnimplementedProtoflowServiceServer) Transcribe(context.Context, *TranscriptionRequest) (*Transcription, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Transcribe not implemented")
-}
-func (UnimplementedProtoflowServiceServer) LiveTranscribe(*TranscriptionRequest, ProtoflowService_LiveTranscribeServer) error {
-	return status.Errorf(codes.Unimplemented, "method LiveTranscribe not implemented")
 }
 
 // UnsafeProtoflowServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -266,6 +289,48 @@ func _ProtoflowService_GetSession_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProtoflowService_UploadContent_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(UploadContentRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(ProtoflowServiceServer).UploadContent(m, &protoflowServiceUploadContentServer{stream})
+}
+
+type ProtoflowService_UploadContentServer interface {
+	Send(*ChatResponse) error
+	grpc.ServerStream
+}
+
+type protoflowServiceUploadContentServer struct {
+	grpc.ServerStream
+}
+
+func (x *protoflowServiceUploadContentServer) Send(m *ChatResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _ProtoflowService_Infer_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(InferRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(ProtoflowServiceServer).Infer(m, &protoflowServiceInferServer{stream})
+}
+
+type ProtoflowService_InferServer interface {
+	Send(*InferResponse) error
+	grpc.ServerStream
+}
+
+type protoflowServiceInferServer struct {
+	grpc.ServerStream
+}
+
+func (x *protoflowServiceInferServer) Send(m *InferResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 func _ProtoflowService_Chat_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(ChatRequest)
 	if err := stream.RecvMsg(m); err != nil {
@@ -323,45 +388,6 @@ func _ProtoflowService_OCR_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProtoflowService_Transcribe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TranscriptionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProtoflowServiceServer).Transcribe(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/protoflow.ProtoflowService/Transcribe",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProtoflowServiceServer).Transcribe(ctx, req.(*TranscriptionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProtoflowService_LiveTranscribe_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(TranscriptionRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(ProtoflowServiceServer).LiveTranscribe(m, &protoflowServiceLiveTranscribeServer{stream})
-}
-
-type ProtoflowService_LiveTranscribeServer interface {
-	Send(*Segment) error
-	grpc.ServerStream
-}
-
-type protoflowServiceLiveTranscribeServer struct {
-	grpc.ServerStream
-}
-
-func (x *protoflowServiceLiveTranscribeServer) Send(m *Segment) error {
-	return x.ServerStream.SendMsg(m)
-}
-
 // ProtoflowService_ServiceDesc is the grpc.ServiceDesc for ProtoflowService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -389,20 +415,21 @@ var ProtoflowService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "OCR",
 			Handler:    _ProtoflowService_OCR_Handler,
 		},
-		{
-			MethodName: "Transcribe",
-			Handler:    _ProtoflowService_Transcribe_Handler,
-		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "Chat",
-			Handler:       _ProtoflowService_Chat_Handler,
+			StreamName:    "UploadContent",
+			Handler:       _ProtoflowService_UploadContent_Handler,
 			ServerStreams: true,
 		},
 		{
-			StreamName:    "LiveTranscribe",
-			Handler:       _ProtoflowService_LiveTranscribe_Handler,
+			StreamName:    "Infer",
+			Handler:       _ProtoflowService_Infer_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "Chat",
+			Handler:       _ProtoflowService_Chat_Handler,
 			ServerStreams: true,
 		},
 	},

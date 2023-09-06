@@ -24,8 +24,8 @@ import {
     useTableSelection,
     createTableColumn,
 } from "@fluentui/react-components";
-import {Segment} from '@/rpc/protoflow_pb'
-import {useEffect, useRef} from "react";
+import {Segment, Token} from '@/rpc/protoflow_pb'
+import {MutableRefObject, RefObject, useEffect, useRef} from "react";
 
 export interface Message {
     text: string;
@@ -43,11 +43,11 @@ interface SubtleSelectionProps {
     style?: React.CSSProperties;
     items: Message[]
     columns: TableColumnDefinition<Message>[]
+    audioRef: RefObject<HTMLAudioElement>
 }
 
-export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, columns }) => {
+export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, columns , audioRef}) => {
     const messagesEndRef = useRef(null);
-    const audioRef = useRef(null);
 
     useEffect(() => {
         if (messagesEndRef.current) {
@@ -105,10 +105,52 @@ export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, 
     );
     const changeCurrentTime = (t: number) => {
         if (audioRef.current) {
-            // @ts-ignore
             audioRef.current.currentTime = t; // Change to any time in seconds
         }
     };
+
+    useEffect(() => {
+        const audioElement = audioRef.current;
+
+        if (audioElement) {
+            const handleTimeUpdate = () => {
+                console.log('Current Time:', audioElement.currentTime);
+            };
+
+            // TODO breadchris highlight the token that is currently being spoken
+            // if (audioRef.current && audioRef.current.currentTime >= Number(t.startTime) / 1000 && audioRef.current.currentTime <= Number(t.endTime) / 1000) {
+            //     return {color: 'red'}
+            // }
+
+            audioElement.addEventListener('timeupdate', handleTimeUpdate);
+
+            // Cleanup to prevent memory leaks
+            return () => {
+                audioElement.removeEventListener('timeupdate', handleTimeUpdate);
+            };
+        }
+    }, []);
+
+    const tc = (item: Message): JSX.Element => {
+        if (item.segment.tokens.length === 0) {
+            return <span>{item.text}</span>
+        }
+        return (
+            <>
+                {item.segment.tokens.map((t) => {
+                    if (/\[.*\]/.test(t.text) || '<|endoftext|>' === t.text) {
+                        return null;
+                    }
+                    const time = Number(t.startTime) / 1000;
+                    return (
+                        <span style={{}} onClick={() => changeCurrentTime(time)} title={time.toString()}>
+                                        {t.text}
+                                    </span>
+                    )
+                })}
+            </>
+        )
+    }
 
     return (
         <Table style={style} aria-label="Table with subtle selection">
@@ -139,21 +181,10 @@ export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, 
                             checked={selected}
                             checkboxIndicator={{ "aria-label": "Select row" }}
                         />
-                        <TableCell>
-                            {item.segment.tokens.map((t) => {
-                                return (
-                                    <span onClick={() => changeCurrentTime(t.startTime / 1000)}>{t.text}</span>
-                                )
-                            })}
-                        </TableCell>
+                        <TableCell>{tc(item)}</TableCell>
                     </TableRow>
                 ))}
-                <div ref={messagesEndRef}></div>
-                <audio
-                    ref={audioRef}
-                    src="/media/presentation.wav"
-                    controls
-                />
+                <tr ref={messagesEndRef}></tr>
             </TableBody>
         </Table>
     );

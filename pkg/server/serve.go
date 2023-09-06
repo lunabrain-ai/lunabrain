@@ -117,8 +117,6 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	// most servers should mount both handlers.
 	apiRoot.Handle(grpcreflect.NewHandlerV1Alpha(reflector, connect.WithRecover(recoverCall)))
 
-	//muxRoot.Handle("/", r)
-
 	assets := public.Assets
 	fs := http.FS(public.Assets)
 	httpFileServer := http.FileServer(fs)
@@ -134,6 +132,8 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	proxy := httputil.NewSingleHostReverseProxy(u)
 
 	muxRoot := http.NewServeMux()
+
+	// TODO breadchris fix this code, preferably with chi
 	muxRoot.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
 			// redirect to /studio
