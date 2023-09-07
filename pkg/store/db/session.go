@@ -29,9 +29,15 @@ func NewSession(db *gorm.DB) (*Session, error) {
 }
 
 func (s *Session) NewSession(ps *genapi.Session) (*model.Session, error) {
+	var id uuid.UUID
+	if ps.Id != "" {
+		id = uuid.MustParse(ps.Id)
+	} else {
+		id = uuid.New()
+	}
 	session := &model.Session{
 		Base: model.Base{
-			ID: uuid.New(),
+			ID: id,
 		},
 		Data: datatypes.JSONType[*genapi.Session]{
 			Data: ps,

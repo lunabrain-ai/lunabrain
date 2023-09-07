@@ -25,6 +25,7 @@ type ProtoflowServiceClient interface {
 	DownloadYouTubeVideo(ctx context.Context, in *YouTubeVideo, opts ...grpc.CallOption) (*FilePath, error)
 	GetSessions(ctx context.Context, in *GetSessionsRequest, opts ...grpc.CallOption) (*GetSessionsResponse, error)
 	GetSession(ctx context.Context, in *GetSessionRequest, opts ...grpc.CallOption) (*GetSessionResponse, error)
+	GetPrompts(ctx context.Context, in *GetPromptsRequest, opts ...grpc.CallOption) (*GetPromptsResponse, error)
 	UploadContent(ctx context.Context, in *UploadContentRequest, opts ...grpc.CallOption) (ProtoflowService_UploadContentClient, error)
 	Infer(ctx context.Context, in *InferRequest, opts ...grpc.CallOption) (ProtoflowService_InferClient, error)
 	Chat(ctx context.Context, in *ChatRequest, opts ...grpc.CallOption) (ProtoflowService_ChatClient, error)
@@ -61,6 +62,15 @@ func (c *protoflowServiceClient) GetSessions(ctx context.Context, in *GetSession
 func (c *protoflowServiceClient) GetSession(ctx context.Context, in *GetSessionRequest, opts ...grpc.CallOption) (*GetSessionResponse, error) {
 	out := new(GetSessionResponse)
 	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/GetSession", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *protoflowServiceClient) GetPrompts(ctx context.Context, in *GetPromptsRequest, opts ...grpc.CallOption) (*GetPromptsResponse, error) {
+	out := new(GetPromptsResponse)
+	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/GetPrompts", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -188,6 +198,7 @@ type ProtoflowServiceServer interface {
 	DownloadYouTubeVideo(context.Context, *YouTubeVideo) (*FilePath, error)
 	GetSessions(context.Context, *GetSessionsRequest) (*GetSessionsResponse, error)
 	GetSession(context.Context, *GetSessionRequest) (*GetSessionResponse, error)
+	GetPrompts(context.Context, *GetPromptsRequest) (*GetPromptsResponse, error)
 	UploadContent(*UploadContentRequest, ProtoflowService_UploadContentServer) error
 	Infer(*InferRequest, ProtoflowService_InferServer) error
 	Chat(*ChatRequest, ProtoflowService_ChatServer) error
@@ -207,6 +218,9 @@ func (UnimplementedProtoflowServiceServer) GetSessions(context.Context, *GetSess
 }
 func (UnimplementedProtoflowServiceServer) GetSession(context.Context, *GetSessionRequest) (*GetSessionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSession not implemented")
+}
+func (UnimplementedProtoflowServiceServer) GetPrompts(context.Context, *GetPromptsRequest) (*GetPromptsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPrompts not implemented")
 }
 func (UnimplementedProtoflowServiceServer) UploadContent(*UploadContentRequest, ProtoflowService_UploadContentServer) error {
 	return status.Errorf(codes.Unimplemented, "method UploadContent not implemented")
@@ -285,6 +299,24 @@ func _ProtoflowService_GetSession_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProtoflowServiceServer).GetSession(ctx, req.(*GetSessionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProtoflowService_GetPrompts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPromptsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProtoflowServiceServer).GetPrompts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protoflow.ProtoflowService/GetPrompts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProtoflowServiceServer).GetPrompts(ctx, req.(*GetPromptsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -406,6 +438,10 @@ var ProtoflowService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSession",
 			Handler:    _ProtoflowService_GetSession_Handler,
+		},
+		{
+			MethodName: "GetPrompts",
+			Handler:    _ProtoflowService_GetPrompts_Handler,
 		},
 		{
 			MethodName: "ConvertFile",

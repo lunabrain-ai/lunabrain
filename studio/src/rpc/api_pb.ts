@@ -496,6 +496,9 @@ export class Content extends Message<Content> {
   data = new Uint8Array(0);
 
   /**
+   * TODO breadchris get rid of type, and use oneof pattern
+   * this is more like the protoflow style and is a more scalable pattern as more content types are used
+   *
    * @generated from field: lunabrain.ContentType type = 2;
    */
   type = ContentType.TEXT;
@@ -823,6 +826,16 @@ export class TextOptions extends Message<TextOptions> {
  * @generated from message lunabrain.AudioOptions
  */
 export class AudioOptions extends Message<AudioOptions> {
+  /**
+   * @generated from field: string file = 1;
+   */
+  file = "";
+
+  /**
+   * @generated from field: bytes data = 2;
+   */
+  data = new Uint8Array(0);
+
   constructor(data?: PartialMessage<AudioOptions>) {
     super();
     proto3.util.initPartial(data, this);
@@ -831,6 +844,8 @@ export class AudioOptions extends Message<AudioOptions> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "lunabrain.AudioOptions";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "file", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "data", kind: "scalar", T: 12 /* ScalarType.BYTES */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AudioOptions {
@@ -855,7 +870,12 @@ export class AudioOptions extends Message<AudioOptions> {
  */
 export class URLOptions extends Message<URLOptions> {
   /**
-   * @generated from field: bool crawl = 1;
+   * @generated from field: string url = 1;
+   */
+  url = "";
+
+  /**
+   * @generated from field: bool crawl = 2;
    */
   crawl = false;
 
@@ -867,7 +887,8 @@ export class URLOptions extends Message<URLOptions> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "lunabrain.URLOptions";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "crawl", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "crawl", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): URLOptions {

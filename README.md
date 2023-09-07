@@ -25,39 +25,49 @@ To get started with LunaBrain, follow these steps:
 ### Setup Repo
 
 ```shell
-git clone https://github.com/lunabrain-ai/lunabrain.git
-# TODO
+git clone --recursive https://github.com/lunabrain-ai/lunabrain.git
+make whisper
 ```
 
 ### Installing System Dependencies
 
-All
-```shell
-# TODO breadchris make go bindings for stream so that the binary isn't required
-# will need to adopt the bindings https://github.com/ggerganov/whisper.cpp/tree/master/bindings/go
-# Make the binary `stream` available on PATH https://github.com/ggerganov/whisper.cpp/tree/master/examples/stream
-```
-
 Mac
 ```shell
-brew install tesseract
-
-# TODO breadchris figure out why these are needed
-export LIBRARY_PATH=/opt/homebrew/lib
-export CPATH=/opt/homebrew/include
+brew install bufbuild/buf/buf tesseract libsndfile sdl2
 ```
 
 Ubuntu & WSL
 ```shell
+# TODO breadchris fill this out
 sudo apt-get install tesseract-ocr
 ```
+
+# TODO breadchris make go bindings for stream so that the binary isn't required
+# will need to adopt the bindings https://github.com/ggerganov/whisper.cpp/tree/master/bindings/go
+# Make the binary `stream` available on PATH https://github.com/ggerganov/whisper.cpp/tree/master/examples/stream
+
+### Running
+
+# TODO breadchris this can be one command
+Frontend
+```shell
+npm install
+npm run dev
+```
+
+Backend
+```shell
+# TODO breadchris figure out why these are needed
+C_INCLUDE_PATH="$(realpath third_party/whisper.cpp/):/opt/homebrew/include/SDL2" LIBRARY_PATH="$(realpath third_party/whisper.cpp):/opt/homebrew/lib" go run main.go start --dev
+```
+
+## Hacking
 
 ### Installing Golang Dependencies
 
 ```shell
 go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-go install github.com/twitchtv/twirp/protoc-gen-twirp@latest
 ```
 
 ### Installing Python Dependencies
@@ -87,12 +97,6 @@ python -m pip install grpcio-tools
 This project uses grpc to communicate between different services. To keep them in sync after making changes, run the following:
 ```shell
 go generate -x ./...
-```
-
-To watch for changes you can use arelo:
-```shell
-go install github.com/makiuchi-d/arelo@latest
-arelo -p 'proto/*.proto' -- go generate ./...
 ```
 
 ## Contributing

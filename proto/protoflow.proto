@@ -130,4 +130,5 @@ message YouTubeVideo {
 
 message FilePath {
   string file = 1;
+  string title = 2;
 }

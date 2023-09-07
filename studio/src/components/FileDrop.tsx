@@ -24,10 +24,13 @@ export const FileDrop: React.FC<FileDropProps> = ({children}) => {
                     console.log('File bytes:', fileBytes);
                     const res = projectService.uploadContent({
                         content: {
-                            data: fileBytes,
-                            metadata: {
-                                name: file.name,
-                            }
+                            options: {
+                                case: 'audioOptions',
+                                value: {
+                                    file: file.name,
+                                    data: fileBytes,
+                                }
+                            },
                         },
                     })
                     void streamMessages(res);

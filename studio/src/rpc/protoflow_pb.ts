@@ -8,6 +8,74 @@ import { Message, proto3, protoInt64 } from "@bufbuild/protobuf";
 import { Content } from "./api_pb.js";
 
 /**
+ * @generated from message protoflow.GetPromptsRequest
+ */
+export class GetPromptsRequest extends Message<GetPromptsRequest> {
+  constructor(data?: PartialMessage<GetPromptsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.GetPromptsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetPromptsRequest {
+    return new GetPromptsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetPromptsRequest {
+    return new GetPromptsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetPromptsRequest {
+    return new GetPromptsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetPromptsRequest | PlainMessage<GetPromptsRequest> | undefined, b: GetPromptsRequest | PlainMessage<GetPromptsRequest> | undefined): boolean {
+    return proto3.util.equals(GetPromptsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message protoflow.GetPromptsResponse
+ */
+export class GetPromptsResponse extends Message<GetPromptsResponse> {
+  /**
+   * @generated from field: repeated string prompts = 1;
+   */
+  prompts: string[] = [];
+
+  constructor(data?: PartialMessage<GetPromptsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.GetPromptsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "prompts", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetPromptsResponse {
+    return new GetPromptsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetPromptsResponse {
+    return new GetPromptsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetPromptsResponse {
+    return new GetPromptsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetPromptsResponse | PlainMessage<GetPromptsResponse> | undefined, b: GetPromptsResponse | PlainMessage<GetPromptsResponse> | undefined): boolean {
+    return proto3.util.equals(GetPromptsResponse, a, b);
+  }
+}
+
+/**
  * @generated from message protoflow.InferRequest
  */
 export class InferRequest extends Message<InferRequest> {
@@ -889,6 +957,11 @@ export class FilePath extends Message<FilePath> {
    */
   file = "";
 
+  /**
+   * @generated from field: string title = 2;
+   */
+  title = "";
+
   constructor(data?: PartialMessage<FilePath>) {
     super();
     proto3.util.initPartial(data, this);
@@ -898,6 +971,7 @@ export class FilePath extends Message<FilePath> {
   static readonly typeName = "protoflow.FilePath";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "file", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): FilePath {

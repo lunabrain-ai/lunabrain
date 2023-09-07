@@ -13,6 +13,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
+	"github.com/lunabrain-ai/lunabrain/pkg/util"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/pkg/errors"
 	"github.com/protoflow-labs/protoflow/gen"
@@ -26,8 +27,10 @@ import (
 	"gorm.io/datatypes"
 	"image"
 	"io"
+	"net/url"
 	"os"
 	"path"
+	"time"
 )
 
 type Protoflow struct {
@@ -67,6 +70,11 @@ func New(
 		sessionStore: sessionStore,
 		fileStore:    fileStore,
 	}
+}
+
+func (p *Protoflow) GetPrompts(ctx context.Context, c *connect_go.Request[genapi.GetPromptsRequest]) (*connect_go.Response[genapi.GetPromptsResponse], error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (p *Protoflow) Infer(ctx context.Context, c *connect_go.Request[genapi.InferRequest], c2 *connect_go.ServerStream[genapi.InferResponse]) error {
@@ -114,38 +122,37 @@ func (p *Protoflow) DownloadYouTubeVideo(ctx context.Context, c *connect_go.Requ
 		panic(err)
 	}
 
-	// only get videos with audio
-	formats := video.Formats.WithAudioChannels()
-	var stream io.ReadCloser
-	var contentLength int64
-	for _, format := range formats {
-		stream, contentLength, err = client.GetStream(video, &format)
-		if err != nil {
-			panic(err)
-		}
-
-		if contentLength != 0 {
-			break
-		}
+	// TODO breadchris support more formats
+	format := video.Formats.Type("audio").FindByQuality("tiny")
+	if format == nil {
+		return nil, errors.Wrapf(err, "no audio format found for tiny")
 	}
+	stream, contentLength, err := client.GetStream(video, format)
 	if contentLength == 0 {
 		return nil, errors.New("no stream found")
 	}
 
-	// TODO breadchris this should be written to a file store, whose directory was provided by an env var? or a config file?
-	file, err := os.Create("/tmp/video.mp4")
+	w, err := p.fileStore.Bucket.NewWriter(ctx, c.Msg.Id, nil)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	defer file.Close()
+	defer w.Close()
+
+	filepath, err := p.fileStore.NewFile(c.Msg.Id)
+	if err != nil {
+		return nil, err
+	}
 
 	log.Info().Str("id", c.Msg.Id).Msg("downloading video")
-	_, err = io.Copy(file, stream)
+	_, err = io.Copy(w, stream)
 	if err != nil {
 		panic(err)
 	}
 	log.Info().Str("id", c.Msg.Id).Msg("downloaded video")
-	return connect_go.NewResponse(&genapi.FilePath{}), nil
+	return connect_go.NewResponse(&genapi.FilePath{
+		Title: video.Title,
+		File:  filepath,
+	}), nil
 }
 
 func (p *Protoflow) GetSessions(ctx context.Context, c *connect_go.Request[genapi.GetSessionsRequest]) (*connect_go.Response[genapi.GetSessionsResponse], error) {
@@ -225,49 +232,117 @@ func (p *Protoflow) Chat(ctx context.Context, c *connect_go.Request[genapi.ChatR
 	return nil
 }
 
-func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[genapi.UploadContentRequest], c2 *connect_go.ServerStream[genapi.ChatResponse]) error {
-	name := c.Msg.Content.Metadata["name"]
-
-	s, err := p.sessionStore.NewSession(&genapi.Session{
-		Name: name,
+func (p *Protoflow) convertAudio(ctx context.Context, filepath string) error {
+	converted := filepath + ".wav"
+	_, err := p.ConvertFile(ctx, &connect_go.Request[genapi.ConvertFileRequest]{
+		Msg: &genapi.ConvertFileRequest{
+			From: filepath,
+			To:   converted,
+		},
 	})
 	if err != nil {
 		return err
 	}
-	err = p.fileStore.Bucket.WriteAll(ctx, s.ID.String(), c.Msg.Content.Data, nil)
-	filepath, err := p.fileStore.NewFile(s.ID.String())
+	// TODO breadchris moving the file back to the original file name until
+	// file chain of custody is implemented
+	err = os.Rename(converted, filepath)
 	if err != nil {
 		return err
 	}
+	return nil
+}
 
-	// TODO breadchris figure out what type of file this content is and try to convert it
-	// use a more robust way of determining file type
-	if path.Ext(name) == ".m4a" {
-		converted := filepath + ".wav"
-		_, err = p.ConvertFile(ctx, &connect_go.Request[genapi.ConvertFileRequest]{
-			Msg: &genapi.ConvertFileRequest{
-				From: filepath,
-				To:   converted,
-			},
-		})
+func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[genapi.UploadContentRequest], c2 *connect_go.ServerStream[genapi.ChatResponse]) error {
+	var (
+		obs  rxgo.Observable
+		name = time.Now().String()
+		id   = uuid.NewString()
+	)
+
+	transcriptFromFile := func(filepath string) (rxgo.Observable, error) {
+		m, err := whisper2.New("third_party/whisper.cpp/models/ggml-base.en.bin")
+		if err != nil {
+			return nil, err
+		}
+		defer m.Close()
+
+		obs, err = whisper.Process(m, filepath, &genapi.TranscriptionRequest{})
+		if err != nil {
+			return nil, err
+		}
+		return obs, nil
+	}
+
+	switch t := c.Msg.Content.Options.(type) {
+	case *genapi.Content_UrlOptions:
+		u, err := url.Parse(t.UrlOptions.Url)
 		if err != nil {
 			return err
 		}
-		// TODO breadchris moving the file back to the original file name until
-		// file chain of custody is implemented
-		err = os.Rename(converted, filepath)
+		s, err := util.RemoveSubdomains(u.Host)
 		if err != nil {
 			return err
 		}
+		switch s {
+		case "youtube.com":
+			log.Debug().
+				Str("host", u.Host).
+				Str("id", u.Query().Get("v")).
+				Msg("downloading youtube video")
+			r, err := p.DownloadYouTubeVideo(ctx, &connect_go.Request[genapi.YouTubeVideo]{
+				Msg: &genapi.YouTubeVideo{
+					Id: u.Query().Get("v"),
+				},
+			})
+			if err != nil {
+				return err
+			}
+			err = p.convertAudio(ctx, r.Msg.File)
+			if err != nil {
+				return err
+			}
+			obs, err = transcriptFromFile(r.Msg.File)
+			if err != nil {
+				return err
+			}
+		default:
+			return errors.New("unsupported url")
+		}
+		break
+	case *genapi.Content_AudioOptions:
+		name = t.AudioOptions.File
+
+		err := p.fileStore.Bucket.WriteAll(ctx, id, t.AudioOptions.Data, nil)
+		filepath, err := p.fileStore.NewFile(id)
+		if err != nil {
+			return err
+		}
+
+		// TODO breadchris figure out what type of file this content is and try to convert it
+		// use a more robust way of determining file type
+		if path.Ext(name) == ".m4a" {
+			err = p.convertAudio(ctx, filepath)
+			if err != nil {
+				return err
+			}
+		}
+
+		obs, err = transcriptFromFile(filepath)
+		if err != nil {
+			return err
+		}
+		break
+	case *genapi.Content_TextOptions:
+		break
+	}
+	if obs == nil {
+		return errors.New("no observable")
 	}
 
-	m, err := whisper2.New("third_party/whisper.cpp/models/ggml-base.en.bin")
-	if err != nil {
-		return err
-	}
-	defer m.Close()
-
-	obs, err := whisper.Process(m, filepath, &genapi.TranscriptionRequest{})
+	s, err := p.sessionStore.NewSession(&genapi.Session{
+		Id:   id,
+		Name: name,
+	})
 	if err != nil {
 		return err
 	}

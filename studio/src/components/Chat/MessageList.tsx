@@ -25,7 +25,7 @@ import {
     createTableColumn,
 } from "@fluentui/react-components";
 import {Segment, Token} from '@/rpc/protoflow_pb'
-import {MutableRefObject, RefObject, useEffect, useRef} from "react";
+import {MutableRefObject, RefObject, useEffect, useRef, useState} from "react";
 
 export interface Message {
     text: string;
@@ -48,6 +48,7 @@ interface SubtleSelectionProps {
 
 export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, columns , audioRef}) => {
     const messagesEndRef = useRef(null);
+    const [currentTime, setCurrentTime] = useState(0);
 
     useEffect(() => {
         if (messagesEndRef.current) {
@@ -103,24 +104,15 @@ export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, 
         },
         [toggleAllRows]
     );
-    const changeCurrentTime = (t: number) => {
-        if (audioRef.current) {
-            audioRef.current.currentTime = t; // Change to any time in seconds
-        }
-    };
 
     useEffect(() => {
         const audioElement = audioRef.current;
 
         if (audioElement) {
             const handleTimeUpdate = () => {
-                console.log('Current Time:', audioElement.currentTime);
+                console.log(audioElement.currentTime)
+                setCurrentTime(audioElement.currentTime);
             };
-
-            // TODO breadchris highlight the token that is currently being spoken
-            // if (audioRef.current && audioRef.current.currentTime >= Number(t.startTime) / 1000 && audioRef.current.currentTime <= Number(t.endTime) / 1000) {
-            //     return {color: 'red'}
-            // }
 
             audioElement.addEventListener('timeupdate', handleTimeUpdate);
 
@@ -130,6 +122,20 @@ export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, 
             };
         }
     }, []);
+
+    const changeCurrentTime = (t: number) => {
+        if (audioRef.current) {
+            audioRef.current.currentTime = t;
+        }
+    };
+
+    const shouldHighlight = (t: Token) => {
+        // TODO breadchris highlight the token that is currently being spoken
+        if (audioRef.current && audioRef.current.currentTime >= Number(t.startTime) / 1000 && audioRef.current.currentTime <= Number(t.endTime) / 1000) {
+            return {color: 'red'};
+        }
+        return {};
+    }
 
     const tc = (item: Message): JSX.Element => {
         if (item.segment.tokens.length === 0) {
@@ -142,10 +148,11 @@ export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, 
                         return null;
                     }
                     const time = Number(t.startTime) / 1000;
+                    // TODO breadchris shouldHighlight runs pretty inefficiently, I think it is what causes lag in the highlighting
                     return (
-                        <span style={{}} onClick={() => changeCurrentTime(time)} title={time.toString()}>
-                                        {t.text}
-                                    </span>
+                        <span style={shouldHighlight(t)} onClick={() => changeCurrentTime(time)} title={time.toString()}>
+                            {t.text}
+                        </span>
                     )
                 })}
             </>

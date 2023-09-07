@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ChatRequest, ChatResponse, ConvertFileRequest, FilePath, GetSessionRequest, GetSessionResponse, GetSessionsRequest, GetSessionsResponse, InferRequest, InferResponse, OCRText, UploadContentRequest, YouTubeVideo } from "./protoflow_pb.js";
+import { ChatRequest, ChatResponse, ConvertFileRequest, FilePath, GetPromptsRequest, GetPromptsResponse, GetSessionRequest, GetSessionResponse, GetSessionsRequest, GetSessionsResponse, InferRequest, InferResponse, OCRText, UploadContentRequest, YouTubeVideo } from "./protoflow_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -37,6 +37,15 @@ export const ProtoflowService = {
       name: "GetSession",
       I: GetSessionRequest,
       O: GetSessionResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc protoflow.ProtoflowService.GetPrompts
+     */
+    getPrompts: {
+      name: "GetPrompts",
+      I: GetPromptsRequest,
+      O: GetPromptsResponse,
       kind: MethodKind.Unary,
     },
     /**
