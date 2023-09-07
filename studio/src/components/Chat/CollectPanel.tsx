@@ -67,7 +67,12 @@ export const CollectPanel: React.FC<SidebarProps> = () => {
             <Button onClick={submitURL}>Submit</Button>
             <TabList vertical size={"medium"} selectedValue={selectedValue} onTabSelect={onTabSelect}>
                 {sessions.map((s) => {
-                    return <Tab key={s.id} value={s.id} style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{s.name}</Tab>
+                    return (<Tab key={s.id} value={s.id} style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+                        <span style={{color: 'red'}} onClick={() => {
+                            projectService.deleteSession({id: s.id})
+                        }}>x</span>
+                        {s.name}
+                    </Tab>)
                 })}
             </TabList>
         </div>

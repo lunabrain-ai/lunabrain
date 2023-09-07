@@ -42,9 +42,15 @@ const (
 	// ProtoflowServiceGetSessionProcedure is the fully-qualified name of the ProtoflowService's
 	// GetSession RPC.
 	ProtoflowServiceGetSessionProcedure = "/protoflow.ProtoflowService/GetSession"
+	// ProtoflowServiceDeleteSessionProcedure is the fully-qualified name of the ProtoflowService's
+	// DeleteSession RPC.
+	ProtoflowServiceDeleteSessionProcedure = "/protoflow.ProtoflowService/DeleteSession"
 	// ProtoflowServiceGetPromptsProcedure is the fully-qualified name of the ProtoflowService's
 	// GetPrompts RPC.
 	ProtoflowServiceGetPromptsProcedure = "/protoflow.ProtoflowService/GetPrompts"
+	// ProtoflowServiceNewPromptProcedure is the fully-qualified name of the ProtoflowService's
+	// NewPrompt RPC.
+	ProtoflowServiceNewPromptProcedure = "/protoflow.ProtoflowService/NewPrompt"
 	// ProtoflowServiceUploadContentProcedure is the fully-qualified name of the ProtoflowService's
 	// UploadContent RPC.
 	ProtoflowServiceUploadContentProcedure = "/protoflow.ProtoflowService/UploadContent"
@@ -64,7 +70,9 @@ type ProtoflowServiceClient interface {
 	DownloadYouTubeVideo(context.Context, *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.FilePath], error)
 	GetSessions(context.Context, *connect_go.Request[gen.GetSessionsRequest]) (*connect_go.Response[gen.GetSessionsResponse], error)
 	GetSession(context.Context, *connect_go.Request[gen.GetSessionRequest]) (*connect_go.Response[gen.GetSessionResponse], error)
+	DeleteSession(context.Context, *connect_go.Request[gen.DeleteSessionRequest]) (*connect_go.Response[gen.Empty], error)
 	GetPrompts(context.Context, *connect_go.Request[gen.GetPromptsRequest]) (*connect_go.Response[gen.GetPromptsResponse], error)
+	NewPrompt(context.Context, *connect_go.Request[gen.Prompt]) (*connect_go.Response[gen.Prompt], error)
 	UploadContent(context.Context, *connect_go.Request[gen.UploadContentRequest]) (*connect_go.ServerStreamForClient[gen.ChatResponse], error)
 	Infer(context.Context, *connect_go.Request[gen.InferRequest]) (*connect_go.ServerStreamForClient[gen.InferResponse], error)
 	Chat(context.Context, *connect_go.Request[gen.ChatRequest]) (*connect_go.ServerStreamForClient[gen.ChatResponse], error)
@@ -97,9 +105,19 @@ func NewProtoflowServiceClient(httpClient connect_go.HTTPClient, baseURL string,
 			baseURL+ProtoflowServiceGetSessionProcedure,
 			opts...,
 		),
+		deleteSession: connect_go.NewClient[gen.DeleteSessionRequest, gen.Empty](
+			httpClient,
+			baseURL+ProtoflowServiceDeleteSessionProcedure,
+			opts...,
+		),
 		getPrompts: connect_go.NewClient[gen.GetPromptsRequest, gen.GetPromptsResponse](
 			httpClient,
 			baseURL+ProtoflowServiceGetPromptsProcedure,
+			opts...,
+		),
+		newPrompt: connect_go.NewClient[gen.Prompt, gen.Prompt](
+			httpClient,
+			baseURL+ProtoflowServiceNewPromptProcedure,
 			opts...,
 		),
 		uploadContent: connect_go.NewClient[gen.UploadContentRequest, gen.ChatResponse](
@@ -135,7 +153,9 @@ type protoflowServiceClient struct {
 	downloadYouTubeVideo *connect_go.Client[gen.YouTubeVideo, gen.FilePath]
 	getSessions          *connect_go.Client[gen.GetSessionsRequest, gen.GetSessionsResponse]
 	getSession           *connect_go.Client[gen.GetSessionRequest, gen.GetSessionResponse]
+	deleteSession        *connect_go.Client[gen.DeleteSessionRequest, gen.Empty]
 	getPrompts           *connect_go.Client[gen.GetPromptsRequest, gen.GetPromptsResponse]
+	newPrompt            *connect_go.Client[gen.Prompt, gen.Prompt]
 	uploadContent        *connect_go.Client[gen.UploadContentRequest, gen.ChatResponse]
 	infer                *connect_go.Client[gen.InferRequest, gen.InferResponse]
 	chat                 *connect_go.Client[gen.ChatRequest, gen.ChatResponse]
@@ -158,9 +178,19 @@ func (c *protoflowServiceClient) GetSession(ctx context.Context, req *connect_go
 	return c.getSession.CallUnary(ctx, req)
 }
 
+// DeleteSession calls protoflow.ProtoflowService.DeleteSession.
+func (c *protoflowServiceClient) DeleteSession(ctx context.Context, req *connect_go.Request[gen.DeleteSessionRequest]) (*connect_go.Response[gen.Empty], error) {
+	return c.deleteSession.CallUnary(ctx, req)
+}
+
 // GetPrompts calls protoflow.ProtoflowService.GetPrompts.
 func (c *protoflowServiceClient) GetPrompts(ctx context.Context, req *connect_go.Request[gen.GetPromptsRequest]) (*connect_go.Response[gen.GetPromptsResponse], error) {
 	return c.getPrompts.CallUnary(ctx, req)
+}
+
+// NewPrompt calls protoflow.ProtoflowService.NewPrompt.
+func (c *protoflowServiceClient) NewPrompt(ctx context.Context, req *connect_go.Request[gen.Prompt]) (*connect_go.Response[gen.Prompt], error) {
+	return c.newPrompt.CallUnary(ctx, req)
 }
 
 // UploadContent calls protoflow.ProtoflowService.UploadContent.
@@ -193,7 +223,9 @@ type ProtoflowServiceHandler interface {
 	DownloadYouTubeVideo(context.Context, *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.FilePath], error)
 	GetSessions(context.Context, *connect_go.Request[gen.GetSessionsRequest]) (*connect_go.Response[gen.GetSessionsResponse], error)
 	GetSession(context.Context, *connect_go.Request[gen.GetSessionRequest]) (*connect_go.Response[gen.GetSessionResponse], error)
+	DeleteSession(context.Context, *connect_go.Request[gen.DeleteSessionRequest]) (*connect_go.Response[gen.Empty], error)
 	GetPrompts(context.Context, *connect_go.Request[gen.GetPromptsRequest]) (*connect_go.Response[gen.GetPromptsResponse], error)
+	NewPrompt(context.Context, *connect_go.Request[gen.Prompt]) (*connect_go.Response[gen.Prompt], error)
 	UploadContent(context.Context, *connect_go.Request[gen.UploadContentRequest], *connect_go.ServerStream[gen.ChatResponse]) error
 	Infer(context.Context, *connect_go.Request[gen.InferRequest], *connect_go.ServerStream[gen.InferResponse]) error
 	Chat(context.Context, *connect_go.Request[gen.ChatRequest], *connect_go.ServerStream[gen.ChatResponse]) error
@@ -222,9 +254,19 @@ func NewProtoflowServiceHandler(svc ProtoflowServiceHandler, opts ...connect_go.
 		svc.GetSession,
 		opts...,
 	)
+	protoflowServiceDeleteSessionHandler := connect_go.NewUnaryHandler(
+		ProtoflowServiceDeleteSessionProcedure,
+		svc.DeleteSession,
+		opts...,
+	)
 	protoflowServiceGetPromptsHandler := connect_go.NewUnaryHandler(
 		ProtoflowServiceGetPromptsProcedure,
 		svc.GetPrompts,
+		opts...,
+	)
+	protoflowServiceNewPromptHandler := connect_go.NewUnaryHandler(
+		ProtoflowServiceNewPromptProcedure,
+		svc.NewPrompt,
 		opts...,
 	)
 	protoflowServiceUploadContentHandler := connect_go.NewServerStreamHandler(
@@ -260,8 +302,12 @@ func NewProtoflowServiceHandler(svc ProtoflowServiceHandler, opts ...connect_go.
 			protoflowServiceGetSessionsHandler.ServeHTTP(w, r)
 		case ProtoflowServiceGetSessionProcedure:
 			protoflowServiceGetSessionHandler.ServeHTTP(w, r)
+		case ProtoflowServiceDeleteSessionProcedure:
+			protoflowServiceDeleteSessionHandler.ServeHTTP(w, r)
 		case ProtoflowServiceGetPromptsProcedure:
 			protoflowServiceGetPromptsHandler.ServeHTTP(w, r)
+		case ProtoflowServiceNewPromptProcedure:
+			protoflowServiceNewPromptHandler.ServeHTTP(w, r)
 		case ProtoflowServiceUploadContentProcedure:
 			protoflowServiceUploadContentHandler.ServeHTTP(w, r)
 		case ProtoflowServiceInferProcedure:
@@ -293,8 +339,16 @@ func (UnimplementedProtoflowServiceHandler) GetSession(context.Context, *connect
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.GetSession is not implemented"))
 }
 
+func (UnimplementedProtoflowServiceHandler) DeleteSession(context.Context, *connect_go.Request[gen.DeleteSessionRequest]) (*connect_go.Response[gen.Empty], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.DeleteSession is not implemented"))
+}
+
 func (UnimplementedProtoflowServiceHandler) GetPrompts(context.Context, *connect_go.Request[gen.GetPromptsRequest]) (*connect_go.Response[gen.GetPromptsResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.GetPrompts is not implemented"))
+}
+
+func (UnimplementedProtoflowServiceHandler) NewPrompt(context.Context, *connect_go.Request[gen.Prompt]) (*connect_go.Response[gen.Prompt], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.NewPrompt is not implemented"))
 }
 
 func (UnimplementedProtoflowServiceHandler) UploadContent(context.Context, *connect_go.Request[gen.UploadContentRequest], *connect_go.ServerStream[gen.ChatResponse]) error {

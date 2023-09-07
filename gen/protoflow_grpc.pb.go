@@ -25,7 +25,9 @@ type ProtoflowServiceClient interface {
 	DownloadYouTubeVideo(ctx context.Context, in *YouTubeVideo, opts ...grpc.CallOption) (*FilePath, error)
 	GetSessions(ctx context.Context, in *GetSessionsRequest, opts ...grpc.CallOption) (*GetSessionsResponse, error)
 	GetSession(ctx context.Context, in *GetSessionRequest, opts ...grpc.CallOption) (*GetSessionResponse, error)
+	DeleteSession(ctx context.Context, in *DeleteSessionRequest, opts ...grpc.CallOption) (*Empty, error)
 	GetPrompts(ctx context.Context, in *GetPromptsRequest, opts ...grpc.CallOption) (*GetPromptsResponse, error)
+	NewPrompt(ctx context.Context, in *Prompt, opts ...grpc.CallOption) (*Prompt, error)
 	UploadContent(ctx context.Context, in *UploadContentRequest, opts ...grpc.CallOption) (ProtoflowService_UploadContentClient, error)
 	Infer(ctx context.Context, in *InferRequest, opts ...grpc.CallOption) (ProtoflowService_InferClient, error)
 	Chat(ctx context.Context, in *ChatRequest, opts ...grpc.CallOption) (ProtoflowService_ChatClient, error)
@@ -68,9 +70,27 @@ func (c *protoflowServiceClient) GetSession(ctx context.Context, in *GetSessionR
 	return out, nil
 }
 
+func (c *protoflowServiceClient) DeleteSession(ctx context.Context, in *DeleteSessionRequest, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/DeleteSession", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *protoflowServiceClient) GetPrompts(ctx context.Context, in *GetPromptsRequest, opts ...grpc.CallOption) (*GetPromptsResponse, error) {
 	out := new(GetPromptsResponse)
 	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/GetPrompts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *protoflowServiceClient) NewPrompt(ctx context.Context, in *Prompt, opts ...grpc.CallOption) (*Prompt, error) {
+	out := new(Prompt)
+	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/NewPrompt", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +218,9 @@ type ProtoflowServiceServer interface {
 	DownloadYouTubeVideo(context.Context, *YouTubeVideo) (*FilePath, error)
 	GetSessions(context.Context, *GetSessionsRequest) (*GetSessionsResponse, error)
 	GetSession(context.Context, *GetSessionRequest) (*GetSessionResponse, error)
+	DeleteSession(context.Context, *DeleteSessionRequest) (*Empty, error)
 	GetPrompts(context.Context, *GetPromptsRequest) (*GetPromptsResponse, error)
+	NewPrompt(context.Context, *Prompt) (*Prompt, error)
 	UploadContent(*UploadContentRequest, ProtoflowService_UploadContentServer) error
 	Infer(*InferRequest, ProtoflowService_InferServer) error
 	Chat(*ChatRequest, ProtoflowService_ChatServer) error
@@ -219,8 +241,14 @@ func (UnimplementedProtoflowServiceServer) GetSessions(context.Context, *GetSess
 func (UnimplementedProtoflowServiceServer) GetSession(context.Context, *GetSessionRequest) (*GetSessionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSession not implemented")
 }
+func (UnimplementedProtoflowServiceServer) DeleteSession(context.Context, *DeleteSessionRequest) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSession not implemented")
+}
 func (UnimplementedProtoflowServiceServer) GetPrompts(context.Context, *GetPromptsRequest) (*GetPromptsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPrompts not implemented")
+}
+func (UnimplementedProtoflowServiceServer) NewPrompt(context.Context, *Prompt) (*Prompt, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NewPrompt not implemented")
 }
 func (UnimplementedProtoflowServiceServer) UploadContent(*UploadContentRequest, ProtoflowService_UploadContentServer) error {
 	return status.Errorf(codes.Unimplemented, "method UploadContent not implemented")
@@ -303,6 +331,24 @@ func _ProtoflowService_GetSession_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProtoflowService_DeleteSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteSessionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProtoflowServiceServer).DeleteSession(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protoflow.ProtoflowService/DeleteSession",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProtoflowServiceServer).DeleteSession(ctx, req.(*DeleteSessionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ProtoflowService_GetPrompts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPromptsRequest)
 	if err := dec(in); err != nil {
@@ -317,6 +363,24 @@ func _ProtoflowService_GetPrompts_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProtoflowServiceServer).GetPrompts(ctx, req.(*GetPromptsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProtoflowService_NewPrompt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Prompt)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProtoflowServiceServer).NewPrompt(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protoflow.ProtoflowService/NewPrompt",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProtoflowServiceServer).NewPrompt(ctx, req.(*Prompt))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -440,8 +504,16 @@ var ProtoflowService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ProtoflowService_GetSession_Handler,
 		},
 		{
+			MethodName: "DeleteSession",
+			Handler:    _ProtoflowService_DeleteSession_Handler,
+		},
+		{
 			MethodName: "GetPrompts",
 			Handler:    _ProtoflowService_GetPrompts_Handler,
+		},
+		{
+			MethodName: "NewPrompt",
+			Handler:    _ProtoflowService_NewPrompt_Handler,
 		},
 		{
 			MethodName: "ConvertFile",

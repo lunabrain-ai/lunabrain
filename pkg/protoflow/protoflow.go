@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/breadchris/gosseract"
 	connect_go "github.com/bufbuild/connect-go"
-	whisper2 "github.com/ggerganov/whisper.cpp/bindings/go/pkg/whisper"
 	"github.com/google/uuid"
 	"github.com/google/wire"
 	"github.com/kkdai/youtube/v2"
@@ -14,7 +13,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/util"
-	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/pkg/errors"
 	"github.com/protoflow-labs/protoflow/gen"
 	pbucket "github.com/protoflow-labs/protoflow/pkg/bucket"
@@ -72,9 +70,34 @@ func New(
 	}
 }
 
+func (p *Protoflow) DeleteSession(ctx context.Context, c *connect_go.Request[genapi.DeleteSessionRequest]) (*connect_go.Response[genapi.Empty], error) {
+	err := p.sessionStore.DeleteSession(c.Msg.Id)
+	return connect_go.NewResponse(&genapi.Empty{}), err
+}
+
+func (p *Protoflow) NewPrompt(ctx context.Context, c *connect_go.Request[genapi.Prompt]) (*connect_go.Response[genapi.Prompt], error) {
+	s, err := p.sessionStore.NewPrompt(c.Msg)
+	return connect_go.NewResponse(&genapi.Prompt{
+		Id:   s.ID.String(),
+		Text: s.Data.Data.Text,
+	}), err
+}
+
 func (p *Protoflow) GetPrompts(ctx context.Context, c *connect_go.Request[genapi.GetPromptsRequest]) (*connect_go.Response[genapi.GetPromptsResponse], error) {
-	//TODO implement me
-	panic("implement me")
+	// TODO breadchris handle pages
+	sessions, _, err := p.sessionStore.AllPrompts(0, 100)
+	if err != nil {
+		return nil, err
+	}
+	var ps []*genapi.Prompt
+	for _, s := range sessions {
+		d := s.Data.Data
+		d.Id = s.ID.String()
+		ps = append(ps, d)
+	}
+	return connect_go.NewResponse(&genapi.GetPromptsResponse{
+		Prompts: ps,
+	}), nil
 }
 
 func (p *Protoflow) Infer(ctx context.Context, c *connect_go.Request[genapi.InferRequest], c2 *connect_go.ServerStream[genapi.InferResponse]) error {
@@ -132,13 +155,20 @@ func (p *Protoflow) DownloadYouTubeVideo(ctx context.Context, c *connect_go.Requ
 		return nil, errors.New("no stream found")
 	}
 
-	w, err := p.fileStore.Bucket.NewWriter(ctx, c.Msg.Id, nil)
+	var filename string
+	if c.Msg.File != "" {
+		filename = c.Msg.File
+	} else {
+		filename = c.Msg.Id
+	}
+
+	w, err := p.fileStore.Bucket.NewWriter(ctx, filename, nil)
 	if err != nil {
 		return nil, err
 	}
 	defer w.Close()
 
-	filepath, err := p.fileStore.NewFile(c.Msg.Id)
+	filepath, err := p.fileStore.NewFile(filename)
 	if err != nil {
 		return nil, err
 	}
@@ -221,7 +251,7 @@ func (p *Protoflow) observeSegments(
 }
 
 func (p *Protoflow) Chat(ctx context.Context, c *connect_go.Request[genapi.ChatRequest], c2 *connect_go.ServerStream[genapi.ChatResponse]) error {
-	obs := p.StreamTranscription(ctx)
+	obs := p.StreamTranscription(ctx, "")
 	s, err := p.sessionStore.NewSession(&genapi.Session{
 		Name: "live chat",
 	})
@@ -259,20 +289,6 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 		id   = uuid.NewString()
 	)
 
-	transcriptFromFile := func(filepath string) (rxgo.Observable, error) {
-		m, err := whisper2.New("third_party/whisper.cpp/models/ggml-base.en.bin")
-		if err != nil {
-			return nil, err
-		}
-		defer m.Close()
-
-		obs, err = whisper.Process(m, filepath, &genapi.TranscriptionRequest{})
-		if err != nil {
-			return nil, err
-		}
-		return obs, nil
-	}
-
 	switch t := c.Msg.Content.Options.(type) {
 	case *genapi.Content_UrlOptions:
 		u, err := url.Parse(t.UrlOptions.Url)
@@ -291,7 +307,8 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 				Msg("downloading youtube video")
 			r, err := p.DownloadYouTubeVideo(ctx, &connect_go.Request[genapi.YouTubeVideo]{
 				Msg: &genapi.YouTubeVideo{
-					Id: u.Query().Get("v"),
+					Id:   u.Query().Get("v"),
+					File: id,
 				},
 			})
 			if err != nil {
@@ -301,10 +318,8 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 			if err != nil {
 				return err
 			}
-			obs, err = transcriptFromFile(r.Msg.File)
-			if err != nil {
-				return err
-			}
+			obs = p.StreamTranscription(ctx, r.Msg.File)
+			name = r.Msg.Title
 		default:
 			return errors.New("unsupported url")
 		}
@@ -326,8 +341,7 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 				return err
 			}
 		}
-
-		obs, err = transcriptFromFile(filepath)
+		obs = p.StreamTranscription(ctx, filepath)
 		if err != nil {
 			return err
 		}

@@ -23,6 +23,7 @@ type ProjectContextType = {
     streamMessages: (res: AsyncIterable<ChatResponse>) => void;
     session: Session | undefined;
     inferFromMessages: (prompt: string) => void;
+    inference: string;
 };
 
 export default function ProjectProvider({children}: ProjectProviderProps) {
@@ -30,27 +31,29 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     const [isRecording, setIsRecording] = useState<boolean>(false);
     const [selectedValue, setSelectedValue] = useState<TabValue>('');
     const [session, setSession] = useState<Session|undefined>(undefined);
+    const [inference, setInference] = useState<string>('');
 
-    const inferFromMessages = async (prompt: string) => {
+    const inferFromMessages = useCallback(async (prompt: string) => {
         const mIdx = messages.length + 1;
         const m: Message = {text: prompt, sender: 'user', segment: new Segment()};
-        setMessages((prev) => [...prev, m, {...m, text: ''}]);
+        setMessages((prev) => [...prev, m]);
+        let i = '';
         try {
             const res = projectService.infer( {
                 text: messages.map((m) => m.text),
                 prompt,
             })
             for await (const exec of res) {
-                setMessages((prev) => {
-                    prev[mIdx].text = prev[mIdx].text + exec.text;
-                    return prev;
-                });
+                setInference((prev) => prev + exec.text || '');
+                i += exec.text || '';
             }
         } catch (e: any) {
             toast.error(e.message);
             console.log(e);
         }
-    };
+        setInference('');
+        setMessages((prev) => [...prev, m, {...m, text: i}]);
+    }, [messages, setMessages]);
 
     useEffect(() => {
         if (selectedValue !== '') {
@@ -114,6 +117,7 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
                 streamMessages,
                 session,
                 inferFromMessages,
+                inference,
             }}
         >
             {children}

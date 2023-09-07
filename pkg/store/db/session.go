@@ -21,6 +21,7 @@ func NewSession(db *gorm.DB) (*Session, error) {
 	err := db.AutoMigrate(
 		&model.Session{},
 		&model.Segment{},
+		&model.Prompt{},
 	)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not migrate database: %v", err)
@@ -48,6 +49,18 @@ func (s *Session) NewSession(ps *genapi.Session) (*model.Session, error) {
 		return nil, errors.Wrapf(res.Error, "could not save session")
 	}
 	return session, nil
+}
+
+func (s *Session) DeleteSession(id string) error {
+	res := s.db.Delete(&model.Session{
+		Base: model.Base{
+			ID: uuid.MustParse(id),
+		},
+	})
+	if res.Error != nil {
+		return errors.Wrapf(res.Error, "could not delete session")
+	}
+	return nil
 }
 
 func (s *Session) SaveSegment(segment *model.Segment) error {
@@ -86,4 +99,43 @@ func (s *Session) All(page, limit int) ([]model.Session, *Pagination, error) {
 	}
 
 	return content, &pagination, nil
+}
+
+func (s *Session) AllPrompts(page, limit int) ([]model.Prompt, *Pagination, error) {
+	var content []model.Prompt
+	pagination := Pagination{
+		Limit: limit,
+		Page:  page,
+	}
+	res := s.db.Order("created_at desc").
+		Scopes(paginate(content, &pagination, s.db)).
+		Preload(clause.Associations).
+		Find(&content)
+	if res.Error != nil {
+		return nil, nil, errors.Wrapf(res.Error, "could not get content")
+	}
+
+	return content, &pagination, nil
+}
+
+func (s *Session) NewPrompt(ps *genapi.Prompt) (*model.Prompt, error) {
+	var id uuid.UUID
+	if ps.Id != "" {
+		id = uuid.MustParse(ps.Id)
+	} else {
+		id = uuid.New()
+	}
+	p := &model.Prompt{
+		Base: model.Base{
+			ID: id,
+		},
+		Data: datatypes.JSONType[*genapi.Prompt]{
+			Data: ps,
+		},
+	}
+	res := s.db.Save(p)
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not save p")
+	}
+	return p, nil
 }

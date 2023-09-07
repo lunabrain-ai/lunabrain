@@ -26,7 +26,6 @@ To get started with LunaBrain, follow these steps:
 
 ```shell
 git clone --recursive https://github.com/lunabrain-ai/lunabrain.git
-make whisper
 ```
 
 ### Installing System Dependencies
@@ -40,6 +39,11 @@ Ubuntu & WSL
 ```shell
 # TODO breadchris fill this out
 sudo apt-get install tesseract-ocr
+```
+
+All: Build Whisper
+```shell
+make whisper && make models
 ```
 
 TODO breadchris make go bindings for stream so that the binary isn't required

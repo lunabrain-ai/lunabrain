@@ -20,3 +20,9 @@ type Segment struct {
 	Session   Session   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Data      datatypes.JSONType[*gen.Segment]
 }
+
+type Prompt struct {
+	Base
+
+	Data datatypes.JSONType[*gen.Prompt]
+}

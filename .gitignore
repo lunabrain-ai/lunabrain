@@ -5,6 +5,7 @@ tmp/
 data/
 node_modules/
 .DS_Store
+models/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

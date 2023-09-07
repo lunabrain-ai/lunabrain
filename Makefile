@@ -34,7 +34,7 @@ model-downloader: submodule mkdir
 
 models: model-downloader
 	@echo Downloading models
-	@${BUILD_DIR}/go-model-download -out ${MODEL_DIR}
+	@${BUILD_DIR}/go-model-download -out ${MODEL_DIR} ggml-base.en
 
 cmd: third_party/whisper $(wildcard cmd/*)
 

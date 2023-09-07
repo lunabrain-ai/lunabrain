@@ -82,6 +82,9 @@ func Process(model whisper2.Model, path string, flags *gen.TranscriptionRequest)
 	context.ResetTimings()
 	context.SetTokenTimestamps(true)
 	go func() {
+		log.Debug().
+			Str("file", path).
+			Msg("processing audio")
 		if err := context.Process(data, cb, nil); err != nil {
 			log.Error().Err(err).Msg("error processing audio")
 		}

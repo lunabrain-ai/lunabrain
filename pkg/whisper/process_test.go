@@ -8,7 +8,7 @@ import (
 )
 
 func TestProcess(t *testing.T) {
-	m, err := whisper2.New("../../third_party/whisper.cpp/models/ggml-base.en.bin")
+	m, err := whisper2.New("../../models/ggml-base.en.bin")
 	if err != nil {
 		t.Fatal("could not load model", err)
 	}

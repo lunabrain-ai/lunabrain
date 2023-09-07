@@ -8,6 +8,117 @@ import { Message, proto3, protoInt64 } from "@bufbuild/protobuf";
 import { Content } from "./api_pb.js";
 
 /**
+ * @generated from message protoflow.Empty
+ */
+export class Empty extends Message<Empty> {
+  constructor(data?: PartialMessage<Empty>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.Empty";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Empty {
+    return new Empty().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Empty {
+    return new Empty().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Empty {
+    return new Empty().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Empty | PlainMessage<Empty> | undefined, b: Empty | PlainMessage<Empty> | undefined): boolean {
+    return proto3.util.equals(Empty, a, b);
+  }
+}
+
+/**
+ * @generated from message protoflow.DeleteSessionRequest
+ */
+export class DeleteSessionRequest extends Message<DeleteSessionRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<DeleteSessionRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.DeleteSessionRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteSessionRequest {
+    return new DeleteSessionRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteSessionRequest {
+    return new DeleteSessionRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteSessionRequest {
+    return new DeleteSessionRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: DeleteSessionRequest | PlainMessage<DeleteSessionRequest> | undefined, b: DeleteSessionRequest | PlainMessage<DeleteSessionRequest> | undefined): boolean {
+    return proto3.util.equals(DeleteSessionRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message protoflow.Prompt
+ */
+export class Prompt extends Message<Prompt> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string text = 2;
+   */
+  text = "";
+
+  constructor(data?: PartialMessage<Prompt>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.Prompt";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Prompt {
+    return new Prompt().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Prompt {
+    return new Prompt().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Prompt {
+    return new Prompt().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Prompt | PlainMessage<Prompt> | undefined, b: Prompt | PlainMessage<Prompt> | undefined): boolean {
+    return proto3.util.equals(Prompt, a, b);
+  }
+}
+
+/**
  * @generated from message protoflow.GetPromptsRequest
  */
 export class GetPromptsRequest extends Message<GetPromptsRequest> {
@@ -43,9 +154,9 @@ export class GetPromptsRequest extends Message<GetPromptsRequest> {
  */
 export class GetPromptsResponse extends Message<GetPromptsResponse> {
   /**
-   * @generated from field: repeated string prompts = 1;
+   * @generated from field: repeated protoflow.Prompt prompts = 1;
    */
-  prompts: string[] = [];
+  prompts: Prompt[] = [];
 
   constructor(data?: PartialMessage<GetPromptsResponse>) {
     super();
@@ -55,7 +166,7 @@ export class GetPromptsResponse extends Message<GetPromptsResponse> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "protoflow.GetPromptsResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "prompts", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 1, name: "prompts", kind: "message", T: Prompt, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetPromptsResponse {
@@ -920,6 +1031,11 @@ export class YouTubeVideo extends Message<YouTubeVideo> {
    */
   id = "";
 
+  /**
+   * @generated from field: string file = 2;
+   */
+  file = "";
+
   constructor(data?: PartialMessage<YouTubeVideo>) {
     super();
     proto3.util.initPartial(data, this);
@@ -929,6 +1045,7 @@ export class YouTubeVideo extends Message<YouTubeVideo> {
   static readonly typeName = "protoflow.YouTubeVideo";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "file", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): YouTubeVideo {

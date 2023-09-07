@@ -15,8 +15,6 @@ export const Window: React.FC<WindowProps> = ({  }) => {
 
     const handleSend = () => {
         if (inputValue && inputValue.trim() !== '') {
-            (async () => {
-            })();
             setInputValue('');
             inferFromMessages(inputValue);
         }

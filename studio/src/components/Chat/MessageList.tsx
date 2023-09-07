@@ -26,6 +26,8 @@ import {
 } from "@fluentui/react-components";
 import {Segment, Token} from '@/rpc/protoflow_pb'
 import {MutableRefObject, RefObject, useEffect, useRef, useState} from "react";
+import ReactMarkdown from "react-markdown";
+import {useProjectContext} from "@/providers/ProjectProvider";
 
 export interface Message {
     text: string;
@@ -49,13 +51,14 @@ interface SubtleSelectionProps {
 export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, columns , audioRef}) => {
     const messagesEndRef = useRef(null);
     const [currentTime, setCurrentTime] = useState(0);
+    const { inference } = useProjectContext();
 
     useEffect(() => {
         if (messagesEndRef.current) {
             //@ts-ignore
             messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-    }, [items]);
+    }, [items, inference]);
 
     const {
         getRows,
@@ -110,7 +113,6 @@ export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, 
 
         if (audioElement) {
             const handleTimeUpdate = () => {
-                console.log(audioElement.currentTime)
                 setCurrentTime(audioElement.currentTime);
             };
 
@@ -130,16 +132,16 @@ export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, 
     };
 
     const shouldHighlight = (t: Token) => {
-        // TODO breadchris highlight the token that is currently being spoken
-        if (audioRef.current && audioRef.current.currentTime >= Number(t.startTime) / 1000 && audioRef.current.currentTime <= Number(t.endTime) / 1000) {
-            return {color: 'red'};
-        }
+        // // TODO breadchris highlight the token that is currently being spoken
+        // if (audioRef.current && audioRef.current.currentTime >= Number(t.startTime) / 1000 && audioRef.current.currentTime <= Number(t.endTime) / 1000) {
+        //     return {color: 'red'};
+        // }
         return {};
     }
 
     const tc = (item: Message): JSX.Element => {
         if (item.segment.tokens.length === 0) {
-            return <span>{item.text}</span>
+            return <ReactMarkdown children={item.text} />
         }
         return (
             <>
@@ -191,6 +193,14 @@ export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, 
                         <TableCell>{tc(item)}</TableCell>
                     </TableRow>
                 ))}
+                {inference !== '' && (
+                    <TableRow>
+                        <TableSelectionCell
+                            subtle
+                        />
+                        <TableCell><ReactMarkdown children={inference} /></TableCell>
+                    </TableRow>
+                )}
                 <tr ref={messagesEndRef}></tr>
             </TableBody>
         </Table>

@@ -10,8 +10,10 @@ service ProtoflowService {
   rpc DownloadYouTubeVideo(YouTubeVideo) returns (FilePath);
   rpc GetSessions(GetSessionsRequest) returns (GetSessionsResponse);
   rpc GetSession(GetSessionRequest) returns (GetSessionResponse);
+  rpc DeleteSession(DeleteSessionRequest) returns (Empty);
 
   rpc GetPrompts(GetPromptsRequest) returns (GetPromptsResponse);
+  rpc NewPrompt(Prompt) returns (Prompt);
 
   rpc UploadContent(UploadContentRequest) returns (stream ChatResponse);
 
@@ -22,10 +24,21 @@ service ProtoflowService {
   rpc OCR (FilePath) returns (OCRText);
 }
 
+message Empty {}
+
+message DeleteSessionRequest {
+  string id = 1;
+}
+
+message Prompt {
+  string id = 1;
+  string text = 2;
+}
+
 message GetPromptsRequest {}
 
 message GetPromptsResponse {
-  repeated string prompts = 1;
+  repeated Prompt prompts = 1;
 }
 
 message InferRequest {
@@ -126,6 +139,7 @@ message ChatResponse {
 
 message YouTubeVideo {
   string id = 1;
+  string file = 2;
 }
 
 message FilePath {
