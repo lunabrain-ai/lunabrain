@@ -42,13 +42,13 @@ Ubuntu & WSL
 sudo apt-get install tesseract-ocr
 ```
 
-# TODO breadchris make go bindings for stream so that the binary isn't required
-# will need to adopt the bindings https://github.com/ggerganov/whisper.cpp/tree/master/bindings/go
-# Make the binary `stream` available on PATH https://github.com/ggerganov/whisper.cpp/tree/master/examples/stream
+TODO breadchris make go bindings for stream so that the binary isn't required
+will need to adopt the bindings https://github.com/ggerganov/whisper.cpp/tree/master/bindings/go
+Make the binary `stream` available on PATH https://github.com/ggerganov/whisper.cpp/tree/master/examples/stream
 
 ### Running
 
-# TODO breadchris this can be one command
+TODO breadchris this can be one command
 Frontend
 ```shell
 npm install
