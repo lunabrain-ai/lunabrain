@@ -33,6 +33,8 @@ type ProtoflowServiceClient interface {
 	Chat(ctx context.Context, in *ChatRequest, opts ...grpc.CallOption) (ProtoflowService_ChatClient, error)
 	ConvertFile(ctx context.Context, in *ConvertFileRequest, opts ...grpc.CallOption) (*FilePath, error)
 	OCR(ctx context.Context, in *FilePath, opts ...grpc.CallOption) (*OCRText, error)
+	Register(ctx context.Context, in *User, opts ...grpc.CallOption) (*Empty, error)
+	Login(ctx context.Context, in *User, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type protoflowServiceClient struct {
@@ -211,6 +213,24 @@ func (c *protoflowServiceClient) OCR(ctx context.Context, in *FilePath, opts ...
 	return out, nil
 }
 
+func (c *protoflowServiceClient) Register(ctx context.Context, in *User, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/Register", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *protoflowServiceClient) Login(ctx context.Context, in *User, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/Login", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProtoflowServiceServer is the server API for ProtoflowService service.
 // All implementations should embed UnimplementedProtoflowServiceServer
 // for forward compatibility
@@ -226,6 +246,8 @@ type ProtoflowServiceServer interface {
 	Chat(*ChatRequest, ProtoflowService_ChatServer) error
 	ConvertFile(context.Context, *ConvertFileRequest) (*FilePath, error)
 	OCR(context.Context, *FilePath) (*OCRText, error)
+	Register(context.Context, *User) (*Empty, error)
+	Login(context.Context, *User) (*Empty, error)
 }
 
 // UnimplementedProtoflowServiceServer should be embedded to have forward compatible implementations.
@@ -264,6 +286,12 @@ func (UnimplementedProtoflowServiceServer) ConvertFile(context.Context, *Convert
 }
 func (UnimplementedProtoflowServiceServer) OCR(context.Context, *FilePath) (*OCRText, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OCR not implemented")
+}
+func (UnimplementedProtoflowServiceServer) Register(context.Context, *User) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedProtoflowServiceServer) Login(context.Context, *User) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
 
 // UnsafeProtoflowServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -484,6 +512,42 @@ func _ProtoflowService_OCR_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProtoflowService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProtoflowServiceServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protoflow.ProtoflowService/Register",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProtoflowServiceServer).Register(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProtoflowService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProtoflowServiceServer).Login(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protoflow.ProtoflowService/Login",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProtoflowServiceServer).Login(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProtoflowService_ServiceDesc is the grpc.ServiceDesc for ProtoflowService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -522,6 +586,14 @@ var ProtoflowService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "OCR",
 			Handler:    _ProtoflowService_OCR_Handler,
+		},
+		{
+			MethodName: "Register",
+			Handler:    _ProtoflowService_Register_Handler,
+		},
+		{
+			MethodName: "Login",
+			Handler:    _ProtoflowService_Login_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

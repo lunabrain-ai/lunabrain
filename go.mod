@@ -5,7 +5,6 @@ go 1.21
 replace github.com/protoflow-labs/protoflow => /Users/hacked/Documents/GitHub/protoflow
 
 require (
-	gitea.com/go-chi/session v0.0.0-20230415140235-3182bcc14852
 	github.com/JohannesKaufmann/html-to-markdown v1.3.3
 	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/PuerkitoBio/goquery v1.8.0
@@ -30,6 +29,7 @@ require (
 	github.com/google/go-github/v51 v51.0.0
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
+	github.com/gorilla/sessions v1.2.1
 	github.com/jba/templatecheck v0.6.0
 	github.com/kkdai/youtube/v2 v2.8.3
 	github.com/makiuchi-d/arelo v1.12.0
@@ -42,6 +42,7 @@ require (
 	github.com/rs/zerolog v1.30.0
 	github.com/samber/go-gpt-3-encoder v0.3.1
 	github.com/samber/lo v1.38.1
+	github.com/sashabaranov/go-openai v1.14.0
 	github.com/slack-go/slack v0.12.3
 	github.com/u2takey/ffmpeg-go v0.4.1
 	github.com/urfave/cli/v2 v2.25.1
@@ -113,6 +114,7 @@ require (
 	github.com/google/subcommands v1.2.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.3 // indirect
 	github.com/googleapis/gax-go/v2 v2.8.0 // indirect
+	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 // indirect
 	github.com/huandu/xstrings v1.4.0 // indirect
@@ -153,7 +155,6 @@ require (
 	github.com/robertkrimen/otto v0.2.1 // indirect
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	github.com/sashabaranov/go-openai v1.14.0 // indirect
 	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/spf13/cast v1.5.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
@@ -163,7 +164,6 @@ require (
 	github.com/teivah/onecontext v1.3.0 // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	github.com/u2takey/go-utils v0.3.1 // indirect
-	github.com/unknwon/com v1.0.1 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.temporal.io/api v1.19.1-0.20230322213042-07fb271d475b // indirect

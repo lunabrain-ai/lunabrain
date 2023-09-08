@@ -70,6 +70,21 @@ func New(
 	}
 }
 
+func (p *Protoflow) Register(ctx context.Context, c *connect_go.Request[genapi.User]) (*connect_go.Response[genapi.Empty], error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (p *Protoflow) Login(ctx context.Context, c *connect_go.Request[genapi.User]) (*connect_go.Response[genapi.Empty], error) {
+	_, err := p.sessionStore.GetUser(c.Msg)
+	if err != nil {
+		return nil, err
+	}
+	_ = connect_go.NewResponse(&genapi.Empty{})
+	// TODO breadchris set session cookie
+	return nil, nil
+}
+
 func (p *Protoflow) DeleteSession(ctx context.Context, c *connect_go.Request[genapi.DeleteSessionRequest]) (*connect_go.Response[genapi.Empty], error) {
 	err := p.sessionStore.DeleteSession(c.Msg.Id)
 	return connect_go.NewResponse(&genapi.Empty{}), err

@@ -26,3 +26,9 @@ type Prompt struct {
 
 	Data datatypes.JSONType[*gen.Prompt]
 }
+
+type User struct {
+	Base
+
+	Data datatypes.JSONType[*gen.User]
+}

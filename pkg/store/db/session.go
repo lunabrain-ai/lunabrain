@@ -22,6 +22,7 @@ func NewSession(db *gorm.DB) (*Session, error) {
 		&model.Session{},
 		&model.Segment{},
 		&model.Prompt{},
+		&model.User{},
 	)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not migrate database: %v", err)
@@ -130,6 +131,32 @@ func (s *Session) NewPrompt(ps *genapi.Prompt) (*model.Prompt, error) {
 			ID: id,
 		},
 		Data: datatypes.JSONType[*genapi.Prompt]{
+			Data: ps,
+		},
+	}
+	res := s.db.Save(p)
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not save p")
+	}
+	return p, nil
+}
+
+func (s *Session) GetUser(ps *genapi.User) (*model.User, error) {
+	p := &model.User{}
+	res := s.db.Find(&p, datatypes.JSONQuery("data").Equals(ps.Username, "username"))
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not save p")
+	}
+	return p, nil
+}
+
+func (s *Session) NewUser(ps *genapi.User) (*model.User, error) {
+	id := uuid.New()
+	p := &model.User{
+		Base: model.Base{
+			ID: id,
+		},
+		Data: datatypes.JSONType[*genapi.User]{
 			Data: ps,
 		},
 	}

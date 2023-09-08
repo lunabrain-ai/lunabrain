@@ -22,7 +22,17 @@ service ProtoflowService {
   rpc Chat(ChatRequest) returns (stream ChatResponse);
   rpc ConvertFile(ConvertFileRequest) returns (FilePath);
   rpc OCR (FilePath) returns (OCRText);
+
+  rpc Register(User) returns (Empty);
+  rpc Login(User) returns (Empty);
 }
+
+message User {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResponse {}
 
 message Empty {}
 

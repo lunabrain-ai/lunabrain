@@ -133,9 +133,9 @@ export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, 
 
     const shouldHighlight = (t: Token) => {
         // // TODO breadchris highlight the token that is currently being spoken
-        // if (audioRef.current && audioRef.current.currentTime >= Number(t.startTime) / 1000 && audioRef.current.currentTime <= Number(t.endTime) / 1000) {
-        //     return {color: 'red'};
-        // }
+        if (audioRef.current && audioRef.current.currentTime >= Number(t.startTime) / 1000 && audioRef.current.currentTime <= Number(t.endTime) / 1000) {
+            return {color: 'red'};
+        }
         return {};
     }
 

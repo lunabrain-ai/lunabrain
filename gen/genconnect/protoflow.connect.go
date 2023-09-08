@@ -63,6 +63,11 @@ const (
 	ProtoflowServiceConvertFileProcedure = "/protoflow.ProtoflowService/ConvertFile"
 	// ProtoflowServiceOCRProcedure is the fully-qualified name of the ProtoflowService's OCR RPC.
 	ProtoflowServiceOCRProcedure = "/protoflow.ProtoflowService/OCR"
+	// ProtoflowServiceRegisterProcedure is the fully-qualified name of the ProtoflowService's Register
+	// RPC.
+	ProtoflowServiceRegisterProcedure = "/protoflow.ProtoflowService/Register"
+	// ProtoflowServiceLoginProcedure is the fully-qualified name of the ProtoflowService's Login RPC.
+	ProtoflowServiceLoginProcedure = "/protoflow.ProtoflowService/Login"
 )
 
 // ProtoflowServiceClient is a client for the protoflow.ProtoflowService service.
@@ -78,6 +83,8 @@ type ProtoflowServiceClient interface {
 	Chat(context.Context, *connect_go.Request[gen.ChatRequest]) (*connect_go.ServerStreamForClient[gen.ChatResponse], error)
 	ConvertFile(context.Context, *connect_go.Request[gen.ConvertFileRequest]) (*connect_go.Response[gen.FilePath], error)
 	OCR(context.Context, *connect_go.Request[gen.FilePath]) (*connect_go.Response[gen.OCRText], error)
+	Register(context.Context, *connect_go.Request[gen.User]) (*connect_go.Response[gen.Empty], error)
+	Login(context.Context, *connect_go.Request[gen.User]) (*connect_go.Response[gen.Empty], error)
 }
 
 // NewProtoflowServiceClient constructs a client for the protoflow.ProtoflowService service. By
@@ -145,6 +152,16 @@ func NewProtoflowServiceClient(httpClient connect_go.HTTPClient, baseURL string,
 			baseURL+ProtoflowServiceOCRProcedure,
 			opts...,
 		),
+		register: connect_go.NewClient[gen.User, gen.Empty](
+			httpClient,
+			baseURL+ProtoflowServiceRegisterProcedure,
+			opts...,
+		),
+		login: connect_go.NewClient[gen.User, gen.Empty](
+			httpClient,
+			baseURL+ProtoflowServiceLoginProcedure,
+			opts...,
+		),
 	}
 }
 
@@ -161,6 +178,8 @@ type protoflowServiceClient struct {
 	chat                 *connect_go.Client[gen.ChatRequest, gen.ChatResponse]
 	convertFile          *connect_go.Client[gen.ConvertFileRequest, gen.FilePath]
 	oCR                  *connect_go.Client[gen.FilePath, gen.OCRText]
+	register             *connect_go.Client[gen.User, gen.Empty]
+	login                *connect_go.Client[gen.User, gen.Empty]
 }
 
 // DownloadYouTubeVideo calls protoflow.ProtoflowService.DownloadYouTubeVideo.
@@ -218,6 +237,16 @@ func (c *protoflowServiceClient) OCR(ctx context.Context, req *connect_go.Reques
 	return c.oCR.CallUnary(ctx, req)
 }
 
+// Register calls protoflow.ProtoflowService.Register.
+func (c *protoflowServiceClient) Register(ctx context.Context, req *connect_go.Request[gen.User]) (*connect_go.Response[gen.Empty], error) {
+	return c.register.CallUnary(ctx, req)
+}
+
+// Login calls protoflow.ProtoflowService.Login.
+func (c *protoflowServiceClient) Login(ctx context.Context, req *connect_go.Request[gen.User]) (*connect_go.Response[gen.Empty], error) {
+	return c.login.CallUnary(ctx, req)
+}
+
 // ProtoflowServiceHandler is an implementation of the protoflow.ProtoflowService service.
 type ProtoflowServiceHandler interface {
 	DownloadYouTubeVideo(context.Context, *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.FilePath], error)
@@ -231,6 +260,8 @@ type ProtoflowServiceHandler interface {
 	Chat(context.Context, *connect_go.Request[gen.ChatRequest], *connect_go.ServerStream[gen.ChatResponse]) error
 	ConvertFile(context.Context, *connect_go.Request[gen.ConvertFileRequest]) (*connect_go.Response[gen.FilePath], error)
 	OCR(context.Context, *connect_go.Request[gen.FilePath]) (*connect_go.Response[gen.OCRText], error)
+	Register(context.Context, *connect_go.Request[gen.User]) (*connect_go.Response[gen.Empty], error)
+	Login(context.Context, *connect_go.Request[gen.User]) (*connect_go.Response[gen.Empty], error)
 }
 
 // NewProtoflowServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -294,6 +325,16 @@ func NewProtoflowServiceHandler(svc ProtoflowServiceHandler, opts ...connect_go.
 		svc.OCR,
 		opts...,
 	)
+	protoflowServiceRegisterHandler := connect_go.NewUnaryHandler(
+		ProtoflowServiceRegisterProcedure,
+		svc.Register,
+		opts...,
+	)
+	protoflowServiceLoginHandler := connect_go.NewUnaryHandler(
+		ProtoflowServiceLoginProcedure,
+		svc.Login,
+		opts...,
+	)
 	return "/protoflow.ProtoflowService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ProtoflowServiceDownloadYouTubeVideoProcedure:
@@ -318,6 +359,10 @@ func NewProtoflowServiceHandler(svc ProtoflowServiceHandler, opts ...connect_go.
 			protoflowServiceConvertFileHandler.ServeHTTP(w, r)
 		case ProtoflowServiceOCRProcedure:
 			protoflowServiceOCRHandler.ServeHTTP(w, r)
+		case ProtoflowServiceRegisterProcedure:
+			protoflowServiceRegisterHandler.ServeHTTP(w, r)
+		case ProtoflowServiceLoginProcedure:
+			protoflowServiceLoginHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -369,4 +414,12 @@ func (UnimplementedProtoflowServiceHandler) ConvertFile(context.Context, *connec
 
 func (UnimplementedProtoflowServiceHandler) OCR(context.Context, *connect_go.Request[gen.FilePath]) (*connect_go.Response[gen.OCRText], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.OCR is not implemented"))
+}
+
+func (UnimplementedProtoflowServiceHandler) Register(context.Context, *connect_go.Request[gen.User]) (*connect_go.Response[gen.Empty], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.Register is not implemented"))
+}
+
+func (UnimplementedProtoflowServiceHandler) Login(context.Context, *connect_go.Request[gen.User]) (*connect_go.Response[gen.Empty], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.Login is not implemented"))
 }
