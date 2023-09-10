@@ -1,7 +1,8 @@
 FROM alpine
-RUN apk add --no-cache build-base libsdl2-dev
+RUN apk add --no-cache build-base sdl2-dev go libsndfile-dev
 WORKDIR /app
 ADD . .
 RUN make whisper && make models
-ENTRYPOINT ["build/lunabrain"]
-CMD ["api", "serve"]
+RUN go build -o main main.go
+ENTRYPOINT ["main"]
+CMD ["start"]

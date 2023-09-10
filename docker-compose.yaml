@@ -10,9 +10,6 @@ services:
     volumes:
       - ./data:/data
       - ./config:/app/config
-    depends_on:
-      postgres:
-        condition: service_healthy
     restart: always
     profiles:
       - base
