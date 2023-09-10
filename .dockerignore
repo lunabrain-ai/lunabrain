@@ -1,4 +1,5 @@
 data
 python/env
-site/node_modules
+env
+node_modules
 Dockerfile
