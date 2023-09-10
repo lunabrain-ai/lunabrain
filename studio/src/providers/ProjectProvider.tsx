@@ -1,10 +1,10 @@
 import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {projectService} from "@/lib/api";
-import {Message} from "@/components/Chat/MessageList";
+import {Message} from "@/pages/Chat/MessageList";
 import {Code, ConnectError} from "@bufbuild/connect";
 import toast from "react-hot-toast";
 import {TabValue} from "@fluentui/react-components";
-import {ChatResponse, Segment, Session} from "@/rpc/protoflow_pb";
+import {ChatResponse, Segment, Session, User} from "@/rpc/protoflow_pb";
 
 const ProjectContext = createContext<ProjectContextType>({} as any);
 export const useProjectContext = () => useContext(ProjectContext);
@@ -24,6 +24,8 @@ type ProjectContextType = {
     session: Session | undefined;
     inferFromMessages: (prompt: string) => void;
     inference: string;
+    user?: User;
+    setUser: (user?: User) => void;
 };
 
 export default function ProjectProvider({children}: ProjectProviderProps) {
@@ -32,6 +34,7 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     const [selectedValue, setSelectedValue] = useState<TabValue>('');
     const [session, setSession] = useState<Session|undefined>(undefined);
     const [inference, setInference] = useState<string>('');
+    const [user, setUser] = useState<User|undefined>(undefined);
 
     const inferFromMessages = useCallback(async (prompt: string) => {
         const mIdx = messages.length + 1;
@@ -118,6 +121,8 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
                 session,
                 inferFromMessages,
                 inference,
+                user,
+                setUser,
             }}
         >
             {children}

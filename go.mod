@@ -12,6 +12,7 @@ require (
 	github.com/advancedlogic/GoOse v0.0.0-20210820140952-9d5822d4a625
 	github.com/alexferrari88/gohn v0.7.5
 	github.com/breadchris/gosseract v0.0.0-20230824200506-0068d5b03643
+	github.com/breadchris/scs/v2 v2.0.0-20230909081317-6125300685dd
 	github.com/bufbuild/connect-go v1.7.0
 	github.com/bufbuild/connect-grpcreflect-go v1.1.0
 	github.com/bwmarrin/discordgo v0.27.1
@@ -29,7 +30,6 @@ require (
 	github.com/google/go-github/v51 v51.0.0
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
-	github.com/gorilla/sessions v1.2.1
 	github.com/jba/templatecheck v0.6.0
 	github.com/kkdai/youtube/v2 v2.8.3
 	github.com/makiuchi-d/arelo v1.12.0
@@ -44,6 +44,7 @@ require (
 	github.com/samber/lo v1.38.1
 	github.com/sashabaranov/go-openai v1.14.0
 	github.com/slack-go/slack v0.12.3
+	github.com/twilio/twilio-go v1.13.0
 	github.com/u2takey/ffmpeg-go v0.4.1
 	github.com/urfave/cli/v2 v2.25.1
 	go.uber.org/config v1.4.0
@@ -114,7 +115,6 @@ require (
 	github.com/google/subcommands v1.2.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.3 // indirect
 	github.com/googleapis/gax-go/v2 v2.8.0 // indirect
-	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 // indirect
 	github.com/huandu/xstrings v1.4.0 // indirect

@@ -1,7 +1,5 @@
-import { useProjectContext } from "@/providers/ProjectProvider";
-
 import "reactflow/dist/style.css";
-import {ChatPage} from "@/components/Chat/Chat";
+import {ChatPage} from "@/pages/Chat/Chat";
 
 export default function Home() {
   return (

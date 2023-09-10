@@ -12,9 +12,9 @@ import { Content } from "./api_pb.js";
  */
 export class User extends Message<User> {
   /**
-   * @generated from field: string username = 1;
+   * @generated from field: string email = 1;
    */
-  username = "";
+  email = "";
 
   /**
    * @generated from field: string password = 2;
@@ -29,7 +29,7 @@ export class User extends Message<User> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "protoflow.User";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
@@ -1032,6 +1032,11 @@ export class ConvertFileRequest extends Message<ConvertFileRequest> {
  * @generated from message protoflow.ChatRequest
  */
 export class ChatRequest extends Message<ChatRequest> {
+  /**
+   * @generated from field: int32 capture_device = 1;
+   */
+  captureDevice = 0;
+
   constructor(data?: PartialMessage<ChatRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -1040,6 +1045,7 @@ export class ChatRequest extends Message<ChatRequest> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "protoflow.ChatRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "capture_device", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ChatRequest {

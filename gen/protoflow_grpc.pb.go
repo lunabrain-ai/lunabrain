@@ -33,8 +33,9 @@ type ProtoflowServiceClient interface {
 	Chat(ctx context.Context, in *ChatRequest, opts ...grpc.CallOption) (ProtoflowService_ChatClient, error)
 	ConvertFile(ctx context.Context, in *ConvertFileRequest, opts ...grpc.CallOption) (*FilePath, error)
 	OCR(ctx context.Context, in *FilePath, opts ...grpc.CallOption) (*OCRText, error)
-	Register(ctx context.Context, in *User, opts ...grpc.CallOption) (*Empty, error)
-	Login(ctx context.Context, in *User, opts ...grpc.CallOption) (*Empty, error)
+	Register(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
+	Login(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
+	Logout(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type protoflowServiceClient struct {
@@ -213,8 +214,8 @@ func (c *protoflowServiceClient) OCR(ctx context.Context, in *FilePath, opts ...
 	return out, nil
 }
 
-func (c *protoflowServiceClient) Register(ctx context.Context, in *User, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *protoflowServiceClient) Register(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
 	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/Register", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -222,9 +223,18 @@ func (c *protoflowServiceClient) Register(ctx context.Context, in *User, opts ..
 	return out, nil
 }
 
-func (c *protoflowServiceClient) Login(ctx context.Context, in *User, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *protoflowServiceClient) Login(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
 	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/Login", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *protoflowServiceClient) Logout(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/Logout", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -246,8 +256,9 @@ type ProtoflowServiceServer interface {
 	Chat(*ChatRequest, ProtoflowService_ChatServer) error
 	ConvertFile(context.Context, *ConvertFileRequest) (*FilePath, error)
 	OCR(context.Context, *FilePath) (*OCRText, error)
-	Register(context.Context, *User) (*Empty, error)
-	Login(context.Context, *User) (*Empty, error)
+	Register(context.Context, *User) (*User, error)
+	Login(context.Context, *User) (*User, error)
+	Logout(context.Context, *Empty) (*Empty, error)
 }
 
 // UnimplementedProtoflowServiceServer should be embedded to have forward compatible implementations.
@@ -287,11 +298,14 @@ func (UnimplementedProtoflowServiceServer) ConvertFile(context.Context, *Convert
 func (UnimplementedProtoflowServiceServer) OCR(context.Context, *FilePath) (*OCRText, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OCR not implemented")
 }
-func (UnimplementedProtoflowServiceServer) Register(context.Context, *User) (*Empty, error) {
+func (UnimplementedProtoflowServiceServer) Register(context.Context, *User) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
-func (UnimplementedProtoflowServiceServer) Login(context.Context, *User) (*Empty, error) {
+func (UnimplementedProtoflowServiceServer) Login(context.Context, *User) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedProtoflowServiceServer) Logout(context.Context, *Empty) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
 
 // UnsafeProtoflowServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -548,6 +562,24 @@ func _ProtoflowService_Login_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProtoflowService_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProtoflowServiceServer).Logout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protoflow.ProtoflowService/Logout",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProtoflowServiceServer).Logout(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProtoflowService_ServiceDesc is the grpc.ServiceDesc for ProtoflowService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -594,6 +626,10 @@ var ProtoflowService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Login",
 			Handler:    _ProtoflowService_Login_Handler,
+		},
+		{
+			MethodName: "Logout",
+			Handler:    _ProtoflowService_Logout_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

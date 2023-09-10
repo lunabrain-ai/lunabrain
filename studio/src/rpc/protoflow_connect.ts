@@ -117,7 +117,7 @@ export const ProtoflowService = {
     register: {
       name: "Register",
       I: User,
-      O: Empty,
+      O: User,
       kind: MethodKind.Unary,
     },
     /**
@@ -126,6 +126,15 @@ export const ProtoflowService = {
     login: {
       name: "Login",
       I: User,
+      O: User,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc protoflow.ProtoflowService.Logout
+     */
+    logout: {
+      name: "Logout",
+      I: Empty,
       O: Empty,
       kind: MethodKind.Unary,
     },

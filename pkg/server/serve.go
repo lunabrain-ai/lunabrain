@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"github.com/breadchris/scs/v2"
 	"github.com/bufbuild/connect-go"
 	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
 	"github.com/go-chi/chi/v5"
@@ -27,6 +28,7 @@ import (
 )
 
 type APIHTTPServer struct {
+	sessionService   *scs.SessionManager
 	config           api.Config
 	db               db.Store
 	apiServer        *api.Server
@@ -43,6 +45,7 @@ type HTTPServer interface {
 
 var (
 	ProviderSet = wire.NewSet(
+		scs.New,
 		api.NewAPIServer,
 		NewAPIHTTPServer,
 		api.NewConfig,
@@ -60,6 +63,7 @@ func NewAPIHTTPServer(
 	d *discord.DiscordService,
 	protoflowService *code.Protoflow,
 	p *protoflow.Protoflow,
+	sessionSerivce *scs.SessionManager,
 ) *APIHTTPServer {
 	return &APIHTTPServer{
 		config:           config,
@@ -70,6 +74,7 @@ func NewAPIHTTPServer(
 		discordService:   d,
 		protoflowService: protoflowService,
 		p:                p,
+		sessionService:   sessionSerivce,
 	}
 }
 
@@ -179,7 +184,8 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	// TODO breadchris enable/disable based on if we are in dev mode
 	//bucketRoute, handler := a.bucket.HandleSignedURLs()
 	//muxRoot.Handle(bucketRoute, handler)
-	return muxRoot
+	// TODO breadchris https://github.com/alexedwards/scs/tree/master/gormstore
+	return a.sessionService.LoadAndSave(muxRoot)
 }
 
 func (a *APIHTTPServer) Start() error {

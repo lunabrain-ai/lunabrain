@@ -3,6 +3,7 @@ package protoflow
 import (
 	"context"
 	"github.com/breadchris/gosseract"
+	"github.com/breadchris/scs/v2"
 	connect_go "github.com/bufbuild/connect-go"
 	"github.com/google/uuid"
 	"github.com/google/wire"
@@ -32,9 +33,10 @@ import (
 )
 
 type Protoflow struct {
-	openai       openai.QAClient
-	sessionStore *db.Session
-	fileStore    *bucket.Bucket
+	openai         openai.QAClient
+	sessionStore   *db.Session
+	fileStore      *bucket.Bucket
+	sessionManager *scs.SessionManager
 }
 
 var ProviderSet = wire.NewSet(
@@ -62,27 +64,58 @@ func New(
 	openai openai.QAClient,
 	sessionStore *db.Session,
 	fileStore *bucket.Bucket,
+	sessionManager *scs.SessionManager,
 ) *Protoflow {
 	return &Protoflow{
-		openai:       openai,
-		sessionStore: sessionStore,
-		fileStore:    fileStore,
+		openai:         openai,
+		sessionStore:   sessionStore,
+		fileStore:      fileStore,
+		sessionManager: sessionManager,
 	}
 }
 
-func (p *Protoflow) Register(ctx context.Context, c *connect_go.Request[genapi.User]) (*connect_go.Response[genapi.Empty], error) {
-	//TODO implement me
-	panic("implement me")
+func (p *Protoflow) Register(ctx context.Context, c *connect_go.Request[genapi.User]) (*connect_go.Response[genapi.User], error) {
+	_, err := p.sessionStore.GetUser(c.Msg)
+	if err == nil {
+		return nil, errors.New("user already exists")
+	}
+	u, err := p.sessionStore.NewUser(c.Msg)
+	if err != nil {
+		return nil, errors.Wrapf(err, "could not create user")
+	}
+	p.sessionManager.Put(ctx, "user", u.ID.String())
+	return connect_go.NewResponse(&genapi.User{
+		Email: u.Data.Data.Email,
+	}), nil
 }
 
-func (p *Protoflow) Login(ctx context.Context, c *connect_go.Request[genapi.User]) (*connect_go.Response[genapi.Empty], error) {
-	_, err := p.sessionStore.GetUser(c.Msg)
+func (p *Protoflow) Login(ctx context.Context, c *connect_go.Request[genapi.User]) (*connect_go.Response[genapi.User], error) {
+	id := p.sessionManager.Get(ctx, "user")
+	if s, ok := id.(string); ok && s != "" {
+		u, err := p.sessionStore.GetUserByID(s)
+		if err != nil {
+			return nil, err
+		}
+		return connect_go.NewResponse(&genapi.User{
+			Email: u.Data.Data.Email,
+		}), nil
+	}
+
+	u, err := p.sessionStore.GetUser(c.Msg)
 	if err != nil {
 		return nil, err
 	}
-	_ = connect_go.NewResponse(&genapi.Empty{})
-	// TODO breadchris set session cookie
-	return nil, nil
+	// TODO breadchris compare hashed passwords
+	if u.Data.Data.Password != c.Msg.Password {
+		return nil, errors.New("invalid password")
+	}
+	p.sessionManager.Put(ctx, "user", u.ID.String())
+	return connect_go.NewResponse(&genapi.User{}), nil
+}
+
+func (p *Protoflow) Logout(ctx context.Context, c *connect_go.Request[genapi.Empty]) (*connect_go.Response[genapi.Empty], error) {
+	err := p.sessionManager.Clear(ctx)
+	return connect_go.NewResponse(&genapi.Empty{}), err
 }
 
 func (p *Protoflow) DeleteSession(ctx context.Context, c *connect_go.Request[genapi.DeleteSessionRequest]) (*connect_go.Response[genapi.Empty], error) {
@@ -200,9 +233,22 @@ func (p *Protoflow) DownloadYouTubeVideo(ctx context.Context, c *connect_go.Requ
 	}), nil
 }
 
+func (p *Protoflow) getUserID(ctx context.Context) (string, error) {
+	id := p.sessionManager.Get(ctx, "user")
+	s, ok := id.(string)
+	if !ok || s == "" {
+		return "", errors.New("no user id")
+	}
+	return s, nil
+}
+
 func (p *Protoflow) GetSessions(ctx context.Context, c *connect_go.Request[genapi.GetSessionsRequest]) (*connect_go.Response[genapi.GetSessionsResponse], error) {
-	// TODO breadchris handle page
-	sessions, _, err := p.sessionStore.All(int(c.Msg.Page), int(c.Msg.Limit))
+	id, err := p.getUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	// TODO breadchris handle paging
+	sessions, _, err := p.sessionStore.All(id, int(c.Msg.Page), int(c.Msg.Limit))
 	if err != nil {
 		return nil, err
 	}
@@ -266,8 +312,13 @@ func (p *Protoflow) observeSegments(
 }
 
 func (p *Protoflow) Chat(ctx context.Context, c *connect_go.Request[genapi.ChatRequest], c2 *connect_go.ServerStream[genapi.ChatResponse]) error {
-	obs := p.StreamTranscription(ctx, "")
-	s, err := p.sessionStore.NewSession(&genapi.Session{
+	id, err := p.getUserID(ctx)
+	if err != nil {
+		return err
+	}
+
+	obs := p.StreamTranscription(ctx, "", c.Msg.CaptureDevice)
+	s, err := p.sessionStore.NewSession(id, &genapi.Session{
 		Name: "live chat",
 	})
 	if err != nil {
@@ -304,6 +355,11 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 		id   = uuid.NewString()
 	)
 
+	id, err := p.getUserID(ctx)
+	if err != nil {
+		return err
+	}
+
 	switch t := c.Msg.Content.Options.(type) {
 	case *genapi.Content_UrlOptions:
 		u, err := url.Parse(t.UrlOptions.Url)
@@ -333,7 +389,7 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 			if err != nil {
 				return err
 			}
-			obs = p.StreamTranscription(ctx, r.Msg.File)
+			obs = p.StreamTranscription(ctx, r.Msg.File, 0)
 			name = r.Msg.Title
 		default:
 			return errors.New("unsupported url")
@@ -356,7 +412,7 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 				return err
 			}
 		}
-		obs = p.StreamTranscription(ctx, filepath)
+		obs = p.StreamTranscription(ctx, filepath, 0)
 		if err != nil {
 			return err
 		}
@@ -368,7 +424,7 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 		return errors.New("no observable")
 	}
 
-	s, err := p.sessionStore.NewSession(&genapi.Session{
+	s, err := p.sessionStore.NewSession(id, &genapi.Session{
 		Id:   id,
 		Name: name,
 	})

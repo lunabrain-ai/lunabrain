@@ -30,7 +30,7 @@ func NewSession(db *gorm.DB) (*Session, error) {
 	return &Session{db: db}, nil
 }
 
-func (s *Session) NewSession(ps *genapi.Session) (*model.Session, error) {
+func (s *Session) NewSession(userID string, ps *genapi.Session) (*model.Session, error) {
 	var id uuid.UUID
 	if ps.Id != "" {
 		id = uuid.MustParse(ps.Id)
@@ -41,6 +41,7 @@ func (s *Session) NewSession(ps *genapi.Session) (*model.Session, error) {
 		Base: model.Base{
 			ID: id,
 		},
+		UserID: uuid.MustParse(userID),
 		Data: datatypes.JSONType[*genapi.Session]{
 			Data: ps,
 		},
@@ -85,7 +86,7 @@ func (s *Session) Get(id string) (*model.Session, error) {
 	return v, nil
 }
 
-func (s *Session) All(page, limit int) ([]model.Session, *Pagination, error) {
+func (s *Session) All(userID string, page, limit int) ([]model.Session, *Pagination, error) {
 	var content []model.Session
 	pagination := Pagination{
 		Limit: limit,
@@ -94,7 +95,7 @@ func (s *Session) All(page, limit int) ([]model.Session, *Pagination, error) {
 	res := s.db.Order("created_at desc").
 		Scopes(paginate(content, &pagination, s.db)).
 		Preload(clause.Associations).
-		Find(&content)
+		Find(&content, "user_id = ?", userID)
 	if res.Error != nil {
 		return nil, nil, errors.Wrapf(res.Error, "could not get content")
 	}
@@ -141,17 +142,31 @@ func (s *Session) NewPrompt(ps *genapi.Prompt) (*model.Prompt, error) {
 	return p, nil
 }
 
+func (s *Session) GetUserByID(id string) (*model.User, error) {
+	p := &model.User{
+		Base: model.Base{
+			ID: uuid.MustParse(id),
+		},
+	}
+	res := s.db.First(&p)
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not get user: %s", id)
+	}
+	return p, nil
+}
+
 func (s *Session) GetUser(ps *genapi.User) (*model.User, error) {
 	p := &model.User{}
-	res := s.db.Find(&p, datatypes.JSONQuery("data").Equals(ps.Username, "username"))
+	res := s.db.First(&p, datatypes.JSONQuery("data").Equals(ps.Email, "email"))
 	if res.Error != nil {
-		return nil, errors.Wrapf(res.Error, "could not save p")
+		return nil, errors.Wrapf(res.Error, "could not get user")
 	}
 	return p, nil
 }
 
 func (s *Session) NewUser(ps *genapi.User) (*model.User, error) {
 	id := uuid.New()
+	// TODO breadchris hash password
 	p := &model.User{
 		Base: model.Base{
 			ID: id,

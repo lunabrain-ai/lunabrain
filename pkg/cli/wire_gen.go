@@ -7,6 +7,7 @@
 package cli
 
 import (
+	"github.com/breadchris/scs/v2"
 	"github.com/lunabrain-ai/lunabrain/pkg/api"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
 	"github.com/lunabrain-ai/lunabrain/pkg/config"
@@ -135,12 +136,13 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	protoflowProtoflow := protoflow.New(openAIQAClient, dbSession, bucketBucket)
+	sessionManager := scs.New()
+	protoflowProtoflow := protoflow.New(openAIQAClient, dbSession, bucketBucket, sessionManager)
 	protoflow2, err := protoflow.NewProtoflow()
 	if err != nil {
 		return nil, err
 	}
-	apihttpServer := server.NewAPIHTTPServer(apiConfig, apiServer, htmlHTML, dbStore, bucketBucket, discordService, protoflowProtoflow, protoflow2)
+	apihttpServer := server.NewAPIHTTPServer(apiConfig, apiServer, htmlHTML, dbStore, bucketBucket, discordService, protoflowProtoflow, protoflow2, sessionManager)
 	discordCollector := collect.NewDiscordCollector(session, dbStore, contentWorkflow)
 	hnCollect := collect.NewHNCollector(dbStore, contentWorkflow)
 	app := NewApp(logLog, apihttpServer, normalizer, summarize, discordCollector, hnCollect)

@@ -16,7 +16,7 @@ const (
 	transModel = "models/ggml-base.en.bin"
 )
 
-func (p *Protoflow) StreamTranscription(ctx context.Context, file string) rxgo.Observable {
+func (p *Protoflow) StreamTranscription(ctx context.Context, file string, captureDevice int32) rxgo.Observable {
 	return rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
 		cmd := exec.Command("third_party/whisper.cpp/stream")
 		_, err := os.Stat(transModel)
@@ -32,7 +32,7 @@ func (p *Protoflow) StreamTranscription(ctx context.Context, file string) rxgo.O
 				cmd.Args,
 				"stream",
 				// TODO breadchris offer selection for input stream
-				"-c", "0",
+				"-c", string(captureDevice),
 			)
 		}
 		cmd.Args = append(
