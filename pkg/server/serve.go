@@ -84,6 +84,13 @@ func NewLogInterceptor() connect.UnaryInterceptorFunc {
 	return interceptor
 }
 
+func loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Debug().Str("method", r.Method).Str("path", r.URL.Path).Msg("request")
+		next.ServeHTTP(w, r)
+	})
+}
+
 func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	interceptors := connect.WithInterceptors(NewLogInterceptor())
 
@@ -171,7 +178,7 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	//bucketRoute, handler := a.bucket.HandleSignedURLs()
 	//muxRoot.Handle(bucketRoute, handler)
 	// TODO breadchris https://github.com/alexedwards/scs/tree/master/gormstore
-	return a.sessionService.LoadAndSave(muxRoot)
+	return a.sessionService.LoadAndSave(loggingMiddleware(muxRoot))
 }
 
 func (a *APIHTTPServer) Start() error {

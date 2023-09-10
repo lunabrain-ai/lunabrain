@@ -3,7 +3,7 @@ import {projectService} from "@/lib/api";
 import toast from "react-hot-toast";
 import {Session} from "@/rpc/protoflow_pb";
 import {
-    Button,
+    Button, Divider,
     Input,
     InputProps,
     SelectTabData,
@@ -15,6 +15,7 @@ import {
 import {Icon, Label} from "@fluentui/react";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {AudioRecorder} from "@/components/AudioRecorder";
+import {FileUpload} from "@/components/FileUpload";
 
 interface SidebarProps {
 }
@@ -76,8 +77,13 @@ export const CollectPanel: React.FC<SidebarProps> = () => {
     return (
         <div style={{ overflowY: 'auto', height: '100%'}}>
             <Button onClick={() => setIsRecording(true)}>Live Transcribe</Button>
+            <Divider style={{margin: "10px"}} />
             <AudioRecorder />
+            <Divider style={{margin: "10px"}} />
+            <FileUpload />
+            <Divider style={{margin: "10px"}} />
             <TabList vertical size={"medium"} selectedValue={selectedValue} onTabSelect={onTabSelect}>
+                {sessions.length === 0 && <Tab value={''}>No Sessions</Tab>}
                 {sessions.map((s) => {
                     return (<Tab key={s.id} value={s.id} style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
                         <span style={{color: 'red'}} onClick={() => {

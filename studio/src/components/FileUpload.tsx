@@ -1,6 +1,11 @@
 import React, { ChangeEvent, useState } from 'react';
+import {projectService} from "@/lib/api";
+import {useProjectContext} from "@/providers/ProjectProvider";
+import {Button} from "@fluentui/react-components";
+import toast from "react-hot-toast";
 
 export const FileUpload: React.FC = () => {
+    const { streamMessages } = useProjectContext();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [fileName, setFileName] = useState<string | null>(null);
 
@@ -11,19 +16,41 @@ export const FileUpload: React.FC = () => {
     };
 
     const handleFileUpload = () => {
-        if (selectedFile) {
-            const formData = new FormData();
-            formData.append('file', selectedFile);
-
-            // Now, you can use `formData` to upload the file via HTTP (using fetch or axios for instance)
+        if (!selectedFile) {
+            return;
         }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const fileAsArrayBuffer = (e.target as FileReader).result;
+            if (fileAsArrayBuffer) {
+                const fileBytes = new Uint8Array(fileAsArrayBuffer as ArrayBuffer);
+                try {
+                    const res = projectService.uploadContent({
+                        content: {
+                            options: {
+                                case: 'audioOptions',
+                                value: {
+                                    file: selectedFile.name,
+                                    data: fileBytes,
+                                }
+                            },
+                        },
+                    })
+                    void streamMessages(res);
+                } catch (e: any) {
+                    console.log(e);
+                    toast.error(e.message);
+                }
+            }
+        };
+        reader.readAsArrayBuffer(selectedFile);
     };
 
     return (
         <div>
             <input type="file" onChange={handleFileChange} />
             {fileName && <div>Selected File: {fileName}</div>}
-            <button onClick={handleFileUpload} disabled={!selectedFile}>Upload</button>
+            <Button onClick={handleFileUpload} disabled={!selectedFile}>Upload</Button>
         </div>
     );
 };

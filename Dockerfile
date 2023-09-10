@@ -4,5 +4,5 @@ WORKDIR /app
 ADD . .
 RUN make whisper && make models
 RUN go build -o main main.go
-ENTRYPOINT ["main"]
+ENTRYPOINT ["./main"]
 CMD ["start"]

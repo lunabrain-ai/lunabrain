@@ -1098,7 +1098,7 @@
             }
             return dispatcher.useContext(Context);
           }
-          function useState29(initialState2) {
+          function useState30(initialState2) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useState(initialState2);
           }
@@ -1900,7 +1900,7 @@
           exports.useMemo = useMemo17;
           exports.useReducer = useReducer2;
           exports.useRef = useRef33;
-          exports.useState = useState29;
+          exports.useState = useState30;
           exports.useSyncExternalStore = useSyncExternalStore;
           exports.useTransition = useTransition;
           exports.version = ReactVersion;
@@ -2396,9 +2396,9 @@
           if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
             __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
           }
-          var React170 = require_react();
+          var React171 = require_react();
           var Scheduler = require_scheduler();
-          var ReactSharedInternals = React170.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React171.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           var suppressWarning = false;
           function setSuppressWarning(newSuppressWarning) {
             {
@@ -4003,7 +4003,7 @@
             {
               if (props.value == null) {
                 if (typeof props.children === "object" && props.children !== null) {
-                  React170.Children.forEach(props.children, function(child) {
+                  React171.Children.forEach(props.children, function(child) {
                     if (child == null) {
                       return;
                     }
@@ -12450,7 +12450,7 @@
             }
           }
           var fakeInternalInstance = {};
-          var emptyRefsObject = new React170.Component().refs;
+          var emptyRefsObject = new React171.Component().refs;
           var didWarnAboutStateAssignmentForComponent;
           var didWarnAboutUninitializedState;
           var didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate;
@@ -24971,7 +24971,7 @@
       if (true) {
         (function() {
           "use strict";
-          var React170 = require_react();
+          var React171 = require_react();
           var REACT_ELEMENT_TYPE = Symbol.for("react.element");
           var REACT_PORTAL_TYPE = Symbol.for("react.portal");
           var REACT_FRAGMENT_TYPE = Symbol.for("react.fragment");
@@ -24997,7 +24997,7 @@
             }
             return null;
           }
-          var ReactSharedInternals = React170.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React171.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           function error(format2) {
             {
               {
@@ -25832,11 +25832,11 @@
               return jsxWithValidation(type, props, key, false);
             }
           }
-          var jsx16 = jsxWithValidationDynamic;
-          var jsxs12 = jsxWithValidationStatic;
+          var jsx17 = jsxWithValidationDynamic;
+          var jsxs13 = jsxWithValidationStatic;
           exports.Fragment = REACT_FRAGMENT_TYPE;
-          exports.jsx = jsx16;
-          exports.jsxs = jsxs12;
+          exports.jsx = jsx17;
+          exports.jsxs = jsxs13;
         })();
       }
     }
@@ -28813,7 +28813,7 @@
   });
 
   // src/index.tsx
-  var import_react55 = __toESM(require_react(), 1);
+  var import_react56 = __toESM(require_react(), 1);
   var import_client = __toESM(require_client(), 1);
 
   // ../node_modules/@griffel/core/constants.esm.js
@@ -64619,10 +64619,10 @@ to {
   };
 
   // src/pages/Chat/Sidebar.tsx
-  var import_react48 = __toESM(require_react(), 1);
+  var import_react49 = __toESM(require_react(), 1);
 
   // src/pages/Chat/CollectPanel.tsx
-  var import_react42 = __toESM(require_react(), 1);
+  var import_react43 = __toESM(require_react(), 1);
 
   // src/components/AudioRecorder.tsx
   var import_react41 = __toESM(require_react(), 1);
@@ -64677,15 +64677,67 @@ to {
     ] });
   };
 
-  // src/pages/Chat/CollectPanel.tsx
+  // src/components/FileUpload.tsx
+  var import_react42 = __toESM(require_react(), 1);
   var import_jsx_runtime5 = __toESM(require_jsx_runtime(), 1);
+  var FileUpload = () => {
+    const { streamMessages } = useProjectContext();
+    const [selectedFile, setSelectedFile] = (0, import_react42.useState)(null);
+    const [fileName, setFileName] = (0, import_react42.useState)(null);
+    const handleFileChange = (event) => {
+      const file = event.target.files ? event.target.files[0] : null;
+      setSelectedFile(file);
+      setFileName(file ? file.name : null);
+    };
+    const handleFileUpload = () => {
+      if (!selectedFile) {
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e2) => {
+        const fileAsArrayBuffer = e2.target.result;
+        if (fileAsArrayBuffer) {
+          const fileBytes = new Uint8Array(fileAsArrayBuffer);
+          try {
+            const res = projectService.uploadContent({
+              content: {
+                options: {
+                  case: "audioOptions",
+                  value: {
+                    file: selectedFile.name,
+                    data: fileBytes
+                  }
+                }
+              }
+            });
+            void streamMessages(res);
+          } catch (e3) {
+            console.log(e3);
+            _t.error(e3.message);
+          }
+        }
+      };
+      reader.readAsArrayBuffer(selectedFile);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "file", onChange: handleFileChange }),
+      fileName && /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { children: [
+        "Selected File: ",
+        fileName
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Button, { onClick: handleFileUpload, disabled: !selectedFile, children: "Upload" })
+    ] });
+  };
+
+  // src/pages/Chat/CollectPanel.tsx
+  var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1);
   var CollectPanel = () => {
-    const [sessions, setSessions] = (0, import_react42.useState)([]);
+    const [sessions, setSessions] = (0, import_react43.useState)([]);
     const { user, setSelectedValue, selectedValue, setIsRecording } = useProjectContext();
     const onTabSelect = (event, data) => {
       setSelectedValue(data.value);
     };
-    (0, import_react42.useEffect)(() => {
+    (0, import_react43.useEffect)(() => {
       if (!user) {
         return;
       }
@@ -64699,31 +64751,38 @@ to {
         }
       })();
     }, [user, setSessions]);
-    return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("div", { style: { overflowY: "auto", height: "100%" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(Button, { onClick: () => setIsRecording(true), children: "Live Transcribe" }),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(AudioRecorder, {}),
-      /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(TabList, { vertical: true, size: "medium", selectedValue, onTabSelect, children: sessions.map((s2) => {
-        return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(Tab2, { value: s2.id, style: { textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { style: { color: "red" }, onClick: () => {
-            projectService.deleteSession({ id: s2.id });
-          }, children: "x" }),
-          s2.name
-        ] }, s2.id);
-      }) })
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { overflowY: "auto", height: "100%" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Button, { onClick: () => setIsRecording(true), children: "Live Transcribe" }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Divider, { style: { margin: "10px" } }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(AudioRecorder, {}),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Divider, { style: { margin: "10px" } }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(FileUpload, {}),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Divider, { style: { margin: "10px" } }),
+      /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(TabList, { vertical: true, size: "medium", selectedValue, onTabSelect, children: [
+        sessions.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Tab2, { value: "", children: "No Sessions" }),
+        sessions.map((s2) => {
+          return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(Tab2, { value: s2.id, style: { textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { style: { color: "red" }, onClick: () => {
+              projectService.deleteSession({ id: s2.id });
+            }, children: "x" }),
+            s2.name
+          ] }, s2.id);
+        })
+      ] })
     ] });
   };
 
   // src/pages/Chat/PromptPanel.tsx
-  var import_react43 = __toESM(require_react(), 1);
-  var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1);
+  var import_react44 = __toESM(require_react(), 1);
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime(), 1);
   var PromptPanel = ({}) => {
-    const [prompts, setPrompts] = (0, import_react43.useState)([]);
-    const [prompt, setPrompt] = (0, import_react43.useState)("");
+    const [prompts, setPrompts] = (0, import_react44.useState)([]);
+    const [prompt, setPrompt] = (0, import_react44.useState)("");
     const { setSelectedValue, selectedValue, inferFromMessages } = useProjectContext();
     const onTabSelect = (event, data) => {
       inferFromMessages(data.value);
     };
-    (0, import_react43.useEffect)(() => {
+    (0, import_react44.useEffect)(() => {
       (async () => {
         try {
           const prompts2 = await projectService.getPrompts({});
@@ -64742,22 +64801,22 @@ to {
         text: prompt
       });
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { overflowY: "auto", height: "100%" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Label2, { style: { color: "white" }, htmlFor: "url", children: "Prompt" }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Input, { id: "url", onChange }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Button, { onClick: submitURL, children: "Submit" }),
-      /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(TabList, { vertical: true, size: "medium", selectedValue, onTabSelect, children: prompts.map((s2) => {
-        return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(Tab2, { value: s2.text, style: { textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: s2.text }, s2.id);
+    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { style: { overflowY: "auto", height: "100%" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Label2, { style: { color: "white" }, htmlFor: "url", children: "Prompt" }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Input, { id: "url", onChange }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Button, { onClick: submitURL, children: "Submit" }),
+      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(TabList, { vertical: true, size: "medium", selectedValue, onTabSelect, children: prompts.map((s2) => {
+        return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Tab2, { value: s2.text, style: { textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: s2.text }, s2.id);
       }) })
     ] });
   };
 
   // src/components/AccountCard.tsx
-  var import_react47 = __toESM(require_react(), 1);
+  var import_react48 = __toESM(require_react(), 1);
 
   // src/components/AuthForm.tsx
-  var import_react45 = __toESM(require_react(), 1);
-  var import_jsx_runtime7 = __toESM(require_jsx_runtime(), 1);
+  var import_react46 = __toESM(require_react(), 1);
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
   var Login = ({ email, password, setEmail, setPassword }) => {
     const { setUser } = useProjectContext();
     const handleLogin = async () => {
@@ -64773,10 +64832,10 @@ to {
         _t.error("Failed to login: " + e2.message);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(Stack, { tokens: { childrenGap: 10 }, styles: { root: { margin: "0 auto" } }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Input, { placeholder: "email", value: email, onChange: (e2, val) => setEmail(val.value) }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Input, { placeholder: "password", type: "password", value: password, onChange: (e2, val) => setPassword(val.value) }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(PrimaryButton, { text: "Login", onClick: handleLogin })
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(Stack, { tokens: { childrenGap: 10 }, styles: { root: { margin: "0 auto" } }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Input, { placeholder: "email", value: email, onChange: (e2, val) => setEmail(val.value) }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Input, { placeholder: "password", type: "password", value: password, onChange: (e2, val) => setPassword(val.value) }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(PrimaryButton, { text: "Login", onClick: handleLogin })
     ] });
   };
   var Register = ({ email, password, setEmail, setPassword }) => {
@@ -64794,16 +64853,16 @@ to {
         _t.error("Failed to register: " + e2.message);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(Stack, { tokens: { childrenGap: 10 }, styles: { root: { margin: "0 auto" } }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Input, { placeholder: "email", value: email, onChange: (e2, val) => setEmail(val.value) }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Input, { placeholder: "password", type: "password", value: password, onChange: (e2, val) => setPassword(val.value) }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(PrimaryButton, { text: "Register", onClick: handleRegister })
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(Stack, { tokens: { childrenGap: 10 }, styles: { root: { margin: "0 auto" } }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Input, { placeholder: "email", value: email, onChange: (e2, val) => setEmail(val.value) }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Input, { placeholder: "password", type: "password", value: password, onChange: (e2, val) => setPassword(val.value) }),
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(PrimaryButton, { text: "Register", onClick: handleRegister })
     ] });
   };
   var AuthForm = () => {
-    const [email, setEmail] = (0, import_react45.useState)("");
-    const [password, setPassword] = (0, import_react45.useState)("");
-    const [selectedValue, setSelectedValue] = import_react45.default.useState("login");
+    const [email, setEmail] = (0, import_react46.useState)("");
+    const [password, setPassword] = (0, import_react46.useState)("");
+    const [selectedValue, setSelectedValue] = import_react46.default.useState("login");
     const onTabSelect = (event, data) => {
       setSelectedValue(data.value);
     };
@@ -64813,24 +64872,24 @@ to {
       setEmail,
       setPassword
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(TabList, { selectedValue, onTabSelect, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Tab2, { value: "login", children: "Login" }),
-        /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Tab2, { value: "register", children: "Register" })
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(import_jsx_runtime8.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(TabList, { selectedValue, onTabSelect, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Tab2, { value: "login", children: "Login" }),
+        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Tab2, { value: "register", children: "Register" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("div", { children: [
-        selectedValue === "login" && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Login, { ...authFormProps }),
-        selectedValue === "register" && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Register, { ...authFormProps })
+      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
+        selectedValue === "login" && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Login, { ...authFormProps }),
+        selectedValue === "register" && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Register, { ...authFormProps })
       ] })
     ] });
   };
 
   // src/components/AccountCard.tsx
-  var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime(), 1);
   var AccountCard = () => {
     const { user, setUser } = useProjectContext();
-    const [showAuthForm, setShowAuthForm] = (0, import_react47.useState)(false);
-    (0, import_react47.useEffect)(() => {
+    const [showAuthForm, setShowAuthForm] = (0, import_react48.useState)(false);
+    (0, import_react48.useEffect)(() => {
       (async () => {
         try {
           const res = await projectService.login({});
@@ -64851,41 +64910,41 @@ to {
       }
     };
     if (showAuthForm && !user) {
-      return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(AuthForm, {});
+      return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(AuthForm, {});
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { children: user ? /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("p", { children: user.email }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Button, { onClick: logout, children: "logout" })
-    ] }) : /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Button, { onClick: () => setShowAuthForm(true), children: "Login" }) });
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("div", { children: user ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("p", { children: user.email }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Button, { onClick: logout, children: "logout" })
+    ] }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Button, { onClick: () => setShowAuthForm(true), children: "Login" }) });
   };
 
   // src/pages/Chat/Sidebar.tsx
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
   var Sidebar = ({}) => {
-    const [selectedValue, setSelectedValue] = (0, import_react48.useState)("collect");
+    const [selectedValue, setSelectedValue] = (0, import_react49.useState)("collect");
     const onTabSelect = (event, data) => {
       setSelectedValue(data.value);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(AccountCard, {}),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Divider, { style: { marginTop: "10px", marginBottom: "10px" } }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(TabList, { selectedValue, onTabSelect, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Tab2, { value: "collect", children: "Collect" }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Tab2, { value: "prompts", children: "Prompts" })
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(import_jsx_runtime10.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(AccountCard, {}),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Divider, { style: { marginTop: "10px", marginBottom: "10px" } }),
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(TabList, { selectedValue, onTabSelect, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Tab2, { value: "collect", children: "Collect" }),
+        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Tab2, { value: "prompts", children: "Prompts" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("div", { style: { marginTop: "10px" }, children: [
-        selectedValue === "collect" && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(CollectPanel, {}),
-        selectedValue === "prompts" && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(PromptPanel, {})
+      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("div", { style: { marginTop: "10px" }, children: [
+        selectedValue === "collect" && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(CollectPanel, {}),
+        selectedValue === "prompts" && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(PromptPanel, {})
       ] })
     ] });
   };
 
   // src/pages/Chat/Window.tsx
-  var import_react52 = __toESM(require_react(), 1);
+  var import_react53 = __toESM(require_react(), 1);
 
   // src/pages/Chat/MessageList.tsx
-  var React167 = __toESM(require_react(), 1);
-  var import_react51 = __toESM(require_react(), 1);
+  var React168 = __toESM(require_react(), 1);
+  var import_react52 = __toESM(require_react(), 1);
 
   // ../node_modules/react-markdown/lib/uri-transformer.js
   var protocols = ["http", "https", "mailto", "tel"];
@@ -64918,7 +64977,7 @@ to {
   }
 
   // ../node_modules/react-markdown/lib/react-markdown.js
-  var import_react50 = __toESM(require_react(), 1);
+  var import_react51 = __toESM(require_react(), 1);
 
   // ../node_modules/vfile/lib/index.js
   var import_is_buffer = __toESM(require_is_buffer(), 1);
@@ -73152,7 +73211,7 @@ to {
   }
 
   // ../node_modules/react-markdown/lib/ast-to-react.js
-  var import_react49 = __toESM(require_react(), 1);
+  var import_react50 = __toESM(require_react(), 1);
   var import_react_is = __toESM(require_react_is2(), 1);
 
   // ../node_modules/hast-util-whitespace/index.js
@@ -73238,7 +73297,7 @@ to {
       end: { line: null, column: null, offset: null }
     };
     const component = options.components && own6.call(options.components, name) ? options.components[name] : name;
-    const basic = typeof component === "string" || component === import_react49.default.Fragment;
+    const basic = typeof component === "string" || component === import_react50.default.Fragment;
     if (!import_react_is.default.isValidElementType(component)) {
       throw new TypeError(
         `Component for name \`${name}\` not defined or is not renderable`
@@ -73309,7 +73368,7 @@ to {
     if (!basic) {
       properties.node = node2;
     }
-    return children.length > 0 ? import_react49.default.createElement(component, properties, children) : import_react49.default.createElement(component, properties);
+    return children.length > 0 ? import_react50.default.createElement(component, properties, children) : import_react50.default.createElement(component, properties);
   }
   function getInputElement(node2) {
     let index2 = -1;
@@ -73430,13 +73489,13 @@ to {
     if (hastNode.type !== "root") {
       throw new TypeError("Expected a `root` node");
     }
-    let result = import_react50.default.createElement(
-      import_react50.default.Fragment,
+    let result = import_react51.default.createElement(
+      import_react51.default.Fragment,
       {},
       childrenToReact({ options, schema: html3, listDepth: 0 }, hastNode)
     );
     if (options.className) {
-      result = import_react50.default.createElement("div", { className: options.className }, result);
+      result = import_react51.default.createElement("div", { className: options.className }, result);
     }
     return result;
   }
@@ -73501,17 +73560,17 @@ to {
   };
 
   // src/pages/Chat/MessageList.tsx
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime(), 1);
   var messageColumns = [
     createTableColumn({
       columnId: "text"
     })
   ];
   var SubtleSelection = ({ style, items, columns, audioRef }) => {
-    const messagesEndRef = (0, import_react51.useRef)(null);
-    const [currentTime, setCurrentTime] = (0, import_react51.useState)(0);
+    const messagesEndRef = (0, import_react52.useRef)(null);
+    const [currentTime, setCurrentTime] = (0, import_react52.useState)(0);
     const { inference } = useProjectContext();
-    (0, import_react51.useEffect)(() => {
+    (0, import_react52.useEffect)(() => {
       if (messagesEndRef.current) {
         messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
       }
@@ -73552,7 +73611,7 @@ to {
         appearance: selected ? "brand" : "none"
       };
     });
-    const toggleAllKeydown = React167.useCallback(
+    const toggleAllKeydown = React168.useCallback(
       (e2) => {
         if (e2.key === " ") {
           toggleAllRows(e2);
@@ -73561,7 +73620,7 @@ to {
       },
       [toggleAllRows]
     );
-    (0, import_react51.useEffect)(() => {
+    (0, import_react52.useEffect)(() => {
       const audioElement = audioRef.current;
       if (audioElement) {
         const handleTimeUpdate = () => {
@@ -73586,19 +73645,19 @@ to {
     };
     const tc = (item) => {
       if (item.segment.tokens.length === 0) {
-        return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(ReactMarkdown, { children: item.text });
+        return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ReactMarkdown, { children: item.text });
       }
-      return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(import_jsx_runtime10.Fragment, { children: item.segment.tokens.map((t2) => {
+      return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(import_jsx_runtime11.Fragment, { children: item.segment.tokens.map((t2) => {
         if (/\[.*\]/.test(t2.text) || "<|endoftext|>" === t2.text) {
           return null;
         }
         const time = Number(t2.startTime) / 1e3;
-        return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { style: shouldHighlight(t2), onClick: () => changeCurrentTime(time), title: time.toString(), children: t2.text });
+        return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: shouldHighlight(t2), onClick: () => changeCurrentTime(time), title: time.toString(), children: t2.text });
       }) });
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(Table, { style, "aria-label": "Table with subtle selection", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(TableHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(TableRow, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(Table, { style, "aria-label": "Table with subtle selection", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(TableHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(TableRow, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
           TableSelectionCell,
           {
             checked: allRowsSelected ? true : someRowsSelected ? "mixed" : false,
@@ -73607,10 +73666,10 @@ to {
             checkboxIndicator: { "aria-label": "Select all rows " }
           }
         ),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(TableHeaderCell, { children: "Message" })
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(TableHeaderCell, { children: "Message" })
       ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(TableBody, { style: { overflowY: "auto" }, children: [
-        rows.map(({ item, selected, onClick, onKeyDown, appearance, rowId }) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(
+      /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(TableBody, { style: { overflowY: "auto" }, children: [
+        rows.map(({ item, selected, onClick, onKeyDown, appearance, rowId }) => /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
           TableRow,
           {
             onClick,
@@ -73618,7 +73677,7 @@ to {
             "aria-selected": selected,
             appearance,
             children: [
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
                 TableSelectionCell,
                 {
                   subtle: true,
@@ -73626,30 +73685,30 @@ to {
                   checkboxIndicator: { "aria-label": "Select row" }
                 }
               ),
-              /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(TableCell, { children: tc(item) })
+              /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(TableCell, { children: tc(item) })
             ]
           },
           rowId
         )),
-        inference !== "" && /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)(TableRow, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+        inference !== "" && /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(TableRow, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
             TableSelectionCell,
             {
               subtle: true
             }
           ),
-          /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(TableCell, { children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(ReactMarkdown, { children: inference }) })
+          /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(TableCell, { children: /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ReactMarkdown, { children: inference }) })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("tr", { ref: messagesEndRef })
+        /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("tr", { ref: messagesEndRef })
       ] })
     ] });
   };
 
   // src/pages/Chat/Window.tsx
-  var import_jsx_runtime11 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
   var Window = ({}) => {
-    const audioRef = (0, import_react52.useRef)(null);
-    const [inputValue, setInputValue] = (0, import_react52.useState)("");
+    const audioRef = (0, import_react53.useRef)(null);
+    const [inputValue, setInputValue] = (0, import_react53.useState)("");
     const { messages, setMessages, session, inferFromMessages } = useProjectContext();
     const handleSend = () => {
       if (inputValue && inputValue.trim() !== "") {
@@ -73657,14 +73716,14 @@ to {
         inferFromMessages(inputValue);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(Stack, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(Stack, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
         Stack,
         {
           verticalFill: true,
           verticalAlign: "space-between",
           styles: { root: { height: "90vh", overflowY: "auto", width: "100%", margin: "0 auto", paddingTop: 10, display: "flex", flexDirection: "column" } },
-          children: messages.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("div", { style: { textAlign: "center", color: "#0078d4", fontSize: 20, fontWeight: "bold" }, children: "Welcome to LunaBrain Chat! Type, talk, or drag something!" }) : /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          children: messages.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { textAlign: "center", color: "#0078d4", fontSize: 20, fontWeight: "bold" }, children: "Welcome to LunaBrain Chat! Type, talk, or drag something!" }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
             SubtleSelection,
             {
               style: { maxHeight: "90vh" },
@@ -73675,7 +73734,7 @@ to {
           )
         }
       ),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(Stack, { children: session && /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Stack, { children: session && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
         "audio",
         {
           ref: audioRef,
@@ -73683,15 +73742,15 @@ to {
           controls: true
         }
       ) }),
-      /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
         Stack,
         {
           horizontal: true,
           verticalAlign: "end",
           horizontalAlign: "center",
           styles: { root: { width: "100%", gap: 15, marginBottom: 20, relative: true } },
-          children: /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(import_jsx_runtime11.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+          children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(import_jsx_runtime12.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
               TextField,
               {
                 placeholder: "Type a message...",
@@ -73706,7 +73765,7 @@ to {
                 styles: { root: { width: "100%" } }
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(PrimaryButton, { text: "Send", onClick: handleSend })
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(PrimaryButton, { text: "Send", onClick: handleSend })
           ] })
         }
       )
@@ -73714,39 +73773,39 @@ to {
   };
 
   // src/pages/Chat/Chat.tsx
-  var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
   var ChatPage = () => {
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(Stack, { horizontal: true, styles: { root: { height: "100vh", gap: 15, width: "100%" } }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Stack.Item, { styles: { root: { borderRight: "1px solid #e1e1e1", padding: 10, width: "20%" } }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Sidebar, {}) }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Stack.Item, { styles: { root: { width: "80%" } }, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(FileDrop, { children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Window, {}) }) })
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(Stack, { horizontal: true, styles: { root: { height: "100vh", gap: 15, width: "100%" } }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Stack.Item, { styles: { root: { borderRight: "1px solid #e1e1e1", padding: 10, width: "20%" } }, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Sidebar, {}) }),
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Stack.Item, { styles: { root: { width: "80%" } }, children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(FileDrop, { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Window, {}) }) })
     ] });
   };
 
   // src/pages/index.tsx
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
   function Home2() {
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("main", { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ChatPage, {}) });
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("main", { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ChatPage, {}) });
   }
 
   // src/App.tsx
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
   initializeIcons20();
   var AppRoutes = () => {
     const commonRoutes = [{
       path: "/studio",
-      element: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Home2, {})
+      element: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Home2, {})
     }];
     const element2 = useRoutes([...commonRoutes]);
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(import_jsx_runtime14.Fragment, { children: element2 });
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_jsx_runtime15.Fragment, { children: element2 });
   };
   function App() {
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(FluentProvider, { theme: webDarkTheme, children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(FluentProvider, { theme: webDarkTheme, children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
       ErrorBoundary,
       {
         FallbackComponent: FallbackError,
-        children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(HotkeysProvider, { initiallyActiveScopes: ["editor"], children: /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(ProjectProvider, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(BrowserRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ProjectProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(AppRoutes, {}) }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Ie, {})
+        children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(HotkeysProvider, { initiallyActiveScopes: ["editor"], children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(ProjectProvider, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(BrowserRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ProjectProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(AppRoutes, {}) }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Ie, {})
         ] }) })
       }
     ) });
@@ -73756,12 +73815,12 @@ to {
   require_source_map_support().install();
 
   // src/index.tsx
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
-  window.React = import_react55.default;
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
+  window.React = import_react56.default;
   new EventSource("/esbuild").addEventListener("change", () => location.reload());
   var root2 = import_client.default.createRoot(document.getElementById("root"));
   root2.render(
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(import_react55.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(App, {}) })
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_react56.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(App, {}) })
   );
 })();
 /*! Bundled license information:
