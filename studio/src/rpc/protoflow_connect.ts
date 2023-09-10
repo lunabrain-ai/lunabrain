@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ChatRequest, ChatResponse, ConvertFileRequest, DeleteSessionRequest, Empty, FilePath, GetPromptsRequest, GetPromptsResponse, GetSessionRequest, GetSessionResponse, GetSessionsRequest, GetSessionsResponse, InferRequest, InferResponse, OCRText, Prompt, UploadContentRequest, User, YouTubeVideo } from "./protoflow_pb.js";
+import { ChatRequest, ChatResponse, ConvertFileRequest, DeleteSessionRequest, Empty, FilePath, GetPromptsRequest, GetPromptsResponse, GetSessionRequest, GetSessionResponse, GetSessionsRequest, GetSessionsResponse, InferRequest, InferResponse, Prompt, UploadContentRequest, User, YouTubeVideo } from "./protoflow_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -94,21 +94,14 @@ export const ProtoflowService = {
       kind: MethodKind.ServerStreaming,
     },
     /**
+     *  rpc OCR (FilePath) returns (OCRText);
+     *
      * @generated from rpc protoflow.ProtoflowService.ConvertFile
      */
     convertFile: {
       name: "ConvertFile",
       I: ConvertFileRequest,
       O: FilePath,
-      kind: MethodKind.Unary,
-    },
-    /**
-     * @generated from rpc protoflow.ProtoflowService.OCR
-     */
-    oCR: {
-      name: "OCR",
-      I: FilePath,
-      O: OCRText,
       kind: MethodKind.Unary,
     },
     /**

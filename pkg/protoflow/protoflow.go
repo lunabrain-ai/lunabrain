@@ -2,7 +2,6 @@ package protoflow
 
 import (
 	"context"
-	"github.com/breadchris/gosseract"
 	"github.com/breadchris/scs/v2"
 	connect_go "github.com/bufbuild/connect-go"
 	"github.com/google/uuid"
@@ -455,22 +454,22 @@ func loadImageFromFile(imgPath string) image.Image {
 	return img
 }
 
-func (p *Protoflow) OCR(ctx context.Context, c *connect_go.Request[genapi.FilePath]) (*connect_go.Response[genapi.OCRText], error) {
-	log.Info().Str("file", c.Msg.File).Msg("ocr")
-	client := gosseract.NewClient()
-	defer client.Close()
-
-	err := client.SetImage(c.Msg.File)
-	if err != nil {
-		return nil, err
-	}
-
-	text, err := client.Text()
-	if err != nil {
-		return nil, err
-	}
-
-	return connect_go.NewResponse(&genapi.OCRText{
-		Text: text,
-	}), nil
-}
+//func (p *Protoflow) OCR(ctx context.Context, c *connect_go.Request[genapi.FilePath]) (*connect_go.Response[genapi.OCRText], error) {
+//	log.Info().Str("file", c.Msg.File).Msg("ocr")
+//	client := gosseract.NewClient()
+//	defer client.Close()
+//
+//	err := client.SetImage(c.Msg.File)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	text, err := client.Text()
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	return connect_go.NewResponse(&genapi.OCRText{
+//		Text: text,
+//	}), nil
+//}

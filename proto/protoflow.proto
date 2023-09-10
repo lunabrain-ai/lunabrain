@@ -21,7 +21,7 @@ service ProtoflowService {
 
   rpc Chat(ChatRequest) returns (stream ChatResponse);
   rpc ConvertFile(ConvertFileRequest) returns (FilePath);
-  rpc OCR (FilePath) returns (OCRText);
+//  rpc OCR (FilePath) returns (OCRText);
 
   rpc Register(User) returns (User);
   rpc Login(User) returns (User);

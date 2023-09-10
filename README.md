@@ -32,13 +32,13 @@ git clone --recursive https://github.com/lunabrain-ai/lunabrain.git
 
 Mac
 ```shell
-brew install bufbuild/buf/buf tesseract libsndfile sdl2
+brew install bufbuild/buf/buf libsndfile sdl2
 ```
 
 Ubuntu & WSL
 ```shell
 # TODO breadchris fill this out
-sudo apt-get install tesseract-ocr
+sudo apt-get install libsndfile sdl2
 ```
 
 All: Build Whisper

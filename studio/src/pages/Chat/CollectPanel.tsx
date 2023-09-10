@@ -14,6 +14,7 @@ import {
 } from "@fluentui/react-components";
 import {Icon, Label} from "@fluentui/react";
 import {useProjectContext} from "@/providers/ProjectProvider";
+import {AudioRecorder} from "@/components/AudioRecorder";
 
 interface SidebarProps {
 }
@@ -75,6 +76,7 @@ export const CollectPanel: React.FC<SidebarProps> = () => {
     return (
         <div style={{ overflowY: 'auto', height: '100%'}}>
             <Button onClick={() => setIsRecording(true)}>Live Transcribe</Button>
+            <AudioRecorder />
             <TabList vertical size={"medium"} selectedValue={selectedValue} onTabSelect={onTabSelect}>
                 {sessions.map((s) => {
                     return (<Tab key={s.id} value={s.id} style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>

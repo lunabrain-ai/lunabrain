@@ -61,8 +61,6 @@ const (
 	// ProtoflowServiceConvertFileProcedure is the fully-qualified name of the ProtoflowService's
 	// ConvertFile RPC.
 	ProtoflowServiceConvertFileProcedure = "/protoflow.ProtoflowService/ConvertFile"
-	// ProtoflowServiceOCRProcedure is the fully-qualified name of the ProtoflowService's OCR RPC.
-	ProtoflowServiceOCRProcedure = "/protoflow.ProtoflowService/OCR"
 	// ProtoflowServiceRegisterProcedure is the fully-qualified name of the ProtoflowService's Register
 	// RPC.
 	ProtoflowServiceRegisterProcedure = "/protoflow.ProtoflowService/Register"
@@ -84,7 +82,6 @@ type ProtoflowServiceClient interface {
 	Infer(context.Context, *connect_go.Request[gen.InferRequest]) (*connect_go.ServerStreamForClient[gen.InferResponse], error)
 	Chat(context.Context, *connect_go.Request[gen.ChatRequest]) (*connect_go.ServerStreamForClient[gen.ChatResponse], error)
 	ConvertFile(context.Context, *connect_go.Request[gen.ConvertFileRequest]) (*connect_go.Response[gen.FilePath], error)
-	OCR(context.Context, *connect_go.Request[gen.FilePath]) (*connect_go.Response[gen.OCRText], error)
 	Register(context.Context, *connect_go.Request[gen.User]) (*connect_go.Response[gen.User], error)
 	Login(context.Context, *connect_go.Request[gen.User]) (*connect_go.Response[gen.User], error)
 	Logout(context.Context, *connect_go.Request[gen.Empty]) (*connect_go.Response[gen.Empty], error)
@@ -150,11 +147,6 @@ func NewProtoflowServiceClient(httpClient connect_go.HTTPClient, baseURL string,
 			baseURL+ProtoflowServiceConvertFileProcedure,
 			opts...,
 		),
-		oCR: connect_go.NewClient[gen.FilePath, gen.OCRText](
-			httpClient,
-			baseURL+ProtoflowServiceOCRProcedure,
-			opts...,
-		),
 		register: connect_go.NewClient[gen.User, gen.User](
 			httpClient,
 			baseURL+ProtoflowServiceRegisterProcedure,
@@ -185,7 +177,6 @@ type protoflowServiceClient struct {
 	infer                *connect_go.Client[gen.InferRequest, gen.InferResponse]
 	chat                 *connect_go.Client[gen.ChatRequest, gen.ChatResponse]
 	convertFile          *connect_go.Client[gen.ConvertFileRequest, gen.FilePath]
-	oCR                  *connect_go.Client[gen.FilePath, gen.OCRText]
 	register             *connect_go.Client[gen.User, gen.User]
 	login                *connect_go.Client[gen.User, gen.User]
 	logout               *connect_go.Client[gen.Empty, gen.Empty]
@@ -241,11 +232,6 @@ func (c *protoflowServiceClient) ConvertFile(ctx context.Context, req *connect_g
 	return c.convertFile.CallUnary(ctx, req)
 }
 
-// OCR calls protoflow.ProtoflowService.OCR.
-func (c *protoflowServiceClient) OCR(ctx context.Context, req *connect_go.Request[gen.FilePath]) (*connect_go.Response[gen.OCRText], error) {
-	return c.oCR.CallUnary(ctx, req)
-}
-
 // Register calls protoflow.ProtoflowService.Register.
 func (c *protoflowServiceClient) Register(ctx context.Context, req *connect_go.Request[gen.User]) (*connect_go.Response[gen.User], error) {
 	return c.register.CallUnary(ctx, req)
@@ -273,7 +259,6 @@ type ProtoflowServiceHandler interface {
 	Infer(context.Context, *connect_go.Request[gen.InferRequest], *connect_go.ServerStream[gen.InferResponse]) error
 	Chat(context.Context, *connect_go.Request[gen.ChatRequest], *connect_go.ServerStream[gen.ChatResponse]) error
 	ConvertFile(context.Context, *connect_go.Request[gen.ConvertFileRequest]) (*connect_go.Response[gen.FilePath], error)
-	OCR(context.Context, *connect_go.Request[gen.FilePath]) (*connect_go.Response[gen.OCRText], error)
 	Register(context.Context, *connect_go.Request[gen.User]) (*connect_go.Response[gen.User], error)
 	Login(context.Context, *connect_go.Request[gen.User]) (*connect_go.Response[gen.User], error)
 	Logout(context.Context, *connect_go.Request[gen.Empty]) (*connect_go.Response[gen.Empty], error)
@@ -335,11 +320,6 @@ func NewProtoflowServiceHandler(svc ProtoflowServiceHandler, opts ...connect_go.
 		svc.ConvertFile,
 		opts...,
 	)
-	protoflowServiceOCRHandler := connect_go.NewUnaryHandler(
-		ProtoflowServiceOCRProcedure,
-		svc.OCR,
-		opts...,
-	)
 	protoflowServiceRegisterHandler := connect_go.NewUnaryHandler(
 		ProtoflowServiceRegisterProcedure,
 		svc.Register,
@@ -377,8 +357,6 @@ func NewProtoflowServiceHandler(svc ProtoflowServiceHandler, opts ...connect_go.
 			protoflowServiceChatHandler.ServeHTTP(w, r)
 		case ProtoflowServiceConvertFileProcedure:
 			protoflowServiceConvertFileHandler.ServeHTTP(w, r)
-		case ProtoflowServiceOCRProcedure:
-			protoflowServiceOCRHandler.ServeHTTP(w, r)
 		case ProtoflowServiceRegisterProcedure:
 			protoflowServiceRegisterHandler.ServeHTTP(w, r)
 		case ProtoflowServiceLoginProcedure:
@@ -432,10 +410,6 @@ func (UnimplementedProtoflowServiceHandler) Chat(context.Context, *connect_go.Re
 
 func (UnimplementedProtoflowServiceHandler) ConvertFile(context.Context, *connect_go.Request[gen.ConvertFileRequest]) (*connect_go.Response[gen.FilePath], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.ConvertFile is not implemented"))
-}
-
-func (UnimplementedProtoflowServiceHandler) OCR(context.Context, *connect_go.Request[gen.FilePath]) (*connect_go.Response[gen.OCRText], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.OCR is not implemented"))
 }
 
 func (UnimplementedProtoflowServiceHandler) Register(context.Context, *connect_go.Request[gen.User]) (*connect_go.Response[gen.User], error) {

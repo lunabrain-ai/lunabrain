@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import {Button} from "@fluentui/react-components";
 
 export const AudioRecorder: React.FC = () => {
     const [recording, setRecording] = useState(false);
@@ -29,9 +30,9 @@ export const AudioRecorder: React.FC = () => {
 
     return (
         <div>
-            <button onClick={recording ? stopRecording : startRecording}>
+            <Button onClick={recording ? stopRecording : startRecording}>
                 {recording ? 'Stop Recording' : 'Start Recording'}
-            </button>
+            </Button>
             {audioUrl && <audio controls src={audioUrl}>Your browser does not support the audio element.</audio>}
         </div>
     );
