@@ -6,13 +6,11 @@ import (
 	"github.com/breadchris/scs/v2"
 	"github.com/bufbuild/connect-go"
 	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
-	"github.com/go-chi/chi/v5"
 	"github.com/google/wire"
 	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/api"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
 	code "github.com/lunabrain-ai/lunabrain/pkg/protoflow"
-	"github.com/lunabrain-ai/lunabrain/pkg/server/html"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/lunabrain-ai/lunabrain/studio/public"
@@ -32,7 +30,6 @@ type APIHTTPServer struct {
 	config           api.Config
 	db               db.Store
 	apiServer        *api.Server
-	htmlContent      *html.HTML
 	bucket           *bucket.Bucket
 	discordService   *discord.DiscordService
 	protoflowService *code.Protoflow
@@ -49,7 +46,6 @@ var (
 		api.NewAPIServer,
 		NewAPIHTTPServer,
 		api.NewConfig,
-		html.NewHTML,
 		wire.Bind(new(HTTPServer), new(*APIHTTPServer)),
 	)
 )
@@ -57,7 +53,6 @@ var (
 func NewAPIHTTPServer(
 	config api.Config,
 	apiServer *api.Server,
-	htmlContent *html.HTML,
 	db db.Store,
 	bucket *bucket.Bucket,
 	d *discord.DiscordService,
@@ -68,7 +63,6 @@ func NewAPIHTTPServer(
 	return &APIHTTPServer{
 		config:           config,
 		apiServer:        apiServer,
-		htmlContent:      htmlContent,
 		db:               db,
 		bucket:           bucket,
 		discordService:   d,
@@ -96,9 +90,6 @@ func NewLogInterceptor() connect.UnaryInterceptorFunc {
 
 func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	interceptors := connect.WithInterceptors(NewLogInterceptor())
-
-	r := chi.NewRouter()
-	a.getClientRoutes(r)
 
 	apiRoot := http.NewServeMux()
 
