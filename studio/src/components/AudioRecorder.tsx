@@ -1,18 +1,22 @@
 import React, { useState, useRef } from 'react';
-import {Button} from "@fluentui/react-components";
+import { Button } from "@fluentui/react-components";
+import {projectService} from "@/lib/api";
+import {useProjectContext} from "@/providers/ProjectProvider";
 
 export const AudioRecorder: React.FC = () => {
+    const { streamMessages } = useProjectContext();
     const [recording, setRecording] = useState(false);
     const [audioUrl, setAudioUrl] = useState<string | null>(null);
     const mediaRecorder = useRef<MediaRecorder | null>(null);
+    const audioChunks = useRef<Blob[]>([]);
 
     const startRecording = () => {
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then(stream => {
-                mediaRecorder.current = new MediaRecorder(stream);
+                mediaRecorder.current = new MediaRecorder(stream, { mimeType: 'audio/wav' });
                 mediaRecorder.current.ondataavailable = event => {
                     if (event.data.size > 0) {
-                        setAudioUrl(URL.createObjectURL(event.data));
+                        audioChunks.current.push(event.data);
                     }
                 };
                 mediaRecorder.current.start();
@@ -28,10 +32,34 @@ export const AudioRecorder: React.FC = () => {
         }
     };
 
+    const uploadAudio = async () => {
+        if(audioChunks.current.length > 0) {
+            const audioBlob = new Blob(audioChunks.current, { type: 'audio/wav' });
+            setAudioUrl(URL.createObjectURL(audioBlob));
+
+            const fileBytes = new Uint8Array(await audioBlob.arrayBuffer());
+            const res = projectService.uploadContent({
+                content: {
+                    options: {
+                        case: 'audioOptions',
+                        value: {
+                            file: new Date().toISOString() + '.wav',
+                            data: fileBytes,
+                        }
+                    },
+                },
+            })
+            void streamMessages(res);
+        }
+    };
+
     return (
         <div>
             <Button onClick={recording ? stopRecording : startRecording}>
                 {recording ? 'Stop Recording' : 'Start Recording'}
+            </Button>
+            <Button onClick={uploadAudio} disabled={audioChunks.current.length === 0}>
+                Upload Audio
             </Button>
             {audioUrl && <audio controls src={audioUrl}>Your browser does not support the audio element.</audio>}
         </div>

@@ -21,7 +21,6 @@ export const FileDrop: React.FC<FileDropProps> = ({children}) => {
                 const fileAsArrayBuffer = (e.target as FileReader).result;
                 if (fileAsArrayBuffer) {
                     const fileBytes = new Uint8Array(fileAsArrayBuffer as ArrayBuffer);
-                    console.log('File bytes:', fileBytes);
                     const res = projectService.uploadContent({
                         content: {
                             options: {

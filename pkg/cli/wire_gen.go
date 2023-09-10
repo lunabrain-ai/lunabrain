@@ -20,7 +20,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
-	"github.com/lunabrain-ai/lunabrain/pkg/server/html"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/protoflow-labs/protoflow/pkg/log"
@@ -122,7 +121,6 @@ func Wire() (*cli.App, error) {
 	publishPublish := publish.NewPublisher(publishDiscord)
 	contentWorkflow := pipeline.NewContentWorkflow(dbStore, normalizer, summarize, categorize, bucketBucket, publishPublish)
 	apiServer := api.NewAPIServer(dbStore, contentWorkflow)
-	htmlHTML := html.NewHTML()
 	discordService := discord.New(discordSession)
 	openaiConfig, err := openai.NewConfig(provider)
 	if err != nil {
@@ -142,7 +140,7 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	apihttpServer := server.NewAPIHTTPServer(apiConfig, apiServer, htmlHTML, dbStore, bucketBucket, discordService, protoflowProtoflow, protoflow2, sessionManager)
+	apihttpServer := server.NewAPIHTTPServer(apiConfig, apiServer, dbStore, bucketBucket, discordService, protoflowProtoflow, protoflow2, sessionManager)
 	discordCollector := collect.NewDiscordCollector(session, dbStore, contentWorkflow)
 	hnCollect := collect.NewHNCollector(dbStore, contentWorkflow)
 	app := NewApp(logLog, apihttpServer, normalizer, summarize, discordCollector, hnCollect)
