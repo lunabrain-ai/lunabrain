@@ -14,10 +14,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/util"
 	"github.com/pkg/errors"
-	"github.com/protoflow-labs/protoflow/gen"
-	pbucket "github.com/protoflow-labs/protoflow/pkg/bucket"
 	"github.com/protoflow-labs/protoflow/pkg/openai"
-	"github.com/protoflow-labs/protoflow/pkg/protoflow"
 	"github.com/reactivex/rxgo/v2"
 	"github.com/rs/zerolog/log"
 	gopenai "github.com/sashabaranov/go-openai"
@@ -36,40 +33,43 @@ type Protoflow struct {
 	sessionStore   *db.Session
 	fileStore      *bucket.Bucket
 	sessionManager *scs.SessionManager
+	config         Config
 }
 
 var ProviderSet = wire.NewSet(
 	New,
-	NewProtoflow,
+	NewConfig,
 )
 
 var _ genconnect.ProtoflowServiceHandler = (*Protoflow)(nil)
 
-func NewProtoflow() (*protoflow.Protoflow, error) {
-	// TODO breadchris pass a config provider in here
-	return protoflow.Wire(pbucket.Config{
-		Name: ".lunabrain",
-	}, &gen.Project{
-		Id:   uuid.NewString(),
-		Name: "test",
-		Graph: &gen.Graph{
-			Nodes: []*gen.Node{},
-			Edges: []*gen.Edge{},
-		},
-	})
-}
+//func NewProtoflow() (*protoflow.Protoflow, error) {
+//	// TODO breadchris pass a config provider in here
+//	return protoflow.Wire(pbucket.Config{
+//		Name: ".lunabrain",
+//	}, &gen.Project{
+//		Id:   uuid.NewString(),
+//		Name: "test",
+//		Graph: &gen.Graph{
+//			Nodes: []*gen.Node{},
+//			Edges: []*gen.Edge{},
+//		},
+//	})
+//}
 
 func New(
 	openai openai.QAClient,
 	sessionStore *db.Session,
 	fileStore *bucket.Bucket,
 	sessionManager *scs.SessionManager,
+	config Config,
 ) *Protoflow {
 	return &Protoflow{
 		openai:         openai,
 		sessionStore:   sessionStore,
 		fileStore:      fileStore,
 		sessionManager: sessionManager,
+		config:         config,
 	}
 }
 
@@ -311,6 +311,10 @@ func (p *Protoflow) observeSegments(
 }
 
 func (p *Protoflow) Chat(ctx context.Context, c *connect_go.Request[genapi.ChatRequest], c2 *connect_go.ServerStream[genapi.ChatResponse]) error {
+	if !p.config.SystemAudio {
+		return errors.New("system audio is not enabled")
+	}
+
 	id, err := p.getUserID(ctx)
 	if err != nil {
 		return err

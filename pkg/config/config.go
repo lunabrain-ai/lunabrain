@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/lunabrain-ai/lunabrain/pkg/api"
+	"github.com/lunabrain-ai/lunabrain/pkg/protoflow"
 	"github.com/lunabrain-ai/lunabrain/pkg/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
@@ -21,12 +22,13 @@ const (
 )
 
 type Config struct {
-	Bucket bucket.Config `yaml:"bucket"`
-	Python python.Config `yaml:"python"`
-	API    api.Config    `yaml:"api"`
-	Scrape scrape.Config `yaml:"scrape"`
-	DB     db.Config     `yaml:"db"`
-	OpenAI openai.Config `yaml:"openai"`
+	Bucket    bucket.Config    `yaml:"bucket"`
+	Python    python.Config    `yaml:"python"`
+	API       api.Config       `yaml:"api"`
+	Scrape    scrape.Config    `yaml:"scrape"`
+	DB        db.Config        `yaml:"db"`
+	OpenAI    openai.Config    `yaml:"openai"`
+	Protoflow protoflow.Config `yaml:"protoflow"`
 }
 
 func newDefaultConfig() Config {
@@ -46,8 +48,9 @@ func newDefaultConfig() Config {
 		Scrape: scrape.Config{
 			Client: scrape.ClientHTTP,
 		},
-		DB:     db.NewDefaultConfig(),
-		OpenAI: openai.NewDefaultConfig(),
+		DB:        db.NewDefaultConfig(),
+		OpenAI:    openai.NewDefaultConfig(),
+		Protoflow: protoflow.NewDefaultConfig(),
 	}
 }
 

@@ -135,12 +135,12 @@ func Wire() (*cli.App, error) {
 		return nil, err
 	}
 	sessionManager := scs.New()
-	protoflowProtoflow := protoflow.New(openAIQAClient, dbSession, bucketBucket, sessionManager)
-	protoflow2, err := protoflow.NewProtoflow()
+	protoflowConfig, err := protoflow.NewConfig(provider)
 	if err != nil {
 		return nil, err
 	}
-	apihttpServer := server.NewAPIHTTPServer(apiConfig, apiServer, dbStore, bucketBucket, discordService, protoflowProtoflow, protoflow2, sessionManager)
+	protoflowProtoflow := protoflow.New(openAIQAClient, dbSession, bucketBucket, sessionManager, protoflowConfig)
+	apihttpServer := server.NewAPIHTTPServer(apiConfig, apiServer, dbStore, bucketBucket, discordService, protoflowProtoflow, sessionManager)
 	discordCollector := collect.NewDiscordCollector(session, dbStore, contentWorkflow)
 	hnCollect := collect.NewHNCollector(dbStore, contentWorkflow)
 	app := NewApp(logLog, apihttpServer, normalizer, summarize, discordCollector, hnCollect)

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"encoding/json"
+	"fmt"
 	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/pkg/errors"
 	"github.com/reactivex/rxgo/v2"
@@ -32,7 +33,7 @@ func (p *Protoflow) StreamTranscription(ctx context.Context, file string, captur
 				cmd.Args,
 				"stream",
 				// TODO breadchris offer selection for input stream
-				"-c", string(captureDevice),
+				"-c", fmt.Sprintf("%d", captureDevice),
 			)
 		}
 		cmd.Args = append(

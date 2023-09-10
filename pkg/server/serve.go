@@ -14,7 +14,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/lunabrain-ai/lunabrain/studio/public"
-	"github.com/protoflow-labs/protoflow/pkg/protoflow"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -33,7 +32,6 @@ type APIHTTPServer struct {
 	bucket           *bucket.Bucket
 	discordService   *discord.DiscordService
 	protoflowService *code.Protoflow
-	p                *protoflow.Protoflow
 }
 
 type HTTPServer interface {
@@ -57,7 +55,6 @@ func NewAPIHTTPServer(
 	bucket *bucket.Bucket,
 	d *discord.DiscordService,
 	protoflowService *code.Protoflow,
-	p *protoflow.Protoflow,
 	sessionSerivce *scs.SessionManager,
 ) *APIHTTPServer {
 	return &APIHTTPServer{
@@ -67,7 +64,6 @@ func NewAPIHTTPServer(
 		bucket:           bucket,
 		discordService:   d,
 		protoflowService: protoflowService,
-		p:                p,
 		sessionService:   sessionSerivce,
 	}
 }
@@ -99,7 +95,6 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	reflector := grpcreflect.NewStaticReflector(
 		"lunabrain.API",
 		"lunabrain.DiscordService",
-		"protoflow.ProtoflowService",
 	)
 	recoverCall := func(_ context.Context, spec connect.Spec, _ http.Header, p any) error {
 		log.Error().Msgf("%+v\n", p)
