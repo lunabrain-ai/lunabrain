@@ -1,4 +1,3 @@
-build/
 tmp/
 .lunabrain.yaml
 .idea/
@@ -23,7 +22,6 @@ venv3.*/
 
 # Distribution / packaging
 dist/
-build/
 *.egg-info/
 *.egg
 *.egg-info/
