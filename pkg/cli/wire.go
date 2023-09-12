@@ -17,6 +17,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/protoflow-labs/protoflow/pkg/log"
 	"github.com/protoflow-labs/protoflow/pkg/openai"
 	"github.com/urfave/cli/v2"
@@ -40,5 +41,6 @@ func Wire() (*cli.App, error) {
 		protoflow.ProviderSet,
 		//api.ProviderSet,
 		openai.ProviderSet,
+		whisper.ProviderSet,
 	))
 }

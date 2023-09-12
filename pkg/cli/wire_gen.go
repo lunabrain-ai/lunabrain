@@ -22,6 +22,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/protoflow-labs/protoflow/pkg/log"
 	"github.com/protoflow-labs/protoflow/pkg/openai"
 	"github.com/urfave/cli/v2"
@@ -139,7 +140,8 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	protoflowProtoflow := protoflow.New(openAIQAClient, dbSession, bucketBucket, sessionManager, protoflowConfig)
+	client := whisper.NewClient(openaiConfig, bucketBucket)
+	protoflowProtoflow := protoflow.New(openAIQAClient, dbSession, bucketBucket, sessionManager, protoflowConfig, client)
 	apihttpServer := server.NewAPIHTTPServer(apiConfig, apiServer, dbStore, bucketBucket, discordService, protoflowProtoflow, sessionManager)
 	discordCollector := collect.NewDiscordCollector(session, dbStore, contentWorkflow)
 	hnCollect := collect.NewHNCollector(dbStore, contentWorkflow)

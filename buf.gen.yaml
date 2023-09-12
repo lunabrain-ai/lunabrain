@@ -24,3 +24,12 @@ plugins:
   - plugin: connect-es
     opt: target=ts
     out: ./studio/src/rpc
+  - plugin: buf.build/bufbuild/connect-swift
+    opt: >
+      GenerateAsyncMethods=true,
+      GenerateCallbackMethods=true,
+      Visibility=Public
+    out: mobile/lunabrain/Generated
+  - plugin: buf.build/apple/swift
+    opt: Visibility=Public
+    out: mobile/lunabrain/Generated

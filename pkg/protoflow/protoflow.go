@@ -13,6 +13,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/util"
+	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/pkg/errors"
 	"github.com/protoflow-labs/protoflow/pkg/openai"
 	"github.com/reactivex/rxgo/v2"
@@ -34,6 +35,7 @@ type Protoflow struct {
 	fileStore      *bucket.Bucket
 	sessionManager *scs.SessionManager
 	config         Config
+	whisper        *whisper.Client
 }
 
 var ProviderSet = wire.NewSet(
@@ -63,6 +65,7 @@ func New(
 	fileStore *bucket.Bucket,
 	sessionManager *scs.SessionManager,
 	config Config,
+	whisper *whisper.Client,
 ) *Protoflow {
 	return &Protoflow{
 		openai:         openai,
@@ -70,6 +73,7 @@ func New(
 		fileStore:      fileStore,
 		sessionManager: sessionManager,
 		config:         config,
+		whisper:        whisper,
 	}
 }
 
