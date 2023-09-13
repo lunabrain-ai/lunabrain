@@ -1,15 +1,15 @@
 # LunaBrain
 
-LunaBrain is a productivity tool designed for teams to save and search for information quickly and easily. With the ability to store different types of files (audio, video, pdfs, docs), existing buckets of data where documents or code are stored (Github, Drive), as well as different services where information is constantly streaming past you (Slack, Discord), LunaBrain provides a centralized platform for managing all your information.
+Record audio, transcribe it, and ask AI to reason about it. All in one place.
 
 [![LunaBrain Demo](site/assets/images/demo.png)](http://www.youtube.com/watch?v=znCMrtOcjb0 "LunaBrain Demo")
 
 ## Features
 
-- Save different types of files including audio, video, pdfs, and docs
-- Connect to existing buckets of data, including Github and Drive
-- Connect to different services like Slack and Discord to capture streaming information
-- Experiment with different retrieval methods, such as full text search, ML embedding semantic search, or GPT context searching
+- Record audio from your microphone
+- Transcribe audio to text
+- Ask AI to reason about your audio
+- Search through your audio recordings
 
 ### Library 
 - To use LunaBrain as a Go library, refer to the [documentation](https://pkg.go.dev/github.com/lunabrain-ai/lunabrain) (Note: This code is still like pre-alpha, so the API is subject to change)

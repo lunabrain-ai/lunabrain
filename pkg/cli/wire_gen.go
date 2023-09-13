@@ -7,10 +7,11 @@
 package cli
 
 import (
-	"github.com/breadchris/scs/v2"
 	"github.com/lunabrain-ai/lunabrain/pkg/api"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
 	"github.com/lunabrain-ai/lunabrain/pkg/config"
+	"github.com/lunabrain-ai/lunabrain/pkg/http"
+	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
@@ -24,7 +25,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/protoflow-labs/protoflow/pkg/log"
-	"github.com/protoflow-labs/protoflow/pkg/openai"
 	"github.com/urfave/cli/v2"
 )
 
@@ -135,12 +135,19 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	sessionManager := scs.New()
+	sessionManager, err := http.NewSession(gormDB)
+	if err != nil {
+		return nil, err
+	}
 	protoflowConfig, err := protoflow.NewConfig(provider)
 	if err != nil {
 		return nil, err
 	}
-	client := whisper.NewClient(openaiConfig, bucketBucket)
+	whisperConfig, err := whisper.NewConfig(provider)
+	if err != nil {
+		return nil, err
+	}
+	client := whisper.NewClient(whisperConfig, openaiConfig, bucketBucket)
 	protoflowProtoflow := protoflow.New(openAIQAClient, dbSession, bucketBucket, sessionManager, protoflowConfig, client)
 	apihttpServer := server.NewAPIHTTPServer(apiConfig, apiServer, dbStore, bucketBucket, discordService, protoflowProtoflow, sessionManager)
 	discordCollector := collect.NewDiscordCollector(session, dbStore, contentWorkflow)

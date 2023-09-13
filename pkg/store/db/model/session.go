@@ -9,10 +9,13 @@ import (
 type Session struct {
 	Base
 
-	UserID   uuid.UUID `gorm:"foreignKey:ID"`
-	User     User      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	Data     datatypes.JSONType[*gen.Session]
+	UserID uuid.UUID `gorm:"foreignKey:ID"`
+	User   User      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+
 	Segments []Segment
+
+	// TODO breadchris Data should probably be Raw, Doc, Proto?
+	Data datatypes.JSONType[*gen.Session]
 }
 
 type Segment struct {

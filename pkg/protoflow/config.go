@@ -7,14 +7,10 @@ import (
 
 const ConfigurationKey = "protoflow"
 
-type Config struct {
-	SystemAudio bool `yaml:"system_audio"`
-}
+type Config struct{}
 
 func NewDefaultConfig() Config {
-	return Config{
-		SystemAudio: false,
-	}
+	return Config{}
 }
 
 // TODO breadchris break up this config

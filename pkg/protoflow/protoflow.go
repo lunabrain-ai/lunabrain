@@ -2,20 +2,20 @@ package protoflow
 
 import (
 	"context"
-	"github.com/breadchris/scs/v2"
 	connect_go "github.com/bufbuild/connect-go"
 	"github.com/google/uuid"
 	"github.com/google/wire"
 	"github.com/kkdai/youtube/v2"
 	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
+	"github.com/lunabrain-ai/lunabrain/pkg/http"
+	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/util"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/pkg/errors"
-	"github.com/protoflow-labs/protoflow/pkg/openai"
 	"github.com/reactivex/rxgo/v2"
 	"github.com/rs/zerolog/log"
 	gopenai "github.com/sashabaranov/go-openai"
@@ -33,7 +33,7 @@ type Protoflow struct {
 	openai         openai.QAClient
 	sessionStore   *db.Session
 	fileStore      *bucket.Bucket
-	sessionManager *scs.SessionManager
+	sessionManager *http.SessionManager
 	config         Config
 	whisper        *whisper.Client
 }
@@ -63,7 +63,7 @@ func New(
 	openai openai.QAClient,
 	sessionStore *db.Session,
 	fileStore *bucket.Bucket,
-	sessionManager *scs.SessionManager,
+	sessionManager *http.SessionManager,
 	config Config,
 	whisper *whisper.Client,
 ) *Protoflow {
@@ -113,7 +113,9 @@ func (p *Protoflow) Login(ctx context.Context, c *connect_go.Request[genapi.User
 		return nil, errors.New("invalid password")
 	}
 	p.sessionManager.Put(ctx, "user", u.ID.String())
-	return connect_go.NewResponse(&genapi.User{}), nil
+	return connect_go.NewResponse(&genapi.User{
+		Email: u.Data.Data.Email,
+	}), nil
 }
 
 func (p *Protoflow) Logout(ctx context.Context, c *connect_go.Request[genapi.Empty]) (*connect_go.Response[genapi.Empty], error) {
@@ -315,22 +317,18 @@ func (p *Protoflow) observeSegments(
 }
 
 func (p *Protoflow) Chat(ctx context.Context, c *connect_go.Request[genapi.ChatRequest], c2 *connect_go.ServerStream[genapi.ChatResponse]) error {
-	if !p.config.SystemAudio {
-		return errors.New("system audio is not enabled")
-	}
-
 	id, err := p.getUserID(ctx)
 	if err != nil {
 		return err
 	}
 
-	obs := p.StreamTranscription(ctx, "", c.Msg.CaptureDevice)
 	s, err := p.sessionStore.NewSession(id, &genapi.Session{
 		Name: "live chat",
 	})
 	if err != nil {
 		return err
 	}
+	obs := p.whisper.Transcribe(ctx, id, "", c.Msg.CaptureDevice)
 	p.observeSegments(s, obs, c2)
 	return nil
 }
@@ -396,7 +394,7 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 			if err != nil {
 				return err
 			}
-			obs = p.StreamTranscription(ctx, r.Msg.File, 0)
+			obs = p.whisper.Transcribe(ctx, id, r.Msg.File, 0)
 			name = r.Msg.Title
 		default:
 			return errors.New("unsupported url")
@@ -419,7 +417,7 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 				return err
 			}
 		}
-		obs = p.StreamTranscription(ctx, filepath, 0)
+		obs = p.whisper.Transcribe(ctx, id, filepath, 0)
 		if err != nil {
 			return err
 		}

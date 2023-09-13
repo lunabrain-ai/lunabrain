@@ -2,12 +2,13 @@ package config
 
 import (
 	"github.com/lunabrain-ai/lunabrain/pkg/api"
+	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/lunabrain-ai/lunabrain/pkg/protoflow"
 	"github.com/lunabrain-ai/lunabrain/pkg/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
-	"github.com/protoflow-labs/protoflow/pkg/openai"
+	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/rs/zerolog/log"
 	"go.uber.org/config"
 	"io/ioutil"
@@ -29,6 +30,7 @@ type Config struct {
 	DB        db.Config        `yaml:"db"`
 	OpenAI    openai.Config    `yaml:"openai"`
 	Protoflow protoflow.Config `yaml:"protoflow"`
+	Whisper   whisper.Config   `yaml:"config"`
 }
 
 func newDefaultConfig() Config {
@@ -51,6 +53,7 @@ func newDefaultConfig() Config {
 		DB:        db.NewDefaultConfig(),
 		OpenAI:    openai.NewDefaultConfig(),
 		Protoflow: protoflow.NewDefaultConfig(),
+		Whisper:   whisper.NewDefaultConfig(),
 	}
 }
 

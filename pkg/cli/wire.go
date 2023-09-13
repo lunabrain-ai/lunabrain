@@ -7,6 +7,7 @@ import (
 	"github.com/google/wire"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
 	"github.com/lunabrain-ai/lunabrain/pkg/config"
+	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
@@ -19,7 +20,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/protoflow-labs/protoflow/pkg/log"
-	"github.com/protoflow-labs/protoflow/pkg/openai"
 	"github.com/urfave/cli/v2"
 )
 

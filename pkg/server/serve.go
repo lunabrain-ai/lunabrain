@@ -3,13 +3,13 @@ package server
 import (
 	"context"
 	"fmt"
-	"github.com/breadchris/scs/v2"
 	"github.com/bufbuild/connect-go"
 	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
 	"github.com/google/wire"
 	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/api"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
+	lhttp "github.com/lunabrain-ai/lunabrain/pkg/http"
 	code "github.com/lunabrain-ai/lunabrain/pkg/protoflow"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
@@ -25,13 +25,13 @@ import (
 )
 
 type APIHTTPServer struct {
-	sessionService   *scs.SessionManager
 	config           api.Config
 	db               db.Store
 	apiServer        *api.Server
 	bucket           *bucket.Bucket
 	discordService   *discord.DiscordService
 	protoflowService *code.Protoflow
+	sessionManager   *lhttp.SessionManager
 }
 
 type HTTPServer interface {
@@ -40,9 +40,9 @@ type HTTPServer interface {
 
 var (
 	ProviderSet = wire.NewSet(
-		scs.New,
 		api.NewAPIServer,
 		NewAPIHTTPServer,
+		lhttp.NewSession,
 		api.NewConfig,
 		wire.Bind(new(HTTPServer), new(*APIHTTPServer)),
 	)
@@ -55,7 +55,7 @@ func NewAPIHTTPServer(
 	bucket *bucket.Bucket,
 	d *discord.DiscordService,
 	protoflowService *code.Protoflow,
-	sessionSerivce *scs.SessionManager,
+	sessionManager *lhttp.SessionManager,
 ) *APIHTTPServer {
 	return &APIHTTPServer{
 		config:           config,
@@ -64,7 +64,7 @@ func NewAPIHTTPServer(
 		bucket:           bucket,
 		discordService:   d,
 		protoflowService: protoflowService,
-		sessionService:   sessionSerivce,
+		sessionManager:   sessionManager,
 	}
 }
 
@@ -178,7 +178,7 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	//bucketRoute, handler := a.bucket.HandleSignedURLs()
 	//muxRoot.Handle(bucketRoute, handler)
 	// TODO breadchris https://github.com/alexedwards/scs/tree/master/gormstore
-	return a.sessionService.LoadAndSave(loggingMiddleware(muxRoot))
+	return a.sessionManager.LoadAndSave(loggingMiddleware(muxRoot))
 }
 
 func (a *APIHTTPServer) Start() error {

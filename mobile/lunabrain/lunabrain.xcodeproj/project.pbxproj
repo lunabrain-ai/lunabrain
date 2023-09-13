@@ -19,6 +19,10 @@
 		4C2324B12AAEEB4500AB937A /* Connect in Frameworks */ = {isa = PBXBuildFile; productRef = 4C2324B02AAEEB4500AB937A /* Connect */; };
 		4C2324B32AAEEB6E00AB937A /* Generated in Resources */ = {isa = PBXBuildFile; fileRef = 4C2324B22AAEEB6E00AB937A /* Generated */; };
 		4C2324B62AAFDD7200AB937A /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C2324B52AAFDD7200AB937A /* Storyboard.storyboard */; };
+		4C2324B82AB0DE9200AB937A /* WatchTranscriptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324B72AB0DE9200AB937A /* WatchTranscriptionViewModel.swift */; };
+		4C2324BA2AB0DFE500AB937A /* TranscriptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324B92AB0DFE500AB937A /* TranscriptionViewModel.swift */; };
+		4C2324BC2AB0EFAB00AB937A /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324BB2AB0EFAB00AB937A /* AudioRecorder.swift */; };
+		4C2324BE2AB0EFF300AB937A /* RecordingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324BD2AB0EFF300AB937A /* RecordingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +63,10 @@
 		4C2324AE2AAEE30400AB937A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		4C2324B22AAEEB6E00AB937A /* Generated */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Generated; sourceTree = "<group>"; };
 		4C2324B52AAFDD7200AB937A /* Storyboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
+		4C2324B72AB0DE9200AB937A /* WatchTranscriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchTranscriptionViewModel.swift; sourceTree = "<group>"; };
+		4C2324B92AB0DFE500AB937A /* TranscriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionViewModel.swift; sourceTree = "<group>"; };
+		4C2324BB2AB0EFAB00AB937A /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
+		4C2324BD2AB0EFF300AB937A /* RecordingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +116,9 @@
 				4C23248C2AAE7FE200AB937A /* ContentView.swift */,
 				4C23248E2AAE7FE300AB937A /* Assets.xcassets */,
 				4C2324902AAE7FE300AB937A /* Preview Content */,
+				4C2324B92AB0DFE500AB937A /* TranscriptionViewModel.swift */,
+				4C2324BB2AB0EFAB00AB937A /* AudioRecorder.swift */,
+				4C2324BD2AB0EFF300AB937A /* RecordingsView.swift */,
 			);
 			path = lunabrain;
 			sourceTree = "<group>";
@@ -127,6 +138,7 @@
 				4C23249E2AAE7FE300AB937A /* ContentView.swift */,
 				4C2324A02AAE7FE400AB937A /* Assets.xcassets */,
 				4C2324A22AAE7FE400AB937A /* Preview Content */,
+				4C2324B72AB0DE9200AB937A /* WatchTranscriptionViewModel.swift */,
 			);
 			path = "lunabrain Watch App";
 			sourceTree = "<group>";
@@ -249,7 +261,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C2324BE2AB0EFF300AB937A /* RecordingsView.swift in Sources */,
 				4C23248D2AAE7FE200AB937A /* ContentView.swift in Sources */,
+				4C2324BA2AB0DFE500AB937A /* TranscriptionViewModel.swift in Sources */,
+				4C2324BC2AB0EFAB00AB937A /* AudioRecorder.swift in Sources */,
 				4C23248B2AAE7FE200AB937A /* lunabrainApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -260,6 +275,7 @@
 			files = (
 				4C23249F2AAE7FE300AB937A /* ContentView.swift in Sources */,
 				4C23249D2AAE7FE300AB937A /* lunabrainApp.swift in Sources */,
+				4C2324B82AB0DE9200AB937A /* WatchTranscriptionViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
