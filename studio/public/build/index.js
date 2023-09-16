@@ -47668,8 +47668,8 @@ to {
           prompt
         });
         for await (const exec of res) {
-          setInference((prev) => prev + exec.text || "");
-          i2 += exec.text || "";
+          setInference((prev) => exec.text || "");
+          i2 = exec.text || "";
         }
       } catch (e2) {
         _t.error(e2.message);
@@ -64589,6 +64589,8 @@ to {
                   }
                 }
               }
+            }, {
+              timeoutMs: void 0
             });
             void streamMessages(res);
           }
@@ -64666,6 +64668,8 @@ to {
               }
             }
           }
+        }, {
+          timeoutMs: void 0
         });
         void streamMessages(res);
       }
@@ -64709,6 +64713,8 @@ to {
                   }
                 }
               }
+            }, {
+              timeoutMs: void 0
             });
             void streamMessages(res);
           } catch (e3) {
@@ -73643,8 +73649,17 @@ to {
       }
       return {};
     };
+    const shouldHighlightSegment = (t2) => {
+      if (audioRef.current && audioRef.current.currentTime >= t2.startTime && audioRef.current.currentTime <= t2.endTime) {
+        return { color: "red" };
+      }
+      return {};
+    };
     const tc = (item) => {
       if (item.segment.tokens.length === 0) {
+        if (item.segment.startTime && item.segment.endTime) {
+          return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)("span", { style: shouldHighlightSegment(item.segment), onClick: () => changeCurrentTime(Number(item.segment.startTime)), title: item.segment.startTime.toString(), children: item.segment.text });
+        }
         return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(ReactMarkdown, { children: item.text });
       }
       return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(import_jsx_runtime11.Fragment, { children: item.segment.tokens.map((t2) => {

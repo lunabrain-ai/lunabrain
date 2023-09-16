@@ -22,6 +22,7 @@
     "esbuild-style-plugin": "^1.6.1",
     "eslint": "8.39.0",
     "framer-motion": "^10.12.4",
+    "gpt-tokenizer": "^2.1.1",
     "react": "18.2.0",
     "react-audio-player": "^0.17.0",
     "react-chat-elements": "^12.0.10",

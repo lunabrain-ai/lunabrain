@@ -35,6 +35,8 @@ export const FileUpload: React.FC = () => {
                                 }
                             },
                         },
+                    }, {
+                        timeoutMs: undefined,
                     })
                     void streamMessages(res);
                 } catch (e: any) {

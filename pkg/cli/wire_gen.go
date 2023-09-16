@@ -127,7 +127,7 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	openAIQAClient, err := openai.NewOpenAIQAClient(openaiConfig)
+	agent, err := openai.NewAgent(openaiConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +148,7 @@ func Wire() (*cli.App, error) {
 		return nil, err
 	}
 	client := whisper.NewClient(whisperConfig, openaiConfig, bucketBucket)
-	protoflowProtoflow := protoflow.New(openAIQAClient, dbSession, bucketBucket, sessionManager, protoflowConfig, client)
+	protoflowProtoflow := protoflow.New(agent, dbSession, bucketBucket, sessionManager, protoflowConfig, client)
 	apihttpServer := server.NewAPIHTTPServer(apiConfig, apiServer, dbStore, bucketBucket, discordService, protoflowProtoflow, sessionManager)
 	discordCollector := collect.NewDiscordCollector(session, dbStore, contentWorkflow)
 	hnCollect := collect.NewHNCollector(dbStore, contentWorkflow)

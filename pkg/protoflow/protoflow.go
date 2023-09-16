@@ -18,7 +18,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/reactivex/rxgo/v2"
 	"github.com/rs/zerolog/log"
-	gopenai "github.com/sashabaranov/go-openai"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"gorm.io/datatypes"
 	"image"
@@ -30,7 +29,7 @@ import (
 )
 
 type Protoflow struct {
-	openai         openai.QAClient
+	openai         *openai.Agent
 	sessionStore   *db.Session
 	fileStore      *bucket.Bucket
 	sessionManager *http.SessionManager
@@ -60,7 +59,7 @@ var _ genconnect.ProtoflowServiceHandler = (*Protoflow)(nil)
 //}
 
 func New(
-	openai openai.QAClient,
+	openai *openai.Agent,
 	sessionStore *db.Session,
 	fileStore *bucket.Bucket,
 	sessionManager *http.SessionManager,
@@ -154,38 +153,33 @@ func (p *Protoflow) GetPrompts(ctx context.Context, c *connect_go.Request[genapi
 }
 
 func (p *Protoflow) Infer(ctx context.Context, c *connect_go.Request[genapi.InferRequest], c2 *connect_go.ServerStream[genapi.InferResponse]) error {
-	var chat []gopenai.ChatCompletionMessage
-
+	var content string
 	for _, t := range c.Msg.Text {
-		chat = append(chat, gopenai.ChatCompletionMessage{
-			Role:    "user",
-			Content: t,
-		})
+		content += t + " "
 	}
-	chat = append(chat, gopenai.ChatCompletionMessage{
-		Role:    "user",
-		Content: c.Msg.Prompt,
-	})
-
-	obs, err := p.openai.StreamResponse(chat)
+	obs, err := p.openai.Ask(c.Msg.Prompt, content)
 	if err != nil {
 		return err
 	}
+
+	var resErr error
 	<-obs.ForEach(func(item any) {
-		t, ok := item.(string)
+		s, ok := item.(string)
 		if !ok {
 			return
 		}
 		if err := c2.Send(&genapi.InferResponse{
-			Text: t,
+			Text: s,
 		}); err != nil {
 			log.Error().Err(err).Msg("error sending token")
 		}
 	}, func(err error) {
-		log.Error().Err(err).Msg("error in observable")
+		log.Error().Err(err).Msg("error while infering")
+		resErr = err
 	}, func() {
+		log.Debug().Msg("infer complete")
 	})
-	return nil
+	return resErr
 }
 
 func (p *Protoflow) DownloadYouTubeVideo(ctx context.Context, c *connect_go.Request[genapi.YouTubeVideo]) (*connect_go.Response[genapi.FilePath], error) {
@@ -360,7 +354,7 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 		id   = uuid.NewString()
 	)
 
-	id, err := p.getUserID(ctx)
+	userID, err := p.getUserID(ctx)
 	if err != nil {
 		return err
 	}
@@ -429,7 +423,7 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 		return errors.New("no observable")
 	}
 
-	s, err := p.sessionStore.NewSession(id, &genapi.Session{
+	s, err := p.sessionStore.NewSession(userID, &genapi.Session{
 		Id:   id,
 		Name: name,
 	})

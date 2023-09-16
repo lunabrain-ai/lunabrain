@@ -48,6 +48,8 @@ export const AudioRecorder: React.FC = () => {
                         }
                     },
                 },
+            }, {
+                timeoutMs: undefined,
             })
             void streamMessages(res);
         }

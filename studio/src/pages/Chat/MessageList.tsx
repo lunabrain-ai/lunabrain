@@ -139,8 +139,24 @@ export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, 
         return {};
     }
 
+    const shouldHighlightSegment = (t: Segment) => {
+        // // TODO breadchris highlight the token that is currently being spoken
+        if (audioRef.current && audioRef.current.currentTime >= t.startTime && audioRef.current.currentTime <= t.endTime) {
+            return {color: 'red'};
+        }
+        return {};
+    }
+
     const tc = (item: Message): JSX.Element => {
         if (item.segment.tokens.length === 0) {
+            if (item.segment.startTime && item.segment.endTime) {
+                // TODO breadchris shouldHighlight runs pretty inefficiently, I think it is what causes lag in the highlighting
+                return (
+                    <span style={shouldHighlightSegment(item.segment)} onClick={() => changeCurrentTime(Number(item.segment.startTime))} title={item.segment.startTime.toString()}>
+                        {item.segment.text}
+                    </span>
+                )
+            }
             return <ReactMarkdown children={item.text} />
         }
         return (

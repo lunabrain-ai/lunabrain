@@ -31,6 +31,8 @@ export const FileDrop: React.FC<FileDropProps> = ({children}) => {
                                 }
                             },
                         },
+                    }, {
+                        timeoutMs: undefined,
                     })
                     void streamMessages(res);
                 }

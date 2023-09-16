@@ -4,6 +4,7 @@ import { Segment } from '@/rpc/protoflow_pb';
 import {Message, messageColumns, SubtleSelection} from "@/pages/Chat/MessageList";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {projectService} from "@/lib/api";
+import {TokenVisualizer} from "@/components/TokenVisualizer";
 
 interface WindowProps {
 }

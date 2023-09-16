@@ -7,88 +7,88 @@ import Connect
 import Foundation
 import SwiftProtobuf
 
-public protocol Protoflow_ProtoflowServiceClientInterface {
+public protocol Protoflow_ProtoflowServiceClientInterface: Sendable {
 
     @discardableResult
-    func `downloadYouTubeVideo`(request: Protoflow_YouTubeVideo, headers: Connect.Headers, completion: @escaping (ResponseMessage<Protoflow_FilePath>) -> Void) -> Connect.Cancelable
+    func `downloadYouTubeVideo`(request: Protoflow_YouTubeVideo, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_FilePath>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
     func `downloadYouTubeVideo`(request: Protoflow_YouTubeVideo, headers: Connect.Headers) async -> ResponseMessage<Protoflow_FilePath>
 
     @discardableResult
-    func `getSessions`(request: Protoflow_GetSessionsRequest, headers: Connect.Headers, completion: @escaping (ResponseMessage<Protoflow_GetSessionsResponse>) -> Void) -> Connect.Cancelable
+    func `getSessions`(request: Protoflow_GetSessionsRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_GetSessionsResponse>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
     func `getSessions`(request: Protoflow_GetSessionsRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_GetSessionsResponse>
 
     @discardableResult
-    func `getSession`(request: Protoflow_GetSessionRequest, headers: Connect.Headers, completion: @escaping (ResponseMessage<Protoflow_GetSessionResponse>) -> Void) -> Connect.Cancelable
+    func `getSession`(request: Protoflow_GetSessionRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_GetSessionResponse>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
     func `getSession`(request: Protoflow_GetSessionRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_GetSessionResponse>
 
     @discardableResult
-    func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers, completion: @escaping (ResponseMessage<Protoflow_Empty>) -> Void) -> Connect.Cancelable
+    func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_Empty>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
     func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_Empty>
 
     @discardableResult
-    func `getPrompts`(request: Protoflow_GetPromptsRequest, headers: Connect.Headers, completion: @escaping (ResponseMessage<Protoflow_GetPromptsResponse>) -> Void) -> Connect.Cancelable
+    func `getPrompts`(request: Protoflow_GetPromptsRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_GetPromptsResponse>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
     func `getPrompts`(request: Protoflow_GetPromptsRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_GetPromptsResponse>
 
     @discardableResult
-    func `newPrompt`(request: Protoflow_Prompt, headers: Connect.Headers, completion: @escaping (ResponseMessage<Protoflow_Prompt>) -> Void) -> Connect.Cancelable
+    func `newPrompt`(request: Protoflow_Prompt, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_Prompt>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
     func `newPrompt`(request: Protoflow_Prompt, headers: Connect.Headers) async -> ResponseMessage<Protoflow_Prompt>
 
-    func `uploadContent`(headers: Connect.Headers, onResult: @escaping (Connect.StreamResult<Protoflow_ChatResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Protoflow_UploadContentRequest>
+    func `uploadContent`(headers: Connect.Headers, onResult: @escaping @Sendable (Connect.StreamResult<Protoflow_ChatResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Protoflow_UploadContentRequest>
 
     @available(iOS 13, *)
     func `uploadContent`(headers: Connect.Headers) -> any Connect.ServerOnlyAsyncStreamInterface<Protoflow_UploadContentRequest, Protoflow_ChatResponse>
 
-    func `infer`(headers: Connect.Headers, onResult: @escaping (Connect.StreamResult<Protoflow_InferResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Protoflow_InferRequest>
+    func `infer`(headers: Connect.Headers, onResult: @escaping @Sendable (Connect.StreamResult<Protoflow_InferResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Protoflow_InferRequest>
 
     @available(iOS 13, *)
     func `infer`(headers: Connect.Headers) -> any Connect.ServerOnlyAsyncStreamInterface<Protoflow_InferRequest, Protoflow_InferResponse>
 
-    func `chat`(headers: Connect.Headers, onResult: @escaping (Connect.StreamResult<Protoflow_ChatResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Protoflow_ChatRequest>
+    func `chat`(headers: Connect.Headers, onResult: @escaping @Sendable (Connect.StreamResult<Protoflow_ChatResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Protoflow_ChatRequest>
 
     @available(iOS 13, *)
     func `chat`(headers: Connect.Headers) -> any Connect.ServerOnlyAsyncStreamInterface<Protoflow_ChatRequest, Protoflow_ChatResponse>
 
     ///  rpc OCR (FilePath) returns (OCRText);
     @discardableResult
-    func `convertFile`(request: Protoflow_ConvertFileRequest, headers: Connect.Headers, completion: @escaping (ResponseMessage<Protoflow_FilePath>) -> Void) -> Connect.Cancelable
+    func `convertFile`(request: Protoflow_ConvertFileRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_FilePath>) -> Void) -> Connect.Cancelable
 
     ///  rpc OCR (FilePath) returns (OCRText);
     @available(iOS 13, *)
     func `convertFile`(request: Protoflow_ConvertFileRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_FilePath>
 
     @discardableResult
-    func `register`(request: Protoflow_User, headers: Connect.Headers, completion: @escaping (ResponseMessage<Protoflow_User>) -> Void) -> Connect.Cancelable
+    func `register`(request: Protoflow_User, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_User>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
     func `register`(request: Protoflow_User, headers: Connect.Headers) async -> ResponseMessage<Protoflow_User>
 
     @discardableResult
-    func `login`(request: Protoflow_User, headers: Connect.Headers, completion: @escaping (ResponseMessage<Protoflow_User>) -> Void) -> Connect.Cancelable
+    func `login`(request: Protoflow_User, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_User>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
     func `login`(request: Protoflow_User, headers: Connect.Headers) async -> ResponseMessage<Protoflow_User>
 
     @discardableResult
-    func `logout`(request: Protoflow_Empty, headers: Connect.Headers, completion: @escaping (ResponseMessage<Protoflow_Empty>) -> Void) -> Connect.Cancelable
+    func `logout`(request: Protoflow_Empty, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_Empty>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
     func `logout`(request: Protoflow_Empty, headers: Connect.Headers) async -> ResponseMessage<Protoflow_Empty>
 }
 
 /// Concrete implementation of `Protoflow_ProtoflowServiceClientInterface`.
-public final class Protoflow_ProtoflowServiceClient: Protoflow_ProtoflowServiceClientInterface {
+public final class Protoflow_ProtoflowServiceClient: Protoflow_ProtoflowServiceClientInterface, Sendable {
     private let client: Connect.ProtocolClientInterface
 
     public init(client: Connect.ProtocolClientInterface) {
@@ -96,130 +96,130 @@ public final class Protoflow_ProtoflowServiceClient: Protoflow_ProtoflowServiceC
     }
 
     @discardableResult
-    public func `downloadYouTubeVideo`(request: Protoflow_YouTubeVideo, headers: Connect.Headers = [:], completion: @escaping (ResponseMessage<Protoflow_FilePath>) -> Void) -> Connect.Cancelable {
-        return self.client.unary(path: "protoflow.ProtoflowService/DownloadYouTubeVideo", request: request, headers: headers, completion: completion)
+    public func `downloadYouTubeVideo`(request: Protoflow_YouTubeVideo, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_FilePath>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/protoflow.ProtoflowService/DownloadYouTubeVideo", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
     public func `downloadYouTubeVideo`(request: Protoflow_YouTubeVideo, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_FilePath> {
-        return await self.client.unary(path: "protoflow.ProtoflowService/DownloadYouTubeVideo", request: request, headers: headers)
+        return await self.client.unary(path: "/protoflow.ProtoflowService/DownloadYouTubeVideo", request: request, headers: headers)
     }
 
     @discardableResult
-    public func `getSessions`(request: Protoflow_GetSessionsRequest, headers: Connect.Headers = [:], completion: @escaping (ResponseMessage<Protoflow_GetSessionsResponse>) -> Void) -> Connect.Cancelable {
-        return self.client.unary(path: "protoflow.ProtoflowService/GetSessions", request: request, headers: headers, completion: completion)
+    public func `getSessions`(request: Protoflow_GetSessionsRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_GetSessionsResponse>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/protoflow.ProtoflowService/GetSessions", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
     public func `getSessions`(request: Protoflow_GetSessionsRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_GetSessionsResponse> {
-        return await self.client.unary(path: "protoflow.ProtoflowService/GetSessions", request: request, headers: headers)
+        return await self.client.unary(path: "/protoflow.ProtoflowService/GetSessions", request: request, headers: headers)
     }
 
     @discardableResult
-    public func `getSession`(request: Protoflow_GetSessionRequest, headers: Connect.Headers = [:], completion: @escaping (ResponseMessage<Protoflow_GetSessionResponse>) -> Void) -> Connect.Cancelable {
-        return self.client.unary(path: "protoflow.ProtoflowService/GetSession", request: request, headers: headers, completion: completion)
+    public func `getSession`(request: Protoflow_GetSessionRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_GetSessionResponse>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/protoflow.ProtoflowService/GetSession", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
     public func `getSession`(request: Protoflow_GetSessionRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_GetSessionResponse> {
-        return await self.client.unary(path: "protoflow.ProtoflowService/GetSession", request: request, headers: headers)
+        return await self.client.unary(path: "/protoflow.ProtoflowService/GetSession", request: request, headers: headers)
     }
 
     @discardableResult
-    public func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers = [:], completion: @escaping (ResponseMessage<Protoflow_Empty>) -> Void) -> Connect.Cancelable {
-        return self.client.unary(path: "protoflow.ProtoflowService/DeleteSession", request: request, headers: headers, completion: completion)
+    public func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_Empty>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/protoflow.ProtoflowService/DeleteSession", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
     public func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_Empty> {
-        return await self.client.unary(path: "protoflow.ProtoflowService/DeleteSession", request: request, headers: headers)
+        return await self.client.unary(path: "/protoflow.ProtoflowService/DeleteSession", request: request, headers: headers)
     }
 
     @discardableResult
-    public func `getPrompts`(request: Protoflow_GetPromptsRequest, headers: Connect.Headers = [:], completion: @escaping (ResponseMessage<Protoflow_GetPromptsResponse>) -> Void) -> Connect.Cancelable {
-        return self.client.unary(path: "protoflow.ProtoflowService/GetPrompts", request: request, headers: headers, completion: completion)
+    public func `getPrompts`(request: Protoflow_GetPromptsRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_GetPromptsResponse>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/protoflow.ProtoflowService/GetPrompts", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
     public func `getPrompts`(request: Protoflow_GetPromptsRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_GetPromptsResponse> {
-        return await self.client.unary(path: "protoflow.ProtoflowService/GetPrompts", request: request, headers: headers)
+        return await self.client.unary(path: "/protoflow.ProtoflowService/GetPrompts", request: request, headers: headers)
     }
 
     @discardableResult
-    public func `newPrompt`(request: Protoflow_Prompt, headers: Connect.Headers = [:], completion: @escaping (ResponseMessage<Protoflow_Prompt>) -> Void) -> Connect.Cancelable {
-        return self.client.unary(path: "protoflow.ProtoflowService/NewPrompt", request: request, headers: headers, completion: completion)
+    public func `newPrompt`(request: Protoflow_Prompt, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_Prompt>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/protoflow.ProtoflowService/NewPrompt", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
     public func `newPrompt`(request: Protoflow_Prompt, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_Prompt> {
-        return await self.client.unary(path: "protoflow.ProtoflowService/NewPrompt", request: request, headers: headers)
+        return await self.client.unary(path: "/protoflow.ProtoflowService/NewPrompt", request: request, headers: headers)
     }
 
-    public func `uploadContent`(headers: Connect.Headers = [:], onResult: @escaping (Connect.StreamResult<Protoflow_ChatResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Protoflow_UploadContentRequest> {
-        return self.client.serverOnlyStream(path: "protoflow.ProtoflowService/UploadContent", headers: headers, onResult: onResult)
+    public func `uploadContent`(headers: Connect.Headers = [:], onResult: @escaping @Sendable (Connect.StreamResult<Protoflow_ChatResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Protoflow_UploadContentRequest> {
+        return self.client.serverOnlyStream(path: "/protoflow.ProtoflowService/UploadContent", headers: headers, onResult: onResult)
     }
 
     @available(iOS 13, *)
     public func `uploadContent`(headers: Connect.Headers = [:]) -> any Connect.ServerOnlyAsyncStreamInterface<Protoflow_UploadContentRequest, Protoflow_ChatResponse> {
-        return self.client.serverOnlyStream(path: "protoflow.ProtoflowService/UploadContent", headers: headers)
+        return self.client.serverOnlyStream(path: "/protoflow.ProtoflowService/UploadContent", headers: headers)
     }
 
-    public func `infer`(headers: Connect.Headers = [:], onResult: @escaping (Connect.StreamResult<Protoflow_InferResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Protoflow_InferRequest> {
-        return self.client.serverOnlyStream(path: "protoflow.ProtoflowService/Infer", headers: headers, onResult: onResult)
+    public func `infer`(headers: Connect.Headers = [:], onResult: @escaping @Sendable (Connect.StreamResult<Protoflow_InferResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Protoflow_InferRequest> {
+        return self.client.serverOnlyStream(path: "/protoflow.ProtoflowService/Infer", headers: headers, onResult: onResult)
     }
 
     @available(iOS 13, *)
     public func `infer`(headers: Connect.Headers = [:]) -> any Connect.ServerOnlyAsyncStreamInterface<Protoflow_InferRequest, Protoflow_InferResponse> {
-        return self.client.serverOnlyStream(path: "protoflow.ProtoflowService/Infer", headers: headers)
+        return self.client.serverOnlyStream(path: "/protoflow.ProtoflowService/Infer", headers: headers)
     }
 
-    public func `chat`(headers: Connect.Headers = [:], onResult: @escaping (Connect.StreamResult<Protoflow_ChatResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Protoflow_ChatRequest> {
-        return self.client.serverOnlyStream(path: "protoflow.ProtoflowService/Chat", headers: headers, onResult: onResult)
+    public func `chat`(headers: Connect.Headers = [:], onResult: @escaping @Sendable (Connect.StreamResult<Protoflow_ChatResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Protoflow_ChatRequest> {
+        return self.client.serverOnlyStream(path: "/protoflow.ProtoflowService/Chat", headers: headers, onResult: onResult)
     }
 
     @available(iOS 13, *)
     public func `chat`(headers: Connect.Headers = [:]) -> any Connect.ServerOnlyAsyncStreamInterface<Protoflow_ChatRequest, Protoflow_ChatResponse> {
-        return self.client.serverOnlyStream(path: "protoflow.ProtoflowService/Chat", headers: headers)
+        return self.client.serverOnlyStream(path: "/protoflow.ProtoflowService/Chat", headers: headers)
     }
 
     @discardableResult
-    public func `convertFile`(request: Protoflow_ConvertFileRequest, headers: Connect.Headers = [:], completion: @escaping (ResponseMessage<Protoflow_FilePath>) -> Void) -> Connect.Cancelable {
-        return self.client.unary(path: "protoflow.ProtoflowService/ConvertFile", request: request, headers: headers, completion: completion)
+    public func `convertFile`(request: Protoflow_ConvertFileRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_FilePath>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/protoflow.ProtoflowService/ConvertFile", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
     public func `convertFile`(request: Protoflow_ConvertFileRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_FilePath> {
-        return await self.client.unary(path: "protoflow.ProtoflowService/ConvertFile", request: request, headers: headers)
+        return await self.client.unary(path: "/protoflow.ProtoflowService/ConvertFile", request: request, headers: headers)
     }
 
     @discardableResult
-    public func `register`(request: Protoflow_User, headers: Connect.Headers = [:], completion: @escaping (ResponseMessage<Protoflow_User>) -> Void) -> Connect.Cancelable {
-        return self.client.unary(path: "protoflow.ProtoflowService/Register", request: request, headers: headers, completion: completion)
+    public func `register`(request: Protoflow_User, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_User>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/protoflow.ProtoflowService/Register", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
     public func `register`(request: Protoflow_User, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_User> {
-        return await self.client.unary(path: "protoflow.ProtoflowService/Register", request: request, headers: headers)
+        return await self.client.unary(path: "/protoflow.ProtoflowService/Register", request: request, headers: headers)
     }
 
     @discardableResult
-    public func `login`(request: Protoflow_User, headers: Connect.Headers = [:], completion: @escaping (ResponseMessage<Protoflow_User>) -> Void) -> Connect.Cancelable {
-        return self.client.unary(path: "protoflow.ProtoflowService/Login", request: request, headers: headers, completion: completion)
+    public func `login`(request: Protoflow_User, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_User>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/protoflow.ProtoflowService/Login", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
     public func `login`(request: Protoflow_User, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_User> {
-        return await self.client.unary(path: "protoflow.ProtoflowService/Login", request: request, headers: headers)
+        return await self.client.unary(path: "/protoflow.ProtoflowService/Login", request: request, headers: headers)
     }
 
     @discardableResult
-    public func `logout`(request: Protoflow_Empty, headers: Connect.Headers = [:], completion: @escaping (ResponseMessage<Protoflow_Empty>) -> Void) -> Connect.Cancelable {
-        return self.client.unary(path: "protoflow.ProtoflowService/Logout", request: request, headers: headers, completion: completion)
+    public func `logout`(request: Protoflow_Empty, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_Empty>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/protoflow.ProtoflowService/Logout", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
     public func `logout`(request: Protoflow_Empty, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_Empty> {
-        return await self.client.unary(path: "protoflow.ProtoflowService/Logout", request: request, headers: headers)
+        return await self.client.unary(path: "/protoflow.ProtoflowService/Logout", request: request, headers: headers)
     }
 
     public enum Metadata {

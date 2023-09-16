@@ -6,7 +6,7 @@ replace github.com/protoflow-labs/protoflow => /Users/hacked/Documents/GitHub/pr
 
 require (
 	github.com/JohannesKaufmann/html-to-markdown v1.3.3
-	github.com/PuerkitoBio/goquery v1.8.0
+	github.com/PuerkitoBio/goquery v1.8.1
 	github.com/PullRequestInc/go-gpt3 v1.1.13
 	github.com/advancedlogic/GoOse v0.0.0-20210820140952-9d5822d4a625
 	github.com/alexedwards/scs/gormstore v0.0.0-20230902070821-95fa2ac9d520
@@ -40,6 +40,7 @@ require (
 	github.com/samber/lo v1.38.1
 	github.com/sashabaranov/go-openai v1.15.2
 	github.com/slack-go/slack v0.12.3
+	github.com/tmc/langchaingo v0.0.0-20230910230029-9c8845b2b019
 	github.com/twilio/twilio-go v1.13.0
 	github.com/u2takey/ffmpeg-go v0.4.1
 	github.com/urfave/cli/v2 v2.25.7
@@ -59,11 +60,15 @@ require (
 require (
 	cloud.google.com/go/compute v1.23.0 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
+	github.com/Masterminds/goutils v1.1.1 // indirect
+	github.com/Masterminds/semver/v3 v3.2.0 // indirect
+	github.com/Masterminds/sprig/v3 v3.2.3 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8 // indirect
 	github.com/VividCortex/gohistogram v1.0.0 // indirect
 	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de // indirect
 	github.com/aws/aws-sdk-go v1.44.314 // indirect
+	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bitly/go-simplejson v0.5.1 // indirect
 	github.com/bmatcuk/doublestar v1.3.4 // indirect
@@ -96,7 +101,11 @@ require (
 	github.com/google/subcommands v1.2.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.5 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
+	github.com/gorilla/css v1.0.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
+	github.com/hajimehoshi/go-mp3 v0.3.4 // indirect
+	github.com/hajimehoshi/oto v1.0.1 // indirect
+	github.com/huandu/xstrings v1.3.3 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.13.0 // indirect
@@ -110,7 +119,7 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
-	github.com/kr/pretty v0.3.1 // indirect
+	github.com/ledongthuc/pdf v0.0.0-20220302134840-0c2507a12d80 // indirect
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
@@ -118,9 +127,13 @@ require (
 	github.com/mattn/go-runewidth v0.0.15 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
+	github.com/microcosm-cc/bluemonday v1.0.24 // indirect
+	github.com/mitchellh/copystructure v1.0.0 // indirect
+	github.com/mitchellh/reflectwalk v1.0.0 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pion/randutil v0.1.0 // indirect
+	github.com/pkoukk/tiktoken-go v0.1.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_golang v1.14.0 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
@@ -128,6 +141,8 @@ require (
 	github.com/prometheus/procfs v0.8.0 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/shopspring/decimal v1.2.0 // indirect
+	github.com/spf13/cast v1.5.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/ssor/bom v0.0.0-20170718123548-6386211fdfcf // indirect
 	github.com/stretchr/objx v0.5.1 // indirect
@@ -137,12 +152,16 @@ require (
 	github.com/u2takey/go-utils v0.3.1 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	go.opencensus.io v0.24.0 // indirect
+	go.starlark.net v0.0.0-20230302034142-4b1e35fe2254 // indirect
 	go.uber.org/dig v1.16.1 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.25.0 // indirect
 	golang.org/x/crypto v0.13.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
+	golang.org/x/exp/shiny v0.0.0-20230905200255-921286631fa9 // indirect
+	golang.org/x/image v0.12.0 // indirect
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
+	golang.org/x/mobile v0.0.0-20230906132913-2077a3224571 // indirect
 	golang.org/x/mod v0.12.0 // indirect
 	golang.org/x/oauth2 v0.11.0 // indirect
 	golang.org/x/sys v0.12.0 // indirect

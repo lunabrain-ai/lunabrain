@@ -47,8 +47,8 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
                 prompt,
             })
             for await (const exec of res) {
-                setInference((prev) => prev + exec.text || '');
-                i += exec.text || '';
+                setInference((prev) => exec.text || '');
+                i = exec.text || '';
             }
         } catch (e: any) {
             toast.error(e.message);

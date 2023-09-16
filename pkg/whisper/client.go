@@ -2,7 +2,6 @@ package whisper
 
 import (
 	"bufio"
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -13,9 +12,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/reactivex/rxgo/v2"
 	"github.com/rs/zerolog/log"
-	"io"
-	"mime/multipart"
-	"net/http"
+	gopenai "github.com/sashabaranov/go-openai"
 	"os"
 	"os/exec"
 )
@@ -50,6 +47,7 @@ func NewClient(
 
 // TODO breadchris captureDevice seems awkward here
 func (a *Client) Transcribe(ctx context.Context, id, filePath string, captureDevice int32) rxgo.Observable {
+	log.Debug().Str("id", id).Str("filePath", filePath).Msg("transcribing audio with whisper")
 	if a.config.Offline {
 		return a.offlineTranscription(ctx, filePath, captureDevice)
 	} else {
@@ -58,29 +56,43 @@ func (a *Client) Transcribe(ctx context.Context, id, filePath string, captureDev
 }
 
 func (a *Client) apiTranscription(ctx context.Context, id, filePath string) rxgo.Observable {
+	c := gopenai.NewClient(a.openaiConfig.APIKey)
+
 	// TODO breadchris figure out what code should be in the producer
 	return rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
 		// TODO breadchris maybe support streams instead of just files?
-		err := a.splitWAVFile(id, maxChunkSize, filePath, func(chunkFilePath string) error {
-			req, err := a.reqFromFile(chunkFilePath)
+		var duration float64
+		err := splitWAVFile(a.fileStore, id, filePath, maxChunkSize, func(chunkFilePath string) error {
+			log.Debug().
+				Str("id", id).
+				Str("chunkFilePath", chunkFilePath).
+				Msg("transcribing chunk")
+
+			req := gopenai.AudioRequest{
+				FilePath: chunkFilePath,
+				Model:    gopenai.Whisper1,
+				Format:   gopenai.AudioResponseFormatVerboseJSON,
+			}
+			res, err := c.CreateTranscription(ctx, req)
 			if err != nil {
-				return errors.Wrapf(err, "failed to create request from file %s", chunkFilePath)
+				return err
 			}
 
-			client := &http.Client{}
-			resp, err := client.Do(req.WithContext(ctx))
-			if err != nil {
-				return errors.Wrapf(err, "failed to make request from file %s", chunkFilePath)
-			}
-			defer resp.Body.Close()
+			duration += res.Duration
 
-			log.Debug().Msgf("Status: %s\n", resp.Status)
-
-			respBody, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return errors.Wrapf(err, "failed to read response body from file %s", chunkFilePath)
+			for _, s := range res.Segments {
+				seg := genapi.Segment{
+					Num:       uint32(s.ID),
+					Text:      s.Text,
+					StartTime: uint64(duration + s.Start),
+					EndTime:   uint64(duration + s.End),
+				}
+				next <- rxgo.Of(&seg)
 			}
-			log.Debug().Msgf("Response: %s\n", respBody)
+
+			log.Debug().
+				Str("id", id).
+				Msg("transcription done")
 			return nil
 		})
 		if err != nil {
@@ -166,45 +178,4 @@ func (a *Client) offlineTranscription(ctx context.Context, file string, captureD
 			return
 		}
 	}}, rxgo.WithContext(ctx))
-}
-
-func (a *Client) reqFromFile(filePath string) (*http.Request, error) {
-	var requestBody bytes.Buffer
-
-	writer := multipart.NewWriter(&requestBody)
-
-	file, err := os.Open(filePath)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to open file %s", filePath)
-	}
-	defer file.Close()
-
-	formFileWriter, err := writer.CreateFormFile("file", file.Name())
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to create form file for %s", file.Name())
-	}
-
-	_, err = io.Copy(formFileWriter, file)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to copy file %s", file.Name())
-	}
-
-	err = writer.WriteField("model", "whisper-1")
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to write model field")
-	}
-
-	err = writer.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", "https://api.openai.com/v1/audio/transcriptions", &requestBody)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Content-Type", writer.FormDataContentType())
-	req.Header.Set("Authorization", "Bearer "+a.openaiConfig.APIKey)
-	return req, nil
 }

@@ -7,23 +7,23 @@ import Connect
 import Foundation
 import SwiftProtobuf
 
-public protocol Lunabrain_ApiClientInterface {
+public protocol Lunabrain_ApiClientInterface: Sendable {
 
     @discardableResult
-    func `save`(request: Lunabrain_Contents, headers: Connect.Headers, completion: @escaping (ResponseMessage<Lunabrain_ContentIDs>) -> Void) -> Connect.Cancelable
+    func `save`(request: Lunabrain_Contents, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Lunabrain_ContentIDs>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
     func `save`(request: Lunabrain_Contents, headers: Connect.Headers) async -> ResponseMessage<Lunabrain_ContentIDs>
 
     @discardableResult
-    func `search`(request: Lunabrain_Query, headers: Connect.Headers, completion: @escaping (ResponseMessage<Lunabrain_Results>) -> Void) -> Connect.Cancelable
+    func `search`(request: Lunabrain_Query, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Lunabrain_Results>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
     func `search`(request: Lunabrain_Query, headers: Connect.Headers) async -> ResponseMessage<Lunabrain_Results>
 }
 
 /// Concrete implementation of `Lunabrain_ApiClientInterface`.
-public final class Lunabrain_ApiClient: Lunabrain_ApiClientInterface {
+public final class Lunabrain_ApiClient: Lunabrain_ApiClientInterface, Sendable {
     private let client: Connect.ProtocolClientInterface
 
     public init(client: Connect.ProtocolClientInterface) {
@@ -31,23 +31,23 @@ public final class Lunabrain_ApiClient: Lunabrain_ApiClientInterface {
     }
 
     @discardableResult
-    public func `save`(request: Lunabrain_Contents, headers: Connect.Headers = [:], completion: @escaping (ResponseMessage<Lunabrain_ContentIDs>) -> Void) -> Connect.Cancelable {
-        return self.client.unary(path: "lunabrain.API/Save", request: request, headers: headers, completion: completion)
+    public func `save`(request: Lunabrain_Contents, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Lunabrain_ContentIDs>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/lunabrain.API/Save", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
     public func `save`(request: Lunabrain_Contents, headers: Connect.Headers = [:]) async -> ResponseMessage<Lunabrain_ContentIDs> {
-        return await self.client.unary(path: "lunabrain.API/Save", request: request, headers: headers)
+        return await self.client.unary(path: "/lunabrain.API/Save", request: request, headers: headers)
     }
 
     @discardableResult
-    public func `search`(request: Lunabrain_Query, headers: Connect.Headers = [:], completion: @escaping (ResponseMessage<Lunabrain_Results>) -> Void) -> Connect.Cancelable {
-        return self.client.unary(path: "lunabrain.API/Search", request: request, headers: headers, completion: completion)
+    public func `search`(request: Lunabrain_Query, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Lunabrain_Results>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/lunabrain.API/Search", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
     public func `search`(request: Lunabrain_Query, headers: Connect.Headers = [:]) async -> ResponseMessage<Lunabrain_Results> {
-        return await self.client.unary(path: "lunabrain.API/Search", request: request, headers: headers)
+        return await self.client.unary(path: "/lunabrain.API/Search", request: request, headers: headers)
     }
 
     public enum Metadata {
@@ -58,45 +58,45 @@ public final class Lunabrain_ApiClient: Lunabrain_ApiClientInterface {
     }
 }
 
-public protocol Lunabrain_DiscordServiceClientInterface {
+public protocol Lunabrain_DiscordServiceClientInterface: Sendable {
 
-    func `readMessages`(headers: Connect.Headers, onResult: @escaping (Connect.StreamResult<Lunabrain_ReadMessagesResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Lunabrain_ReadMessagesRequest>
+    func `readMessages`(headers: Connect.Headers, onResult: @escaping @Sendable (Connect.StreamResult<Lunabrain_ReadMessagesResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Lunabrain_ReadMessagesRequest>
 
     @available(iOS 13, *)
     func `readMessages`(headers: Connect.Headers) -> any Connect.ServerOnlyAsyncStreamInterface<Lunabrain_ReadMessagesRequest, Lunabrain_ReadMessagesResponse>
 
     @discardableResult
-    func `writeMessage`(request: Lunabrain_WriteMessageRequest, headers: Connect.Headers, completion: @escaping (ResponseMessage<Lunabrain_WriteMessageResponse>) -> Void) -> Connect.Cancelable
+    func `writeMessage`(request: Lunabrain_WriteMessageRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Lunabrain_WriteMessageResponse>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
     func `writeMessage`(request: Lunabrain_WriteMessageRequest, headers: Connect.Headers) async -> ResponseMessage<Lunabrain_WriteMessageResponse>
 }
 
 /// Concrete implementation of `Lunabrain_DiscordServiceClientInterface`.
-public final class Lunabrain_DiscordServiceClient: Lunabrain_DiscordServiceClientInterface {
+public final class Lunabrain_DiscordServiceClient: Lunabrain_DiscordServiceClientInterface, Sendable {
     private let client: Connect.ProtocolClientInterface
 
     public init(client: Connect.ProtocolClientInterface) {
         self.client = client
     }
 
-    public func `readMessages`(headers: Connect.Headers = [:], onResult: @escaping (Connect.StreamResult<Lunabrain_ReadMessagesResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Lunabrain_ReadMessagesRequest> {
-        return self.client.serverOnlyStream(path: "lunabrain.DiscordService/ReadMessages", headers: headers, onResult: onResult)
+    public func `readMessages`(headers: Connect.Headers = [:], onResult: @escaping @Sendable (Connect.StreamResult<Lunabrain_ReadMessagesResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Lunabrain_ReadMessagesRequest> {
+        return self.client.serverOnlyStream(path: "/lunabrain.DiscordService/ReadMessages", headers: headers, onResult: onResult)
     }
 
     @available(iOS 13, *)
     public func `readMessages`(headers: Connect.Headers = [:]) -> any Connect.ServerOnlyAsyncStreamInterface<Lunabrain_ReadMessagesRequest, Lunabrain_ReadMessagesResponse> {
-        return self.client.serverOnlyStream(path: "lunabrain.DiscordService/ReadMessages", headers: headers)
+        return self.client.serverOnlyStream(path: "/lunabrain.DiscordService/ReadMessages", headers: headers)
     }
 
     @discardableResult
-    public func `writeMessage`(request: Lunabrain_WriteMessageRequest, headers: Connect.Headers = [:], completion: @escaping (ResponseMessage<Lunabrain_WriteMessageResponse>) -> Void) -> Connect.Cancelable {
-        return self.client.unary(path: "lunabrain.DiscordService/WriteMessage", request: request, headers: headers, completion: completion)
+    public func `writeMessage`(request: Lunabrain_WriteMessageRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Lunabrain_WriteMessageResponse>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/lunabrain.DiscordService/WriteMessage", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
     public func `writeMessage`(request: Lunabrain_WriteMessageRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<Lunabrain_WriteMessageResponse> {
-        return await self.client.unary(path: "lunabrain.DiscordService/WriteMessage", request: request, headers: headers)
+        return await self.client.unary(path: "/lunabrain.DiscordService/WriteMessage", request: request, headers: headers)
     }
 
     public enum Metadata {
