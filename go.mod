@@ -19,7 +19,6 @@ require (
 	github.com/cosmtrek/air v1.29.0
 	github.com/fsnotify/fsnotify v1.6.0
 	github.com/geziyor/geziyor v0.0.0-20230315135110-a242b58aaa65
-	github.com/ggerganov/whisper.cpp/bindings/go v0.0.0-20230828102826-8e46ba80d3c1
 	github.com/go-audio/wav v1.1.0
 	github.com/go-jet/jet/v2 v2.7.1
 	github.com/golang/protobuf v1.5.3

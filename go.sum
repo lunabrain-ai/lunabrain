@@ -286,8 +286,6 @@ github.com/fsnotify/fsnotify v1.6.0 h1:n+5WquG0fcWoWp6xPWfHdbskMCQaFnG6PfBrh1Ky4
 github.com/fsnotify/fsnotify v1.6.0/go.mod h1:sl3t1tCWJFWoRz9R8WJCbQihKKwmorjAbSClcnxKAGw=
 github.com/geziyor/geziyor v0.0.0-20230315135110-a242b58aaa65 h1:hvRVRgTVEIIJmSO6cjP/RrS5SCFyu3RHGEQZds5kSfI=
 github.com/geziyor/geziyor v0.0.0-20230315135110-a242b58aaa65/go.mod h1:zYqllQWFOgqPbitpT+6LWhF/eLzgBchHBzPJa4+IuXk=
-github.com/ggerganov/whisper.cpp/bindings/go v0.0.0-20230828102826-8e46ba80d3c1 h1:RcrLWk1ghhaxMlDZ5yCwKXspRqUZb4RV/bbteLIlyeQ=
-github.com/ggerganov/whisper.cpp/bindings/go v0.0.0-20230828102826-8e46ba80d3c1/go.mod h1:QIjZ9OktHFG7p+/m3sMvrAJKKdWrr1fZIK0rM6HZlyo=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/gigawattio/window v0.0.0-20180317192513-0f5467e35573 h1:u8AQ9bPa9oC+8/A/jlWouakhIvkFfuxgIIRjiy8av7I=
 github.com/gigawattio/window v0.0.0-20180317192513-0f5467e35573/go.mod h1:eBvb3i++NHDH4Ugo9qCvMw8t0mTSctaEa5blJbWcNxs=
