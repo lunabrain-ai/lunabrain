@@ -2,8 +2,6 @@ module github.com/lunabrain-ai/lunabrain
 
 go 1.21
 
-replace github.com/protoflow-labs/protoflow => /Users/hacked/Documents/GitHub/protoflow/
-
 require (
 	github.com/JohannesKaufmann/html-to-markdown v1.3.3
 	github.com/PuerkitoBio/goquery v1.8.1
@@ -28,6 +26,7 @@ require (
 	github.com/google/go-github/v51 v51.0.0
 	github.com/google/uuid v1.3.1
 	github.com/google/wire v0.5.0
+	github.com/hajimehoshi/go-mp3 v0.3.4
 	github.com/kkdai/youtube/v2 v2.8.3
 	github.com/makiuchi-d/arelo v1.12.0
 	github.com/pion/rtp v1.7.13
@@ -103,8 +102,6 @@ require (
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
-	github.com/hajimehoshi/go-mp3 v0.3.4 // indirect
-	github.com/hajimehoshi/oto v1.0.1 // indirect
 	github.com/huandu/xstrings v1.3.3 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
@@ -158,10 +155,7 @@ require (
 	go.uber.org/zap v1.25.0 // indirect
 	golang.org/x/crypto v0.13.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
-	golang.org/x/exp/shiny v0.0.0-20230905200255-921286631fa9 // indirect
-	golang.org/x/image v0.12.0 // indirect
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
-	golang.org/x/mobile v0.0.0-20230906132913-2077a3224571 // indirect
 	golang.org/x/mod v0.12.0 // indirect
 	golang.org/x/oauth2 v0.11.0 // indirect
 	golang.org/x/sys v0.12.0 // indirect
