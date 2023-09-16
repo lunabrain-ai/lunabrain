@@ -430,6 +430,14 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 					next <- rxgo.Of(&seg)
 				}
 			}}, rxgo.WithContext(ctx))
+		case "text/plain; charset=utf-8":
+			obs = rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
+				seg := genapi.Segment{
+					Num:  0,
+					Text: string(t.FileOptions.Data),
+				}
+				next <- rxgo.Of(&seg)
+			}}, rxgo.WithContext(ctx))
 		default:
 			// TODO breadchris m4a is not a mime type in the golang mime package
 			if path.Ext(name) == ".m4a" {
