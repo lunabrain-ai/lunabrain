@@ -48,7 +48,7 @@ interface SubtleSelectionProps {
     audioRef: RefObject<HTMLAudioElement>
 }
 
-export const SubtleSelection: React.FC<SubtleSelectionProps> = ({ style, items, columns , audioRef}) => {
+export const MessageList: React.FC<SubtleSelectionProps> = ({ style, items, columns , audioRef}) => {
     const messagesEndRef = useRef(null);
     const [currentTime, setCurrentTime] = useState(0);
     const { inference } = useProjectContext();

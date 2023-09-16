@@ -5,7 +5,7 @@ import {Button} from "@fluentui/react-components";
 import toast from "react-hot-toast";
 
 export const FileUpload: React.FC = () => {
-    const { streamMessages } = useProjectContext();
+    const { streamMessages, loading, setLoading } = useProjectContext();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [fileName, setFileName] = useState<string | null>(null);
 
@@ -25,6 +25,7 @@ export const FileUpload: React.FC = () => {
             if (fileAsArrayBuffer) {
                 const fileBytes = new Uint8Array(fileAsArrayBuffer as ArrayBuffer);
                 try {
+                    setLoading(true);
                     const res = projectService.uploadContent({
                         content: {
                             options: {
@@ -38,7 +39,7 @@ export const FileUpload: React.FC = () => {
                     }, {
                         timeoutMs: undefined,
                     })
-                    void streamMessages(res);
+                    streamMessages(res);
                 } catch (e: any) {
                     console.log(e);
                     toast.error(e.message);

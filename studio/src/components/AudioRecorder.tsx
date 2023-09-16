@@ -2,9 +2,10 @@ import React, { useState, useRef } from 'react';
 import { Button } from "@fluentui/react-components";
 import {projectService} from "@/lib/api";
 import {useProjectContext} from "@/providers/ProjectProvider";
+import toast from "react-hot-toast";
 
 export const AudioRecorder: React.FC = () => {
-    const { streamMessages } = useProjectContext();
+    const { streamMessages, setLoading, loading } = useProjectContext();
     const [recording, setRecording] = useState(false);
     const [audioUrl, setAudioUrl] = useState<string | null>(null);
     const mediaRecorder = useRef<MediaRecorder | null>(null);
@@ -37,21 +38,27 @@ export const AudioRecorder: React.FC = () => {
             const audioBlob = new Blob(audioChunks.current, { type: 'audio/wav' });
             setAudioUrl(URL.createObjectURL(audioBlob));
 
-            const fileBytes = new Uint8Array(await audioBlob.arrayBuffer());
-            const res = projectService.uploadContent({
-                content: {
-                    options: {
-                        case: 'audioOptions',
-                        value: {
-                            file: new Date().toISOString() + '.wav',
-                            data: fileBytes,
-                        }
+            try {
+                const fileBytes = new Uint8Array(await audioBlob.arrayBuffer());
+                setLoading(true);
+                const res = projectService.uploadContent({
+                    content: {
+                        options: {
+                            case: 'audioOptions',
+                            value: {
+                                file: new Date().toISOString() + '.wav',
+                                data: fileBytes,
+                            }
+                        },
                     },
-                },
-            }, {
-                timeoutMs: undefined,
-            })
-            void streamMessages(res);
+                }, {
+                    timeoutMs: undefined,
+                })
+                streamMessages(res);
+            } catch (e: any) {
+                console.error(e);
+                toast.error(e.message);
+            }
         }
     };
 

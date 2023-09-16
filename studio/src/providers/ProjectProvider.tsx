@@ -26,6 +26,8 @@ type ProjectContextType = {
     inference: string;
     user?: User;
     setUser: (user?: User) => void;
+    loading: boolean;
+    setLoading: (loading: boolean) => void;
 };
 
 export default function ProjectProvider({children}: ProjectProviderProps) {
@@ -35,6 +37,7 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     const [session, setSession] = useState<Session|undefined>(undefined);
     const [inference, setInference] = useState<string>('');
     const [user, setUser] = useState<User|undefined>(undefined);
+    const [loading, setLoading] = useState(false);
 
     const inferFromMessages = useCallback(async (prompt: string) => {
         const mIdx = messages.length + 1;
@@ -87,6 +90,7 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
                 return [...prev, newMsg];
             });
         }
+        setLoading(false);
     }
 
     useEffect(() => {
@@ -123,6 +127,8 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
                 inference,
                 user,
                 setUser,
+                loading,
+                setLoading,
             }}
         >
             {children}

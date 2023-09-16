@@ -1,7 +1,7 @@
 import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
-import {List, PrimaryButton, Stack, TextField} from "@fluentui/react";
+import {List, PrimaryButton, Spinner, SpinnerSize, Stack, TextField} from "@fluentui/react";
 import { Segment } from '@/rpc/protoflow_pb';
-import {Message, messageColumns, SubtleSelection} from "@/pages/Chat/MessageList";
+import {Message, messageColumns, MessageList} from "@/pages/Chat/MessageList";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {projectService} from "@/lib/api";
 import {TokenVisualizer} from "@/components/TokenVisualizer";
@@ -12,7 +12,7 @@ interface WindowProps {
 export const Window: React.FC<WindowProps> = ({  }) => {
     const audioRef = useRef<HTMLAudioElement>(null);
     const [inputValue, setInputValue] = useState<string | undefined>('');
-    const { messages, setMessages, session, inferFromMessages } = useProjectContext();
+    const { loading, messages, setMessages, session, inferFromMessages } = useProjectContext();
 
     const handleSend = () => {
         if (inputValue && inputValue.trim() !== '') {
@@ -26,11 +26,17 @@ export const Window: React.FC<WindowProps> = ({  }) => {
             <Stack verticalFill verticalAlign="space-between"
                    styles={{root: {height: '90vh', overflowY: 'auto', width: '100%', margin: '0 auto', paddingTop: 10, display: 'flex', flexDirection: 'column'}}}>
                 {messages.length === 0 ? (
-                    <div style={{textAlign: 'center', color: '#0078d4', fontSize: 20, fontWeight: 'bold'}}>
-                        Welcome to LunaBrain Chat! Type, talk, or drag something!
-                    </div>
+                    <>
+                        {loading ? (
+                            <Spinner size={SpinnerSize.large} label="Loading..." ariaLive="assertive" labelPosition="right" />
+                        ) : (
+                            <div style={{textAlign: 'center', color: '#0078d4', fontSize: 20, fontWeight: 'bold'}}>
+                                Welcome to LunaBrain Chat! Type, talk, or drag something! <br />Audio files must be .wav or .m4a.
+                            </div>
+                        )}
+                    </>
                 ) : (
-                    <SubtleSelection
+                    <MessageList
                         style={{ maxHeight: '90vh' }}
                         columns={messageColumns}
                         items={messages}
