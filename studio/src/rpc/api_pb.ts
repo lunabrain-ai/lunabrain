@@ -496,9 +496,6 @@ export class Content extends Message<Content> {
   data = new Uint8Array(0);
 
   /**
-   * TODO breadchris get rid of type, and use oneof pattern
-   * this is more like the protoflow style and is a more scalable pattern as more content types are used
-   *
    * @generated from field: lunabrain.ContentType type = 2;
    */
   type = ContentType.TEXT;
@@ -514,10 +511,10 @@ export class Content extends Message<Content> {
     case: "textOptions";
   } | {
     /**
-     * @generated from field: lunabrain.AudioOptions audioOptions = 4;
+     * @generated from field: lunabrain.FileOptions fileOptions = 4;
      */
-    value: AudioOptions;
-    case: "audioOptions";
+    value: FileOptions;
+    case: "fileOptions";
   } | {
     /**
      * @generated from field: lunabrain.URLOptions urlOptions = 5;
@@ -552,7 +549,7 @@ export class Content extends Message<Content> {
     { no: 1, name: "data", kind: "scalar", T: 12 /* ScalarType.BYTES */ },
     { no: 2, name: "type", kind: "enum", T: proto3.getEnumType(ContentType) },
     { no: 3, name: "textOptions", kind: "message", T: TextOptions, oneof: "options" },
-    { no: 4, name: "audioOptions", kind: "message", T: AudioOptions, oneof: "options" },
+    { no: 4, name: "fileOptions", kind: "message", T: FileOptions, oneof: "options" },
     { no: 5, name: "urlOptions", kind: "message", T: URLOptions, oneof: "options" },
     { no: 6, name: "metadata", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
     { no: 7, name: "createdAt", kind: "scalar", T: 9 /* ScalarType.STRING */ },
@@ -795,6 +792,11 @@ export class ContentID extends Message<ContentID> {
  * @generated from message lunabrain.TextOptions
  */
 export class TextOptions extends Message<TextOptions> {
+  /**
+   * @generated from field: string data = 1;
+   */
+  data = "";
+
   constructor(data?: PartialMessage<TextOptions>) {
     super();
     proto3.util.initPartial(data, this);
@@ -803,6 +805,7 @@ export class TextOptions extends Message<TextOptions> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "lunabrain.TextOptions";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "data", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): TextOptions {
@@ -823,9 +826,9 @@ export class TextOptions extends Message<TextOptions> {
 }
 
 /**
- * @generated from message lunabrain.AudioOptions
+ * @generated from message lunabrain.FileOptions
  */
-export class AudioOptions extends Message<AudioOptions> {
+export class FileOptions extends Message<FileOptions> {
   /**
    * @generated from field: string file = 1;
    */
@@ -836,32 +839,32 @@ export class AudioOptions extends Message<AudioOptions> {
    */
   data = new Uint8Array(0);
 
-  constructor(data?: PartialMessage<AudioOptions>) {
+  constructor(data?: PartialMessage<FileOptions>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "lunabrain.AudioOptions";
+  static readonly typeName = "lunabrain.FileOptions";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "file", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "data", kind: "scalar", T: 12 /* ScalarType.BYTES */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AudioOptions {
-    return new AudioOptions().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): FileOptions {
+    return new FileOptions().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AudioOptions {
-    return new AudioOptions().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): FileOptions {
+    return new FileOptions().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AudioOptions {
-    return new AudioOptions().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): FileOptions {
+    return new FileOptions().fromJsonString(jsonString, options);
   }
 
-  static equals(a: AudioOptions | PlainMessage<AudioOptions> | undefined, b: AudioOptions | PlainMessage<AudioOptions> | undefined): boolean {
-    return proto3.util.equals(AudioOptions, a, b);
+  static equals(a: FileOptions | PlainMessage<FileOptions> | undefined, b: FileOptions | PlainMessage<FileOptions> | undefined): boolean {
+    return proto3.util.equals(FileOptions, a, b);
   }
 }
 

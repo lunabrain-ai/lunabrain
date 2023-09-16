@@ -1,6 +1,7 @@
 package protoflow
 
 import (
+	"bytes"
 	"context"
 	connect_go "github.com/bufbuild/connect-go"
 	"github.com/google/uuid"
@@ -10,6 +11,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
+	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
@@ -22,6 +24,7 @@ import (
 	"gorm.io/datatypes"
 	"image"
 	"io"
+	ghttp "net/http"
 	"net/url"
 	"os"
 	"path"
@@ -394,30 +397,67 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 			return errors.New("unsupported url")
 		}
 		break
-	case *genapi.Content_AudioOptions:
-		name = t.AudioOptions.File
+	case *genapi.Content_FileOptions:
+		name = t.FileOptions.File
 
-		err := p.fileStore.Bucket.WriteAll(ctx, id, t.AudioOptions.Data, nil)
+		err := p.fileStore.Bucket.WriteAll(ctx, id, t.FileOptions.Data, nil)
 		filepath, err := p.fileStore.NewFile(id)
 		if err != nil {
 			return err
 		}
 
-		// TODO breadchris figure out what type of file this content is and try to convert it
-		// use a more robust way of determining file type
-		if path.Ext(name) == ".m4a" {
-			err = p.convertAudio(ctx, filepath)
-			if err != nil {
-				return err
+		isAudio := false
+
+		contentType := ghttp.DetectContentType(t.FileOptions.Data)
+		switch contentType {
+		case "audio/wave":
+			isAudio = true
+		case "application/pdf":
+			r := bytes.NewReader(t.FileOptions.Data)
+			pd := collect.NewPDF(r, int64(len(t.FileOptions.Data)))
+			obs = rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
+				pages, err := pd.Load(ctx)
+				if err != nil {
+					next <- rxgo.Error(err)
+					return
+				}
+
+				for i, page := range pages {
+					seg := genapi.Segment{
+						Num:  uint32(i),
+						Text: page.PageContent,
+					}
+					next <- rxgo.Of(&seg)
+				}
+			}}, rxgo.WithContext(ctx))
+		default:
+			// TODO breadchris m4a is not a mime type in the golang mime package
+			if path.Ext(name) == ".m4a" {
+				err = p.convertAudio(ctx, filepath)
+				if err != nil {
+					return err
+				}
+				isAudio = true
+			} else {
+				return errors.Errorf("unsupported file type: %s", contentType)
 			}
 		}
-		obs = p.whisper.Transcribe(ctx, id, filepath, 0)
+		if isAudio {
+			obs = p.whisper.Transcribe(ctx, id, filepath, 0)
+		}
+
 		if err != nil {
 			return err
 		}
 		break
 	case *genapi.Content_TextOptions:
-		break
+		obs = rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
+			seg := genapi.Segment{
+				Num:  0,
+				Text: t.TextOptions.Data,
+			}
+			next <- rxgo.Of(&seg)
+		}}, rxgo.WithContext(ctx))
 	}
 	if obs == nil {
 		return errors.New("no observable")

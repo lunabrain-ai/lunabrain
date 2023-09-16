@@ -45497,9 +45497,6 @@ Be sure to create slots properly by using 'slot.always' or 'slot.optional' with 
      */
     data = new Uint8Array(0);
     /**
-     * TODO breadchris get rid of type, and use oneof pattern
-     * this is more like the protoflow style and is a more scalable pattern as more content types are used
-     *
      * @generated from field: lunabrain.ContentType type = 2;
      */
     type = 0 /* TEXT */;
@@ -45549,7 +45546,7 @@ Be sure to create slots properly by using 'slot.always' or 'slot.optional' with 
     },
     { no: 2, name: "type", kind: "enum", T: proto3.getEnumType(ContentType) },
     { no: 3, name: "textOptions", kind: "message", T: TextOptions, oneof: "options" },
-    { no: 4, name: "audioOptions", kind: "message", T: AudioOptions, oneof: "options" },
+    { no: 4, name: "fileOptions", kind: "message", T: FileOptions, oneof: "options" },
     { no: 5, name: "urlOptions", kind: "message", T: URLOptions, oneof: "options" },
     { no: 6, name: "metadata", kind: "map", K: 9, V: {
       kind: "scalar",
@@ -45773,6 +45770,10 @@ Be sure to create slots properly by using 'slot.always' or 'slot.optional' with 
     }
   ]));
   var _TextOptions = class extends Message {
+    /**
+     * @generated from field: string data = 1;
+     */
+    data = "";
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
@@ -45793,8 +45794,16 @@ Be sure to create slots properly by using 'slot.always' or 'slot.optional' with 
   var TextOptions = _TextOptions;
   __publicField(TextOptions, "runtime", proto3);
   __publicField(TextOptions, "typeName", "lunabrain.TextOptions");
-  __publicField(TextOptions, "fields", proto3.util.newFieldList(() => []));
-  var _AudioOptions = class extends Message {
+  __publicField(TextOptions, "fields", proto3.util.newFieldList(() => [
+    {
+      no: 1,
+      name: "data",
+      kind: "scalar",
+      T: 9
+      /* ScalarType.STRING */
+    }
+  ]));
+  var _FileOptions = class extends Message {
     /**
      * @generated from field: string file = 1;
      */
@@ -45808,22 +45817,22 @@ Be sure to create slots properly by using 'slot.always' or 'slot.optional' with 
       proto3.util.initPartial(data, this);
     }
     static fromBinary(bytes, options) {
-      return new _AudioOptions().fromBinary(bytes, options);
+      return new _FileOptions().fromBinary(bytes, options);
     }
     static fromJson(jsonValue, options) {
-      return new _AudioOptions().fromJson(jsonValue, options);
+      return new _FileOptions().fromJson(jsonValue, options);
     }
     static fromJsonString(jsonString, options) {
-      return new _AudioOptions().fromJsonString(jsonString, options);
+      return new _FileOptions().fromJsonString(jsonString, options);
     }
     static equals(a2, b3) {
-      return proto3.util.equals(_AudioOptions, a2, b3);
+      return proto3.util.equals(_FileOptions, a2, b3);
     }
   };
-  var AudioOptions = _AudioOptions;
-  __publicField(AudioOptions, "runtime", proto3);
-  __publicField(AudioOptions, "typeName", "lunabrain.AudioOptions");
-  __publicField(AudioOptions, "fields", proto3.util.newFieldList(() => [
+  var FileOptions = _FileOptions;
+  __publicField(FileOptions, "runtime", proto3);
+  __publicField(FileOptions, "typeName", "lunabrain.FileOptions");
+  __publicField(FileOptions, "fields", proto3.util.newFieldList(() => [
     {
       no: 1,
       name: "file",
@@ -64761,7 +64770,7 @@ to {
               const res = projectService.uploadContent({
                 content: {
                   options: {
-                    case: "audioOptions",
+                    case: "fileOptions",
                     value: {
                       file: file.name,
                       data: fileBytes
@@ -64845,7 +64854,7 @@ to {
           const res = projectService.uploadContent({
             content: {
               options: {
-                case: "audioOptions",
+                case: "fileOptions",
                 value: {
                   file: (/* @__PURE__ */ new Date()).toISOString() + ".wav",
                   data: fileBytes
@@ -64895,7 +64904,7 @@ to {
             const res = projectService.uploadContent({
               content: {
                 options: {
-                  case: "audioOptions",
+                  case: "fileOptions",
                   value: {
                     file: selectedFile.name,
                     data: fileBytes

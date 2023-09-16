@@ -26,7 +26,7 @@ export const FileDrop: React.FC<FileDropProps> = ({children}) => {
                         const res = projectService.uploadContent({
                             content: {
                                 options: {
-                                    case: 'audioOptions',
+                                    case: 'fileOptions',
                                     value: {
                                         file: file.name,
                                         data: fileBytes,

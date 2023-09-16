@@ -29,7 +29,7 @@ export const FileUpload: React.FC = () => {
                     const res = projectService.uploadContent({
                         content: {
                             options: {
-                                case: 'audioOptions',
+                                case: 'fileOptions',
                                 value: {
                                     file: selectedFile.name,
                                     data: fileBytes,

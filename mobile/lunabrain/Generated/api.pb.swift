@@ -338,8 +338,6 @@ public struct Lunabrain_Content {
 
   public var data: Data = Data()
 
-  /// TODO breadchris get rid of type, and use oneof pattern
-  /// this is more like the protoflow style and is a more scalable pattern as more content types are used
   public var type: Lunabrain_ContentType = .text
 
   public var options: Lunabrain_Content.OneOf_Options? = nil
@@ -352,12 +350,12 @@ public struct Lunabrain_Content {
     set {options = .textOptions(newValue)}
   }
 
-  public var audioOptions: Lunabrain_AudioOptions {
+  public var fileOptions: Lunabrain_FileOptions {
     get {
-      if case .audioOptions(let v)? = options {return v}
-      return Lunabrain_AudioOptions()
+      if case .fileOptions(let v)? = options {return v}
+      return Lunabrain_FileOptions()
     }
-    set {options = .audioOptions(newValue)}
+    set {options = .fileOptions(newValue)}
   }
 
   public var urlOptions: Lunabrain_URLOptions {
@@ -378,7 +376,7 @@ public struct Lunabrain_Content {
 
   public enum OneOf_Options: Equatable {
     case textOptions(Lunabrain_TextOptions)
-    case audioOptions(Lunabrain_AudioOptions)
+    case fileOptions(Lunabrain_FileOptions)
     case urlOptions(Lunabrain_URLOptions)
 
   #if !swift(>=4.1)
@@ -391,8 +389,8 @@ public struct Lunabrain_Content {
         guard case .textOptions(let l) = lhs, case .textOptions(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
-      case (.audioOptions, .audioOptions): return {
-        guard case .audioOptions(let l) = lhs, case .audioOptions(let r) = rhs else { preconditionFailure() }
+      case (.fileOptions, .fileOptions): return {
+        guard case .fileOptions(let l) = lhs, case .fileOptions(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
       case (.urlOptions, .urlOptions): return {
@@ -483,12 +481,14 @@ public struct Lunabrain_TextOptions {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  public var data: String = String()
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 }
 
-public struct Lunabrain_AudioOptions {
+public struct Lunabrain_FileOptions {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -537,7 +537,7 @@ extension Lunabrain_File: @unchecked Sendable {}
 extension Lunabrain_ContentIDs: @unchecked Sendable {}
 extension Lunabrain_ContentID: @unchecked Sendable {}
 extension Lunabrain_TextOptions: @unchecked Sendable {}
-extension Lunabrain_AudioOptions: @unchecked Sendable {}
+extension Lunabrain_FileOptions: @unchecked Sendable {}
 extension Lunabrain_URLOptions: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
@@ -910,7 +910,7 @@ extension Lunabrain_Content: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     1: .same(proto: "data"),
     2: .same(proto: "type"),
     3: .same(proto: "textOptions"),
-    4: .same(proto: "audioOptions"),
+    4: .same(proto: "fileOptions"),
     5: .same(proto: "urlOptions"),
     6: .same(proto: "metadata"),
     7: .same(proto: "createdAt"),
@@ -939,16 +939,16 @@ extension Lunabrain_Content: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
         }
       }()
       case 4: try {
-        var v: Lunabrain_AudioOptions?
+        var v: Lunabrain_FileOptions?
         var hadOneofValue = false
         if let current = self.options {
           hadOneofValue = true
-          if case .audioOptions(let m) = current {v = m}
+          if case .fileOptions(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {
           if hadOneofValue {try decoder.handleConflictingOneOf()}
-          self.options = .audioOptions(v)
+          self.options = .fileOptions(v)
         }
       }()
       case 5: try {
@@ -988,8 +988,8 @@ extension Lunabrain_Content: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
       guard case .textOptions(let v)? = self.options else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
     }()
-    case .audioOptions?: try {
-      guard case .audioOptions(let v)? = self.options else { preconditionFailure() }
+    case .fileOptions?: try {
+      guard case .fileOptions(let v)? = self.options else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
     }()
     case .urlOptions?: try {
@@ -1214,25 +1214,38 @@ extension Lunabrain_ContentID: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
 
 extension Lunabrain_TextOptions: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".TextOptions"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "data"),
+  ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let _ = try decoder.nextFieldNumber() {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.data) }()
+      default: break
+      }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.data.isEmpty {
+      try visitor.visitSingularStringField(value: self.data, fieldNumber: 1)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Lunabrain_TextOptions, rhs: Lunabrain_TextOptions) -> Bool {
+    if lhs.data != rhs.data {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension Lunabrain_AudioOptions: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".AudioOptions"
+extension Lunabrain_FileOptions: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".FileOptions"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "file"),
     2: .same(proto: "data"),
@@ -1261,7 +1274,7 @@ extension Lunabrain_AudioOptions: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Lunabrain_AudioOptions, rhs: Lunabrain_AudioOptions) -> Bool {
+  public static func ==(lhs: Lunabrain_FileOptions, rhs: Lunabrain_FileOptions) -> Bool {
     if lhs.file != rhs.file {return false}
     if lhs.data != rhs.data {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}

@@ -60,12 +60,10 @@ message StoredContent {
 // Content has data and metadata
 message Content {
   bytes data = 1;
-  // TODO breadchris get rid of type, and use oneof pattern
-  // this is more like the protoflow style and is a more scalable pattern as more content types are used
   ContentType type = 2;
   oneof options {
     TextOptions textOptions = 3;
-    AudioOptions audioOptions = 4;
+    FileOptions fileOptions = 4;
     URLOptions urlOptions = 5;
   };
   map<string, string> metadata = 6;
@@ -105,9 +103,10 @@ enum ContentType {
 }
 
 message TextOptions {
+  string data = 1;
 }
 
-message AudioOptions {
+message FileOptions {
   string file = 1;
   bytes data = 2;
 }
