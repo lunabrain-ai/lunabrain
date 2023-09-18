@@ -54,6 +54,14 @@ class TranscriptionViewModel: NSObject, ObservableObject {
             session?.activate()
         }
     }
+    
+    func startRecording() {
+        
+    }
+    
+    func stopRecording() {
+        
+    }
 
     func startLiveTranscription() {
         do {
@@ -82,7 +90,6 @@ class TranscriptionViewModel: NSObject, ObservableObject {
                 self?.liveTranscription = result.bestTranscription.formattedString
                 let messageDict = ["transcription": result.bestTranscription.formattedString]
                 WCSession.default.transferUserInfo(messageDict)
-                print("sent message")
                 if result.isFinal && result.bestTranscription.formattedString != "" {
                     self?.transcriptionSegments.append(result.bestTranscription.formattedString)
                 }
@@ -145,10 +152,13 @@ extension TranscriptionViewModel: WCSessionDelegate {
     }
     
     func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
-        print(message)
-        if let transcription = message["transcription"] as? String {
+        if let recording = message["recording"] as? Bool {
             DispatchQueue.main.async {
-                self.liveTranscription = transcription
+                if recording {
+                    self.startRecording()
+                } else {
+                    self.stopRecording()
+                }
             }
         }
     }

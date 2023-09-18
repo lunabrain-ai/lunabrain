@@ -3,6 +3,7 @@ import WatchConnectivity
 
 class WatchTranscriptionViewModel: NSObject, ObservableObject {
     @Published var liveTranscription: String = ""
+    @Published var isRecording: Bool = false
     
     private var session: WCSession?
     
@@ -15,9 +16,16 @@ class WatchTranscriptionViewModel: NSObject, ObservableObject {
         }
     }
     
-    func sendMessage() {
-        let messageDict = ["transcription": "test"]
+    func startRecording() {
+        let messageDict = ["recording": true]
         WCSession.default.transferUserInfo(messageDict)
+        isRecording = true
+    }
+    
+    func stopRecording() {
+        let messageDict = ["recording": false]
+        WCSession.default.transferUserInfo(messageDict)
+        isRecording = false
     }
 }
 

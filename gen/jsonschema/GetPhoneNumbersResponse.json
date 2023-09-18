@@ -1,0 +1,23 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/GetPhoneNumbersResponse",
+    "definitions": {
+        "GetPhoneNumbersResponse": {
+            "properties": {
+                "phone_numbers": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "summary": {
+                    "type": "string",
+                    "description": "A summary of the conversation from a YC founder that will be sent as a text message."
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Get Phone Numbers Response"
+        }
+    }
+}

@@ -4,6 +4,38 @@ import {useProjectContext} from "@/providers/ProjectProvider";
 import {Button} from "@fluentui/react-components";
 import toast from "react-hot-toast";
 
+function readFileInChunks(file: File, chunkSize: number = 25 * 1024 * 1024): Promise<void> {
+    return new Promise((resolve, reject) => {
+        let offset = 0;
+
+        const reader = new FileReader();
+
+        reader.onerror = () => {
+            reader.abort();
+            reject(new Error("Problem reading file."));
+        };
+
+        reader.onload = () => {
+            if (reader.result && offset < file.size) {
+                // Process the chunk here. Currently, it just logs the chunk.
+                console.log(new Uint8Array(reader.result as ArrayBuffer));
+
+                offset += chunkSize;
+                readChunk();
+            } else {
+                resolve();
+            }
+        };
+
+        function readChunk() {
+            const slice = file.slice(offset, offset + chunkSize);
+            reader.readAsArrayBuffer(slice);
+        }
+
+        readChunk();
+    });
+}
+
 export const FileUpload: React.FC = () => {
     const { streamMessages, loading, setLoading } = useProjectContext();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);

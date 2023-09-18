@@ -3,34 +3,23 @@ import Foundation
 
 struct RecordingsView: View {
     @StateObject var audioRecorder = AudioRecorder()
+    @StateObject var player = RecordingPlayer()
     
     var body: some View {
         VStack {
-            Button(action: {
-                if audioRecorder.audioRecorder == nil {
-                    audioRecorder.startRecording()
-                } else {
-                    audioRecorder.stopRecording()
-                }
-            }) {
-                Image(systemName: audioRecorder.audioRecorder == nil ? "circle.fill" : "stop.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 50, height: 50)
-            }
-            .padding()
-            
             List {
-                ForEach(audioRecorder.recordings, id: \.id) { recording in
+                ForEach(audioRecorder.recordings.sorted(by: { $0.createdAt > $1.createdAt }) , id: \.id) { recording in
                     HStack {
-                        Text(recording.fileURL.lastPathComponent)
-                        Spacer()
                         Text("\(recording.createdAt)")
                         Spacer()
                         Button(action: {
-                            audioRecorder.playRecording(recording)
+                            if player.isPlaying && player.current?.id == recording.id {
+                                player.stop()
+                            } else {
+                                player.play(with: recording)
+                            }
                         }) {
-                            Image(systemName: "play.circle")
+                            Image(systemName: player.isPlaying && player.current?.id == recording.id ? "stop.circle" : "play.circle")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 30, height: 30)
@@ -44,6 +33,7 @@ struct RecordingsView: View {
         }
     }
 }
+
 
 struct RecordingsView_Previews: PreviewProvider {
     static var previews: some View {

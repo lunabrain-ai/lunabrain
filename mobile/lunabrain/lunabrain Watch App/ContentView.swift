@@ -3,8 +3,6 @@ import WatchConnectivity
 import Combine
 
 struct ContentView: View {
-    @State private var isRecording = false
-
     @ObservedObject var viewModel = WatchTranscriptionViewModel()
     
     var body: some View {
@@ -14,6 +12,22 @@ struct ContentView: View {
             ScrollView {
                 Text(viewModel.liveTranscription)
                     .padding()
+            }
+            HStack {
+                Button(action: {}) {
+                    Image(systemName: viewModel.isRecording ? "stop.fill" : "circle.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 50, height: 50)
+                }
+                .padding()
+                Button(action: {
+                }) {
+                    Image(systemName: "brain")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 50, height: 50)
+                }
             }
         }
     }

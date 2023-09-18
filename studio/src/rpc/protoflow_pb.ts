@@ -8,6 +8,80 @@ import { Message, proto3, protoInt64 } from "@bufbuild/protobuf";
 import { Content } from "./api_pb.js";
 
 /**
+ * @generated from message protoflow.GenerateImagesRequest
+ */
+export class GenerateImagesRequest extends Message<GenerateImagesRequest> {
+  /**
+   * @generated from field: string prompt = 1;
+   */
+  prompt = "";
+
+  constructor(data?: PartialMessage<GenerateImagesRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.GenerateImagesRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "prompt", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GenerateImagesRequest {
+    return new GenerateImagesRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GenerateImagesRequest {
+    return new GenerateImagesRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GenerateImagesRequest {
+    return new GenerateImagesRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GenerateImagesRequest | PlainMessage<GenerateImagesRequest> | undefined, b: GenerateImagesRequest | PlainMessage<GenerateImagesRequest> | undefined): boolean {
+    return proto3.util.equals(GenerateImagesRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message protoflow.GenerateImagesResponse
+ */
+export class GenerateImagesResponse extends Message<GenerateImagesResponse> {
+  /**
+   * @generated from field: repeated string images = 1;
+   */
+  images: string[] = [];
+
+  constructor(data?: PartialMessage<GenerateImagesResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.GenerateImagesResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "images", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GenerateImagesResponse {
+    return new GenerateImagesResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GenerateImagesResponse {
+    return new GenerateImagesResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GenerateImagesResponse {
+    return new GenerateImagesResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GenerateImagesResponse | PlainMessage<GenerateImagesResponse> | undefined, b: GenerateImagesResponse | PlainMessage<GenerateImagesResponse> | undefined): boolean {
+    return proto3.util.equals(GenerateImagesResponse, a, b);
+  }
+}
+
+/**
  * @generated from message protoflow.User
  */
 export class User extends Message<User> {
@@ -274,6 +348,11 @@ export class InferRequest extends Message<InferRequest> {
    */
   text: string[] = [];
 
+  /**
+   * @generated from field: bool call = 3;
+   */
+  call = false;
+
   constructor(data?: PartialMessage<InferRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -284,6 +363,7 @@ export class InferRequest extends Message<InferRequest> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "prompt", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 3, name: "call", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): InferRequest {

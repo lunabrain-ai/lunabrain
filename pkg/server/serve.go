@@ -102,6 +102,7 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	reflector := grpcreflect.NewStaticReflector(
 		"lunabrain.API",
 		"lunabrain.DiscordService",
+		"protoflow.ProtoflowService",
 	)
 	recoverCall := func(_ context.Context, spec connect.Spec, _ http.Header, p any) error {
 		log.Error().Msgf("%+v\n", p)

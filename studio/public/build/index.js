@@ -45895,6 +45895,68 @@ Be sure to create slots properly by using 'slot.always' or 'slot.optional' with 
   ]));
 
   // src/rpc/protoflow_pb.ts
+  var _GenerateImagesRequest = class extends Message {
+    /**
+     * @generated from field: string prompt = 1;
+     */
+    prompt = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _GenerateImagesRequest().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _GenerateImagesRequest().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _GenerateImagesRequest().fromJsonString(jsonString, options);
+    }
+    static equals(a2, b3) {
+      return proto3.util.equals(_GenerateImagesRequest, a2, b3);
+    }
+  };
+  var GenerateImagesRequest = _GenerateImagesRequest;
+  __publicField(GenerateImagesRequest, "runtime", proto3);
+  __publicField(GenerateImagesRequest, "typeName", "protoflow.GenerateImagesRequest");
+  __publicField(GenerateImagesRequest, "fields", proto3.util.newFieldList(() => [
+    {
+      no: 1,
+      name: "prompt",
+      kind: "scalar",
+      T: 9
+      /* ScalarType.STRING */
+    }
+  ]));
+  var _GenerateImagesResponse = class extends Message {
+    /**
+     * @generated from field: repeated string images = 1;
+     */
+    images = [];
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _GenerateImagesResponse().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _GenerateImagesResponse().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _GenerateImagesResponse().fromJsonString(jsonString, options);
+    }
+    static equals(a2, b3) {
+      return proto3.util.equals(_GenerateImagesResponse, a2, b3);
+    }
+  };
+  var GenerateImagesResponse = _GenerateImagesResponse;
+  __publicField(GenerateImagesResponse, "runtime", proto3);
+  __publicField(GenerateImagesResponse, "typeName", "protoflow.GenerateImagesResponse");
+  __publicField(GenerateImagesResponse, "fields", proto3.util.newFieldList(() => [
+    { no: 1, name: "images", kind: "scalar", T: 9, repeated: true }
+  ]));
   var _User = class extends Message {
     /**
      * @generated from field: string email = 1;
@@ -46122,6 +46184,10 @@ Be sure to create slots properly by using 'slot.always' or 'slot.optional' with 
      * @generated from field: repeated string text = 2;
      */
     text = [];
+    /**
+     * @generated from field: bool call = 3;
+     */
+    call = false;
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
@@ -46150,7 +46216,14 @@ Be sure to create slots properly by using 'slot.always' or 'slot.optional' with 
       T: 9
       /* ScalarType.STRING */
     },
-    { no: 2, name: "text", kind: "scalar", T: 9, repeated: true }
+    { no: 2, name: "text", kind: "scalar", T: 9, repeated: true },
+    {
+      no: 3,
+      name: "call",
+      kind: "scalar",
+      T: 8
+      /* ScalarType.BOOL */
+    }
   ]));
   var _InferResponse = class extends Message {
     /**
@@ -47160,14 +47233,23 @@ Be sure to create slots properly by using 'slot.always' or 'slot.optional' with 
         kind: MethodKind.ServerStreaming
       },
       /**
-       *  rpc OCR (FilePath) returns (OCRText);
-       *
        * @generated from rpc protoflow.ProtoflowService.ConvertFile
        */
       convertFile: {
         name: "ConvertFile",
         I: ConvertFileRequest,
         O: FilePath,
+        kind: MethodKind.Unary
+      },
+      /**
+       *  rpc OCR (FilePath) returns (OCRText);
+       *
+       * @generated from rpc protoflow.ProtoflowService.GenerateImages
+       */
+      generateImages: {
+        name: "GenerateImages",
+        I: GenerateImagesRequest,
+        O: GenerateImagesResponse,
         kind: MethodKind.Unary
       },
       /**

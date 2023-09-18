@@ -32,6 +32,7 @@ type ProtoflowServiceClient interface {
 	Infer(ctx context.Context, in *InferRequest, opts ...grpc.CallOption) (ProtoflowService_InferClient, error)
 	Chat(ctx context.Context, in *ChatRequest, opts ...grpc.CallOption) (ProtoflowService_ChatClient, error)
 	ConvertFile(ctx context.Context, in *ConvertFileRequest, opts ...grpc.CallOption) (*FilePath, error)
+	GenerateImages(ctx context.Context, in *GenerateImagesRequest, opts ...grpc.CallOption) (*GenerateImagesResponse, error)
 	Register(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 	Login(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 	Logout(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
@@ -204,6 +205,15 @@ func (c *protoflowServiceClient) ConvertFile(ctx context.Context, in *ConvertFil
 	return out, nil
 }
 
+func (c *protoflowServiceClient) GenerateImages(ctx context.Context, in *GenerateImagesRequest, opts ...grpc.CallOption) (*GenerateImagesResponse, error) {
+	out := new(GenerateImagesResponse)
+	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/GenerateImages", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *protoflowServiceClient) Register(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
 	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/Register", in, out, opts...)
@@ -245,6 +255,7 @@ type ProtoflowServiceServer interface {
 	Infer(*InferRequest, ProtoflowService_InferServer) error
 	Chat(*ChatRequest, ProtoflowService_ChatServer) error
 	ConvertFile(context.Context, *ConvertFileRequest) (*FilePath, error)
+	GenerateImages(context.Context, *GenerateImagesRequest) (*GenerateImagesResponse, error)
 	Register(context.Context, *User) (*User, error)
 	Login(context.Context, *User) (*User, error)
 	Logout(context.Context, *Empty) (*Empty, error)
@@ -283,6 +294,9 @@ func (UnimplementedProtoflowServiceServer) Chat(*ChatRequest, ProtoflowService_C
 }
 func (UnimplementedProtoflowServiceServer) ConvertFile(context.Context, *ConvertFileRequest) (*FilePath, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConvertFile not implemented")
+}
+func (UnimplementedProtoflowServiceServer) GenerateImages(context.Context, *GenerateImagesRequest) (*GenerateImagesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateImages not implemented")
 }
 func (UnimplementedProtoflowServiceServer) Register(context.Context, *User) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
@@ -494,6 +508,24 @@ func _ProtoflowService_ConvertFile_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProtoflowService_GenerateImages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateImagesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProtoflowServiceServer).GenerateImages(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protoflow.ProtoflowService/GenerateImages",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProtoflowServiceServer).GenerateImages(ctx, req.(*GenerateImagesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ProtoflowService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(User)
 	if err := dec(in); err != nil {
@@ -582,6 +614,10 @@ var ProtoflowService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ConvertFile",
 			Handler:    _ProtoflowService_ConvertFile_Handler,
+		},
+		{
+			MethodName: "GenerateImages",
+			Handler:    _ProtoflowService_GenerateImages_Handler,
 		},
 		{
 			MethodName: "Register",

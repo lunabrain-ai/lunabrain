@@ -20,6 +20,30 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
+public struct Protoflow_GenerateImagesRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var prompt: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Protoflow_GenerateImagesResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var images: [String] = []
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 public struct Protoflow_User {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -110,6 +134,8 @@ public struct Protoflow_InferRequest {
   public var prompt: String = String()
 
   public var text: [String] = []
+
+  public var call: Bool = false
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -437,6 +463,8 @@ public struct Protoflow_FilePath {
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
+extension Protoflow_GenerateImagesRequest: @unchecked Sendable {}
+extension Protoflow_GenerateImagesResponse: @unchecked Sendable {}
 extension Protoflow_User: @unchecked Sendable {}
 extension Protoflow_LoginResponse: @unchecked Sendable {}
 extension Protoflow_Empty: @unchecked Sendable {}
@@ -469,6 +497,70 @@ extension Protoflow_FilePath: @unchecked Sendable {}
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "protoflow"
+
+extension Protoflow_GenerateImagesRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".GenerateImagesRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "prompt"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.prompt) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.prompt.isEmpty {
+      try visitor.visitSingularStringField(value: self.prompt, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Protoflow_GenerateImagesRequest, rhs: Protoflow_GenerateImagesRequest) -> Bool {
+    if lhs.prompt != rhs.prompt {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Protoflow_GenerateImagesResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".GenerateImagesResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "images"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedStringField(value: &self.images) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.images.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.images, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Protoflow_GenerateImagesResponse, rhs: Protoflow_GenerateImagesResponse) -> Bool {
+    if lhs.images != rhs.images {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
 
 extension Protoflow_User: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".User"
@@ -672,6 +764,7 @@ extension Protoflow_InferRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageI
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "prompt"),
     2: .same(proto: "text"),
+    3: .same(proto: "call"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -682,6 +775,7 @@ extension Protoflow_InferRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageI
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.prompt) }()
       case 2: try { try decoder.decodeRepeatedStringField(value: &self.text) }()
+      case 3: try { try decoder.decodeSingularBoolField(value: &self.call) }()
       default: break
       }
     }
@@ -694,12 +788,16 @@ extension Protoflow_InferRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     if !self.text.isEmpty {
       try visitor.visitRepeatedStringField(value: self.text, fieldNumber: 2)
     }
+    if self.call != false {
+      try visitor.visitSingularBoolField(value: self.call, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Protoflow_InferRequest, rhs: Protoflow_InferRequest) -> Bool {
     if lhs.prompt != rhs.prompt {return false}
     if lhs.text != rhs.text {return false}
+    if lhs.call != rhs.call {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

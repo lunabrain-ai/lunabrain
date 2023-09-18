@@ -21,11 +21,20 @@ service ProtoflowService {
 
   rpc Chat(ChatRequest) returns (stream ChatResponse);
   rpc ConvertFile(ConvertFileRequest) returns (FilePath);
+  rpc GenerateImages(GenerateImagesRequest) returns (GenerateImagesResponse);
 //  rpc OCR (FilePath) returns (OCRText);
 
   rpc Register(User) returns (User);
   rpc Login(User) returns (User);
   rpc Logout(Empty) returns (Empty);
+}
+
+message GenerateImagesRequest {
+  string prompt = 1;
+}
+
+message GenerateImagesResponse {
+  repeated string images = 1;
 }
 
 message User {
@@ -55,6 +64,7 @@ message GetPromptsResponse {
 message InferRequest {
   string prompt = 1;
   repeated string text = 2;
+  bool call = 3;
 }
 
 message InferResponse {

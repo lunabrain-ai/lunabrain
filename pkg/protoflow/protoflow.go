@@ -155,36 +155,6 @@ func (p *Protoflow) GetPrompts(ctx context.Context, c *connect_go.Request[genapi
 	}), nil
 }
 
-func (p *Protoflow) Infer(ctx context.Context, c *connect_go.Request[genapi.InferRequest], c2 *connect_go.ServerStream[genapi.InferResponse]) error {
-	var content string
-	for _, t := range c.Msg.Text {
-		content += t + " "
-	}
-	obs, err := p.openai.Ask(c.Msg.Prompt, content)
-	if err != nil {
-		return err
-	}
-
-	var resErr error
-	<-obs.ForEach(func(item any) {
-		s, ok := item.(string)
-		if !ok {
-			return
-		}
-		if err := c2.Send(&genapi.InferResponse{
-			Text: s,
-		}); err != nil {
-			log.Error().Err(err).Msg("error sending token")
-		}
-	}, func(err error) {
-		log.Error().Err(err).Msg("error while infering")
-		resErr = err
-	}, func() {
-		log.Debug().Msg("infer complete")
-	})
-	return resErr
-}
-
 func (p *Protoflow) DownloadYouTubeVideo(ctx context.Context, c *connect_go.Request[genapi.YouTubeVideo]) (*connect_go.Response[genapi.FilePath], error) {
 	client := youtube.Client{
 		Debug: true,
@@ -500,6 +470,16 @@ func loadImageFromFile(imgPath string) image.Image {
 	defer imageFile.Close()
 	img, _, _ := image.Decode(imageFile)
 	return img
+}
+
+func (p *Protoflow) GenerateImages(ctx context.Context, c *connect_go.Request[genapi.GenerateImagesRequest]) (*connect_go.Response[genapi.GenerateImagesResponse], error) {
+	images, err := p.openai.GenerateImages(ctx, c.Msg.Prompt)
+	if err != nil {
+		return nil, err
+	}
+	return connect_go.NewResponse(&genapi.GenerateImagesResponse{
+		Images: images,
+	}), nil
 }
 
 //func (p *Protoflow) OCR(ctx context.Context, c *connect_go.Request[genapi.FilePath]) (*connect_go.Response[genapi.OCRText], error) {

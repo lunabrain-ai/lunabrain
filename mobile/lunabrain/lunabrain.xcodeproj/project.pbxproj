@@ -17,12 +17,19 @@
 		4C2324A12AAE7FE400AB937A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C2324A02AAE7FE400AB937A /* Assets.xcassets */; };
 		4C2324A42AAE7FE400AB937A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C2324A32AAE7FE400AB937A /* Preview Assets.xcassets */; };
 		4C2324B12AAEEB4500AB937A /* Connect in Frameworks */ = {isa = PBXBuildFile; productRef = 4C2324B02AAEEB4500AB937A /* Connect */; };
-		4C2324B32AAEEB6E00AB937A /* Generated in Resources */ = {isa = PBXBuildFile; fileRef = 4C2324B22AAEEB6E00AB937A /* Generated */; };
 		4C2324B62AAFDD7200AB937A /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C2324B52AAFDD7200AB937A /* Storyboard.storyboard */; };
 		4C2324B82AB0DE9200AB937A /* WatchTranscriptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324B72AB0DE9200AB937A /* WatchTranscriptionViewModel.swift */; };
 		4C2324BA2AB0DFE500AB937A /* TranscriptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324B92AB0DFE500AB937A /* TranscriptionViewModel.swift */; };
 		4C2324BC2AB0EFAB00AB937A /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324BB2AB0EFAB00AB937A /* AudioRecorder.swift */; };
 		4C2324BE2AB0EFF300AB937A /* RecordingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324BD2AB0EFF300AB937A /* RecordingsView.swift */; };
+		4C2324C02AB8159500AB937A /* AIViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324BF2AB8159500AB937A /* AIViewModel.swift */; };
+		4C2324CE2AB819C700AB937A /* protoflow.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324C62AB819C700AB937A /* protoflow.pb.swift */; };
+		4C2324CF2AB819C700AB937A /* api.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324C72AB819C700AB937A /* api.pb.swift */; };
+		4C2324D12AB819C700AB937A /* python.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324C92AB819C700AB937A /* python.pb.swift */; };
+		4C2324D22AB819C700AB937A /* api.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324CA2AB819C700AB937A /* api.connect.swift */; };
+		4C2324D32AB819C700AB937A /* jsonschema.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324CB2AB819C700AB937A /* jsonschema.pb.swift */; };
+		4C2324D42AB819C700AB937A /* protoflow.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324CC2AB819C700AB937A /* protoflow.connect.swift */; };
+		4C2324D52AB819C700AB937A /* python.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324CD2AB819C700AB937A /* python.connect.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,12 +68,19 @@
 		4C2324A02AAE7FE400AB937A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4C2324A32AAE7FE400AB937A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4C2324AE2AAEE30400AB937A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		4C2324B22AAEEB6E00AB937A /* Generated */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Generated; sourceTree = "<group>"; };
 		4C2324B52AAFDD7200AB937A /* Storyboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		4C2324B72AB0DE9200AB937A /* WatchTranscriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchTranscriptionViewModel.swift; sourceTree = "<group>"; };
 		4C2324B92AB0DFE500AB937A /* TranscriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionViewModel.swift; sourceTree = "<group>"; };
 		4C2324BB2AB0EFAB00AB937A /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
 		4C2324BD2AB0EFF300AB937A /* RecordingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingsView.swift; sourceTree = "<group>"; };
+		4C2324BF2AB8159500AB937A /* AIViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIViewModel.swift; sourceTree = "<group>"; };
+		4C2324C62AB819C700AB937A /* protoflow.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = protoflow.pb.swift; sourceTree = "<group>"; };
+		4C2324C72AB819C700AB937A /* api.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = api.pb.swift; sourceTree = "<group>"; };
+		4C2324C92AB819C700AB937A /* python.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = python.pb.swift; sourceTree = "<group>"; };
+		4C2324CA2AB819C700AB937A /* api.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = api.connect.swift; sourceTree = "<group>"; };
+		4C2324CB2AB819C700AB937A /* jsonschema.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = jsonschema.pb.swift; sourceTree = "<group>"; };
+		4C2324CC2AB819C700AB937A /* protoflow.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = protoflow.connect.swift; sourceTree = "<group>"; };
+		4C2324CD2AB819C700AB937A /* python.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = python.connect.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,7 +106,6 @@
 			isa = PBXGroup;
 			children = (
 				4C2324B52AAFDD7200AB937A /* Storyboard.storyboard */,
-				4C2324B22AAEEB6E00AB937A /* Generated */,
 				4C2324892AAE7FE200AB937A /* lunabrain */,
 				4C23249B2AAE7FE300AB937A /* lunabrain Watch App */,
 				4C2324882AAE7FE200AB937A /* Products */,
@@ -111,6 +124,7 @@
 		4C2324892AAE7FE200AB937A /* lunabrain */ = {
 			isa = PBXGroup;
 			children = (
+				4C2324C52AB819C700AB937A /* Generated */,
 				4C2324AE2AAEE30400AB937A /* Info.plist */,
 				4C23248A2AAE7FE200AB937A /* lunabrainApp.swift */,
 				4C23248C2AAE7FE200AB937A /* ContentView.swift */,
@@ -119,6 +133,7 @@
 				4C2324B92AB0DFE500AB937A /* TranscriptionViewModel.swift */,
 				4C2324BB2AB0EFAB00AB937A /* AudioRecorder.swift */,
 				4C2324BD2AB0EFF300AB937A /* RecordingsView.swift */,
+				4C2324BF2AB8159500AB937A /* AIViewModel.swift */,
 			);
 			path = lunabrain;
 			sourceTree = "<group>";
@@ -150,6 +165,20 @@
 			);
 			path = "Preview Content";
 			sourceTree = "<group>";
+		};
+		4C2324C52AB819C700AB937A /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				4C2324C62AB819C700AB937A /* protoflow.pb.swift */,
+				4C2324C72AB819C700AB937A /* api.pb.swift */,
+				4C2324C92AB819C700AB937A /* python.pb.swift */,
+				4C2324CA2AB819C700AB937A /* api.connect.swift */,
+				4C2324CB2AB819C700AB937A /* jsonschema.pb.swift */,
+				4C2324CC2AB819C700AB937A /* protoflow.connect.swift */,
+				4C2324CD2AB819C700AB937A /* python.connect.swift */,
+			);
+			path = Generated;
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
@@ -241,7 +270,6 @@
 				4C2324922AAE7FE300AB937A /* Preview Assets.xcassets in Resources */,
 				4C2324B62AAFDD7200AB937A /* Storyboard.storyboard in Resources */,
 				4C23248F2AAE7FE300AB937A /* Assets.xcassets in Resources */,
-				4C2324B32AAEEB6E00AB937A /* Generated in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,9 +289,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C2324D52AB819C700AB937A /* python.connect.swift in Sources */,
+				4C2324D32AB819C700AB937A /* jsonschema.pb.swift in Sources */,
+				4C2324D22AB819C700AB937A /* api.connect.swift in Sources */,
+				4C2324CE2AB819C700AB937A /* protoflow.pb.swift in Sources */,
+				4C2324D12AB819C700AB937A /* python.pb.swift in Sources */,
+				4C2324CF2AB819C700AB937A /* api.pb.swift in Sources */,
 				4C2324BE2AB0EFF300AB937A /* RecordingsView.swift in Sources */,
 				4C23248D2AAE7FE200AB937A /* ContentView.swift in Sources */,
+				4C2324D42AB819C700AB937A /* protoflow.connect.swift in Sources */,
 				4C2324BA2AB0DFE500AB937A /* TranscriptionViewModel.swift in Sources */,
+				4C2324C02AB8159500AB937A /* AIViewModel.swift in Sources */,
 				4C2324BC2AB0EFAB00AB937A /* AudioRecorder.swift in Sources */,
 				4C23248B2AAE7FE200AB937A /* lunabrainApp.swift in Sources */,
 			);

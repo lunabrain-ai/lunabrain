@@ -60,13 +60,19 @@ public protocol Protoflow_ProtoflowServiceClientInterface: Sendable {
     @available(iOS 13, *)
     func `chat`(headers: Connect.Headers) -> any Connect.ServerOnlyAsyncStreamInterface<Protoflow_ChatRequest, Protoflow_ChatResponse>
 
-    ///  rpc OCR (FilePath) returns (OCRText);
     @discardableResult
     func `convertFile`(request: Protoflow_ConvertFileRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_FilePath>) -> Void) -> Connect.Cancelable
 
-    ///  rpc OCR (FilePath) returns (OCRText);
     @available(iOS 13, *)
     func `convertFile`(request: Protoflow_ConvertFileRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_FilePath>
+
+    ///  rpc OCR (FilePath) returns (OCRText);
+    @discardableResult
+    func `generateImages`(request: Protoflow_GenerateImagesRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_GenerateImagesResponse>) -> Void) -> Connect.Cancelable
+
+    ///  rpc OCR (FilePath) returns (OCRText);
+    @available(iOS 13, *)
+    func `generateImages`(request: Protoflow_GenerateImagesRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_GenerateImagesResponse>
 
     @discardableResult
     func `register`(request: Protoflow_User, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_User>) -> Void) -> Connect.Cancelable
@@ -193,6 +199,16 @@ public final class Protoflow_ProtoflowServiceClient: Protoflow_ProtoflowServiceC
     }
 
     @discardableResult
+    public func `generateImages`(request: Protoflow_GenerateImagesRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_GenerateImagesResponse>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/protoflow.ProtoflowService/GenerateImages", request: request, headers: headers, completion: completion)
+    }
+
+    @available(iOS 13, *)
+    public func `generateImages`(request: Protoflow_GenerateImagesRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_GenerateImagesResponse> {
+        return await self.client.unary(path: "/protoflow.ProtoflowService/GenerateImages", request: request, headers: headers)
+    }
+
+    @discardableResult
     public func `register`(request: Protoflow_User, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_User>) -> Void) -> Connect.Cancelable {
         return self.client.unary(path: "/protoflow.ProtoflowService/Register", request: request, headers: headers, completion: completion)
     }
@@ -234,6 +250,7 @@ public final class Protoflow_ProtoflowServiceClient: Protoflow_ProtoflowServiceC
             public static let infer = Connect.MethodSpec(name: "Infer", service: "protoflow.ProtoflowService", type: .serverStream)
             public static let chat = Connect.MethodSpec(name: "Chat", service: "protoflow.ProtoflowService", type: .serverStream)
             public static let convertFile = Connect.MethodSpec(name: "ConvertFile", service: "protoflow.ProtoflowService", type: .unary)
+            public static let generateImages = Connect.MethodSpec(name: "GenerateImages", service: "protoflow.ProtoflowService", type: .unary)
             public static let register = Connect.MethodSpec(name: "Register", service: "protoflow.ProtoflowService", type: .unary)
             public static let login = Connect.MethodSpec(name: "Login", service: "protoflow.ProtoflowService", type: .unary)
             public static let logout = Connect.MethodSpec(name: "Logout", service: "protoflow.ProtoflowService", type: .unary)
