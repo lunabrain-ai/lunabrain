@@ -33,6 +33,7 @@ type ProtoflowServiceClient interface {
 	Chat(ctx context.Context, in *ChatRequest, opts ...grpc.CallOption) (ProtoflowService_ChatClient, error)
 	ConvertFile(ctx context.Context, in *ConvertFileRequest, opts ...grpc.CallOption) (*FilePath, error)
 	GenerateImages(ctx context.Context, in *GenerateImagesRequest, opts ...grpc.CallOption) (*GenerateImagesResponse, error)
+	AnalyzeConversation(ctx context.Context, in *AnalyzeConversationRequest, opts ...grpc.CallOption) (*AnalyzeConversationResponse, error)
 	Register(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 	Login(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 	Logout(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
@@ -214,6 +215,15 @@ func (c *protoflowServiceClient) GenerateImages(ctx context.Context, in *Generat
 	return out, nil
 }
 
+func (c *protoflowServiceClient) AnalyzeConversation(ctx context.Context, in *AnalyzeConversationRequest, opts ...grpc.CallOption) (*AnalyzeConversationResponse, error) {
+	out := new(AnalyzeConversationResponse)
+	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/AnalyzeConversation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *protoflowServiceClient) Register(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
 	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/Register", in, out, opts...)
@@ -256,6 +266,7 @@ type ProtoflowServiceServer interface {
 	Chat(*ChatRequest, ProtoflowService_ChatServer) error
 	ConvertFile(context.Context, *ConvertFileRequest) (*FilePath, error)
 	GenerateImages(context.Context, *GenerateImagesRequest) (*GenerateImagesResponse, error)
+	AnalyzeConversation(context.Context, *AnalyzeConversationRequest) (*AnalyzeConversationResponse, error)
 	Register(context.Context, *User) (*User, error)
 	Login(context.Context, *User) (*User, error)
 	Logout(context.Context, *Empty) (*Empty, error)
@@ -297,6 +308,9 @@ func (UnimplementedProtoflowServiceServer) ConvertFile(context.Context, *Convert
 }
 func (UnimplementedProtoflowServiceServer) GenerateImages(context.Context, *GenerateImagesRequest) (*GenerateImagesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateImages not implemented")
+}
+func (UnimplementedProtoflowServiceServer) AnalyzeConversation(context.Context, *AnalyzeConversationRequest) (*AnalyzeConversationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AnalyzeConversation not implemented")
 }
 func (UnimplementedProtoflowServiceServer) Register(context.Context, *User) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
@@ -526,6 +540,24 @@ func _ProtoflowService_GenerateImages_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProtoflowService_AnalyzeConversation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AnalyzeConversationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProtoflowServiceServer).AnalyzeConversation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/protoflow.ProtoflowService/AnalyzeConversation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProtoflowServiceServer).AnalyzeConversation(ctx, req.(*AnalyzeConversationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ProtoflowService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(User)
 	if err := dec(in); err != nil {
@@ -618,6 +650,10 @@ var ProtoflowService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GenerateImages",
 			Handler:    _ProtoflowService_GenerateImages_Handler,
+		},
+		{
+			MethodName: "AnalyzeConversation",
+			Handler:    _ProtoflowService_AnalyzeConversation_Handler,
 		},
 		{
 			MethodName: "Register",

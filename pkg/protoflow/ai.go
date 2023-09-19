@@ -3,6 +3,7 @@ package protoflow
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	connect_go "github.com/bufbuild/connect-go"
 	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/gen/jsonschema"
@@ -10,7 +11,6 @@ import (
 	"github.com/reactivex/rxgo/v2"
 	"github.com/rs/zerolog/log"
 	"github.com/tmc/langchaingo/llms"
-	"strings"
 )
 
 func (p *Protoflow) Infer(ctx context.Context, c *connect_go.Request[genapi.InferRequest], c2 *connect_go.ServerStream[genapi.InferResponse]) error {
@@ -22,11 +22,7 @@ func (p *Protoflow) Infer(ctx context.Context, c *connect_go.Request[genapi.Infe
 		obs rxgo.Observable
 		err error
 	)
-	if c.Msg.Call {
-		obs, err = p.callFunction(ctx, content)
-	} else {
-		obs, err = p.openai.Ask(c.Msg.Prompt, content)
-	}
+	obs, err = p.openai.Ask(c.Msg.Prompt, content)
 	if err != nil {
 		return err
 	}
@@ -64,8 +60,9 @@ type Definition struct {
 	Title                string          `json:"title"`
 }
 
-func (p *Protoflow) callFunction(ctx context.Context, content string) (rxgo.Observable, error) {
-	getPhoneNumbers, err := jsonschema.Assets.ReadFile("GetPhoneNumbersResponse.json")
+func (p *Protoflow) AnalyzeConversation(ctx context.Context, c *connect_go.Request[genapi.AnalyzeConversationRequest]) (*connect_go.Response[genapi.AnalyzeConversationResponse], error) {
+	name := "AnalyzeConversationResponse"
+	getPhoneNumbers, err := jsonschema.Assets.ReadFile(fmt.Sprintf("%s.json", name))
 	if err != nil {
 		return nil, err
 	}
@@ -86,32 +83,24 @@ func (p *Protoflow) callFunction(ctx context.Context, content string) (rxgo.Obse
 		funcs = append(funcs, f)
 	}
 
-	return rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
-		call, err := p.openai.Call(ctx, content, funcs)
-		if err != nil {
-			log.Debug().Err(err).Msg("error calling llm")
-			next <- rxgo.Error(err)
-			return
-		}
+	call, err := p.openai.Call(ctx, c.Msg.Text, funcs)
+	if err != nil {
+		return nil, err
+	}
 
-		if call == nil {
-			next <- rxgo.Error(errors.New("no call was found"))
-			return
-		}
+	if call == nil {
+		return nil, errors.New("no call was found")
+	}
 
-		for _, f := range funcs {
-			if f.Name == call.Name {
-				if f.Name == "GetPhoneNumbersResponse" {
-					var resp genapi.GetPhoneNumbersResponse
-					err := json.Unmarshal([]byte(call.Arguments), &resp)
-					if err != nil {
-						next <- rxgo.Error(err)
-						return
-					}
-					next <- rxgo.Of(strings.Join(resp.PhoneNumbers, ", ") + " " + resp.Summary)
-					break
-				}
+	var resp genapi.AnalyzeConversationResponse
+	for _, f := range funcs {
+		if f.Name == name {
+			err := json.Unmarshal([]byte(call.Arguments), &resp)
+			if err != nil {
+				return nil, err
 			}
+			break
 		}
-	}}, rxgo.WithContext(ctx)), nil
+	}
+	return connect_go.NewResponse(&resp), nil
 }

@@ -1,0 +1,64 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/ChatResponse",
+    "definitions": {
+        "ChatResponse": {
+            "properties": {
+                "segment": {
+                    "$ref": "#/definitions/protoflow.Segment",
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Chat Response"
+        },
+        "protoflow.Segment": {
+            "properties": {
+                "num": {
+                    "type": "integer"
+                },
+                "tokens": {
+                    "items": {
+                        "$ref": "#/definitions/protoflow.Token"
+                    },
+                    "type": "array"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Segment"
+        },
+        "protoflow.Token": {
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "p": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Token"
+        }
+    }
+}

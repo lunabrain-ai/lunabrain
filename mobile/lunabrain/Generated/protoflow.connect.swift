@@ -75,6 +75,12 @@ public protocol Protoflow_ProtoflowServiceClientInterface: Sendable {
     func `generateImages`(request: Protoflow_GenerateImagesRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_GenerateImagesResponse>
 
     @discardableResult
+    func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_AnalyzeConversationResponse>) -> Void) -> Connect.Cancelable
+
+    @available(iOS 13, *)
+    func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_AnalyzeConversationResponse>
+
+    @discardableResult
     func `register`(request: Protoflow_User, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_User>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
@@ -209,6 +215,16 @@ public final class Protoflow_ProtoflowServiceClient: Protoflow_ProtoflowServiceC
     }
 
     @discardableResult
+    public func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_AnalyzeConversationResponse>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/protoflow.ProtoflowService/AnalyzeConversation", request: request, headers: headers, completion: completion)
+    }
+
+    @available(iOS 13, *)
+    public func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_AnalyzeConversationResponse> {
+        return await self.client.unary(path: "/protoflow.ProtoflowService/AnalyzeConversation", request: request, headers: headers)
+    }
+
+    @discardableResult
     public func `register`(request: Protoflow_User, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_User>) -> Void) -> Connect.Cancelable {
         return self.client.unary(path: "/protoflow.ProtoflowService/Register", request: request, headers: headers, completion: completion)
     }
@@ -251,6 +267,7 @@ public final class Protoflow_ProtoflowServiceClient: Protoflow_ProtoflowServiceC
             public static let chat = Connect.MethodSpec(name: "Chat", service: "protoflow.ProtoflowService", type: .serverStream)
             public static let convertFile = Connect.MethodSpec(name: "ConvertFile", service: "protoflow.ProtoflowService", type: .unary)
             public static let generateImages = Connect.MethodSpec(name: "GenerateImages", service: "protoflow.ProtoflowService", type: .unary)
+            public static let analyzeConversation = Connect.MethodSpec(name: "AnalyzeConversation", service: "protoflow.ProtoflowService", type: .unary)
             public static let register = Connect.MethodSpec(name: "Register", service: "protoflow.ProtoflowService", type: .unary)
             public static let login = Connect.MethodSpec(name: "Login", service: "protoflow.ProtoflowService", type: .unary)
             public static let logout = Connect.MethodSpec(name: "Logout", service: "protoflow.ProtoflowService", type: .unary)

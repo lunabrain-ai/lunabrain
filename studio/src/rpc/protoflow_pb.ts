@@ -8,6 +8,90 @@ import { Message, proto3, protoInt64 } from "@bufbuild/protobuf";
 import { Content } from "./api_pb.js";
 
 /**
+ * @generated from message protoflow.AnalyzeConversationRequest
+ */
+export class AnalyzeConversationRequest extends Message<AnalyzeConversationRequest> {
+  /**
+   * @generated from field: string text = 1;
+   */
+  text = "";
+
+  constructor(data?: PartialMessage<AnalyzeConversationRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.AnalyzeConversationRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AnalyzeConversationRequest {
+    return new AnalyzeConversationRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AnalyzeConversationRequest {
+    return new AnalyzeConversationRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AnalyzeConversationRequest {
+    return new AnalyzeConversationRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AnalyzeConversationRequest | PlainMessage<AnalyzeConversationRequest> | undefined, b: AnalyzeConversationRequest | PlainMessage<AnalyzeConversationRequest> | undefined): boolean {
+    return proto3.util.equals(AnalyzeConversationRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message protoflow.AnalyzeConversationResponse
+ */
+export class AnalyzeConversationResponse extends Message<AnalyzeConversationResponse> {
+  /**
+   * Phone numbers of the participants
+   *
+   * @generated from field: repeated string phone_numbers = 1;
+   */
+  phoneNumbers: string[] = [];
+
+  /**
+   * The summary of the conversation
+   *
+   * @generated from field: string summary = 2;
+   */
+  summary = "";
+
+  constructor(data?: PartialMessage<AnalyzeConversationResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "protoflow.AnalyzeConversationResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "phone_numbers", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 2, name: "summary", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AnalyzeConversationResponse {
+    return new AnalyzeConversationResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AnalyzeConversationResponse {
+    return new AnalyzeConversationResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AnalyzeConversationResponse {
+    return new AnalyzeConversationResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AnalyzeConversationResponse | PlainMessage<AnalyzeConversationResponse> | undefined, b: AnalyzeConversationResponse | PlainMessage<AnalyzeConversationResponse> | undefined): boolean {
+    return proto3.util.equals(AnalyzeConversationResponse, a, b);
+  }
+}
+
+/**
  * @generated from message protoflow.GenerateImagesRequest
  */
 export class GenerateImagesRequest extends Message<GenerateImagesRequest> {
@@ -348,11 +432,6 @@ export class InferRequest extends Message<InferRequest> {
    */
   text: string[] = [];
 
-  /**
-   * @generated from field: bool call = 3;
-   */
-  call = false;
-
   constructor(data?: PartialMessage<InferRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -363,7 +442,6 @@ export class InferRequest extends Message<InferRequest> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "prompt", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
-    { no: 3, name: "call", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): InferRequest {

@@ -27,7 +27,6 @@
 		4C2324CF2AB819C700AB937A /* api.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324C72AB819C700AB937A /* api.pb.swift */; };
 		4C2324D12AB819C700AB937A /* python.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324C92AB819C700AB937A /* python.pb.swift */; };
 		4C2324D22AB819C700AB937A /* api.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324CA2AB819C700AB937A /* api.connect.swift */; };
-		4C2324D32AB819C700AB937A /* jsonschema.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324CB2AB819C700AB937A /* jsonschema.pb.swift */; };
 		4C2324D42AB819C700AB937A /* protoflow.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324CC2AB819C700AB937A /* protoflow.connect.swift */; };
 		4C2324D52AB819C700AB937A /* python.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324CD2AB819C700AB937A /* python.connect.swift */; };
 /* End PBXBuildFile section */
@@ -78,7 +77,6 @@
 		4C2324C72AB819C700AB937A /* api.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = api.pb.swift; sourceTree = "<group>"; };
 		4C2324C92AB819C700AB937A /* python.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = python.pb.swift; sourceTree = "<group>"; };
 		4C2324CA2AB819C700AB937A /* api.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = api.connect.swift; sourceTree = "<group>"; };
-		4C2324CB2AB819C700AB937A /* jsonschema.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = jsonschema.pb.swift; sourceTree = "<group>"; };
 		4C2324CC2AB819C700AB937A /* protoflow.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = protoflow.connect.swift; sourceTree = "<group>"; };
 		4C2324CD2AB819C700AB937A /* python.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = python.connect.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -173,7 +171,6 @@
 				4C2324C72AB819C700AB937A /* api.pb.swift */,
 				4C2324C92AB819C700AB937A /* python.pb.swift */,
 				4C2324CA2AB819C700AB937A /* api.connect.swift */,
-				4C2324CB2AB819C700AB937A /* jsonschema.pb.swift */,
 				4C2324CC2AB819C700AB937A /* protoflow.connect.swift */,
 				4C2324CD2AB819C700AB937A /* python.connect.swift */,
 			);
@@ -290,7 +287,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C2324D52AB819C700AB937A /* python.connect.swift in Sources */,
-				4C2324D32AB819C700AB937A /* jsonschema.pb.swift in Sources */,
 				4C2324D22AB819C700AB937A /* api.connect.swift in Sources */,
 				4C2324CE2AB819C700AB937A /* protoflow.pb.swift in Sources */,
 				4C2324D12AB819C700AB937A /* python.pb.swift in Sources */,

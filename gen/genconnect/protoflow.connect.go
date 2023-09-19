@@ -64,6 +64,9 @@ const (
 	// ProtoflowServiceGenerateImagesProcedure is the fully-qualified name of the ProtoflowService's
 	// GenerateImages RPC.
 	ProtoflowServiceGenerateImagesProcedure = "/protoflow.ProtoflowService/GenerateImages"
+	// ProtoflowServiceAnalyzeConversationProcedure is the fully-qualified name of the
+	// ProtoflowService's AnalyzeConversation RPC.
+	ProtoflowServiceAnalyzeConversationProcedure = "/protoflow.ProtoflowService/AnalyzeConversation"
 	// ProtoflowServiceRegisterProcedure is the fully-qualified name of the ProtoflowService's Register
 	// RPC.
 	ProtoflowServiceRegisterProcedure = "/protoflow.ProtoflowService/Register"
@@ -86,6 +89,7 @@ type ProtoflowServiceClient interface {
 	Chat(context.Context, *connect_go.Request[gen.ChatRequest]) (*connect_go.ServerStreamForClient[gen.ChatResponse], error)
 	ConvertFile(context.Context, *connect_go.Request[gen.ConvertFileRequest]) (*connect_go.Response[gen.FilePath], error)
 	GenerateImages(context.Context, *connect_go.Request[gen.GenerateImagesRequest]) (*connect_go.Response[gen.GenerateImagesResponse], error)
+	AnalyzeConversation(context.Context, *connect_go.Request[gen.AnalyzeConversationRequest]) (*connect_go.Response[gen.AnalyzeConversationResponse], error)
 	Register(context.Context, *connect_go.Request[gen.User]) (*connect_go.Response[gen.User], error)
 	Login(context.Context, *connect_go.Request[gen.User]) (*connect_go.Response[gen.User], error)
 	Logout(context.Context, *connect_go.Request[gen.Empty]) (*connect_go.Response[gen.Empty], error)
@@ -156,6 +160,11 @@ func NewProtoflowServiceClient(httpClient connect_go.HTTPClient, baseURL string,
 			baseURL+ProtoflowServiceGenerateImagesProcedure,
 			opts...,
 		),
+		analyzeConversation: connect_go.NewClient[gen.AnalyzeConversationRequest, gen.AnalyzeConversationResponse](
+			httpClient,
+			baseURL+ProtoflowServiceAnalyzeConversationProcedure,
+			opts...,
+		),
 		register: connect_go.NewClient[gen.User, gen.User](
 			httpClient,
 			baseURL+ProtoflowServiceRegisterProcedure,
@@ -187,6 +196,7 @@ type protoflowServiceClient struct {
 	chat                 *connect_go.Client[gen.ChatRequest, gen.ChatResponse]
 	convertFile          *connect_go.Client[gen.ConvertFileRequest, gen.FilePath]
 	generateImages       *connect_go.Client[gen.GenerateImagesRequest, gen.GenerateImagesResponse]
+	analyzeConversation  *connect_go.Client[gen.AnalyzeConversationRequest, gen.AnalyzeConversationResponse]
 	register             *connect_go.Client[gen.User, gen.User]
 	login                *connect_go.Client[gen.User, gen.User]
 	logout               *connect_go.Client[gen.Empty, gen.Empty]
@@ -247,6 +257,11 @@ func (c *protoflowServiceClient) GenerateImages(ctx context.Context, req *connec
 	return c.generateImages.CallUnary(ctx, req)
 }
 
+// AnalyzeConversation calls protoflow.ProtoflowService.AnalyzeConversation.
+func (c *protoflowServiceClient) AnalyzeConversation(ctx context.Context, req *connect_go.Request[gen.AnalyzeConversationRequest]) (*connect_go.Response[gen.AnalyzeConversationResponse], error) {
+	return c.analyzeConversation.CallUnary(ctx, req)
+}
+
 // Register calls protoflow.ProtoflowService.Register.
 func (c *protoflowServiceClient) Register(ctx context.Context, req *connect_go.Request[gen.User]) (*connect_go.Response[gen.User], error) {
 	return c.register.CallUnary(ctx, req)
@@ -275,6 +290,7 @@ type ProtoflowServiceHandler interface {
 	Chat(context.Context, *connect_go.Request[gen.ChatRequest], *connect_go.ServerStream[gen.ChatResponse]) error
 	ConvertFile(context.Context, *connect_go.Request[gen.ConvertFileRequest]) (*connect_go.Response[gen.FilePath], error)
 	GenerateImages(context.Context, *connect_go.Request[gen.GenerateImagesRequest]) (*connect_go.Response[gen.GenerateImagesResponse], error)
+	AnalyzeConversation(context.Context, *connect_go.Request[gen.AnalyzeConversationRequest]) (*connect_go.Response[gen.AnalyzeConversationResponse], error)
 	Register(context.Context, *connect_go.Request[gen.User]) (*connect_go.Response[gen.User], error)
 	Login(context.Context, *connect_go.Request[gen.User]) (*connect_go.Response[gen.User], error)
 	Logout(context.Context, *connect_go.Request[gen.Empty]) (*connect_go.Response[gen.Empty], error)
@@ -341,6 +357,11 @@ func NewProtoflowServiceHandler(svc ProtoflowServiceHandler, opts ...connect_go.
 		svc.GenerateImages,
 		opts...,
 	)
+	protoflowServiceAnalyzeConversationHandler := connect_go.NewUnaryHandler(
+		ProtoflowServiceAnalyzeConversationProcedure,
+		svc.AnalyzeConversation,
+		opts...,
+	)
 	protoflowServiceRegisterHandler := connect_go.NewUnaryHandler(
 		ProtoflowServiceRegisterProcedure,
 		svc.Register,
@@ -380,6 +401,8 @@ func NewProtoflowServiceHandler(svc ProtoflowServiceHandler, opts ...connect_go.
 			protoflowServiceConvertFileHandler.ServeHTTP(w, r)
 		case ProtoflowServiceGenerateImagesProcedure:
 			protoflowServiceGenerateImagesHandler.ServeHTTP(w, r)
+		case ProtoflowServiceAnalyzeConversationProcedure:
+			protoflowServiceAnalyzeConversationHandler.ServeHTTP(w, r)
 		case ProtoflowServiceRegisterProcedure:
 			protoflowServiceRegisterHandler.ServeHTTP(w, r)
 		case ProtoflowServiceLoginProcedure:
@@ -437,6 +460,10 @@ func (UnimplementedProtoflowServiceHandler) ConvertFile(context.Context, *connec
 
 func (UnimplementedProtoflowServiceHandler) GenerateImages(context.Context, *connect_go.Request[gen.GenerateImagesRequest]) (*connect_go.Response[gen.GenerateImagesResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.GenerateImages is not implemented"))
+}
+
+func (UnimplementedProtoflowServiceHandler) AnalyzeConversation(context.Context, *connect_go.Request[gen.AnalyzeConversationRequest]) (*connect_go.Response[gen.AnalyzeConversationResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.AnalyzeConversation is not implemented"))
 }
 
 func (UnimplementedProtoflowServiceHandler) Register(context.Context, *connect_go.Request[gen.User]) (*connect_go.Response[gen.User], error) {

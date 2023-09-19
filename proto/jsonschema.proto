@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-package jsonschema;
-option go_package = "./gen";
-
-message GetPhoneNumbersResponse {
-  repeated string phone_numbers = 1;
-  string summary = 2;
-}

@@ -24,9 +24,22 @@ service ProtoflowService {
   rpc GenerateImages(GenerateImagesRequest) returns (GenerateImagesResponse);
 //  rpc OCR (FilePath) returns (OCRText);
 
+  rpc AnalyzeConversation(AnalyzeConversationRequest) returns (AnalyzeConversationResponse);
+
   rpc Register(User) returns (User);
   rpc Login(User) returns (User);
   rpc Logout(Empty) returns (Empty);
+}
+
+message AnalyzeConversationRequest {
+  string text = 1;
+}
+
+message AnalyzeConversationResponse {
+  // Phone numbers of the participants
+  repeated string phone_numbers = 1;
+  // The summary of the conversation
+  string summary = 2;
 }
 
 message GenerateImagesRequest {
@@ -64,7 +77,6 @@ message GetPromptsResponse {
 message InferRequest {
   string prompt = 1;
   repeated string text = 2;
-  bool call = 3;
 }
 
 message InferResponse {

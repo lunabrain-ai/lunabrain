@@ -1,0 +1,19 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/GenerateImagesResponse",
+    "definitions": {
+        "GenerateImagesResponse": {
+            "properties": {
+                "images": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Generate Images Response"
+        }
+    }
+}

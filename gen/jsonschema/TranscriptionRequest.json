@@ -1,0 +1,68 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/TranscriptionRequest",
+    "definitions": {
+        "TranscriptionRequest": {
+            "properties": {
+                "file_path": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string",
+                    "description": "Path to the model file"
+                },
+                "language": {
+                    "type": "string",
+                    "description": "Spoken language"
+                },
+                "translate": {
+                    "type": "boolean",
+                    "description": "Translate from source language to English"
+                },
+                "offset": {
+                    "type": "string",
+                    "description": "Time offset in nanoseconds to match Go's time.Duration"
+                },
+                "duration": {
+                    "type": "string",
+                    "description": "Duration of audio to process in nanoseconds"
+                },
+                "threads": {
+                    "type": "integer",
+                    "description": "Number of threads to use"
+                },
+                "speedup": {
+                    "type": "boolean",
+                    "description": "Enable speedup"
+                },
+                "max_len": {
+                    "type": "integer",
+                    "description": "Maximum segment length in characters"
+                },
+                "max_tokens": {
+                    "type": "integer",
+                    "description": "Maximum tokens per segment"
+                },
+                "word_threshold": {
+                    "type": "number",
+                    "description": "Maximum segment score"
+                },
+                "tokens": {
+                    "type": "boolean",
+                    "description": "Display tokens"
+                },
+                "colorize": {
+                    "type": "boolean",
+                    "description": "Colorize tokens"
+                },
+                "out": {
+                    "type": "string",
+                    "description": "Output format (srt, none or leave as empty string)"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Transcription Request"
+        }
+    }
+}

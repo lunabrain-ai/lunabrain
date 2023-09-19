@@ -1,0 +1,24 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/AnalyzeConversationResponse",
+    "definitions": {
+        "AnalyzeConversationResponse": {
+            "properties": {
+                "phone_numbers": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "description": "Phone numbers of the participants"
+                },
+                "summary": {
+                    "type": "string",
+                    "description": "The summary of the conversation"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Analyze Conversation Response"
+        }
+    }
+}

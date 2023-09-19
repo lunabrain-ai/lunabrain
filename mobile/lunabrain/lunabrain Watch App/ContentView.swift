@@ -14,7 +14,9 @@ struct ContentView: View {
                     .padding()
             }
             HStack {
-                Button(action: {}) {
+                Button(action: {
+                    
+                }) {
                     Image(systemName: viewModel.isRecording ? "stop.fill" : "circle.fill")
                         .resizable()
                         .aspectRatio(contentMode: .fit)

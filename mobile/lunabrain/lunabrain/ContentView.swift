@@ -11,9 +11,11 @@ struct ContentView: View {
     var body: some View {
         TabView {
             VStack {
-                Text(viewModel.liveTranscription)
-                    .padding()
-                if let res = aiModel.result {
+                ScrollView {
+                    Text(viewModel.liveTranscription)
+                        .padding()
+                }
+                if let res = aiModel.text {
                     Text(res)
                         .contextMenu {
                             Button(action: {
@@ -23,6 +25,15 @@ struct ContentView: View {
                             }
                         }
                         .padding()
+                    Button(action: {
+                        let u = "sms:" + (aiModel.phoneNumber ?? "") + "&body=" + (res.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "hello")
+                        print(u)
+                        if let url = URL(string: u) {
+                            UIApplication.shared.open(url)
+                        }
+                    }) {
+                        Image(systemName: "paperplane")
+                    }
                 }
                 List(viewModel.transcriptionSegments.reversed(), id: \.self) { segment in
                     Text(segment)

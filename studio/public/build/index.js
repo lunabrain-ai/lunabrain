@@ -45895,6 +45895,83 @@ Be sure to create slots properly by using 'slot.always' or 'slot.optional' with 
   ]));
 
   // src/rpc/protoflow_pb.ts
+  var _AnalyzeConversationRequest = class extends Message {
+    /**
+     * @generated from field: string text = 1;
+     */
+    text = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _AnalyzeConversationRequest().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _AnalyzeConversationRequest().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _AnalyzeConversationRequest().fromJsonString(jsonString, options);
+    }
+    static equals(a2, b3) {
+      return proto3.util.equals(_AnalyzeConversationRequest, a2, b3);
+    }
+  };
+  var AnalyzeConversationRequest = _AnalyzeConversationRequest;
+  __publicField(AnalyzeConversationRequest, "runtime", proto3);
+  __publicField(AnalyzeConversationRequest, "typeName", "protoflow.AnalyzeConversationRequest");
+  __publicField(AnalyzeConversationRequest, "fields", proto3.util.newFieldList(() => [
+    {
+      no: 1,
+      name: "text",
+      kind: "scalar",
+      T: 9
+      /* ScalarType.STRING */
+    }
+  ]));
+  var _AnalyzeConversationResponse = class extends Message {
+    /**
+     * Phone numbers of the participants
+     *
+     * @generated from field: repeated string phone_numbers = 1;
+     */
+    phoneNumbers = [];
+    /**
+     * The summary of the conversation
+     *
+     * @generated from field: string summary = 2;
+     */
+    summary = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _AnalyzeConversationResponse().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _AnalyzeConversationResponse().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _AnalyzeConversationResponse().fromJsonString(jsonString, options);
+    }
+    static equals(a2, b3) {
+      return proto3.util.equals(_AnalyzeConversationResponse, a2, b3);
+    }
+  };
+  var AnalyzeConversationResponse = _AnalyzeConversationResponse;
+  __publicField(AnalyzeConversationResponse, "runtime", proto3);
+  __publicField(AnalyzeConversationResponse, "typeName", "protoflow.AnalyzeConversationResponse");
+  __publicField(AnalyzeConversationResponse, "fields", proto3.util.newFieldList(() => [
+    { no: 1, name: "phone_numbers", kind: "scalar", T: 9, repeated: true },
+    {
+      no: 2,
+      name: "summary",
+      kind: "scalar",
+      T: 9
+      /* ScalarType.STRING */
+    }
+  ]));
   var _GenerateImagesRequest = class extends Message {
     /**
      * @generated from field: string prompt = 1;
@@ -46184,10 +46261,6 @@ Be sure to create slots properly by using 'slot.always' or 'slot.optional' with 
      * @generated from field: repeated string text = 2;
      */
     text = [];
-    /**
-     * @generated from field: bool call = 3;
-     */
-    call = false;
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
@@ -46216,14 +46289,7 @@ Be sure to create slots properly by using 'slot.always' or 'slot.optional' with 
       T: 9
       /* ScalarType.STRING */
     },
-    { no: 2, name: "text", kind: "scalar", T: 9, repeated: true },
-    {
-      no: 3,
-      name: "call",
-      kind: "scalar",
-      T: 8
-      /* ScalarType.BOOL */
-    }
+    { no: 2, name: "text", kind: "scalar", T: 9, repeated: true }
   ]));
   var _InferResponse = class extends Message {
     /**
@@ -47250,6 +47316,15 @@ Be sure to create slots properly by using 'slot.always' or 'slot.optional' with 
         name: "GenerateImages",
         I: GenerateImagesRequest,
         O: GenerateImagesResponse,
+        kind: MethodKind.Unary
+      },
+      /**
+       * @generated from rpc protoflow.ProtoflowService.AnalyzeConversation
+       */
+      analyzeConversation: {
+        name: "AnalyzeConversation",
+        I: AnalyzeConversationRequest,
+        O: AnalyzeConversationResponse,
         kind: MethodKind.Unary
       },
       /**
