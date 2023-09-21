@@ -75,7 +75,7 @@ export const CollectPanel: React.FC<SidebarProps> = () => {
     }, [user, setSessions]);
 
     return (
-        <div style={{ overflowY: 'auto', height: '100%'}}>
+        <div>
             <Button onClick={() => setIsRecording(true)}>Live Transcribe</Button>
             <Divider style={{margin: "10px"}} />
             <AudioRecorder />

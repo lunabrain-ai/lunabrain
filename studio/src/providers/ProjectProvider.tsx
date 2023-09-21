@@ -4,7 +4,7 @@ import {Message} from "@/pages/Chat/MessageList";
 import {Code, ConnectError} from "@bufbuild/connect";
 import toast from "react-hot-toast";
 import {TabValue} from "@fluentui/react-components";
-import {ChatResponse, Segment, Session, User} from "@/rpc/protoflow_pb";
+import {AnalyzeConversationResponse, ChatResponse, Segment, Session, User} from "@/rpc/protoflow_pb";
 
 const ProjectContext = createContext<ProjectContextType>({} as any);
 export const useProjectContext = () => useContext(ProjectContext);
@@ -28,6 +28,8 @@ type ProjectContextType = {
     setUser: (user?: User) => void;
     loading: boolean;
     setLoading: (loading: boolean) => void;
+    analyzedText?: AnalyzeConversationResponse;
+    setAnalyzedText: (analyzedText?: AnalyzeConversationResponse) => void;
 };
 
 export default function ProjectProvider({children}: ProjectProviderProps) {
@@ -38,6 +40,7 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     const [inference, setInference] = useState<string>('');
     const [user, setUser] = useState<User|undefined>(undefined);
     const [loading, setLoading] = useState(false);
+    const [analyzedText, setAnalyzedText] = useState<AnalyzeConversationResponse|undefined>(undefined);
 
     const inferFromMessages = useCallback(async (prompt: string) => {
         const mIdx = messages.length + 1;
@@ -68,6 +71,7 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
                     id: selectedValue as string,
                 })
                 setSession(res.session);
+                // TODO breadchris components should use the session directly
                 setMessages(res.session?.segments.map((m) => ({text: m.text || '', sender: 'bot', segment: m})) || []);
             })();
         }
@@ -129,6 +133,8 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
                 setUser,
                 loading,
                 setLoading,
+                analyzedText,
+                setAnalyzedText,
             }}
         >
             {children}

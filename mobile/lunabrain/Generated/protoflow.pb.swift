@@ -43,6 +43,9 @@ public struct Protoflow_AnalyzeConversationResponse {
   /// The summary of the conversation
   public var summary: String = String()
 
+  /// Based on the content of the conversation, the system will generate a list of questions
+  public var questions: [String] = []
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -563,6 +566,7 @@ extension Protoflow_AnalyzeConversationResponse: SwiftProtobuf.Message, SwiftPro
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "phone_numbers"),
     2: .same(proto: "summary"),
+    3: .same(proto: "questions"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -573,6 +577,7 @@ extension Protoflow_AnalyzeConversationResponse: SwiftProtobuf.Message, SwiftPro
       switch fieldNumber {
       case 1: try { try decoder.decodeRepeatedStringField(value: &self.phoneNumbers) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.summary) }()
+      case 3: try { try decoder.decodeRepeatedStringField(value: &self.questions) }()
       default: break
       }
     }
@@ -585,12 +590,16 @@ extension Protoflow_AnalyzeConversationResponse: SwiftProtobuf.Message, SwiftPro
     if !self.summary.isEmpty {
       try visitor.visitSingularStringField(value: self.summary, fieldNumber: 2)
     }
+    if !self.questions.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.questions, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Protoflow_AnalyzeConversationResponse, rhs: Protoflow_AnalyzeConversationResponse) -> Bool {
     if lhs.phoneNumbers != rhs.phoneNumbers {return false}
     if lhs.summary != rhs.summary {return false}
+    if lhs.questions != rhs.questions {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

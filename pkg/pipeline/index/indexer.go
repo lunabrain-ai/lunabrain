@@ -2,7 +2,7 @@ package index
 
 import (
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/db"
 )
 
 // TODO breadchris figure out how this works

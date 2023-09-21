@@ -3,13 +3,12 @@ import {List, PrimaryButton, Spinner, SpinnerSize, Stack, TextField} from "@flue
 import { Segment } from '@/rpc/protoflow_pb';
 import {Message, messageColumns, MessageList} from "@/pages/Chat/MessageList";
 import {useProjectContext} from "@/providers/ProjectProvider";
-import {projectService} from "@/lib/api";
-import {TokenVisualizer} from "@/components/TokenVisualizer";
+import {MarkdownEditor} from "@/components/Editor/MarkdownEditor";
 
 interface WindowProps {
 }
 
-export const Window: React.FC<WindowProps> = ({  }) => {
+const MessageWindow: React.FC = ({  }) => {
     const audioRef = useRef<HTMLAudioElement>(null);
     const [inputValue, setInputValue] = useState<string | undefined>('');
     const { loading, messages, setMessages, session, inferFromMessages } = useProjectContext();
@@ -20,9 +19,8 @@ export const Window: React.FC<WindowProps> = ({  }) => {
             inferFromMessages(inputValue);
         }
     };
-
     return (
-        <Stack>
+        <>
             <Stack verticalFill verticalAlign="space-between"
                    styles={{root: {height: '90vh', overflowY: 'auto', width: '100%', margin: '0 auto', paddingTop: 10, display: 'flex', flexDirection: 'column'}}}>
                 {messages.length === 0 ? (
@@ -71,6 +69,30 @@ export const Window: React.FC<WindowProps> = ({  }) => {
                     <PrimaryButton text="Send" onClick={handleSend}/>
                 </>
             </Stack>
+        </>
+    )
+}
+
+export const Window: React.FC<WindowProps> = ({  }) => {
+    const { analyzedText } = useProjectContext();
+    return (
+        <Stack style={{ overflowY: 'auto'}}>
+            {/*<MessageWindow />*/}
+            <>
+                <Stack verticalFill verticalAlign="space-between"
+                       styles={{root: {height: '90vh', overflowY: 'auto', width: '100%', margin: '0 auto', paddingTop: 10, display: 'flex', flexDirection: 'column'}}}>
+                    <MarkdownEditor />
+                </Stack>
+                <Stack horizontal verticalAlign="end" horizontalAlign="center"
+                       styles={{root: {width: '100%', gap: 15, marginBottom: 20, relative: true}}}>
+                    {analyzedText && (
+                        <>
+                            <p>{analyzedText.summary}</p>
+                            <p>{analyzedText.questions}</p>
+                        </>
+                    )}
+                </Stack>
+            </>
         </Stack>
     )
 }

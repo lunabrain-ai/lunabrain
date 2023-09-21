@@ -17,15 +17,20 @@ class WatchTranscriptionViewModel: NSObject, ObservableObject {
     }
     
     func startRecording() {
+        print("start recording")
         let messageDict = ["recording": true]
         WCSession.default.transferUserInfo(messageDict)
-        isRecording = true
     }
     
     func stopRecording() {
+        print("stop recording")
         let messageDict = ["recording": false]
         WCSession.default.transferUserInfo(messageDict)
-        isRecording = false
+    }
+    
+    func askAI() {
+        let messageDict = ["ai": "conversation"]
+        WCSession.default.transferUserInfo(messageDict)
     }
 }
 
@@ -40,7 +45,14 @@ extension WatchTranscriptionViewModel: WCSessionDelegate {
     }
     
     func session(_ session: WCSession, didReceiveUserInfo userInfo: [String : Any] = [:]) {
-        let data = userInfo["transcription"]
-        self.liveTranscription = data as! String;
+        if let recording = userInfo["recording"] as? Bool {
+            self.isRecording = recording;
+        }
+        if let data = userInfo["transcription"] as? String {
+            self.liveTranscription = data;
+        }
+        if let data = userInfo["summary"] as? String {
+            self.liveTranscription = data;
+        }
     }
 }

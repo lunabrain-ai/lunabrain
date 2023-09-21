@@ -2,12 +2,12 @@ package config
 
 import (
 	"github.com/lunabrain-ai/lunabrain/pkg/api"
+	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/lunabrain-ai/lunabrain/pkg/protoflow"
 	"github.com/lunabrain-ai/lunabrain/pkg/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/rs/zerolog/log"
 	"go.uber.org/config"

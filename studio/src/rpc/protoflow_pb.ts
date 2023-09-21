@@ -62,6 +62,13 @@ export class AnalyzeConversationResponse extends Message<AnalyzeConversationResp
    */
   summary = "";
 
+  /**
+   * Based on the content of the conversation, the system will generate a list of questions
+   *
+   * @generated from field: repeated string questions = 3;
+   */
+  questions: string[] = [];
+
   constructor(data?: PartialMessage<AnalyzeConversationResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -72,6 +79,7 @@ export class AnalyzeConversationResponse extends Message<AnalyzeConversationResp
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "phone_numbers", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
     { no: 2, name: "summary", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "questions", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AnalyzeConversationResponse {

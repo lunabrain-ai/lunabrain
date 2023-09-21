@@ -9,8 +9,8 @@ class AIViewModel: ObservableObject {
     @Published var text: String? = nil
 
     init() {
-        let host = "http://10.0.0.201:8081"
-        //let host = "https://demo.lunabrain.com"
+        //let host = "http://10.0.0.201:8081"
+        let host = "https://demo.lunabrain.com"
         let protocolClient = ProtocolClient(
             httpClient: URLSessionHTTPClient(),
             config: ProtocolClientConfig(
@@ -21,17 +21,19 @@ class AIViewModel: ObservableObject {
         self.client = Protoflow_ProtoflowServiceClient(client: protocolClient)
     }
     
-    func send(text: String) async {
+    func send(text: String) async -> String {
         let req = Protoflow_AnalyzeConversationRequest.with { $0.text = text }
         let res = await self.client.analyzeConversation(request: req, headers: [:])
         if let err = res.error {
             print("error analyzing conversation \(err)")
-            return
+            return "none"
         }
         if (res.message?.phoneNumbers.count)! > 0 {
             self.phoneNumber = res.message?.phoneNumbers[0]
         }
         self.text = res.message?.summary
+        print("ai summary: \(res.message)")
+        return res.message?.summary ?? "none"
     }
     
 //    func send(text: String) async {

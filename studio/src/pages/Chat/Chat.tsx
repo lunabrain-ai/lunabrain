@@ -11,7 +11,7 @@ export const ChatPage = () => {
                 <Sidebar />
             </Stack.Item>
 
-            <Stack.Item styles={{ root: { width: '80%' } }}>
+            <Stack.Item styles={{ root: { width: '80%', height: '100%', overflowY: 'auto' } }}>
                 <FileDrop>
                     <Window />
                 </FileDrop>

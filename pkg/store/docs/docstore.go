@@ -1,9 +1,9 @@
 package docs
 
 import (
+	db2 "github.com/lunabrain-ai/lunabrain/pkg/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"gorm.io/datatypes"
@@ -49,8 +49,8 @@ func typeString[T any](t T) string {
 
 var _ DocStore[interface{}] = (*docStore[interface{}])(nil)
 
-func NewDocStore[T any](c db.Config, bucket *bucket.Bucket) (*docStore[T], error) {
-	db, err := db.NewGormDB(c, bucket)
+func NewDocStore[T any](c db2.Config, bucket *bucket.Bucket) (*docStore[T], error) {
+	db, err := db2.NewGormDB(c, bucket)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not connect to database: %v", err)
 	}

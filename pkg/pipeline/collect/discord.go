@@ -5,9 +5,9 @@ import (
 	"github.com/bwmarrin/discordgo"
 	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	util2 "github.com/lunabrain-ai/lunabrain/pkg/chat/discord/util"
+	"github.com/lunabrain-ai/lunabrain/pkg/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"github.com/rs/zerolog/log"
 )
 

@@ -1,12 +1,9 @@
 /* src/styles/globals.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 html {
   background: black;
 }
 body {
-  margin: 0;
+  margin: 0 !important;
   padding: 0;
 }
 main {

@@ -1,7 +1,7 @@
 {
   "version": 3,
   "sources": ["../../../src/styles/globals.css"],
-  "sourcesContent": ["@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\nhtml {\n  background: black;\n}\n\nbody {\n  margin: 0;\n  padding: 0;\n}\n\nmain {\n  min-height: 100vh;\n}\n\nspan.rsjv-expander {\n  color: #888;\n}\n\nspan.rsjv-expander:hover {\n  cursor: pointer;\n}\n\nspan.rsjv-value {\n  color: #3d94bf;\n  overflow-wrap: anywhere;\n}\n\n.json-viewer {\n  max-height: 50em;\n  overflow-y: auto;\n}\n\n.json-viewer ul {\n  padding-left: 1em;\n}\n"],
-  "mappings": ";AAAA;AACA;AACA;AAEA;AACE;AAAA;AAGF;AACE;AACA;AAAA;AAGF;AACE;AAAA;AAGF;AACE;AAAA;AAGF;AACE;AAAA;AAGF;AACE;AACA;AAAA;AAGF;AACE;AACA;AAAA;AAGF;AACE;AAAA;",
+  "sourcesContent": ["html {\n  background: black;\n}\n\nbody {\n  margin: 0 !important;\n  padding: 0;\n}\n\nmain {\n  min-height: 100vh;\n}\n\nspan.rsjv-expander {\n  color: #888;\n}\n\nspan.rsjv-expander:hover {\n  cursor: pointer;\n}\n\nspan.rsjv-value {\n  color: #3d94bf;\n  overflow-wrap: anywhere;\n}\n\n.json-viewer {\n  max-height: 50em;\n  overflow-y: auto;\n}\n\n.json-viewer ul {\n  padding-left: 1em;\n}\n"],
+  "mappings": ";AAAA;AACE;AAAA;AAGF;AACE;AACA;AAAA;AAGF;AACE;AAAA;AAGF;AACE;AAAA;AAGF;AACE;AAAA;AAGF;AACE;AACA;AAAA;AAGF;AACE;AACA;AAAA;AAGF;AACE;AAAA;",
   "names": []
 }

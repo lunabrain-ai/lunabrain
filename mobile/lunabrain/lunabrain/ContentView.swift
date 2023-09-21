@@ -5,17 +5,13 @@ import Speech
 
 struct ContentView: View {
     @ObservedObject var viewModel: TranscriptionViewModel
-    @ObservedObject var aiModel: AIViewModel
-    @StateObject var audioRecorder = AudioRecorder()
 
     var body: some View {
         TabView {
             VStack {
-                ScrollView {
-                    Text(viewModel.liveTranscription)
-                        .padding()
-                }
-                if let res = aiModel.text {
+                Text(viewModel.liveTranscription)
+                    .padding()
+                if let res = viewModel.aiModel.text {
                     Text(res)
                         .contextMenu {
                             Button(action: {
@@ -26,7 +22,7 @@ struct ContentView: View {
                         }
                         .padding()
                     Button(action: {
-                        let u = "sms:" + (aiModel.phoneNumber ?? "") + "&body=" + (res.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "hello")
+                        let u = "sms:" + (viewModel.aiModel.phoneNumber ?? "") + "&body=" + (res.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "hello")
                         print(u)
                         if let url = URL(string: u) {
                             UIApplication.shared.open(url)
@@ -50,25 +46,20 @@ struct ContentView: View {
                 }
                 HStack {
                     Button(action: {
-                        if audioRecorder.isRecording {
-                            audioRecorder.stopRecording()
-                        } else {
-                            audioRecorder.startRecording()
-                        }
                         if viewModel.isTranscribing {
                             viewModel.stopLiveTranscription()
                         } else {
                             viewModel.startLiveTranscription()
                         }
                     }) {
-                        Image(systemName: audioRecorder.isRecording ? "stop.fill" : "circle.fill")
+                        Image(systemName: viewModel.audioRecorder.isRecording ? "stop.fill" : "circle.fill")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 50, height: 50)
                     }
                     .padding()
                     Button(action: {
-                        Task { await aiModel.send(text: viewModel.liveTranscription) }
+                        Task { await viewModel.aiModel.send(text: viewModel.liveTranscription) }
                     }) {
                         Image(systemName: "brain")
                             .resizable()
@@ -89,6 +80,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(viewModel: TranscriptionViewModel(), aiModel: AIViewModel())
+        ContentView(viewModel: TranscriptionViewModel())
     }
 }

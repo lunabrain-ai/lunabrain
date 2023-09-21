@@ -40,6 +40,8 @@ message AnalyzeConversationResponse {
   repeated string phone_numbers = 1;
   // The summary of the conversation
   string summary = 2;
+  // Based on the content of the conversation, the system will generate a list of questions
+  repeated string questions = 3;
 }
 
 message GenerateImagesRequest {

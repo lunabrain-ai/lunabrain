@@ -4,10 +4,10 @@ import (
 	"context"
 	"github.com/google/wire"
 	genapi "github.com/lunabrain-ai/lunabrain/gen"
+	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
 	"github.com/pkg/errors"
 	"net/http"
 )

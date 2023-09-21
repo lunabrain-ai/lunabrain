@@ -1,8 +1,5 @@
 import esbuild from "esbuild";
 import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
-import tailwindcss from 'tailwindcss';
-import autoprefixer from 'autoprefixer';
-import postcss from "postcss";
 
 const prodBuild = process.env.BUILD === 'true'
 

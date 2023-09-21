@@ -6,9 +6,9 @@ import (
 	"github.com/google/uuid"
 	gen "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
+	"github.com/lunabrain-ai/lunabrain/pkg/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
 	"github.com/pkg/errors"
 )
 

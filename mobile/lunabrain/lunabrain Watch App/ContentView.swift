@@ -15,20 +15,19 @@ struct ContentView: View {
             }
             HStack {
                 Button(action: {
-                    
+                    if viewModel.isRecording {
+                        viewModel.stopRecording()
+                    } else {
+                        viewModel.startRecording()
+                    }
                 }) {
                     Image(systemName: viewModel.isRecording ? "stop.fill" : "circle.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 50, height: 50)
                 }
                 .padding()
                 Button(action: {
+                    viewModel.askAI()
                 }) {
                     Image(systemName: "brain")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 50, height: 50)
                 }
             }
         }

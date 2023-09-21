@@ -5,7 +5,7 @@ import (
 	"crypto/tls"
 	"github.com/chromedp/chromedp"
 	genapi "github.com/lunabrain-ai/lunabrain/gen"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"

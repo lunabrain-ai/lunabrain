@@ -1,7 +1,7 @@
 package util
 
 import (
-	"github.com/lunabrain-ai/lunabrain/pkg/store/db/model"
+	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 )
 
 func GenerateTranscript(msgs []*model.DiscordMessage) string {

@@ -11,7 +11,7 @@ import SwiftUI
 struct lunabrainApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView(viewModel: TranscriptionViewModel(), aiModel: AIViewModel())
+            ContentView(viewModel: TranscriptionViewModel())
         }
     }
 }
