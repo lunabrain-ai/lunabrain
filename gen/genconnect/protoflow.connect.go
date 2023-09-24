@@ -78,7 +78,7 @@ const (
 
 // ProtoflowServiceClient is a client for the protoflow.ProtoflowService service.
 type ProtoflowServiceClient interface {
-	DownloadYouTubeVideo(context.Context, *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.FilePath], error)
+	DownloadYouTubeVideo(context.Context, *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.YouTubeVideoResponse], error)
 	GetSessions(context.Context, *connect_go.Request[gen.GetSessionsRequest]) (*connect_go.Response[gen.GetSessionsResponse], error)
 	GetSession(context.Context, *connect_go.Request[gen.GetSessionRequest]) (*connect_go.Response[gen.GetSessionResponse], error)
 	DeleteSession(context.Context, *connect_go.Request[gen.DeleteSessionRequest]) (*connect_go.Response[gen.Empty], error)
@@ -105,7 +105,7 @@ type ProtoflowServiceClient interface {
 func NewProtoflowServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts ...connect_go.ClientOption) ProtoflowServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
 	return &protoflowServiceClient{
-		downloadYouTubeVideo: connect_go.NewClient[gen.YouTubeVideo, gen.FilePath](
+		downloadYouTubeVideo: connect_go.NewClient[gen.YouTubeVideo, gen.YouTubeVideoResponse](
 			httpClient,
 			baseURL+ProtoflowServiceDownloadYouTubeVideoProcedure,
 			opts...,
@@ -185,7 +185,7 @@ func NewProtoflowServiceClient(httpClient connect_go.HTTPClient, baseURL string,
 
 // protoflowServiceClient implements ProtoflowServiceClient.
 type protoflowServiceClient struct {
-	downloadYouTubeVideo *connect_go.Client[gen.YouTubeVideo, gen.FilePath]
+	downloadYouTubeVideo *connect_go.Client[gen.YouTubeVideo, gen.YouTubeVideoResponse]
 	getSessions          *connect_go.Client[gen.GetSessionsRequest, gen.GetSessionsResponse]
 	getSession           *connect_go.Client[gen.GetSessionRequest, gen.GetSessionResponse]
 	deleteSession        *connect_go.Client[gen.DeleteSessionRequest, gen.Empty]
@@ -203,7 +203,7 @@ type protoflowServiceClient struct {
 }
 
 // DownloadYouTubeVideo calls protoflow.ProtoflowService.DownloadYouTubeVideo.
-func (c *protoflowServiceClient) DownloadYouTubeVideo(ctx context.Context, req *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.FilePath], error) {
+func (c *protoflowServiceClient) DownloadYouTubeVideo(ctx context.Context, req *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.YouTubeVideoResponse], error) {
 	return c.downloadYouTubeVideo.CallUnary(ctx, req)
 }
 
@@ -279,7 +279,7 @@ func (c *protoflowServiceClient) Logout(ctx context.Context, req *connect_go.Req
 
 // ProtoflowServiceHandler is an implementation of the protoflow.ProtoflowService service.
 type ProtoflowServiceHandler interface {
-	DownloadYouTubeVideo(context.Context, *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.FilePath], error)
+	DownloadYouTubeVideo(context.Context, *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.YouTubeVideoResponse], error)
 	GetSessions(context.Context, *connect_go.Request[gen.GetSessionsRequest]) (*connect_go.Response[gen.GetSessionsResponse], error)
 	GetSession(context.Context, *connect_go.Request[gen.GetSessionRequest]) (*connect_go.Response[gen.GetSessionResponse], error)
 	DeleteSession(context.Context, *connect_go.Request[gen.DeleteSessionRequest]) (*connect_go.Response[gen.Empty], error)
@@ -418,7 +418,7 @@ func NewProtoflowServiceHandler(svc ProtoflowServiceHandler, opts ...connect_go.
 // UnimplementedProtoflowServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedProtoflowServiceHandler struct{}
 
-func (UnimplementedProtoflowServiceHandler) DownloadYouTubeVideo(context.Context, *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.FilePath], error) {
+func (UnimplementedProtoflowServiceHandler) DownloadYouTubeVideo(context.Context, *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.YouTubeVideoResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.DownloadYouTubeVideo is not implemented"))
 }
 

@@ -1,7 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
     "$ref": "#/definitions/AnalyzeConversationResponse",
-    "description": "An analysis of a conversation and extracting content from text.",
     "definitions": {
         "AnalyzeConversationResponse": {
             "properties": {

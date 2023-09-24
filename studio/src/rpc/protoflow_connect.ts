@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AnalyzeConversationRequest, AnalyzeConversationResponse, ChatRequest, ChatResponse, ConvertFileRequest, DeleteSessionRequest, Empty, FilePath, GenerateImagesRequest, GenerateImagesResponse, GetPromptsRequest, GetPromptsResponse, GetSessionRequest, GetSessionResponse, GetSessionsRequest, GetSessionsResponse, InferRequest, InferResponse, Prompt, UploadContentRequest, User, YouTubeVideo } from "./protoflow_pb.js";
+import { AnalyzeConversationRequest, AnalyzeConversationResponse, ChatRequest, ChatResponse, ConvertFileRequest, DeleteSessionRequest, Empty, FilePath, GenerateImagesRequest, GenerateImagesResponse, GetPromptsRequest, GetPromptsResponse, GetSessionRequest, GetSessionResponse, GetSessionsRequest, GetSessionsResponse, InferRequest, InferResponse, Prompt, UploadContentRequest, User, YouTubeVideo, YouTubeVideoResponse } from "./protoflow_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -18,7 +18,7 @@ export const ProtoflowService = {
     downloadYouTubeVideo: {
       name: "DownloadYouTubeVideo",
       I: YouTubeVideo,
-      O: FilePath,
+      O: YouTubeVideoResponse,
       kind: MethodKind.Unary,
     },
     /**

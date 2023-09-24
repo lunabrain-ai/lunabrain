@@ -21,6 +21,7 @@ interface SidebarProps {
 }
 
 const CollectYouTube: React.FC = () => {
+    const { streamMessages, setMedia } = useProjectContext()
     const [url, setUrl] = useState<string>('');
 
     const onChange: InputProps["onChange"] = (ev, data) => {
@@ -28,16 +29,26 @@ const CollectYouTube: React.FC = () => {
     }
 
     const submitURL = async () => {
-        const res = projectService.uploadContent({
-            content: {
-                options: {
-                    case: 'urlOptions',
-                    value: {
-                        url,
-                    }
+        try {
+            setMedia({
+                type: 'youtube',
+                url,
+            })
+            const res = projectService.uploadContent({
+                content: {
+                    options: {
+                        case: 'urlOptions',
+                        value: {
+                            url,
+                        }
+                    },
                 },
-            },
-        })
+            })
+            streamMessages(res)
+        } catch (e: any) {
+            console.error(e)
+            toast.error('Failed to upload content: ' + e.message)
+        }
     }
 
     return (
@@ -75,14 +86,16 @@ export const CollectPanel: React.FC<SidebarProps> = () => {
     }, [user, setSessions]);
 
     return (
-        <div>
+        <>
             <Button onClick={() => setIsRecording(true)}>Live Transcribe</Button>
+            <Divider style={{margin: "10px"}} />
+            <CollectYouTube />
             <Divider style={{margin: "10px"}} />
             <AudioRecorder />
             <Divider style={{margin: "10px"}} />
             <FileUpload />
             <Divider style={{margin: "10px"}} />
-            <TabList vertical size={"medium"} selectedValue={selectedValue} onTabSelect={onTabSelect}>
+            <TabList vertical size={"medium"} selectedValue={selectedValue} onTabSelect={onTabSelect} style={{height: '100vh', overflowY: 'auto'}}>
                 {sessions.length === 0 && <Tab value={''}>No Sessions</Tab>}
                 {sessions.map((s) => {
                     return (<Tab key={s.id} value={s.id} style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
@@ -93,6 +106,6 @@ export const CollectPanel: React.FC<SidebarProps> = () => {
                     </Tab>)
                 })}
             </TabList>
-        </div>
+        </>
     );
 }

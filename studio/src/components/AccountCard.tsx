@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { Image, Text } from '@fluentui/react';
 import {AuthForm} from './AuthForm';
-import {Button} from "@fluentui/react-components";
+import {Button, Card, CardHeader} from "@fluentui/react-components";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {projectService} from "@/lib/api";
 import toast from "react-hot-toast";
@@ -47,10 +47,12 @@ export const AccountCard: React.FC<AccountCardProps> = () => {
     return (
         <div>
             {user ? (
-                <div>
-                    <p>{user.email}</p>
-                    <Button onClick={logout}>logout</Button>
-                </div>
+                <Card>
+                    <CardHeader
+                        header={user.email}
+                        action={<Button onClick={logout}>logout</Button>}
+                        />
+                </Card>
             ) : (
                 <Button onClick={() => setShowAuthForm(true)}>
                     Login

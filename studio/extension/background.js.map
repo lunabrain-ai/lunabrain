@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../src/extension/background.tsx"],
+  "sourcesContent": ["/// <reference types=\"chrome\"/>\nchrome.runtime.onInstalled.addListener(function() {\n    console.log('Extension Installed');\n});\nexport {};"],
+  "mappings": ";;;AACA,SAAO,QAAQ,YAAY,YAAY,WAAW;AAC9C,YAAQ,IAAI,qBAAqB;AAAA,EACrC,CAAC;",
+  "names": []
+}

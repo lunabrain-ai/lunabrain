@@ -484,11 +484,34 @@ public struct Protoflow_FilePath {
 
   public var file: String = String()
 
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Protoflow_YouTubeVideoResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
   public var title: String = String()
+
+  public var filePath: Protoflow_FilePath {
+    get {return _filePath ?? Protoflow_FilePath()}
+    set {_filePath = newValue}
+  }
+  /// Returns true if `filePath` has been explicitly set.
+  public var hasFilePath: Bool {return self._filePath != nil}
+  /// Clears the value of `filePath`. Subsequent reads from it will return its default value.
+  public mutating func clearFilePath() {self._filePath = nil}
+
+  public var transcript: [Protoflow_Segment] = []
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
+
+  fileprivate var _filePath: Protoflow_FilePath? = nil
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
@@ -523,6 +546,7 @@ extension Protoflow_ChatRequest: @unchecked Sendable {}
 extension Protoflow_ChatResponse: @unchecked Sendable {}
 extension Protoflow_YouTubeVideo: @unchecked Sendable {}
 extension Protoflow_FilePath: @unchecked Sendable {}
+extension Protoflow_YouTubeVideoResponse: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -1639,7 +1663,6 @@ extension Protoflow_FilePath: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
   public static let protoMessageName: String = _protobuf_package + ".FilePath"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "file"),
-    2: .same(proto: "title"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1649,7 +1672,6 @@ extension Protoflow_FilePath: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.file) }()
-      case 2: try { try decoder.decodeSingularStringField(value: &self.title) }()
       default: break
       }
     }
@@ -1659,15 +1681,59 @@ extension Protoflow_FilePath: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     if !self.file.isEmpty {
       try visitor.visitSingularStringField(value: self.file, fieldNumber: 1)
     }
-    if !self.title.isEmpty {
-      try visitor.visitSingularStringField(value: self.title, fieldNumber: 2)
-    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Protoflow_FilePath, rhs: Protoflow_FilePath) -> Bool {
     if lhs.file != rhs.file {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Protoflow_YouTubeVideoResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".YouTubeVideoResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "title"),
+    2: .standard(proto: "file_path"),
+    3: .same(proto: "transcript"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.title) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._filePath) }()
+      case 3: try { try decoder.decodeRepeatedMessageField(value: &self.transcript) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if !self.title.isEmpty {
+      try visitor.visitSingularStringField(value: self.title, fieldNumber: 1)
+    }
+    try { if let v = self._filePath {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
+    if !self.transcript.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.transcript, fieldNumber: 3)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Protoflow_YouTubeVideoResponse, rhs: Protoflow_YouTubeVideoResponse) -> Bool {
     if lhs.title != rhs.title {return false}
+    if lhs._filePath != rhs._filePath {return false}
+    if lhs.transcript != rhs.transcript {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

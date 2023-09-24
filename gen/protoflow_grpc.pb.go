@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProtoflowServiceClient interface {
-	DownloadYouTubeVideo(ctx context.Context, in *YouTubeVideo, opts ...grpc.CallOption) (*FilePath, error)
+	DownloadYouTubeVideo(ctx context.Context, in *YouTubeVideo, opts ...grpc.CallOption) (*YouTubeVideoResponse, error)
 	GetSessions(ctx context.Context, in *GetSessionsRequest, opts ...grpc.CallOption) (*GetSessionsResponse, error)
 	GetSession(ctx context.Context, in *GetSessionRequest, opts ...grpc.CallOption) (*GetSessionResponse, error)
 	DeleteSession(ctx context.Context, in *DeleteSessionRequest, opts ...grpc.CallOption) (*Empty, error)
@@ -47,8 +47,8 @@ func NewProtoflowServiceClient(cc grpc.ClientConnInterface) ProtoflowServiceClie
 	return &protoflowServiceClient{cc}
 }
 
-func (c *protoflowServiceClient) DownloadYouTubeVideo(ctx context.Context, in *YouTubeVideo, opts ...grpc.CallOption) (*FilePath, error) {
-	out := new(FilePath)
+func (c *protoflowServiceClient) DownloadYouTubeVideo(ctx context.Context, in *YouTubeVideo, opts ...grpc.CallOption) (*YouTubeVideoResponse, error) {
+	out := new(YouTubeVideoResponse)
 	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/DownloadYouTubeVideo", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -255,7 +255,7 @@ func (c *protoflowServiceClient) Logout(ctx context.Context, in *Empty, opts ...
 // All implementations should embed UnimplementedProtoflowServiceServer
 // for forward compatibility
 type ProtoflowServiceServer interface {
-	DownloadYouTubeVideo(context.Context, *YouTubeVideo) (*FilePath, error)
+	DownloadYouTubeVideo(context.Context, *YouTubeVideo) (*YouTubeVideoResponse, error)
 	GetSessions(context.Context, *GetSessionsRequest) (*GetSessionsResponse, error)
 	GetSession(context.Context, *GetSessionRequest) (*GetSessionResponse, error)
 	DeleteSession(context.Context, *DeleteSessionRequest) (*Empty, error)
@@ -276,7 +276,7 @@ type ProtoflowServiceServer interface {
 type UnimplementedProtoflowServiceServer struct {
 }
 
-func (UnimplementedProtoflowServiceServer) DownloadYouTubeVideo(context.Context, *YouTubeVideo) (*FilePath, error) {
+func (UnimplementedProtoflowServiceServer) DownloadYouTubeVideo(context.Context, *YouTubeVideo) (*YouTubeVideoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DownloadYouTubeVideo not implemented")
 }
 func (UnimplementedProtoflowServiceServer) GetSessions(context.Context, *GetSessionsRequest) (*GetSessionsResponse, error) {

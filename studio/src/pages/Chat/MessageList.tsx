@@ -1,16 +1,5 @@
 import * as React from "react";
 import {
-    FolderRegular,
-    EditRegular,
-    OpenRegular,
-    DocumentRegular,
-    PeopleRegular,
-    DocumentPdfRegular,
-    VideoRegular,
-} from "@fluentui/react-icons";
-import {
-    PresenceBadgeStatus,
-    Avatar,
     TableBody,
     TableCell,
     TableRow,
@@ -18,7 +7,6 @@ import {
     TableHeader,
     TableHeaderCell,
     TableSelectionCell,
-    TableCellLayout,
     useTableFeatures,
     TableColumnDefinition,
     useTableSelection,
@@ -45,12 +33,10 @@ interface SubtleSelectionProps {
     style?: React.CSSProperties;
     items: Message[]
     columns: TableColumnDefinition<Message>[]
-    audioRef: RefObject<HTMLAudioElement>
 }
 
-export const MessageList: React.FC<SubtleSelectionProps> = ({ style, items, columns , audioRef}) => {
+export const MessageList: React.FC<SubtleSelectionProps> = ({ style, items, columns }) => {
     const messagesEndRef = useRef(null);
-    const [currentTime, setCurrentTime] = useState(0);
     const { inference } = useProjectContext();
 
     useEffect(() => {
@@ -108,51 +94,12 @@ export const MessageList: React.FC<SubtleSelectionProps> = ({ style, items, colu
         [toggleAllRows]
     );
 
-    useEffect(() => {
-        const audioElement = audioRef.current;
-
-        if (audioElement) {
-            const handleTimeUpdate = () => {
-                setCurrentTime(audioElement.currentTime);
-            };
-
-            audioElement.addEventListener('timeupdate', handleTimeUpdate);
-
-            // Cleanup to prevent memory leaks
-            return () => {
-                audioElement.removeEventListener('timeupdate', handleTimeUpdate);
-            };
-        }
-    }, []);
-
-    const changeCurrentTime = (t: number) => {
-        if (audioRef.current) {
-            audioRef.current.currentTime = t;
-        }
-    };
-
-    const shouldHighlight = (t: Token) => {
-        // // TODO breadchris highlight the token that is currently being spoken
-        if (audioRef.current && audioRef.current.currentTime >= Number(t.startTime) / 1000 && audioRef.current.currentTime <= Number(t.endTime) / 1000) {
-            return {color: 'red'};
-        }
-        return {};
-    }
-
-    const shouldHighlightSegment = (t: Segment) => {
-        // // TODO breadchris highlight the token that is currently being spoken
-        if (audioRef.current && audioRef.current.currentTime >= t.startTime && audioRef.current.currentTime <= t.endTime) {
-            return {color: 'red'};
-        }
-        return {};
-    }
-
     const tc = (item: Message): JSX.Element => {
         if (item.segment.tokens.length === 0) {
             if (item.segment.startTime && item.segment.endTime) {
                 // TODO breadchris shouldHighlight runs pretty inefficiently, I think it is what causes lag in the highlighting
                 return (
-                    <span style={shouldHighlightSegment(item.segment)} onClick={() => changeCurrentTime(Number(item.segment.startTime))} title={item.segment.startTime.toString()}>
+                    <span>
                         {item.segment.text}
                     </span>
                 )
@@ -161,14 +108,14 @@ export const MessageList: React.FC<SubtleSelectionProps> = ({ style, items, colu
         }
         return (
             <>
-                {item.segment.tokens.map((t) => {
+                {item.segment.tokens.map((t, idx) => {
                     if (/\[.*\]/.test(t.text) || '<|endoftext|>' === t.text) {
                         return null;
                     }
                     const time = Number(t.startTime) / 1000;
                     // TODO breadchris shouldHighlight runs pretty inefficiently, I think it is what causes lag in the highlighting
                     return (
-                        <span style={shouldHighlight(t)} onClick={() => changeCurrentTime(time)} title={time.toString()}>
+                        <span key={item.segment.startTime.toString() + t.startTime.toString() + idx}>
                             {t.text}
                         </span>
                     )

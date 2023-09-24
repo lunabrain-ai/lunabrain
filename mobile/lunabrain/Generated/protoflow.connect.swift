@@ -10,10 +10,10 @@ import SwiftProtobuf
 public protocol Protoflow_ProtoflowServiceClientInterface: Sendable {
 
     @discardableResult
-    func `downloadYouTubeVideo`(request: Protoflow_YouTubeVideo, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_FilePath>) -> Void) -> Connect.Cancelable
+    func `downloadYouTubeVideo`(request: Protoflow_YouTubeVideo, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_YouTubeVideoResponse>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
-    func `downloadYouTubeVideo`(request: Protoflow_YouTubeVideo, headers: Connect.Headers) async -> ResponseMessage<Protoflow_FilePath>
+    func `downloadYouTubeVideo`(request: Protoflow_YouTubeVideo, headers: Connect.Headers) async -> ResponseMessage<Protoflow_YouTubeVideoResponse>
 
     @discardableResult
     func `getSessions`(request: Protoflow_GetSessionsRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_GetSessionsResponse>) -> Void) -> Connect.Cancelable
@@ -108,12 +108,12 @@ public final class Protoflow_ProtoflowServiceClient: Protoflow_ProtoflowServiceC
     }
 
     @discardableResult
-    public func `downloadYouTubeVideo`(request: Protoflow_YouTubeVideo, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_FilePath>) -> Void) -> Connect.Cancelable {
+    public func `downloadYouTubeVideo`(request: Protoflow_YouTubeVideo, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_YouTubeVideoResponse>) -> Void) -> Connect.Cancelable {
         return self.client.unary(path: "/protoflow.ProtoflowService/DownloadYouTubeVideo", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
-    public func `downloadYouTubeVideo`(request: Protoflow_YouTubeVideo, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_FilePath> {
+    public func `downloadYouTubeVideo`(request: Protoflow_YouTubeVideo, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_YouTubeVideoResponse> {
         return await self.client.unary(path: "/protoflow.ProtoflowService/DownloadYouTubeVideo", request: request, headers: headers)
     }
 

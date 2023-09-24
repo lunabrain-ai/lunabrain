@@ -110,6 +110,7 @@ func (p *Protoflow) Login(ctx context.Context, c *connect_go.Request[genapi.User
 	if err != nil {
 		return nil, err
 	}
+
 	// TODO breadchris compare hashed passwords
 	if u.Data.Data.Password != c.Msg.Password {
 		return nil, errors.New("invalid password")
@@ -155,14 +156,37 @@ func (p *Protoflow) GetPrompts(ctx context.Context, c *connect_go.Request[genapi
 	}), nil
 }
 
-func (p *Protoflow) DownloadYouTubeVideo(ctx context.Context, c *connect_go.Request[genapi.YouTubeVideo]) (*connect_go.Response[genapi.FilePath], error) {
+func (p *Protoflow) DownloadYouTubeVideo(ctx context.Context, c *connect_go.Request[genapi.YouTubeVideo]) (*connect_go.Response[genapi.YouTubeVideoResponse], error) {
 	client := youtube.Client{
 		Debug: true,
 	}
 
-	video, err := client.GetVideo(c.Msg.Id)
+	video, err := client.GetVideoContext(ctx, c.Msg.Id)
 	if err != nil {
-		panic(err)
+		return nil, err
+	}
+
+	// TODO breadchris will this error if it can't find the transcript
+	vt, err := client.GetTranscriptCtx(ctx, video)
+	if err != nil {
+		return nil, err
+	}
+
+	var segments []*genapi.Segment
+	for i, seg := range vt {
+		segments = append(segments, &genapi.Segment{
+			Num:       uint32(i),
+			Text:      seg.Text,
+			StartTime: uint64(seg.StartMs),
+			EndTime:   uint64(seg.StartMs + seg.Duration),
+		})
+	}
+
+	if len(segments) > 0 {
+		return connect_go.NewResponse(&genapi.YouTubeVideoResponse{
+			Title:      video.Title,
+			Transcript: segments,
+		}), nil
 	}
 
 	// TODO breadchris support more formats
@@ -199,9 +223,12 @@ func (p *Protoflow) DownloadYouTubeVideo(ctx context.Context, c *connect_go.Requ
 		panic(err)
 	}
 	log.Info().Str("id", c.Msg.Id).Msg("downloaded video")
-	return connect_go.NewResponse(&genapi.FilePath{
+	return connect_go.NewResponse(&genapi.YouTubeVideoResponse{
 		Title: video.Title,
-		File:  filepath,
+		FilePath: &genapi.FilePath{
+			File: filepath,
+		},
+		Transcript: segments,
 	}), nil
 }
 
@@ -357,11 +384,19 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 			if err != nil {
 				return err
 			}
-			err = p.convertAudio(ctx, r.Msg.File)
-			if err != nil {
-				return err
+			if r.Msg.Transcript == nil {
+				err = p.convertAudio(ctx, r.Msg.FilePath.File)
+				if err != nil {
+					return err
+				}
+				obs = p.whisper.Transcribe(ctx, id, r.Msg.FilePath.File, 0)
+			} else {
+				obs = rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
+					for _, seg := range r.Msg.Transcript {
+						next <- rxgo.Of(seg)
+					}
+				}}, rxgo.WithContext(ctx))
 			}
-			obs = p.whisper.Transcribe(ctx, id, r.Msg.File, 0)
 			name = r.Msg.Title
 		default:
 			return errors.New("unsupported url")

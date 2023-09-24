@@ -13,6 +13,11 @@ type ProjectProviderProps = {
     children: React.ReactNode;
 };
 
+type Media = {
+    type: 'audio' | 'youtube';
+    url: string;
+}
+
 type ProjectContextType = {
     messages: Message[];
     setMessages: (messages: Message[]) => void;
@@ -30,6 +35,8 @@ type ProjectContextType = {
     setLoading: (loading: boolean) => void;
     analyzedText?: AnalyzeConversationResponse;
     setAnalyzedText: (analyzedText?: AnalyzeConversationResponse) => void;
+    media?: Media;
+    setMedia: (media?: Media) => void;
 };
 
 export default function ProjectProvider({children}: ProjectProviderProps) {
@@ -41,6 +48,7 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     const [user, setUser] = useState<User|undefined>(undefined);
     const [loading, setLoading] = useState(false);
     const [analyzedText, setAnalyzedText] = useState<AnalyzeConversationResponse|undefined>(undefined);
+    const [media, setMedia] = useState<Media|undefined>(undefined);
 
     const inferFromMessages = useCallback(async (prompt: string) => {
         const mIdx = messages.length + 1;
@@ -135,6 +143,8 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
                 setLoading,
                 analyzedText,
                 setAnalyzedText,
+                media,
+                setMedia,
             }}
         >
             {children}

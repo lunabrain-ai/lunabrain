@@ -6,7 +6,7 @@ import {Window} from "@/pages/Chat/Window";
 
 export const ChatPage = () => {
     return (
-        <Stack horizontal styles={{root: {height: '100vh', gap: 15, width: "100%"}}}>
+        <Stack horizontal styles={{root: {height: '100%', gap: 15, width: "100%"}}}>
             <Stack.Item styles={{ root: { borderRight: '1px solid #e1e1e1', padding: 10, width: '20%' } }}>
                 <Sidebar />
             </Stack.Item>
