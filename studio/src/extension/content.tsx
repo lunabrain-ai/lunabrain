@@ -8,6 +8,7 @@ import {FloatingPanel} from "@/extension/FloatingPanel";
 
 const rootElem = document.createElement("div");
 rootElem.setAttribute("id", "lunabrain-root");
+togglePanelVisibility();
 
 document.body.appendChild(rootElem);
 document.addEventListener('keydown', function(event) {

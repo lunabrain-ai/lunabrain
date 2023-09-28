@@ -41803,6 +41803,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
   var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1);
   var rootElem = document.createElement("div");
   rootElem.setAttribute("id", "lunabrain-root");
+  togglePanelVisibility();
   document.body.appendChild(rootElem);
   document.addEventListener("keydown", function(event) {
     if (event.ctrlKey && event.key === "l") {

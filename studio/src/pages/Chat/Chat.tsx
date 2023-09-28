@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {List, PrimaryButton, Stack, TextField} from '@fluentui/react';
 import {FileDrop} from "@/components/FileDrop";
 import {Sidebar} from "@/pages/Chat/Sidebar";
-import {Window} from "@/pages/Chat/Window";
+import {MessageWindow} from "@/pages/Chat/Window";
 
 export const ChatPage = () => {
     return (
@@ -11,9 +11,9 @@ export const ChatPage = () => {
                 <Sidebar />
             </Stack.Item>
 
-            <Stack.Item styles={{ root: { width: '80%', height: '100%', overflowY: 'auto' } }}>
+            <Stack.Item styles={{ root: { width: '80%' } }}>
                 <FileDrop>
-                    <Window />
+                    <MessageWindow />
                 </FileDrop>
             </Stack.Item>
         </Stack>

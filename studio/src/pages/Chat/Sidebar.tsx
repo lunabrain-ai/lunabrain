@@ -22,7 +22,7 @@ export const Sidebar: React.FC<SidebarProps> = ({  }) => {
                 <Tab value="collect">Collect</Tab>
                 <Tab value="prompts">Prompts</Tab>
             </TabList>
-            <div style={{marginTop: "10px", height: '100vh', overflowY: 'auto'}}>
+            <div style={{marginTop: "10px"}}>
                 {selectedValue === 'collect' && <CollectPanel />}
                 {selectedValue === 'prompts' && <PromptPanel />}
             </div>

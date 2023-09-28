@@ -57,7 +57,8 @@ message User {
   string password = 2;
 }
 
-message LoginResponse {}
+message LoginResponse {
+}
 
 message Empty {}
 

@@ -95,7 +95,7 @@ export const CollectPanel: React.FC<SidebarProps> = () => {
             <Divider style={{margin: "10px"}} />
             <FileUpload />
             <Divider style={{margin: "10px"}} />
-            <TabList vertical size={"medium"} selectedValue={selectedValue} onTabSelect={onTabSelect} style={{height: '100vh', overflowY: 'auto'}}>
+            <TabList vertical size={"medium"} selectedValue={selectedValue} onTabSelect={onTabSelect}>
                 {sessions.length === 0 && <Tab value={''}>No Sessions</Tab>}
                 {sessions.map((s) => {
                     return (<Tab key={s.id} value={s.id} style={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>

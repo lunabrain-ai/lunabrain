@@ -31,20 +31,18 @@ export const messageColumns: TableColumnDefinition<Message>[] = [
 
 interface SubtleSelectionProps {
     style?: React.CSSProperties;
-    items: Message[]
-    columns: TableColumnDefinition<Message>[]
 }
 
-export const MessageList: React.FC<SubtleSelectionProps> = ({ style, items, columns }) => {
+export const MessageList: React.FC<SubtleSelectionProps> = ({ style }) => {
     const messagesEndRef = useRef(null);
-    const { inference } = useProjectContext();
+    const { inference, messages } = useProjectContext();
 
     useEffect(() => {
         if (messagesEndRef.current) {
             //@ts-ignore
             messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-    }, [items, inference]);
+    }, [messages, inference]);
 
     const {
         getRows,
@@ -57,8 +55,8 @@ export const MessageList: React.FC<SubtleSelectionProps> = ({ style, items, colu
         },
     } = useTableFeatures(
         {
-            columns,
-            items,
+            columns: messageColumns,
+            items: messages,
         },
         [
             useTableSelection({
