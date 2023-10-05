@@ -11,5 +11,7 @@ const transport = createConnectTransport({
   baseUrl: apiURL || 'http://localhost:8080/api',
 });
 
+// @ts-ignore
 export const projectService = createPromiseClient(ProtoflowService, transport);
+// @ts-ignore
 export const contentService = createPromiseClient(ContentService, transport);

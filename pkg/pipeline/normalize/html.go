@@ -1,11 +1,12 @@
 package normalize
 
 import (
+	"fmt"
 	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/PuerkitoBio/goquery"
 	goose "github.com/advancedlogic/GoOse"
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
+	"log/slog"
 	"strings"
 )
 
@@ -13,7 +14,7 @@ import (
 func FormatHTMLAsArticle(html, nurl string) (string, error) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Warn().Msgf("panic while parsing html: %+v", r)
+			slog.Warn("panic while parsing html", "panic", fmt.Sprintf("%+v", r))
 		}
 	}()
 

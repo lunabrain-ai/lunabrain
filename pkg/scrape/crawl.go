@@ -5,11 +5,11 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/geziyor/geziyor"
 	"github.com/geziyor/geziyor/client"
+	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
 	"gocloud.dev/blob"
+	"log/slog"
 	"net/url"
 	"path"
 	"path/filepath"
@@ -82,7 +82,7 @@ func (c *crawler) linksParse(purl *url.URL) func(g *geziyor.Geziyor, r *client.R
 		err := c.saveURLToFolder(rawDir, r.Request.URL, r.Body)
 		if err != nil {
 			err = errors.Wrapf(err, "error: save raw content for %s\n", r.Request.URL.String())
-			log.Error().Err(err).Msg("")
+			slog.Error("error scraping", "err", err)
 			return
 		}
 
@@ -92,7 +92,7 @@ func (c *crawler) linksParse(purl *url.URL) func(g *geziyor.Geziyor, r *client.R
 			err = c.saveURLToFolder(normalDir, r.Request.URL, []byte(article))
 			if err != nil {
 				err = errors.Wrapf(err, "error: save article for %s\n", r.Request.URL.String())
-				log.Error().Err(err).Msg("")
+				slog.Error("error scraping", "error", err)
 				return
 			}
 		}
@@ -112,7 +112,7 @@ func (c *crawler) linksParse(purl *url.URL) func(g *geziyor.Geziyor, r *client.R
 			val, _ := s.Attr("href")
 			u, err := url.Parse(val)
 			if err != nil {
-				log.Error().Err(err).Msg("unable to parse url")
+				slog.Error("unable to parse url", "error", err)
 				return
 			}
 

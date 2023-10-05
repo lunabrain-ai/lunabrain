@@ -6,8 +6,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
-	"github.com/rs/zerolog/log"
 	"gorm.io/datatypes"
+	"log/slog"
 )
 
 // HNCollect collects messages from Hacker News
@@ -42,22 +42,22 @@ func (c *HNCollect) Collect() error {
 
 		comments, err := hn.Items.FetchAllDescendants(ctx, story, nil)
 		if err != nil {
-			log.Warn().Err(err).Msg("error fetching hn comments")
+			slog.Warn("error fetching hn comments", "error", err)
 			continue
 		}
 
-		log.Info().Str("story", *story.URL).Msg("processing story")
+		slog.Info("processing story", "story", *story.URL)
 
 		// TODO breadchris process story.URL
 		if err != nil {
-			log.Warn().Err(err).Msg("error processing content")
+			slog.Warn("error processing content", "error", err)
 			continue
 		}
 
 		// TODO breadchris set the ID
 		_, err = c.db.SaveHNStory(*story.ID, *story.URL, &i, uuid.New(), story, comments)
 		if err != nil {
-			log.Warn().Err(err).Msg("error storing hn story")
+			slog.Warn("error storing hn story", "error", err)
 			continue
 		}
 	}

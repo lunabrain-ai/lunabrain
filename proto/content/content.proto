@@ -8,6 +8,7 @@ option go_package = "./gen";
 service ContentService {
   rpc Save(Contents) returns (ContentIDs);
   rpc Search(Query) returns (Results);
+  rpc Analyze(Content) returns (Contents);
   rpc Delete(ContentIDs) returns (ContentIDs);
 }
 

@@ -8,25 +8,14 @@ import {FloatingPanel} from "@/extension/FloatingPanel";
 
 const rootElem = document.createElement("div");
 rootElem.setAttribute("id", "lunabrain-root");
-togglePanelVisibility();
-
 document.body.appendChild(rootElem);
-document.addEventListener('keydown', function(event) {
-    if (event.ctrlKey && event.key === 'l') {
-        togglePanelVisibility();
-        event.preventDefault(); // To prevent default action of Ctrl+L (focus on address bar)
-    }
-});
 
-function togglePanelVisibility() {
-    if (rootElem.style.display === 'none') {
-        rootElem.style.display = 'block';
-    } else {
-        rootElem.style.display = 'none';
-    }
-}
+rootElem.style.width = '0';
+rootElem.style.height = '0';
+rootElem.style.padding = '0';
+rootElem.style.margin = '0';
 
-const root = ReactDOM.createRoot(rootElem as HTMLElement);
+const root = ReactDOM.createRoot(rootElem);
 root.render(
     <React.StrictMode>
         <FloatingPanel />

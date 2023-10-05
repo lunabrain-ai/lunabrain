@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/lunabrain-ai/lunabrain/pkg/util"
+	"log/slog"
 	"strconv"
 	"strings"
 
@@ -15,7 +16,6 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
 	"github.com/samber/lo"
 
 	tokenizer "github.com/samber/go-gpt-3-encoder"
@@ -71,11 +71,7 @@ func (p *service) AnswerQuestionFromContent(prompt, question string, content []s
 	for _, c := range content {
 		encoded, err := encoder.Encode(c)
 		if err != nil {
-			log.Error().
-				Err(err).
-				Str("content", c).
-				Msg("failed to encode content")
-			return "", err
+			return "", errors.Wrapf(err, "failed to encode content")
 		}
 
 		tokenCount += len(encoded)
@@ -144,10 +140,7 @@ func (p *service) SearchForReferences(vulnID, search, question string) (string, 
 		if err != nil {
 			return "", err
 		}
-		log.Info().
-			Float64("similarity", res.Similarity).
-			Str("url", res.URL).
-			Msg("reference")
+		slog.Info("reference", "url", res.URL, "similarity", res.Similarity)
 
 		contentText := fmt.Sprintf("url: %s\ncontent: %s\n---\n", res.URL, strings.TrimSpace(res.Content))
 		content = append(content, contentText)
@@ -170,11 +163,7 @@ func (p *service) GenerateEmbeddingForRef(
 		return p.doGenerateEmbeddingForRef(ref, refEmbeddingExists, insertRefEmbedding)
 	}, expBackoff)
 	if err != nil {
-		log.Error().
-			Err(err).
-			Str("url", ref.URL).
-			Msg("failed to generate embedding for reference after backoff")
-		return err
+		return errors.Wrapf(err, "failed to generate embedding for reference after backoff")
 	}
 	return nil
 }
@@ -185,16 +174,12 @@ func (p *service) doGenerateEmbeddingForRef(
 	insertRefEmbedding InsertRefEmbeddingFunc,
 ) error {
 	if ref.LastSuccessfulFetch == nil {
-		log.Warn().
-			Str("url", ref.URL).
-			Msg("Content has not been successfully fetched")
+		slog.Warn("content has not been successfully fetched", "url", ref.URL)
 		return nil
 	}
 
 	if len(ref.NormalizedContent) > maxEmbeddingSize {
-		log.Warn().
-			Str("url", ref.URL).
-			Msg("content too large, truncating")
+		slog.Warn("content too large, truncating", "url", ref.URL)
 		ref.NormalizedContent = ref.NormalizedContent[:maxEmbeddingSize]
 	}
 
@@ -221,13 +206,12 @@ func (p *service) doGenerateEmbeddingForRef(
 
 		if refEmb, ok := refEmbeddingExists(hashStr); ok {
 			// skip this chunk, we already have an embedding for it
-			log.Info().Str("url", ref.URL).Msg("skipping chunk, already have embedding")
+			slog.Info("skipping chunk, already have embedding", "url", ref.URL)
 
 			var embedding []float64
 			err := json.Unmarshal([]byte(refEmb), &embedding)
 			if err != nil {
-				log.Error().Err(err).Msg("failed to unmarshal embedding")
-				return err
+				return errors.Wrapf(err, "failed to unmarshal embedding")
 			}
 			continue
 		}
@@ -239,31 +223,19 @@ func (p *service) doGenerateEmbeddingForRef(
 
 		res, err := p.OpenAIClient.Embeddings(context.Background(), req)
 		if err != nil {
-			log.Error().
-				Err(err).
-				Str("url", ref.URL).
-				Msg("failed to generate embedding")
-			return err
+			return errors.Wrapf(err, "failed to generate embedding")
 		}
 
 		// TODO (cthompson) will there be more than just one value in Data? currently we are only sending one chunk at a time.
 		embedding := res.Data[0].Embedding
 		embeddingData, err := json.Marshal(embedding)
 		if err != nil {
-			log.Error().
-				Err(err).
-				Str("url", ref.URL).
-				Msg("failed to marshal embedding data")
-			return err
+			return errors.Wrapf(err, "failed to marshal embedding data")
 		}
 
 		err = insertRefEmbedding(ref.ID, hashStr, formattedChunk, string(embeddingData))
 		if err != nil {
-			log.Error().
-				Err(err).
-				Str("url", ref.URL).
-				Msg("failed to insert reference embedding")
-			return err
+			return errors.Wrapf(err, "failed to insert reference embedding")
 		}
 	}
 	return nil

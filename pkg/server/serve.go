@@ -9,16 +9,16 @@ import (
 	"github.com/lunabrain-ai/lunabrain/gen/chat/chatconnect"
 	"github.com/lunabrain-ai/lunabrain/gen/content/contentconnect"
 	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
+	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
 	"github.com/lunabrain-ai/lunabrain/pkg/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	http3 "github.com/lunabrain-ai/lunabrain/pkg/http"
 	code "github.com/lunabrain-ai/lunabrain/pkg/protoflow"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/studio/dist/site"
-	"github.com/rs/zerolog/log"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
+	"log/slog"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -78,7 +78,9 @@ func NewLogInterceptor() connect.UnaryInterceptorFunc {
 		) (connect.AnyResponse, error) {
 			resp, err := next(ctx, req)
 			if err != nil {
-				log.Error().Msgf("connect error: %+v\n", err)
+				// slog.Error("connect error", "error", fmt.Sprintf("%+v", err))
+				// TODO breadchris this should only be done for local dev
+				fmt.Printf("%+v", err)
 			}
 			return resp, err
 		}
@@ -88,7 +90,7 @@ func NewLogInterceptor() connect.UnaryInterceptorFunc {
 
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Debug().Str("method", r.Method).Str("path", r.URL.Path).Msg("request")
+		slog.Debug("request", "method", r.Method, "path", r.URL.Path)
 		next.ServeHTTP(w, r)
 	})
 }
@@ -107,7 +109,7 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 		"protoflow.ProtoflowService",
 	)
 	recoverCall := func(_ context.Context, spec connect.Spec, _ http.Header, p any) error {
-		log.Error().Msgf("%+v\n", p)
+		slog.Error("panic", "err", fmt.Sprintf("%+v", p))
 		if err, ok := p.(error); ok {
 			return err
 		}
@@ -127,7 +129,7 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 
 	u, err := url.Parse(a.config.StudioProxy)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to parse studio proxy")
+		slog.Error("failed to parse studio proxy", "error", err)
 		return nil
 	}
 	proxy := httputil.NewSingleHostReverseProxy(u)
@@ -150,7 +152,7 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 			r.URL.Path = strings.Replace(r.URL.Path, "/studio", "", 1)
 
 			if a.config.StudioProxy != "" {
-				log.Debug().Msgf("proxying request: %s", r.URL.Path)
+				slog.Debug("proxying request", "path", r.URL.Path)
 				proxy.ServeHTTP(w, r)
 			} else {
 				filePath := r.URL.Path
@@ -165,7 +167,7 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 				if err == nil {
 					f.Close()
 				}
-				log.Debug().Msgf("serving file: %s", filePath)
+				slog.Debug("serving file", "path", filePath)
 				httpFileServer.ServeHTTP(w, r)
 			}
 			return
@@ -189,7 +191,7 @@ func (a *APIHTTPServer) Start() error {
 
 	addr := fmt.Sprintf(":%s", a.config.Port)
 
-	log.Info().Str("addr", addr).Msg("starting http server")
+	slog.Info("starting http server", "addr", addr)
 
 	//go func() {
 	//	log.Debug().Msg("starting protoflow server")

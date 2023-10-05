@@ -1,16 +1,16 @@
 package config
 
 import (
+	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/lunabrain-ai/lunabrain/pkg/protoflow"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
-	"github.com/rs/zerolog/log"
 	"go.uber.org/config"
 	"io/ioutil"
+	"log/slog"
 	"os"
 	"path"
 )
@@ -70,13 +70,11 @@ func NewConfigProvider() (config.Provider, error) {
 		}
 	}
 	if err != nil {
-		log.Warn().Str("config directory", configDir).Msg("unable to locate config directory")
+		slog.Warn("unable to locate config directory", "config directory", configDir)
 	}
 
 	if f, ferr := os.Stat(configFile); ferr == nil {
-		log.Info().
-			Str("config file", configFile).
-			Msg("using local config file")
+		slog.Info("using local config file", "config file", configFile)
 		opts = append(opts, config.File(path.Join(f.Name())))
 	}
 

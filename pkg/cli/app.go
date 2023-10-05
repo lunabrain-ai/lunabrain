@@ -1,9 +1,9 @@
 package cli
 
 import (
+	"github.com/lunabrain-ai/lunabrain/pkg/log"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
-	"github.com/protoflow-labs/protoflow/pkg/log"
 	"github.com/urfave/cli/v2"
 )
 

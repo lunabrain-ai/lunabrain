@@ -5,7 +5,7 @@ import (
 	util2 "github.com/lunabrain-ai/lunabrain/pkg/chat/discord/util"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
-	"github.com/rs/zerolog/log"
+	"log/slog"
 )
 
 type DiscordCollector struct {
@@ -35,7 +35,7 @@ func (c *DiscordCollector) Collect(channelID string) ([]*model.DiscordMessage, e
 		}
 
 		if len(msgs) == 0 {
-			log.Debug().Str("channelID", channelID).Msg("no messages to collect")
+			slog.Debug("no messages to collect", "channelID", channelID)
 			return nil, nil
 		}
 
@@ -89,7 +89,7 @@ func (c *DiscordCollector) createTranscripts(channelID string, msgs []*model.Dis
 // TODO breadchris discord starts with the latest message in the channel, so there will be a retroactive collection and a forward collection
 func (c *DiscordCollector) getHistoricalChannelMessages(channelID string) ([]*model.DiscordMessage, error) {
 	// Get the messages from the channel
-	log.Debug().Str("channelID", channelID).Msg("getting discord messages")
+	slog.Debug("getting discord messages", "channelID", channelID)
 	messages, err := c.session.ChannelMessages(channelID, 100, "", "", "")
 	if err != nil {
 		return nil, err
@@ -106,7 +106,7 @@ func (c *DiscordCollector) getHistoricalChannelMessages(channelID string) ([]*mo
 		oldestMsgID = messages[len(messages)-1].ID
 
 		// Get the next set of messages using the last ID
-		log.Debug().Str("oldestMsgID", oldestMsgID).Msg("getting more discord messages")
+		slog.Debug("getting more discord messages", "oldestMsgID", oldestMsgID)
 		moreMessages, err := c.session.ChannelMessages(channelID, 100, oldestMsgID, "", "")
 		if err != nil {
 			return nil, err
@@ -114,7 +114,7 @@ func (c *DiscordCollector) getHistoricalChannelMessages(channelID string) ([]*mo
 
 		// Append the new messages to the existing messages slice
 		messages = append(messages, moreMessages...)
-		log.Debug().Int("count", len(messages)).Msg("total messages collected")
+		slog.Debug("total messages collected", "count", len(messages))
 
 		// Check if we have all the messages
 		if len(moreMessages) < 100 {

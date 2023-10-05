@@ -2,7 +2,6 @@ package twilio
 
 import (
 	"github.com/google/wire"
-	"github.com/rs/zerolog/log"
 	"github.com/twilio/twilio-go"
 	twilioApi "github.com/twilio/twilio-go/rest/api/v2010"
 	"go.uber.org/config"
@@ -24,13 +23,13 @@ var ProviderSet = wire.NewSet(
 	NewTwilio,
 )
 
-func NewConfig(config config.Provider) (cfg Config, err error) {
-	err = config.Get("twilio").Populate(&cfg)
+func NewConfig(config config.Provider) (Config, error) {
+	var cfg Config
+	err := config.Get("twilio").Populate(&cfg)
 	if err != nil {
-		log.Error().Err(err).Msg("failed loading config")
-		return
+		return Config{}, err
 	}
-	return
+	return cfg, nil
 }
 
 func NewTwilio(config *Config) (*TwilioService, error) {

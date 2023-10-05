@@ -3,12 +3,15 @@ package content
 import (
 	"context"
 	connect_go "github.com/bufbuild/connect-go"
+	"github.com/go-shiori/go-readability"
 	"github.com/google/uuid"
 	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/gen/content/contentconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/pkg/errors"
+	"log"
+	"time"
 )
 
 type Service struct {
@@ -71,6 +74,20 @@ func (s *Service) Delete(ctx context.Context, c *connect_go.Request[content.Cont
 		}
 	}
 	return connect_go.NewResponse(&content.ContentIDs{ContentIds: c.Msg.GetContentIds()}), nil
+}
+
+func (s *Service) Analyze(ctx context.Context, c *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error) {
+	switch t := c.Msg.Type.(type) {
+	case *content.Content_Data:
+		switch u := t.Data.Type.(type) {
+		case *content.Data_Url:
+			_, err := readability.FromURL(u.Url.Url, 30*time.Second)
+			if err != nil {
+				log.Fatalf("failed to parse %s, %v\n", u.Url.Url, err)
+			}
+		}
+	}
+	return connect_go.NewResponse(&content.Contents{}), nil
 }
 
 func NewAPIServer(

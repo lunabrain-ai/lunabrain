@@ -9,8 +9,8 @@ import (
 	"github.com/lunabrain-ai/lunabrain/gen/jsonschema"
 	"github.com/pkg/errors"
 	"github.com/reactivex/rxgo/v2"
-	"github.com/rs/zerolog/log"
 	"github.com/tmc/langchaingo/llms"
+	"log/slog"
 )
 
 func (p *Protoflow) Infer(ctx context.Context, c *connect_go.Request[genapi.InferRequest], c2 *connect_go.ServerStream[genapi.InferResponse]) error {
@@ -36,13 +36,13 @@ func (p *Protoflow) Infer(ctx context.Context, c *connect_go.Request[genapi.Infe
 		if err := c2.Send(&genapi.InferResponse{
 			Text: s,
 		}); err != nil {
-			log.Error().Err(err).Msg("error sending token")
+			slog.Error("error sending token", "error", err)
 		}
 	}, func(err error) {
-		log.Error().Err(err).Msg("error while infering")
+		slog.Error("error while infering", "error", err)
 		resErr = err
 	}, func() {
-		log.Debug().Msg("infer complete")
+		slog.Debug("infer complete")
 	})
 	return resErr
 }

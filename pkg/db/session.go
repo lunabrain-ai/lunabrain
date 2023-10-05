@@ -5,10 +5,10 @@ import (
 	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	model2 "github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"log/slog"
 )
 
 type Session struct {
@@ -17,7 +17,7 @@ type Session struct {
 
 func NewSession(db *gorm.DB) (*Session, error) {
 	// TODO breadchris migration should be done via a migration tool, no automigrate
-	log.Info().Msg("migrating database")
+	slog.Info("migrating database")
 	err := db.AutoMigrate(
 		&model2.Session{},
 		&model2.Segment{},
@@ -159,7 +159,7 @@ func (s *Session) GetUser(ps *genapi.User) (*model2.User, error) {
 	p := &model2.User{}
 	res := s.db.First(&p, datatypes.JSONQuery("data").Equals(ps.Email, "email"))
 	if res.Error != nil {
-		return nil, errors.Wrapf(res.Error, "could not get user")
+		return nil, errors.Wrapf(res.Error, "could not get user: %s", ps.Email)
 	}
 	return p, nil
 }

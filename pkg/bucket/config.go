@@ -1,7 +1,6 @@
 package bucket
 
 import (
-	"github.com/rs/zerolog/log"
 	"go.uber.org/config"
 )
 
@@ -13,11 +12,11 @@ type Config struct {
 	URLBase   string `yaml:"url_base"`
 }
 
-func NewConfig(config config.Provider) (cfg Config, err error) {
-	err = config.Get(ConfigurationKey).Populate(&cfg)
+func NewConfig(config config.Provider) (Config, error) {
+	var cfg Config
+	err := config.Get(ConfigurationKey).Populate(&cfg)
 	if err != nil {
-		log.Error().Err(err).Msg("failed loading config")
-		return
+		return Config{}, err
 	}
-	return
+	return cfg, nil
 }

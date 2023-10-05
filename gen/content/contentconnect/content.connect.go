@@ -37,6 +37,8 @@ const (
 	ContentServiceSaveProcedure = "/content.ContentService/Save"
 	// ContentServiceSearchProcedure is the fully-qualified name of the ContentService's Search RPC.
 	ContentServiceSearchProcedure = "/content.ContentService/Search"
+	// ContentServiceAnalyzeProcedure is the fully-qualified name of the ContentService's Analyze RPC.
+	ContentServiceAnalyzeProcedure = "/content.ContentService/Analyze"
 	// ContentServiceDeleteProcedure is the fully-qualified name of the ContentService's Delete RPC.
 	ContentServiceDeleteProcedure = "/content.ContentService/Delete"
 )
@@ -45,6 +47,7 @@ const (
 type ContentServiceClient interface {
 	Save(context.Context, *connect_go.Request[content.Contents]) (*connect_go.Response[content.ContentIDs], error)
 	Search(context.Context, *connect_go.Request[content.Query]) (*connect_go.Response[content.Results], error)
+	Analyze(context.Context, *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error)
 	Delete(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
 }
 
@@ -68,6 +71,11 @@ func NewContentServiceClient(httpClient connect_go.HTTPClient, baseURL string, o
 			baseURL+ContentServiceSearchProcedure,
 			opts...,
 		),
+		analyze: connect_go.NewClient[content.Content, content.Contents](
+			httpClient,
+			baseURL+ContentServiceAnalyzeProcedure,
+			opts...,
+		),
 		delete: connect_go.NewClient[content.ContentIDs, content.ContentIDs](
 			httpClient,
 			baseURL+ContentServiceDeleteProcedure,
@@ -78,9 +86,10 @@ func NewContentServiceClient(httpClient connect_go.HTTPClient, baseURL string, o
 
 // contentServiceClient implements ContentServiceClient.
 type contentServiceClient struct {
-	save   *connect_go.Client[content.Contents, content.ContentIDs]
-	search *connect_go.Client[content.Query, content.Results]
-	delete *connect_go.Client[content.ContentIDs, content.ContentIDs]
+	save    *connect_go.Client[content.Contents, content.ContentIDs]
+	search  *connect_go.Client[content.Query, content.Results]
+	analyze *connect_go.Client[content.Content, content.Contents]
+	delete  *connect_go.Client[content.ContentIDs, content.ContentIDs]
 }
 
 // Save calls content.ContentService.Save.
@@ -93,6 +102,11 @@ func (c *contentServiceClient) Search(ctx context.Context, req *connect_go.Reque
 	return c.search.CallUnary(ctx, req)
 }
 
+// Analyze calls content.ContentService.Analyze.
+func (c *contentServiceClient) Analyze(ctx context.Context, req *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error) {
+	return c.analyze.CallUnary(ctx, req)
+}
+
 // Delete calls content.ContentService.Delete.
 func (c *contentServiceClient) Delete(ctx context.Context, req *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error) {
 	return c.delete.CallUnary(ctx, req)
@@ -102,6 +116,7 @@ func (c *contentServiceClient) Delete(ctx context.Context, req *connect_go.Reque
 type ContentServiceHandler interface {
 	Save(context.Context, *connect_go.Request[content.Contents]) (*connect_go.Response[content.ContentIDs], error)
 	Search(context.Context, *connect_go.Request[content.Query]) (*connect_go.Response[content.Results], error)
+	Analyze(context.Context, *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error)
 	Delete(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
 }
 
@@ -121,6 +136,11 @@ func NewContentServiceHandler(svc ContentServiceHandler, opts ...connect_go.Hand
 		svc.Search,
 		opts...,
 	)
+	contentServiceAnalyzeHandler := connect_go.NewUnaryHandler(
+		ContentServiceAnalyzeProcedure,
+		svc.Analyze,
+		opts...,
+	)
 	contentServiceDeleteHandler := connect_go.NewUnaryHandler(
 		ContentServiceDeleteProcedure,
 		svc.Delete,
@@ -132,6 +152,8 @@ func NewContentServiceHandler(svc ContentServiceHandler, opts ...connect_go.Hand
 			contentServiceSaveHandler.ServeHTTP(w, r)
 		case ContentServiceSearchProcedure:
 			contentServiceSearchHandler.ServeHTTP(w, r)
+		case ContentServiceAnalyzeProcedure:
+			contentServiceAnalyzeHandler.ServeHTTP(w, r)
 		case ContentServiceDeleteProcedure:
 			contentServiceDeleteHandler.ServeHTTP(w, r)
 		default:
@@ -149,6 +171,10 @@ func (UnimplementedContentServiceHandler) Save(context.Context, *connect_go.Requ
 
 func (UnimplementedContentServiceHandler) Search(context.Context, *connect_go.Request[content.Query]) (*connect_go.Response[content.Results], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.Search is not implemented"))
+}
+
+func (UnimplementedContentServiceHandler) Analyze(context.Context, *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.Analyze is not implemented"))
 }
 
 func (UnimplementedContentServiceHandler) Delete(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error) {

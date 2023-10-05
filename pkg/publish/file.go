@@ -3,11 +3,9 @@ package publish
 import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
-	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
+	"log/slog"
 )
 
 type FileConfig struct {
@@ -22,43 +20,22 @@ type File struct {
 	db      db.Store
 }
 
-func formatForFile(c *model.Content) string {
-	// TODO breadchris for message summaries, this will be too much data
-	formatted := "" // "Data: " + content.Data + "\n"
-	for _, normalContent := range c.NormalizedContent {
-		for _, transformedContent := range normalContent.TransformedContent {
-			if transformedContent.TransformerID == int32(content.TransformerID_SUMMARY) {
-				formatted += "Summary: " + transformedContent.Data + "\n"
-			}
-			if transformedContent.TransformerID == int32(content.TransformerID_CATEGORIES) {
-				formatted += "Categories: " + transformedContent.Data + "\n"
-			}
-		}
-	}
-	return formatted
-}
-
 func (f *File) Publish(contentID uuid.UUID) error {
 	if !f.config.Enabled {
-		log.Debug().
-			Str("contentID", contentID.String()).
-			Msg("content publishing to file disabled")
+		slog.Debug("content publishing to file disabled", "contentID", contentID.String())
 		return nil
 	}
 
-	log.Debug().
-		Str("contentID", contentID.String()).
-		Msg("publishing content to file")
+	slog.Debug("publishing content to file", "contentID", contentID.String())
 
-	content, err := f.db.GetContentByID(contentID)
+	_, err := f.db.GetContentByID(contentID)
 	if err != nil {
 		return errors.Wrapf(err, "failed to get content by id %s", contentID)
 	}
 
 	// TODO breadchris this is a POC for publishing to a file
 	if f.config.Type == "logseq" {
-		msg := formatForFile(content)
-		log.Debug().Str("msg", msg).Msg("publishing to file")
+		slog.Info("publishing to logseq")
 	}
 	return nil
 }

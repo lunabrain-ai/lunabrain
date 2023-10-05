@@ -20,6 +20,11 @@ const Login: React.FC<AuthFormProps> = ({email, password, setEmail, setPassword}
                 email,
                 password,
             })
+            if (!res.email) {
+                console.warn('no user logged in')
+                toast.error('Failed to login: no user logged in')
+                return
+            }
             setUser(res)
             toast.success('Successful login!')
         } catch (e: any) {

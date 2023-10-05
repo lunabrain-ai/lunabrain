@@ -1,7 +1,7 @@
 package db
 
 import (
-	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
+	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/pkg/errors"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"

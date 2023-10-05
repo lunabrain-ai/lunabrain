@@ -22,6 +22,12 @@ public protocol Content_ContentServiceClientInterface: Sendable {
     func `search`(request: Content_Query, headers: Connect.Headers) async -> ResponseMessage<Content_Results>
 
     @discardableResult
+    func `analyze`(request: Content_Content, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Content_Contents>) -> Void) -> Connect.Cancelable
+
+    @available(iOS 13, *)
+    func `analyze`(request: Content_Content, headers: Connect.Headers) async -> ResponseMessage<Content_Contents>
+
+    @discardableResult
     func `delete`(request: Content_ContentIDs, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Content_ContentIDs>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
@@ -57,6 +63,16 @@ public final class Content_ContentServiceClient: Content_ContentServiceClientInt
     }
 
     @discardableResult
+    public func `analyze`(request: Content_Content, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Content_Contents>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/content.ContentService/Analyze", request: request, headers: headers, completion: completion)
+    }
+
+    @available(iOS 13, *)
+    public func `analyze`(request: Content_Content, headers: Connect.Headers = [:]) async -> ResponseMessage<Content_Contents> {
+        return await self.client.unary(path: "/content.ContentService/Analyze", request: request, headers: headers)
+    }
+
+    @discardableResult
     public func `delete`(request: Content_ContentIDs, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Content_ContentIDs>) -> Void) -> Connect.Cancelable {
         return self.client.unary(path: "/content.ContentService/Delete", request: request, headers: headers, completion: completion)
     }
@@ -70,6 +86,7 @@ public final class Content_ContentServiceClient: Content_ContentServiceClientInt
         public enum Methods {
             public static let save = Connect.MethodSpec(name: "Save", service: "content.ContentService", type: .unary)
             public static let search = Connect.MethodSpec(name: "Search", service: "content.ContentService", type: .unary)
+            public static let analyze = Connect.MethodSpec(name: "Analyze", service: "content.ContentService", type: .unary)
             public static let delete = Connect.MethodSpec(name: "Delete", service: "content.ContentService", type: .unary)
         }
     }

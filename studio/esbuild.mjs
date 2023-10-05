@@ -55,7 +55,6 @@ if (target === 'extension') {
             "./src/extension/tab.tsx",
             "./src/extension/options.tsx",
             "./src/extension/background.tsx",
-            "./src/extension/styles.css",
         ],
         outdir: "dist/extension/",
     });

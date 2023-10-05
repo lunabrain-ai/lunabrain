@@ -7,10 +7,10 @@ import (
 	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"log/slog"
 )
 
 var (
@@ -28,7 +28,7 @@ type Store struct {
 
 func New(db *gorm.DB) (*Store, error) {
 	// TODO breadchris migration should be done via a migration tool, no automigrate
-	log.Info().Msg("migrating database")
+	slog.Info("migrating database")
 	err := db.AutoMigrate(
 		&model.Content{},
 		&model.DiscordChannel{},
@@ -182,7 +182,7 @@ func (s *Store) StoreDiscordMessages(msgs []*model.DiscordMessage) error {
 		res := s.db.Create(msg)
 		if res.Error != nil {
 			//return errors.Wrapf(res.Error, "could not save discord message: %v", msg.ID)
-			log.Warn().Str("msg_id", msg.MessageID).Err(res.Error).Msg("could not save discord message")
+			slog.Warn("could not save discord message", "error", res.Error, "msg_id", msg.MessageID)
 			continue
 		}
 	}

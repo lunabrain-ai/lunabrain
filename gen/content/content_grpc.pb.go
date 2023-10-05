@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type ContentServiceClient interface {
 	Save(ctx context.Context, in *Contents, opts ...grpc.CallOption) (*ContentIDs, error)
 	Search(ctx context.Context, in *Query, opts ...grpc.CallOption) (*Results, error)
+	Analyze(ctx context.Context, in *Content, opts ...grpc.CallOption) (*Contents, error)
 	Delete(ctx context.Context, in *ContentIDs, opts ...grpc.CallOption) (*ContentIDs, error)
 }
 
@@ -53,6 +54,15 @@ func (c *contentServiceClient) Search(ctx context.Context, in *Query, opts ...gr
 	return out, nil
 }
 
+func (c *contentServiceClient) Analyze(ctx context.Context, in *Content, opts ...grpc.CallOption) (*Contents, error) {
+	out := new(Contents)
+	err := c.cc.Invoke(ctx, "/content.ContentService/Analyze", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *contentServiceClient) Delete(ctx context.Context, in *ContentIDs, opts ...grpc.CallOption) (*ContentIDs, error) {
 	out := new(ContentIDs)
 	err := c.cc.Invoke(ctx, "/content.ContentService/Delete", in, out, opts...)
@@ -68,6 +78,7 @@ func (c *contentServiceClient) Delete(ctx context.Context, in *ContentIDs, opts 
 type ContentServiceServer interface {
 	Save(context.Context, *Contents) (*ContentIDs, error)
 	Search(context.Context, *Query) (*Results, error)
+	Analyze(context.Context, *Content) (*Contents, error)
 	Delete(context.Context, *ContentIDs) (*ContentIDs, error)
 }
 
@@ -80,6 +91,9 @@ func (UnimplementedContentServiceServer) Save(context.Context, *Contents) (*Cont
 }
 func (UnimplementedContentServiceServer) Search(context.Context, *Query) (*Results, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Search not implemented")
+}
+func (UnimplementedContentServiceServer) Analyze(context.Context, *Content) (*Contents, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Analyze not implemented")
 }
 func (UnimplementedContentServiceServer) Delete(context.Context, *ContentIDs) (*ContentIDs, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
@@ -132,6 +146,24 @@ func _ContentService_Search_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ContentService_Analyze_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Content)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContentServiceServer).Analyze(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/content.ContentService/Analyze",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContentServiceServer).Analyze(ctx, req.(*Content))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ContentService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ContentIDs)
 	if err := dec(in); err != nil {
@@ -164,6 +196,10 @@ var ContentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Search",
 			Handler:    _ContentService_Search_Handler,
+		},
+		{
+			MethodName: "Analyze",
+			Handler:    _ContentService_Analyze_Handler,
 		},
 		{
 			MethodName: "Delete",

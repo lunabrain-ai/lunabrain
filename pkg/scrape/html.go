@@ -6,7 +6,7 @@ import (
 	"github.com/chromedp/cdproto/fetch"
 	"github.com/chromedp/cdproto/network"
 	"github.com/chromedp/chromedp"
-	"github.com/rs/zerolog/log"
+	"log/slog"
 )
 
 type Response struct {
@@ -22,7 +22,7 @@ func listenForNetworkEvent(ctx context.Context) {
 		case *network.EventResponseReceived:
 			resp := ev.Response
 			if len(resp.Headers) != 0 {
-				log.Printf("received headers: %s", resp.Headers)
+				slog.Debug("received headers", "headers", resp.Headers)
 			}
 		}
 	})
@@ -56,7 +56,7 @@ func whenPromptedLoginToProxy(ctx context.Context, username, password string) {
 
 				err := fetch.ContinueWithAuth(ev.RequestID, resp).Do(execCtx)
 				if err != nil {
-					log.Print(err)
+					slog.Debug("failed to continue with auth", "err", err)
 				}
 
 			case *fetch.EventRequestPaused:
@@ -64,7 +64,7 @@ func whenPromptedLoginToProxy(ctx context.Context, username, password string) {
 				execCtx := cdp.WithExecutor(ctx, c.Target)
 				err := fetch.ContinueRequest(ev.RequestID).Do(execCtx)
 				if err != nil {
-					log.Print(err)
+					slog.Error("failed to continue request", "err", err)
 				}
 			}
 		}()

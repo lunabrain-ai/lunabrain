@@ -10,21 +10,21 @@ import (
 	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
+	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/util"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/pkg/errors"
 	"github.com/reactivex/rxgo/v2"
-	"github.com/rs/zerolog/log"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"gorm.io/datatypes"
 	"image"
 	"io"
+	"log/slog"
 	ghttp "net/http"
 	"net/url"
 	"os"
@@ -109,7 +109,10 @@ func (p *Protoflow) Login(ctx context.Context, c *connect_go.Request[genapi.User
 
 	u, err := p.sessionStore.GetUser(c.Msg)
 	if err != nil {
-		return nil, err
+		slog.Warn("could not find user", "error", err)
+		return connect_go.NewResponse(&genapi.User{
+			Email: "",
+		}), nil
 	}
 
 	// TODO breadchris compare hashed passwords
@@ -218,12 +221,12 @@ func (p *Protoflow) DownloadYouTubeVideo(ctx context.Context, c *connect_go.Requ
 		return nil, err
 	}
 
-	log.Info().Str("id", c.Msg.Id).Msg("downloading video")
+	slog.Info("downloading video", "id", c.Msg.Id, "size", contentLength)
 	_, err = io.Copy(w, stream)
 	if err != nil {
 		panic(err)
 	}
-	log.Info().Str("id", c.Msg.Id).Msg("downloaded video")
+	slog.Info("downloaded video", "id", c.Msg.Id, "size", contentLength)
 	return connect_go.NewResponse(&genapi.YouTubeVideoResponse{
 		Title: video.Title,
 		FilePath: &genapi.FilePath{
@@ -296,18 +299,18 @@ func (p *Protoflow) observeSegments(
 			},
 		})
 		if err != nil {
-			log.Error().Err(err).Msg("error saving segment")
+			slog.Error("error saving segment", "error", err)
 		}
 
 		if err := c2.Send(&genapi.ChatResponse{
 			Segment: t,
 		}); err != nil {
-			log.Error().Err(err).Msg("error sending token")
+			slog.Error("error sending token", "error", err)
 		}
 	}, func(err error) {
-		log.Error().Err(err).Msg("error in observable")
+		slog.Error("error in observable", "error", err)
 	}, func() {
-		log.Info().Msg("transcription complete")
+		slog.Info("transcription complete")
 	})
 }
 
@@ -374,10 +377,7 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 			}
 			switch s {
 			case "youtube.com":
-				log.Debug().
-					Str("host", u.Host).
-					Str("id", u.Query().Get("v")).
-					Msg("downloading youtube video")
+				slog.Debug("downloading youtube video", "host", u.Host, "id", u.Query().Get("v"))
 				r, err := p.DownloadYouTubeVideo(ctx, &connect_go.Request[genapi.YouTubeVideo]{
 					Msg: &genapi.YouTubeVideo{
 						Id:   u.Query().Get("v"),

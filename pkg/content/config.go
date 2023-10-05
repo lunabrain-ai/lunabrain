@@ -1,7 +1,6 @@
 package content
 
 import (
-	"github.com/rs/zerolog/log"
 	"go.uber.org/config"
 )
 
@@ -10,15 +9,13 @@ type Config struct {
 	StudioProxy string `yaml:"studio_proxy"`
 }
 
-func NewConfig(provider config.Provider) (config Config, err error) {
+func NewConfig(provider config.Provider) (Config, error) {
 	value := provider.Get("service")
 
-	err = value.Populate(&config)
+	var cfg Config
+	err := value.Populate(&cfg)
 	if err != nil {
-		log.Error().
-			Err(err).
-			Msg("unable populate openai config")
-		return
+		return Config{}, err
 	}
-	return
+	return cfg, nil
 }

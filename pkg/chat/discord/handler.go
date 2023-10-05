@@ -3,11 +3,11 @@ package discord
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"strings"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/rs/zerolog/log"
 )
 
 type MessageInfo struct {
@@ -98,17 +98,13 @@ func (d *Handler) setupHandlers() error {
 
 		switch i.Type {
 		case discordgo.InteractionApplicationCommand:
-			log.Info().
-				Str("handlerName", i.ApplicationCommandData().Name).
-				Msg("invoking command handler")
+			slog.Info("interaction application command", "name", i.ApplicationCommandData().Name)
 			if h, ok := d.cmdMap[i.ApplicationCommandData().Name]; ok {
 				h(ctx, s, i)
 			}
 		case discordgo.InteractionMessageComponent:
 			customID := i.MessageComponentData().CustomID
-			log.Info().
-				Str("customID", customID).
-				Msg("invoking message component handler")
+			slog.Info("interaction message component", "customID", customID)
 			if h, ok := d.cmdMap[customID]; ok {
 				h(ctx, s, i)
 			}
@@ -122,13 +118,10 @@ func (d *Handler) setupHandlers() error {
 
 		ccmd, err := d.session.ApplicationCommandCreate(d.config.ApplicationID, v.GuildID, &v.Command)
 		if err != nil {
-			log.Error().Err(err).Msg("failed to register command")
+			slog.Error("failed to register command", "name", v.Command.Name, "err", err)
 			return err
 		}
-		log.Info().
-			Str("name", ccmd.Name).
-			Str("id", ccmd.ID).
-			Msg("registered command")
+		slog.Info("registered command", "name", ccmd.Name, "id", ccmd.ID)
 	}
 	return nil
 }

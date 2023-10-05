@@ -6,7 +6,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/gen/chat"
 	"github.com/lunabrain-ai/lunabrain/gen/chat/chatconnect"
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
+	"log/slog"
 )
 
 type DiscordService struct {
@@ -29,7 +29,7 @@ func (d *DiscordService) ReadMessages(ctx context.Context, c *connect_go.Request
 		if msg.Author.Bot {
 			continue
 		}
-		log.Info().Msgf("reading message \"%s\"", msg.Content)
+		slog.Info("reading message", "content", msg.Content)
 		err := c2.Send(&chat.ReadMessagesResponse{
 			MessageID: msg.ID,
 			Content:   msg.Content,
@@ -43,7 +43,7 @@ func (d *DiscordService) ReadMessages(ctx context.Context, c *connect_go.Request
 }
 
 func (d *DiscordService) WriteMessage(ctx context.Context, c *connect_go.Request[chat.WriteMessageRequest]) (*connect_go.Response[chat.WriteMessageResponse], error) {
-	log.Info().Msgf("writing message \"%s\" to channel %s", c.Msg.Content, c.Msg.ChannelID)
+	slog.Info("writing message", "content", c.Msg.Content, "channelID", c.Msg.ChannelID)
 	channelID := c.Msg.ChannelID
 	msg, err := d.session.ChannelMessageSend(channelID, c.Msg.Content)
 	if msg == nil {

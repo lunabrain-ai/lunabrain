@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ContentIDs, Contents, Query, Results } from "./content_pb.js";
+import { Content, ContentIDs, Contents, Query, Results } from "./content_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -28,6 +28,15 @@ export const ContentService = {
       name: "Search",
       I: Query,
       O: Results,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc content.ContentService.Analyze
+     */
+    analyze: {
+      name: "Analyze",
+      I: Content,
+      O: Contents,
       kind: MethodKind.Unary,
     },
     /**

@@ -6,8 +6,8 @@ import (
 	"github.com/chromedp/chromedp"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
 	"io"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -53,7 +53,7 @@ func NewScraper(config Config, db *db.Store) *scraper {
 
 	chromeCtx, cancel := chromedp.NewContext(
 		ctx,
-		chromedp.WithDebugf(log.Printf),
+		chromedp.WithDebugf(slog.Debug),
 	)
 	defer cancel()
 
@@ -98,21 +98,13 @@ func (p *scraper) Scrape(url string) (*Response, error) {
 func (p *scraper) scrapeWithClient(url string) (*Response, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		log.Error().
-			Err(err).
-			Str("url", url).
-			Msg("Failed to create request for reference Host")
-		return nil, err
+		return nil, errors.Wrapf(err, "failed to create request for %s", url)
 	}
 	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36")
 
 	resp, err := p.httpClient.Do(req)
 	if err != nil {
-		log.Error().
-			Err(err).
-			Str("url", url).
-			Msg("Failed to fetch reference Host")
-		return nil, err
+		return nil, errors.Wrapf(err, "failed to fetch reference Host %s", url)
 	}
 	defer resp.Body.Close()
 
@@ -153,9 +145,7 @@ func (p *scraper) scrapeWithChrome(url string) (*Response, error) {
 		return nil, errors.Wrapf(err, "failed to scrape Host with Chrome: %s", url)
 	}
 
-	log.Debug().
-		Float64("duration", time.Since(start).Seconds()).
-		Msg("Scraped Host with Chrome")
+	slog.Debug("scraped Host with Chrome", "url", url, "duration", time.Since(start).Seconds())
 	return &Response{
 		Title:       title,
 		Content:     html,

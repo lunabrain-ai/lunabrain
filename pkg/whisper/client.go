@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"github.com/google/wire"
 	genapi "github.com/lunabrain-ai/lunabrain/gen"
+	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/pkg/errors"
 	"github.com/reactivex/rxgo/v2"
-	"github.com/rs/zerolog/log"
 	gopenai "github.com/sashabaranov/go-openai"
+	"log/slog"
 	"os"
 	"os/exec"
 )
@@ -47,7 +47,7 @@ func NewClient(
 
 // TODO breadchris captureDevice seems awkward here
 func (a *Client) Transcribe(ctx context.Context, id, filePath string, captureDevice int32) rxgo.Observable {
-	log.Debug().Str("id", id).Str("filePath", filePath).Msg("transcribing audio with whisper")
+	slog.Debug("transcribing audio with whisper", "id", id, "filePath", filePath)
 	if a.config.Offline {
 		return a.offlineTranscription(ctx, filePath, captureDevice)
 	} else {
@@ -63,10 +63,7 @@ func (a *Client) apiTranscription(ctx context.Context, id, filePath string) rxgo
 		// TODO breadchris maybe support streams instead of just files?
 		var duration float64
 		err := splitWAVFile(a.fileStore, id, filePath, maxChunkSize, func(chunkFilePath string) error {
-			log.Debug().
-				Str("id", id).
-				Str("chunkFilePath", chunkFilePath).
-				Msg("transcribing chunk")
+			slog.Debug("transcribing chunk", "id", id, "chunkFilePath", chunkFilePath)
 
 			req := gopenai.AudioRequest{
 				FilePath: chunkFilePath,
@@ -90,9 +87,7 @@ func (a *Client) apiTranscription(ctx context.Context, id, filePath string) rxgo
 				next <- rxgo.Of(&seg)
 			}
 
-			log.Debug().
-				Str("id", id).
-				Msg("transcription done")
+			slog.Debug("transcription done", "id", id)
 			return nil
 		})
 		if err != nil {
@@ -126,9 +121,7 @@ func (a *Client) offlineTranscription(ctx context.Context, file string, captureD
 			"-m", transModel,
 		)
 
-		log.Debug().
-			Str("cmd", cmd.String()).
-			Msg("running stream")
+		slog.Debug("running stream", "cmd", cmd.String())
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
 			next <- rxgo.Error(err)
@@ -156,7 +149,7 @@ func (a *Client) offlineTranscription(ctx context.Context, file string, captureD
 		go func() {
 			for stderrScan.Scan() {
 				// next <- rxgo.Of(stderrScan.Text())
-				log.Debug().Str("stderr", stderrScan.Text()).Msg("stream")
+				slog.Debug(stderrScan.Text(), "stream")
 			}
 		}()
 
@@ -168,7 +161,7 @@ func (a *Client) offlineTranscription(ctx context.Context, file string, captureD
 
 		go func() {
 			<-ctx.Done()
-			log.Info().Msg("killing stream")
+			slog.Info("killing stream")
 			cmd.Process.Kill()
 		}()
 
