@@ -61,8 +61,7 @@ npm run dev
 
 Backend
 ```shell
-# TODO breadchris figure out why these are needed
-C_INCLUDE_PATH="$(realpath third_party/whisper.cpp/):/opt/homebrew/include/SDL2" LIBRARY_PATH="$(realpath third_party/whisper.cpp):/opt/homebrew/lib" go run main.go start --dev
+go run main.go start --dev
 ```
 
 ## Hacking
@@ -72,29 +71,6 @@ C_INCLUDE_PATH="$(realpath third_party/whisper.cpp/):/opt/homebrew/include/SDL2"
 ```shell
 go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-```
-
-### Installing Python Dependencies
-
-Upgrade your Pip version, if necessary (or install Pip if this fails)
-```shell
-python -m pip install --upgrade pip
-```
-
-Setup Virtual Environment
-
-```shell
-python -m pip install virtualenv
-virtualenv venv
-source venv/bin/activate
-python -m pip install --upgrade pip
-```
-
-Install GRPC
-
-```shell
-python -m pip install grpcio
-python -m pip install grpcio-tools
 ```
 
 ### Generating Code

@@ -8,6 +8,7 @@ import (
 	"github.com/google/wire"
 	"github.com/kkdai/youtube/v2"
 	genapi "github.com/lunabrain-ai/lunabrain/gen"
+	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
@@ -359,118 +360,123 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 		return err
 	}
 
-	switch t := c.Msg.Content.Options.(type) {
-	case *genapi.Content_UrlOptions:
-		u, err := url.Parse(t.UrlOptions.Url)
-		if err != nil {
-			return err
-		}
-		s, err := util.RemoveSubdomains(u.Host)
-		if err != nil {
-			return err
-		}
-		switch s {
-		case "youtube.com":
-			log.Debug().
-				Str("host", u.Host).
-				Str("id", u.Query().Get("v")).
-				Msg("downloading youtube video")
-			r, err := p.DownloadYouTubeVideo(ctx, &connect_go.Request[genapi.YouTubeVideo]{
-				Msg: &genapi.YouTubeVideo{
-					Id:   u.Query().Get("v"),
-					File: id,
-				},
-			})
+	switch u := c.Msg.Content.Type.(type) {
+	case *content.Content_Data:
+		switch t := u.Data.Type.(type) {
+		case *content.Data_Url:
+			u, err := url.Parse(t.Url.Url)
 			if err != nil {
 				return err
 			}
-			if r.Msg.Transcript == nil {
-				err = p.convertAudio(ctx, r.Msg.FilePath.File)
+			s, err := util.RemoveSubdomains(u.Host)
+			if err != nil {
+				return err
+			}
+			switch s {
+			case "youtube.com":
+				log.Debug().
+					Str("host", u.Host).
+					Str("id", u.Query().Get("v")).
+					Msg("downloading youtube video")
+				r, err := p.DownloadYouTubeVideo(ctx, &connect_go.Request[genapi.YouTubeVideo]{
+					Msg: &genapi.YouTubeVideo{
+						Id:   u.Query().Get("v"),
+						File: id,
+					},
+				})
 				if err != nil {
 					return err
 				}
-				obs = p.whisper.Transcribe(ctx, id, r.Msg.FilePath.File, 0)
-			} else {
+				if r.Msg.Transcript == nil {
+					err = p.convertAudio(ctx, r.Msg.FilePath.File)
+					if err != nil {
+						return err
+					}
+					obs = p.whisper.Transcribe(ctx, id, r.Msg.FilePath.File, 0)
+				} else {
+					obs = rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
+						for _, seg := range r.Msg.Transcript {
+							next <- rxgo.Of(seg)
+						}
+					}}, rxgo.WithContext(ctx))
+				}
+				name = r.Msg.Title
+			default:
+				return errors.New("unsupported url")
+			}
+			break
+		case *content.Data_File:
+			name = t.File.File
+
+			err := p.fileStore.Bucket.WriteAll(ctx, id, t.File.Data, nil)
+			filepath, err := p.fileStore.NewFile(id)
+			if err != nil {
+				return err
+			}
+
+			isAudio := false
+
+			contentType := ghttp.DetectContentType(t.File.Data)
+			switch contentType {
+			case "audio/wave":
+				isAudio = true
+			case "application/pdf":
+				r := bytes.NewReader(t.File.Data)
+				pd := collect.NewPDF(r, int64(len(t.File.Data)))
 				obs = rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
-					for _, seg := range r.Msg.Transcript {
-						next <- rxgo.Of(seg)
+					pages, err := pd.Load(ctx)
+					if err != nil {
+						next <- rxgo.Error(err)
+						return
+					}
+
+					for i, page := range pages {
+						seg := genapi.Segment{
+							Num:  uint32(i),
+							Text: page.PageContent,
+						}
+						next <- rxgo.Of(&seg)
 					}
 				}}, rxgo.WithContext(ctx))
-			}
-			name = r.Msg.Title
-		default:
-			return errors.New("unsupported url")
-		}
-		break
-	case *genapi.Content_FileOptions:
-		name = t.FileOptions.File
-
-		err := p.fileStore.Bucket.WriteAll(ctx, id, t.FileOptions.Data, nil)
-		filepath, err := p.fileStore.NewFile(id)
-		if err != nil {
-			return err
-		}
-
-		isAudio := false
-
-		contentType := ghttp.DetectContentType(t.FileOptions.Data)
-		switch contentType {
-		case "audio/wave":
-			isAudio = true
-		case "application/pdf":
-			r := bytes.NewReader(t.FileOptions.Data)
-			pd := collect.NewPDF(r, int64(len(t.FileOptions.Data)))
-			obs = rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
-				pages, err := pd.Load(ctx)
-				if err != nil {
-					next <- rxgo.Error(err)
-					return
-				}
-
-				for i, page := range pages {
+			case "text/plain; charset=utf-8":
+				obs = rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
 					seg := genapi.Segment{
-						Num:  uint32(i),
-						Text: page.PageContent,
+						Num:  0,
+						Text: string(t.File.Data),
 					}
 					next <- rxgo.Of(&seg)
+				}}, rxgo.WithContext(ctx))
+			default:
+				// TODO breadchris m4a is not a mime type in the golang mime package
+				if path.Ext(name) == ".m4a" {
+					err = p.convertAudio(ctx, filepath)
+					if err != nil {
+						return err
+					}
+					isAudio = true
+				} else {
+					return errors.Errorf("unsupported file type: %s", contentType)
 				}
-			}}, rxgo.WithContext(ctx))
-		case "text/plain; charset=utf-8":
+			}
+			if isAudio {
+				obs = p.whisper.Transcribe(ctx, id, filepath, 0)
+			}
+
+			if err != nil {
+				return err
+			}
+			break
+		case *content.Data_Text:
 			obs = rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
 				seg := genapi.Segment{
 					Num:  0,
-					Text: string(t.FileOptions.Data),
+					Text: t.Text.Data,
 				}
 				next <- rxgo.Of(&seg)
 			}}, rxgo.WithContext(ctx))
-		default:
-			// TODO breadchris m4a is not a mime type in the golang mime package
-			if path.Ext(name) == ".m4a" {
-				err = p.convertAudio(ctx, filepath)
-				if err != nil {
-					return err
-				}
-				isAudio = true
-			} else {
-				return errors.Errorf("unsupported file type: %s", contentType)
-			}
 		}
-		if isAudio {
-			obs = p.whisper.Transcribe(ctx, id, filepath, 0)
-		}
-
-		if err != nil {
-			return err
-		}
-		break
-	case *genapi.Content_TextOptions:
-		obs = rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
-			seg := genapi.Segment{
-				Num:  0,
-				Text: t.TextOptions.Data,
-			}
-			next <- rxgo.Of(&seg)
-		}}, rxgo.WithContext(ctx))
+	default:
+		return errors.New("invalid content type")
 	}
 	if obs == nil {
 		return errors.New("no observable")

@@ -48,7 +48,7 @@ If you want to roll up your sleves and dig around, you can bring up the services
 Note: These might fall out of date quickly! We are working on a better local dev experience with [tilt](https://tilt.dev/).
 
 ```bash
-go run cmd/main.go api serve
+go run cmd/main.go content serve
 ```
 
 {{<details "What can I configure?" >}}

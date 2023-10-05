@@ -5,6 +5,7 @@ import {useProjectContext} from "@/providers/ProjectProvider";
 import {MarkdownEditor} from "@/components/Editor/MarkdownEditor";
 import YouTube from "react-youtube";
 import {AudioPlayer} from "@/components/AudioPlayer";
+import {ContentList} from "@/pages/Chat/ContentList";
 
 const MediaViewer: React.FC = ({  }) => {
     const { media } = useProjectContext();
@@ -38,7 +39,7 @@ export const MessageWindow: React.FC = ({  }) => {
     return (
         <Stack styles={{ root: { height: '100vh' } }} verticalFill>
             <Stack.Item grow styles={{ root: { overflowY: 'auto' } }}>
-                <MessageList />
+                <ContentList />
             </Stack.Item>
             <Stack.Item grow disableShrink>
                 <Stack horizontal verticalAlign="end" horizontalAlign="center"

@@ -3,7 +3,7 @@ package publish
 import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/google/uuid"
-	genapi "github.com/lunabrain-ai/lunabrain/gen"
+	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/pkg/errors"
@@ -22,15 +22,15 @@ type File struct {
 	db      db.Store
 }
 
-func formatForFile(content *model.Content) string {
+func formatForFile(c *model.Content) string {
 	// TODO breadchris for message summaries, this will be too much data
 	formatted := "" // "Data: " + content.Data + "\n"
-	for _, normalContent := range content.NormalizedContent {
+	for _, normalContent := range c.NormalizedContent {
 		for _, transformedContent := range normalContent.TransformedContent {
-			if transformedContent.TransformerID == int32(genapi.TransformerID_SUMMARY) {
+			if transformedContent.TransformerID == int32(content.TransformerID_SUMMARY) {
 				formatted += "Summary: " + transformedContent.Data + "\n"
 			}
-			if transformedContent.TransformerID == int32(genapi.TransformerID_CATEGORIES) {
+			if transformedContent.TransformerID == int32(content.TransformerID_CATEGORIES) {
 				formatted += "Categories: " + transformedContent.Data + "\n"
 			}
 		}

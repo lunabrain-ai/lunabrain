@@ -1,20 +1,16 @@
 package collect
 
 import (
-	"context"
 	"github.com/bwmarrin/discordgo"
-	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	util2 "github.com/lunabrain-ai/lunabrain/pkg/chat/discord/util"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
 	"github.com/rs/zerolog/log"
 )
 
 type DiscordCollector struct {
-	session  *discordgo.Session
-	workflow pipeline.Workflow
-	db       db.Store
+	session *discordgo.Session
+	db      *db.Store
 }
 
 func (c *DiscordCollector) Collect(channelID string) ([]*model.DiscordMessage, error) {
@@ -83,10 +79,8 @@ func (c *DiscordCollector) createTranscripts(channelID string, msgs []*model.Dis
 			if err != nil {
 				return err
 			}
-			_, err = c.workflow.ProcessContent(context.Background(), &genapi.Content{
-				Data: []byte(transcript),
-				Type: genapi.ContentType_TEXT,
-			})
+
+			// TODO breadchris process transcript
 		}
 	}
 	return nil
@@ -142,10 +136,9 @@ func (c *DiscordCollector) getHistoricalChannelMessages(channelID string) ([]*mo
 	return returnMessages, nil
 }
 
-func NewDiscordCollector(session *discordgo.Session, db db.Store, workflow pipeline.Workflow) *DiscordCollector {
+func NewDiscordCollector(session *discordgo.Session, db *db.Store) *DiscordCollector {
 	return &DiscordCollector{
-		workflow: workflow,
-		session:  session,
-		db:       db,
+		session: session,
+		db:      db,
 	}
 }

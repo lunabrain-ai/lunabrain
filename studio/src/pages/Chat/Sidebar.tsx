@@ -16,7 +16,6 @@ export const Sidebar: React.FC<SidebarProps> = ({  }) => {
 
     return (
         <>
-            <AccountCard />
             <Divider style={{ marginTop: '10px', marginBottom: '10px' }} />
             <TabList selectedValue={selectedValue} onTabSelect={onTabSelect}>
                 <Tab value="collect">Collect</Tab>

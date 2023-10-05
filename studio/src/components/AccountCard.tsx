@@ -3,7 +3,7 @@ import { Image, Text } from '@fluentui/react';
 import {AuthForm} from './AuthForm';
 import {Button, Card, CardHeader} from "@fluentui/react-components";
 import {useProjectContext} from "@/providers/ProjectProvider";
-import {projectService} from "@/lib/api";
+import {projectService} from "@/lib/service";
 import toast from "react-hot-toast";
 
 interface User {

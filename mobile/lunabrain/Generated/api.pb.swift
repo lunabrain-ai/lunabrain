@@ -20,50 +20,6 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
-public enum Lunabrain_ContentType: SwiftProtobuf.Enum {
-  public typealias RawValue = Int
-  case text // = 0
-  case audio // = 1
-  case url // = 2
-  case UNRECOGNIZED(Int)
-
-  public init() {
-    self = .text
-  }
-
-  public init?(rawValue: Int) {
-    switch rawValue {
-    case 0: self = .text
-    case 1: self = .audio
-    case 2: self = .url
-    default: self = .UNRECOGNIZED(rawValue)
-    }
-  }
-
-  public var rawValue: Int {
-    switch self {
-    case .text: return 0
-    case .audio: return 1
-    case .url: return 2
-    case .UNRECOGNIZED(let i): return i
-    }
-  }
-
-}
-
-#if swift(>=4.2)
-
-extension Lunabrain_ContentType: CaseIterable {
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static let allCases: [Lunabrain_ContentType] = [
-    .text,
-    .audio,
-    .url,
-  ]
-}
-
-#endif  // swift(>=4.2)
-
 /// Should be in its own file
 public enum Lunabrain_NormalizerID: SwiftProtobuf.Enum {
   public typealias RawValue = Int
@@ -336,37 +292,31 @@ public struct Lunabrain_Content {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var data: Data = Data()
+  public var type: Lunabrain_Content.OneOf_Type? = nil
 
-  public var type: Lunabrain_ContentType = .text
-
-  public var options: Lunabrain_Content.OneOf_Options? = nil
-
-  public var textOptions: Lunabrain_TextOptions {
+  public var text: Lunabrain_Text {
     get {
-      if case .textOptions(let v)? = options {return v}
-      return Lunabrain_TextOptions()
+      if case .text(let v)? = type {return v}
+      return Lunabrain_Text()
     }
-    set {options = .textOptions(newValue)}
+    set {type = .text(newValue)}
   }
 
-  public var fileOptions: Lunabrain_FileOptions {
+  public var file: Lunabrain_File {
     get {
-      if case .fileOptions(let v)? = options {return v}
-      return Lunabrain_FileOptions()
+      if case .file(let v)? = type {return v}
+      return Lunabrain_File()
     }
-    set {options = .fileOptions(newValue)}
+    set {type = .file(newValue)}
   }
 
-  public var urlOptions: Lunabrain_URLOptions {
+  public var url: Lunabrain_URL {
     get {
-      if case .urlOptions(let v)? = options {return v}
-      return Lunabrain_URLOptions()
+      if case .url(let v)? = type {return v}
+      return Lunabrain_URL()
     }
-    set {options = .urlOptions(newValue)}
+    set {type = .url(newValue)}
   }
-
-  public var metadata: Dictionary<String,String> = [:]
 
   public var createdAt: String = String()
 
@@ -374,27 +324,27 @@ public struct Lunabrain_Content {
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum OneOf_Options: Equatable {
-    case textOptions(Lunabrain_TextOptions)
-    case fileOptions(Lunabrain_FileOptions)
-    case urlOptions(Lunabrain_URLOptions)
+  public enum OneOf_Type: Equatable {
+    case text(Lunabrain_Text)
+    case file(Lunabrain_File)
+    case url(Lunabrain_URL)
 
   #if !swift(>=4.1)
-    public static func ==(lhs: Lunabrain_Content.OneOf_Options, rhs: Lunabrain_Content.OneOf_Options) -> Bool {
+    public static func ==(lhs: Lunabrain_Content.OneOf_Type, rhs: Lunabrain_Content.OneOf_Type) -> Bool {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch (lhs, rhs) {
-      case (.textOptions, .textOptions): return {
-        guard case .textOptions(let l) = lhs, case .textOptions(let r) = rhs else { preconditionFailure() }
+      case (.text, .text): return {
+        guard case .text(let l) = lhs, case .text(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
-      case (.fileOptions, .fileOptions): return {
-        guard case .fileOptions(let l) = lhs, case .fileOptions(let r) = rhs else { preconditionFailure() }
+      case (.file, .file): return {
+        guard case .file(let l) = lhs, case .file(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
-      case (.urlOptions, .urlOptions): return {
-        guard case .urlOptions(let l) = lhs, case .urlOptions(let r) = rhs else { preconditionFailure() }
+      case (.url, .url): return {
+        guard case .url(let l) = lhs, case .url(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
       default: return false
@@ -445,6 +395,8 @@ public struct Lunabrain_File {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  public var file: String = String()
+
   public var data: Data = Data()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -457,26 +409,14 @@ public struct Lunabrain_ContentIDs {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var contentIds: [Lunabrain_ContentID] = []
+  public var contentIds: [String] = []
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 }
 
-public struct Lunabrain_ContentID {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  public var id: String = String()
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-}
-
-public struct Lunabrain_TextOptions {
+public struct Lunabrain_Text {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -488,21 +428,7 @@ public struct Lunabrain_TextOptions {
   public init() {}
 }
 
-public struct Lunabrain_FileOptions {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  public var file: String = String()
-
-  public var data: Data = Data()
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-}
-
-public struct Lunabrain_URLOptions {
+public struct Lunabrain_URL {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -517,7 +443,6 @@ public struct Lunabrain_URLOptions {
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
-extension Lunabrain_ContentType: @unchecked Sendable {}
 extension Lunabrain_NormalizerID: @unchecked Sendable {}
 extension Lunabrain_TransformerID: @unchecked Sendable {}
 extension Lunabrain_EntityType: @unchecked Sendable {}
@@ -530,28 +455,18 @@ extension Lunabrain_Query: @unchecked Sendable {}
 extension Lunabrain_Results: @unchecked Sendable {}
 extension Lunabrain_StoredContent: @unchecked Sendable {}
 extension Lunabrain_Content: @unchecked Sendable {}
-extension Lunabrain_Content.OneOf_Options: @unchecked Sendable {}
+extension Lunabrain_Content.OneOf_Type: @unchecked Sendable {}
 extension Lunabrain_NormalizedContent: @unchecked Sendable {}
 extension Lunabrain_TransformedContent: @unchecked Sendable {}
 extension Lunabrain_File: @unchecked Sendable {}
 extension Lunabrain_ContentIDs: @unchecked Sendable {}
-extension Lunabrain_ContentID: @unchecked Sendable {}
-extension Lunabrain_TextOptions: @unchecked Sendable {}
-extension Lunabrain_FileOptions: @unchecked Sendable {}
-extension Lunabrain_URLOptions: @unchecked Sendable {}
+extension Lunabrain_Text: @unchecked Sendable {}
+extension Lunabrain_URL: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "lunabrain"
-
-extension Lunabrain_ContentType: SwiftProtobuf._ProtoNameProviding {
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "TEXT"),
-    1: .same(proto: "AUDIO"),
-    2: .same(proto: "URL"),
-  ]
-}
 
 extension Lunabrain_NormalizerID: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -907,12 +822,9 @@ extension Lunabrain_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._Message
 extension Lunabrain_Content: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Content"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "data"),
-    2: .same(proto: "type"),
-    3: .same(proto: "textOptions"),
-    4: .same(proto: "fileOptions"),
-    5: .same(proto: "urlOptions"),
-    6: .same(proto: "metadata"),
+    3: .same(proto: "text"),
+    4: .same(proto: "file"),
+    5: .same(proto: "url"),
     7: .same(proto: "createdAt"),
     8: .same(proto: "id"),
   ]
@@ -923,48 +835,45 @@ extension Lunabrain_Content: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularBytesField(value: &self.data) }()
-      case 2: try { try decoder.decodeSingularEnumField(value: &self.type) }()
       case 3: try {
-        var v: Lunabrain_TextOptions?
+        var v: Lunabrain_Text?
         var hadOneofValue = false
-        if let current = self.options {
+        if let current = self.type {
           hadOneofValue = true
-          if case .textOptions(let m) = current {v = m}
+          if case .text(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {
           if hadOneofValue {try decoder.handleConflictingOneOf()}
-          self.options = .textOptions(v)
+          self.type = .text(v)
         }
       }()
       case 4: try {
-        var v: Lunabrain_FileOptions?
+        var v: Lunabrain_File?
         var hadOneofValue = false
-        if let current = self.options {
+        if let current = self.type {
           hadOneofValue = true
-          if case .fileOptions(let m) = current {v = m}
+          if case .file(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {
           if hadOneofValue {try decoder.handleConflictingOneOf()}
-          self.options = .fileOptions(v)
+          self.type = .file(v)
         }
       }()
       case 5: try {
-        var v: Lunabrain_URLOptions?
+        var v: Lunabrain_URL?
         var hadOneofValue = false
-        if let current = self.options {
+        if let current = self.type {
           hadOneofValue = true
-          if case .urlOptions(let m) = current {v = m}
+          if case .url(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {
           if hadOneofValue {try decoder.handleConflictingOneOf()}
-          self.options = .urlOptions(v)
+          self.type = .url(v)
         }
       }()
-      case 6: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufString>.self, value: &self.metadata) }()
       case 7: try { try decoder.decodeSingularStringField(value: &self.createdAt) }()
       case 8: try { try decoder.decodeSingularStringField(value: &self.id) }()
       default: break
@@ -977,29 +886,20 @@ extension Lunabrain_Content: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     // allocates stack space for every if/case branch local when no optimizations
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
-    if !self.data.isEmpty {
-      try visitor.visitSingularBytesField(value: self.data, fieldNumber: 1)
-    }
-    if self.type != .text {
-      try visitor.visitSingularEnumField(value: self.type, fieldNumber: 2)
-    }
-    switch self.options {
-    case .textOptions?: try {
-      guard case .textOptions(let v)? = self.options else { preconditionFailure() }
+    switch self.type {
+    case .text?: try {
+      guard case .text(let v)? = self.type else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
     }()
-    case .fileOptions?: try {
-      guard case .fileOptions(let v)? = self.options else { preconditionFailure() }
+    case .file?: try {
+      guard case .file(let v)? = self.type else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
     }()
-    case .urlOptions?: try {
-      guard case .urlOptions(let v)? = self.options else { preconditionFailure() }
+    case .url?: try {
+      guard case .url(let v)? = self.type else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
     }()
     case nil: break
-    }
-    if !self.metadata.isEmpty {
-      try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufString>.self, value: self.metadata, fieldNumber: 6)
     }
     if !self.createdAt.isEmpty {
       try visitor.visitSingularStringField(value: self.createdAt, fieldNumber: 7)
@@ -1011,10 +911,7 @@ extension Lunabrain_Content: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
   }
 
   public static func ==(lhs: Lunabrain_Content, rhs: Lunabrain_Content) -> Bool {
-    if lhs.data != rhs.data {return false}
     if lhs.type != rhs.type {return false}
-    if lhs.options != rhs.options {return false}
-    if lhs.metadata != rhs.metadata {return false}
     if lhs.createdAt != rhs.createdAt {return false}
     if lhs.id != rhs.id {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
@@ -1119,134 +1016,6 @@ extension Lunabrain_TransformedContent: SwiftProtobuf.Message, SwiftProtobuf._Me
 extension Lunabrain_File: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".File"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "data"),
-  ]
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularBytesField(value: &self.data) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.data.isEmpty {
-      try visitor.visitSingularBytesField(value: self.data, fieldNumber: 1)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Lunabrain_File, rhs: Lunabrain_File) -> Bool {
-    if lhs.data != rhs.data {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension Lunabrain_ContentIDs: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ContentIDs"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "contentIDs"),
-  ]
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.contentIds) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.contentIds.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.contentIds, fieldNumber: 1)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Lunabrain_ContentIDs, rhs: Lunabrain_ContentIDs) -> Bool {
-    if lhs.contentIds != rhs.contentIds {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension Lunabrain_ContentID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ContentID"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
-  ]
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.id.isEmpty {
-      try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Lunabrain_ContentID, rhs: Lunabrain_ContentID) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension Lunabrain_TextOptions: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".TextOptions"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "data"),
-  ]
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.data) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.data.isEmpty {
-      try visitor.visitSingularStringField(value: self.data, fieldNumber: 1)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Lunabrain_TextOptions, rhs: Lunabrain_TextOptions) -> Bool {
-    if lhs.data != rhs.data {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension Lunabrain_FileOptions: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".FileOptions"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "file"),
     2: .same(proto: "data"),
   ]
@@ -1274,7 +1043,7 @@ extension Lunabrain_FileOptions: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Lunabrain_FileOptions, rhs: Lunabrain_FileOptions) -> Bool {
+  public static func ==(lhs: Lunabrain_File, rhs: Lunabrain_File) -> Bool {
     if lhs.file != rhs.file {return false}
     if lhs.data != rhs.data {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
@@ -1282,8 +1051,72 @@ extension Lunabrain_FileOptions: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
   }
 }
 
-extension Lunabrain_URLOptions: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".URLOptions"
+extension Lunabrain_ContentIDs: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".ContentIDs"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "contentIDs"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedStringField(value: &self.contentIds) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.contentIds.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.contentIds, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Lunabrain_ContentIDs, rhs: Lunabrain_ContentIDs) -> Bool {
+    if lhs.contentIds != rhs.contentIds {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Lunabrain_Text: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".Text"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "data"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.data) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.data.isEmpty {
+      try visitor.visitSingularStringField(value: self.data, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Lunabrain_Text, rhs: Lunabrain_Text) -> Bool {
+    if lhs.data != rhs.data {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Lunabrain_URL: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".URL"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "url"),
     2: .same(proto: "crawl"),
@@ -1312,7 +1145,7 @@ extension Lunabrain_URLOptions: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Lunabrain_URLOptions, rhs: Lunabrain_URLOptions) -> Bool {
+  public static func ==(lhs: Lunabrain_URL, rhs: Lunabrain_URL) -> Bool {
     if lhs.url != rhs.url {return false}
     if lhs.crawl != rhs.crawl {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}

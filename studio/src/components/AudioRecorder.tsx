@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Button } from "@fluentui/react-components";
-import {projectService} from "@/lib/api";
+import {projectService} from "@/lib/service";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import toast from "react-hot-toast";
 
@@ -43,8 +43,8 @@ export const AudioRecorder: React.FC = () => {
                 setLoading(true);
                 const res = projectService.uploadContent({
                     content: {
-                        options: {
-                            case: 'fileOptions',
+                        type: {
+                            case: 'file',
                             value: {
                                 file: new Date().toISOString() + '.wav',
                                 data: fileBytes,

@@ -2,7 +2,7 @@ package publish
 
 import (
 	"github.com/google/uuid"
-	genapi "github.com/lunabrain-ai/lunabrain/gen"
+	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
@@ -20,18 +20,18 @@ type DiscordConfig struct {
 type Discord struct {
 	session *discord.Session
 	config  DiscordConfig
-	db      db.Store
+	db      *db.Store
 }
 
-func formatMsg(content *model.Content) string {
+func formatMsg(c *model.Content) string {
 	// TODO breadchris for message summaries, this will be too much data
-	formatted := "" // "Data: " + content.Data + "\n"
-	for _, normalContent := range content.NormalizedContent {
+	formatted := "Data: " + c.Data.String() + "\n"
+	for _, normalContent := range c.NormalizedContent {
 		for _, transformedContent := range normalContent.TransformedContent {
-			if transformedContent.TransformerID == int32(genapi.TransformerID_SUMMARY) {
+			if transformedContent.TransformerID == int32(content.TransformerID_SUMMARY) {
 				formatted += "Summary: " + transformedContent.Data + "\n"
 			}
-			if transformedContent.TransformerID == int32(genapi.TransformerID_CATEGORIES) {
+			if transformedContent.TransformerID == int32(content.TransformerID_CATEGORIES) {
 				formatted += "Categories: " + transformedContent.Data + "\n"
 			}
 		}
@@ -66,7 +66,7 @@ func (d *Discord) Publish(contentID uuid.UUID) error {
 	return nil
 }
 
-func NewDiscord(session *discord.Session, config Config, db db.Store) *Discord {
+func NewDiscord(session *discord.Session, config Config, db *db.Store) *Discord {
 	if config.Discord.ChannelID == "" {
 		log.Warn().Msg("discord channel id not set, publishing to discord disabled")
 		config.Discord.Enabled = false

@@ -6,14 +6,16 @@ import (
 	"github.com/bufbuild/connect-go"
 	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
 	"github.com/google/wire"
+	"github.com/lunabrain-ai/lunabrain/gen/chat/chatconnect"
+	"github.com/lunabrain-ai/lunabrain/gen/content/contentconnect"
 	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
-	"github.com/lunabrain-ai/lunabrain/pkg/api"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
+	"github.com/lunabrain-ai/lunabrain/pkg/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
-	lhttp "github.com/lunabrain-ai/lunabrain/pkg/http"
+	http3 "github.com/lunabrain-ai/lunabrain/pkg/http"
 	code "github.com/lunabrain-ai/lunabrain/pkg/protoflow"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
-	"github.com/lunabrain-ai/lunabrain/studio/public"
+	"github.com/lunabrain-ai/lunabrain/studio/dist/site"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -25,13 +27,13 @@ import (
 )
 
 type APIHTTPServer struct {
-	config           api.Config
-	db               db.Store
-	apiServer        *api.Server
+	config           content.Config
+	db               *db.Store
+	contentService   *content.Service
 	bucket           *bucket.Bucket
 	discordService   *discord.DiscordService
 	protoflowService *code.Protoflow
-	sessionManager   *lhttp.SessionManager
+	sessionManager   *http3.SessionManager
 }
 
 type HTTPServer interface {
@@ -40,26 +42,26 @@ type HTTPServer interface {
 
 var (
 	ProviderSet = wire.NewSet(
-		api.NewAPIServer,
+		content.NewAPIServer,
 		NewAPIHTTPServer,
-		lhttp.NewSession,
-		api.NewConfig,
+		http3.NewSession,
+		content.NewConfig,
 		wire.Bind(new(HTTPServer), new(*APIHTTPServer)),
 	)
 )
 
 func NewAPIHTTPServer(
-	config api.Config,
-	apiServer *api.Server,
-	db db.Store,
+	config content.Config,
+	apiServer *content.Service,
+	db *db.Store,
 	bucket *bucket.Bucket,
 	d *discord.DiscordService,
 	protoflowService *code.Protoflow,
-	sessionManager *lhttp.SessionManager,
+	sessionManager *http3.SessionManager,
 ) *APIHTTPServer {
 	return &APIHTTPServer{
 		config:           config,
-		apiServer:        apiServer,
+		contentService:   apiServer,
 		db:               db,
 		bucket:           bucket,
 		discordService:   d,
@@ -96,11 +98,11 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 
 	apiRoot := http.NewServeMux()
 
-	apiRoot.Handle(genconnect.NewAPIHandler(a.apiServer, interceptors))
-	apiRoot.Handle(genconnect.NewDiscordServiceHandler(a.discordService, interceptors))
+	apiRoot.Handle(contentconnect.NewContentServiceHandler(a.contentService, interceptors))
+	apiRoot.Handle(chatconnect.NewDiscordServiceHandler(a.discordService, interceptors))
 	apiRoot.Handle(genconnect.NewProtoflowServiceHandler(a.protoflowService, interceptors))
 	reflector := grpcreflect.NewStaticReflector(
-		"lunabrain.API",
+		"lunabrain.Service",
 		"lunabrain.DiscordService",
 		"protoflow.ProtoflowService",
 	)
@@ -112,12 +114,12 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 		return fmt.Errorf("panic: %v", p)
 	}
 	apiRoot.Handle(grpcreflect.NewHandlerV1(reflector, connect.WithRecover(recoverCall)))
-	// Many tools still expect the older version of the server reflection API, so
+	// Many tools still expect the older version of the server reflection Service, so
 	// most servers should mount both handlers.
 	apiRoot.Handle(grpcreflect.NewHandlerV1Alpha(reflector, connect.WithRecover(recoverCall)))
 
-	assets := public.Assets
-	fs := http.FS(public.Assets)
+	assets := site.Assets
+	fs := http.FS(site.Assets)
 	httpFileServer := http.FileServer(fs)
 
 	f := http.FS(os.DirFS("data"))
@@ -199,5 +201,18 @@ func (a *APIHTTPServer) Start() error {
 	//	}
 	//}()
 
-	return http.ListenAndServe(addr, h2c.NewHandler(httpApiHandler, &http2.Server{}))
+	return http.ListenAndServe(addr, h2c.NewHandler(corsMiddleware(httpApiHandler), &http2.Server{}))
+}
+
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Authorization, connect-protocol-version")
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }

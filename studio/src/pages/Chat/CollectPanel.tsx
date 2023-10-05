@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {projectService} from "@/lib/api";
+import {projectService} from "@/lib/service";
 import toast from "react-hot-toast";
 import {Session} from "@/rpc/protoflow_pb";
 import {
@@ -36,8 +36,8 @@ const CollectYouTube: React.FC = () => {
             })
             const res = projectService.uploadContent({
                 content: {
-                    options: {
-                        case: 'urlOptions',
+                    type: {
+                        case: 'url',
                         value: {
                             url,
                         }

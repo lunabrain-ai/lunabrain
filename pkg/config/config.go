@@ -1,11 +1,10 @@
 package config
 
 import (
-	"github.com/lunabrain-ai/lunabrain/pkg/api"
+	"github.com/lunabrain-ai/lunabrain/pkg/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/lunabrain-ai/lunabrain/pkg/protoflow"
-	"github.com/lunabrain-ai/lunabrain/pkg/python"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
@@ -24,8 +23,7 @@ const (
 
 type Config struct {
 	Bucket    bucket.Config    `yaml:"bucket"`
-	Python    python.Config    `yaml:"python"`
-	API       api.Config       `yaml:"api"`
+	Service   content.Config   `yaml:"api"`
 	Scrape    scrape.Config    `yaml:"scrape"`
 	DB        db.Config        `yaml:"db"`
 	OpenAI    openai.Config    `yaml:"openai"`
@@ -38,13 +36,10 @@ func newDefaultConfig() Config {
 		Bucket: bucket.Config{
 			LocalName: userConfigDir,
 			Path:      "",
-			// TODO breadchris this will break if the port is changed in the API config
+			// TODO breadchris this will break if the port is changed in the Service config
 			URLBase: "localhost:8080/bucket",
 		},
-		Python: python.Config{
-			Host: "localhost:50051",
-		},
-		API: api.Config{
+		Service: content.Config{
 			Port: "8080",
 		},
 		Scrape: scrape.Config{

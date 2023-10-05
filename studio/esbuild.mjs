@@ -21,6 +21,7 @@ const baseOptions = {
     sourcemap: "linked",
     define: {
         "global": "window",
+        "process.env.API_URL": prodBuild ? '"https://demo.lunabrain.com/api"' : '"http://localhost:8080/api"'
     },
     logLevel: 'info'
 }
@@ -36,7 +37,7 @@ async function doBuild(options, serve) {
             await context.rebuild()
             if (serve) {
                 context.serve({
-                    servedir: 'public',
+                    servedir: 'dist/site',
                 })
             }
             await context.watch()
@@ -51,10 +52,12 @@ if (target === 'extension') {
         ...baseOptions,
         entryPoints: [
             "./src/extension/content.tsx",
+            "./src/extension/tab.tsx",
+            "./src/extension/options.tsx",
             "./src/extension/background.tsx",
             "./src/extension/styles.css",
         ],
-        outdir: "extension/",
+        outdir: "dist/extension/",
     });
 } else if (target === 'studio') {
     await doBuild({
@@ -63,6 +66,6 @@ if (target === 'extension') {
             "./src/index.tsx",
             "./src/styles/globals.css",
         ],
-        outdir: "public/build/",
+        outdir: "dist/site/build/",
     }, true);
 }

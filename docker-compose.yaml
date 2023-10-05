@@ -14,28 +14,6 @@ services:
     profiles:
       - base
 
-  lunabrain-python:
-#    image: ghcr.io/lunabrain/lunabrain-python
-    build:
-      context: ./python
-    hostname: lunabrain-python
-    ports:
-      - "50051:50051"
-    volumes:
-      - ./data:/data
-      - ./config:/app/config
-    restart: always
-    profiles:
-      - full
-    environment:
-      LUNABRAIN_DIR: "/data/lunabrain"
-      TORCH_HOME: "/data/torch"
-      TRANSFORMERS_CACHE: "/data/transformers"
-      PYTORCH_TRANSFORMERS_CACHE: "/data/transformers"
-      SENTENCE_TRANSFORMERS_HOME: "/data/transformers"
-      # HF_DATASETS_OFFLINE: 1
-      # TRANSFORMERS_OFFLINE: 1
-
   postgres:
     # Special image with vectorized postgres
     image: ankane/pgvector:v0.4.0

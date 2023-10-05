@@ -7,20 +7,14 @@
 package cli
 
 import (
-	"github.com/lunabrain-ai/lunabrain/pkg/api"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
 	"github.com/lunabrain-ai/lunabrain/pkg/config"
+	"github.com/lunabrain-ai/lunabrain/pkg/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
 	"github.com/lunabrain-ai/lunabrain/pkg/protoflow"
-	"github.com/lunabrain-ai/lunabrain/pkg/publish"
-	"github.com/lunabrain-ai/lunabrain/pkg/python"
-	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
@@ -40,7 +34,7 @@ func Wire() (*cli.App, error) {
 		return nil, err
 	}
 	logLog := log.NewLog(logConfig)
-	apiConfig, err := api.NewConfig(provider)
+	contentConfig, err := content.NewConfig(provider)
 	if err != nil {
 		return nil, err
 	}
@@ -60,48 +54,11 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	dbStore, err := db.New(gormDB)
+	store, err := db.New(gormDB)
 	if err != nil {
 		return nil, err
 	}
-	pythonConfig, err := python.NewConfig(provider)
-	if err != nil {
-		return nil, err
-	}
-	pythonClient, err := python.NewPythonClient(pythonConfig)
-	if err != nil {
-		return nil, err
-	}
-	audioNormalizer, err := normalize.NewAudioNormalizer(pythonClient)
-	if err != nil {
-		return nil, err
-	}
-	normalizeConfig, err := normalize.NewConfig(provider)
-	if err != nil {
-		return nil, err
-	}
-	scrapeConfig, err := scrape.NewConfig(provider)
-	if err != nil {
-		return nil, err
-	}
-	scraper := scrape.NewScraper(scrapeConfig, dbStore)
-	crawler := scrape.NewCrawler(bucketBucket)
-	urlNormalizer, err := normalize.NewURLNormalizer(normalizeConfig, pythonClient, scraper, crawler)
-	if err != nil {
-		return nil, err
-	}
-	normalizer, err := normalize.NewNormalizer(audioNormalizer, urlNormalizer, dbStore, pythonClient, bucketBucket)
-	if err != nil {
-		return nil, err
-	}
-	summarize, err := transform.NewSummarize(pythonClient)
-	if err != nil {
-		return nil, err
-	}
-	categorize, err := transform.NewCategorize(pythonClient)
-	if err != nil {
-		return nil, err
-	}
+	service := content.NewAPIServer(store)
 	discordConfig, err := discord.NewConfig(provider)
 	if err != nil {
 		return nil, err
@@ -114,14 +71,6 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	publishConfig, err := publish.NewConfig(provider)
-	if err != nil {
-		return nil, err
-	}
-	publishDiscord := publish.NewDiscord(discordSession, publishConfig, dbStore)
-	publishPublish := publish.NewPublisher(publishDiscord)
-	contentWorkflow := pipeline.NewContentWorkflow(dbStore, normalizer, summarize, categorize, bucketBucket, publishPublish)
-	apiServer := api.NewAPIServer(dbStore, contentWorkflow)
 	discordService := discord.New(discordSession)
 	openaiConfig, err := openai.NewConfig(provider)
 	if err != nil {
@@ -149,9 +98,9 @@ func Wire() (*cli.App, error) {
 	}
 	client := whisper.NewClient(whisperConfig, openaiConfig, bucketBucket)
 	protoflowProtoflow := protoflow.New(agent, dbSession, bucketBucket, sessionManager, protoflowConfig, client)
-	apihttpServer := server.NewAPIHTTPServer(apiConfig, apiServer, dbStore, bucketBucket, discordService, protoflowProtoflow, sessionManager)
-	discordCollector := collect.NewDiscordCollector(session, dbStore, contentWorkflow)
-	hnCollect := collect.NewHNCollector(dbStore, contentWorkflow)
-	app := NewApp(logLog, apihttpServer, normalizer, summarize, discordCollector, hnCollect)
+	apihttpServer := server.NewAPIHTTPServer(contentConfig, service, store, bucketBucket, discordService, protoflowProtoflow, sessionManager)
+	discordCollector := collect.NewDiscordCollector(session, store)
+	hnCollect := collect.NewHNCollector(store)
+	app := NewApp(logLog, apihttpServer, discordCollector, hnCollect)
 	return app, nil
 }

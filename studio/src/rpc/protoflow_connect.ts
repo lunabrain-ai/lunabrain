@@ -3,8 +3,9 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AnalyzeConversationRequest, AnalyzeConversationResponse, ChatRequest, ChatResponse, ConvertFileRequest, DeleteSessionRequest, Empty, FilePath, GenerateImagesRequest, GenerateImagesResponse, GetPromptsRequest, GetPromptsResponse, GetSessionRequest, GetSessionResponse, GetSessionsRequest, GetSessionsResponse, InferRequest, InferResponse, Prompt, UploadContentRequest, User, YouTubeVideo, YouTubeVideoResponse } from "./protoflow_pb.js";
+import { AnalyzeConversationRequest, ChatRequest, ChatResponse, ConvertFileRequest, DeleteSessionRequest, Empty, FilePath, GenerateImagesRequest, GenerateImagesResponse, GetPromptsRequest, GetPromptsResponse, GetSessionRequest, GetSessionResponse, GetSessionsRequest, GetSessionsResponse, InferRequest, InferResponse, Prompt, UploadContentRequest, User, YouTubeVideo, YouTubeVideoResponse } from "./protoflow_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
+import { AnalyzeConversationResponse } from "./ai_pb.js";
 
 /**
  * @generated from service protoflow.ProtoflowService
@@ -103,7 +104,7 @@ export const ProtoflowService = {
       kind: MethodKind.Unary,
     },
     /**
-     *  rpc OCR (FilePath) returns (OCRText);
+     * rpc OCR (FilePath) returns (OCRText);
      *
      * @generated from rpc protoflow.ProtoflowService.GenerateImages
      */

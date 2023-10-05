@@ -66,19 +66,19 @@ public protocol Protoflow_ProtoflowServiceClientInterface: Sendable {
     @available(iOS 13, *)
     func `convertFile`(request: Protoflow_ConvertFileRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_FilePath>
 
-    ///  rpc OCR (FilePath) returns (OCRText);
+    /// rpc OCR (FilePath) returns (OCRText);
     @discardableResult
     func `generateImages`(request: Protoflow_GenerateImagesRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_GenerateImagesResponse>) -> Void) -> Connect.Cancelable
 
-    ///  rpc OCR (FilePath) returns (OCRText);
+    /// rpc OCR (FilePath) returns (OCRText);
     @available(iOS 13, *)
     func `generateImages`(request: Protoflow_GenerateImagesRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_GenerateImagesResponse>
 
     @discardableResult
-    func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_AnalyzeConversationResponse>) -> Void) -> Connect.Cancelable
+    func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Ai_AnalyzeConversationResponse>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
-    func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_AnalyzeConversationResponse>
+    func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers) async -> ResponseMessage<Ai_AnalyzeConversationResponse>
 
     @discardableResult
     func `register`(request: Protoflow_User, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_User>) -> Void) -> Connect.Cancelable
@@ -215,12 +215,12 @@ public final class Protoflow_ProtoflowServiceClient: Protoflow_ProtoflowServiceC
     }
 
     @discardableResult
-    public func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_AnalyzeConversationResponse>) -> Void) -> Connect.Cancelable {
+    public func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Ai_AnalyzeConversationResponse>) -> Void) -> Connect.Cancelable {
         return self.client.unary(path: "/protoflow.ProtoflowService/AnalyzeConversation", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
-    public func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_AnalyzeConversationResponse> {
+    public func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<Ai_AnalyzeConversationResponse> {
         return await self.client.unary(path: "/protoflow.ProtoflowService/AnalyzeConversation", request: request, headers: headers)
     }
 

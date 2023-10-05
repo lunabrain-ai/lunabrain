@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, PrimaryButton, Stack } from '@fluentui/react';
 import {Table, TableBody, TableCell, TableCellActions, TableHeader, TableRow} from "@fluentui/react-components";
-import {projectService} from "@/lib/api";
+import {contentService} from "@/lib/service";
+import {Content, Data} from "@/rpc/content/content_pb";
+import {Property} from "csstype";
+import {urlContent} from "@/extension/util";
 
 interface FloatingPanelProps {}
 
+// TODO breadchris get page content https://github.com/omnivore-app/omnivore/blob/main/pkg/extension/src/scripts/content/prepare-content.js#L274
+
 export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
+    const [error, setError] = useState<string|undefined>(undefined);
     const [title, setTitle] = useState(document.title);
     const [url, setUrl] = useState(window.location.href);
     const [annotation, setAnnotation] = useState<string>('');
@@ -37,7 +43,17 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
         setAnnotation('');
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
+        setError(undefined);
+        try {
+            const res = await contentService.save({
+                contents: [urlContent(url, ['browser/save'])]
+            })
+            console.log(res)
+        } catch (e: any) {
+            console.error(e)
+            setError(e.message);
+        }
     }
 
     const handleRemove = (id: number) => {
@@ -63,6 +79,9 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
                 <PrimaryButton onClick={handleAnother} text="Another" />
                 <PrimaryButton onClick={handleSave} text="Save" />
             </Stack>
+            {error && (
+                <div style={{ color: 'red' }}>{error}</div>
+            )}
             {annotations.length > 0 && (
                 <Table style={{height: '100px', overflowY: 'auto'}}>
                     {annotations.map((annotation, idx) => (

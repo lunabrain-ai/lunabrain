@@ -1,10 +1,11 @@
 import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
-import {projectService} from "@/lib/api";
+import {contentService, projectService} from "@/lib/service";
 import {Message} from "@/pages/Chat/MessageList";
 import {Code, ConnectError} from "@bufbuild/connect";
 import toast from "react-hot-toast";
 import {TabValue} from "@fluentui/react-components";
-import {AnalyzeConversationResponse, ChatResponse, Segment, Session, User} from "@/rpc/protoflow_pb";
+import {ChatResponse, Segment, Session, User} from "@/rpc/protoflow_pb";
+import { Content, StoredContent } from "@/rpc/content/content_pb";
 
 const ProjectContext = createContext<ProjectContextType>({} as any);
 export const useProjectContext = () => useContext(ProjectContext);
@@ -21,6 +22,11 @@ type Media = {
 type ProjectContextType = {
     messages: Message[];
     setMessages: (messages: Message[]) => void;
+
+    content: StoredContent[];
+    setContent: (content: StoredContent[]) => void;
+    deleteContent: (ids: string[]) => void;
+
     isRecording: boolean;
     setIsRecording: (isRecording: boolean) => void;
     selectedValue: TabValue;
@@ -33,21 +39,19 @@ type ProjectContextType = {
     setUser: (user?: User) => void;
     loading: boolean;
     setLoading: (loading: boolean) => void;
-    analyzedText?: AnalyzeConversationResponse;
-    setAnalyzedText: (analyzedText?: AnalyzeConversationResponse) => void;
     media?: Media;
     setMedia: (media?: Media) => void;
 };
 
 export default function ProjectProvider({children}: ProjectProviderProps) {
     const [messages, setMessages] = useState<Message[]>([]);
+    const [content, setContent] = useState<StoredContent[]>([]);
     const [isRecording, setIsRecording] = useState<boolean>(false);
     const [selectedValue, setSelectedValue] = useState<TabValue>('');
     const [session, setSession] = useState<Session|undefined>(undefined);
     const [inference, setInference] = useState<string>('');
     const [user, setUser] = useState<User|undefined>(undefined);
     const [loading, setLoading] = useState(false);
-    const [analyzedText, setAnalyzedText] = useState<AnalyzeConversationResponse|undefined>(undefined);
     const [media, setMedia] = useState<Media|undefined>(undefined);
 
     const inferFromMessages = useCallback(async (prompt: string) => {
@@ -71,6 +75,24 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
         setInference('');
         setMessages((prev) => [...prev, m, {...m, text: i}]);
     }, [messages, setMessages]);
+
+    const loadContent = async () => {
+        const res = await contentService.search({});
+        setContent(res.storedContent);
+    }
+
+    useEffect(() => {
+        void loadContent();
+    }, []);
+
+    const deleteContent = async (ids: string[]) => {
+        const res = await contentService.delete({
+            contentIds: ids,
+        })
+        console.log(res)
+
+        void loadContent();
+    }
 
     useEffect(() => {
         if (selectedValue !== '') {
@@ -129,6 +151,9 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
             value={{
                 messages,
                 setMessages,
+                content,
+                setContent,
+                deleteContent,
                 isRecording,
                 setIsRecording,
                 selectedValue,
@@ -141,8 +166,6 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
                 setUser,
                 loading,
                 setLoading,
-                analyzedText,
-                setAnalyzedText,
                 media,
                 setMedia,
             }}

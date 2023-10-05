@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {Pivot, PivotItem, TextField, PrimaryButton, Stack, Label} from '@fluentui/react';
 import {Input, SelectTabData, SelectTabEvent, Tab, TabList, TabValue} from "@fluentui/react-components";
-import {projectService} from "@/lib/api";
+import {projectService} from "@/lib/service";
 import toast from "react-hot-toast";
 import {useProjectContext} from "@/providers/ProjectProvider";
 

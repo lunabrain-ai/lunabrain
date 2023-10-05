@@ -2,12 +2,9 @@ package cli
 
 import (
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform"
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/protoflow-labs/protoflow/pkg/util/reload"
 	"github.com/urfave/cli/v2"
-	"path/filepath"
 )
 
 func NewServeCommand(
@@ -44,7 +41,7 @@ func liveReload() error {
 		// TODO breadchris the patterns and ignores are not quite working
 		// ideally we use tilt here
 		Patterns: []string{"pkg/**/*.go", "templates/**"},
-		Ignores:  []string{"studio/**", "node_modules/**", ".git/**", "examples/**", "third_party/**", "env/**", "site/**", "data/**"},
+		Ignores:  []string{"studio/**", "node_modules/**", ".git/**", "examples/**", "third_party/**", "env/**", "site/**", "data/**", "mobile/**"},
 	}
 	// TODO breadchris this code needs to be refactored to use observability
 	return reload.Reload(c)
@@ -97,69 +94,6 @@ func NewCollectCommand(
 					channel := ctx.String("channel")
 					_, err := discordCollect.Collect(channel)
 					return err
-				},
-			},
-		},
-	}
-}
-
-func NewNormalizeCommand(normalizer normalize.Normalizer) *cli.Command {
-	return &cli.Command{
-		Name:  "normalize",
-		Usage: "Noramlize a note.",
-		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name: "out",
-			},
-		},
-		Action: func(ctx *cli.Context) error {
-			//fileName := ctx.Args().First()
-			//out := ctx.String("out")
-			//
-			//absPath, err := filepath.Abs(fileName)
-			//if err != nil {
-			//	return err
-			//}
-			//
-			//transcript, err := normalizer.NormalizeFile(absPath, "audio")
-			//if err != nil {
-			//	return err
-			//}
-			//
-			//if out != "" {
-			//	err = os.WriteFile(out, []byte(transcript), 0644)
-			//	if err != nil {
-			//		return err
-			//	}
-			//} else {
-			//	println(transcript)
-			//}
-			return nil
-		},
-	}
-}
-
-func NewTextCommand(summarizer transform.Summarizer) *cli.Command {
-	return &cli.Command{
-		Name:  "text",
-		Usage: "Process text.",
-		Subcommands: []*cli.Command{
-			{
-				Name: "summarize",
-				Action: func(ctx *cli.Context) error {
-					fileName := ctx.Args().First()
-
-					absPath, err := filepath.Abs(fileName)
-					if err != nil {
-						return err
-					}
-
-					transcript, err := summarizer.SummarizeFile(absPath)
-					if err != nil {
-						return err
-					}
-					println(transcript)
-					return nil
 				},
 			},
 		},

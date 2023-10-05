@@ -7,7 +7,7 @@ import {
 import { css } from '@emotion/css'
 import {Button, Icon, Menu, Portal} from './Components'
 import { CustomEditor } from './custom-types'
-import {projectService} from "@/lib/api";
+import {projectService} from "@/lib/service";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import toast from "react-hot-toast";
 

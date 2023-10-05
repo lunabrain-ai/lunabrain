@@ -3,15 +3,15 @@ import {List, PrimaryButton, Stack, TextField} from '@fluentui/react';
 import {FileDrop} from "@/components/FileDrop";
 import {Sidebar} from "@/pages/Chat/Sidebar";
 import {MessageWindow} from "@/pages/Chat/Window";
+import {AccountCard} from "@/components/AccountCard";
 
 export const ChatPage = () => {
     return (
-        <Stack horizontal styles={{root: {height: '100%', gap: 15, width: "100%"}}}>
-            <Stack.Item styles={{ root: { borderRight: '1px solid #e1e1e1', padding: 10, width: '20%' } }}>
-                <Sidebar />
+        <Stack styles={{root: {height: '100%', gap: 15, width: "100%"}}}>
+            <Stack.Item>
+                <AccountCard />
             </Stack.Item>
-
-            <Stack.Item styles={{ root: { width: '80%' } }}>
+            <Stack.Item>
                 <FileDrop>
                     <MessageWindow />
                 </FileDrop>
