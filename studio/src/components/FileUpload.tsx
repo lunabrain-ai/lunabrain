@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState } from 'react';
-import {projectService} from "@/lib/service";
+import {projectService} from "@/service";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {Button} from "@fluentui/react-components";
 import toast from "react-hot-toast";

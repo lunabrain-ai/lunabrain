@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {Pivot, PivotItem, TextField, PrimaryButton, Stack, Label} from '@fluentui/react';
 import {Input, SelectTabData, SelectTabEvent, Tab, TabList, TabValue} from "@fluentui/react-components";
-import {projectService} from "@/lib/service";
+import {projectService, userService} from "@/service";
 import toast from "react-hot-toast";
 import {useProjectContext} from "@/providers/ProjectProvider";
 
@@ -16,7 +16,7 @@ const Login: React.FC<AuthFormProps> = ({email, password, setEmail, setPassword}
     const {setUser} = useProjectContext();
     const handleLogin = async () => {
         try {
-            const res = await projectService.login({
+            const res = await userService.login({
                 email,
                 password,
             })
@@ -45,7 +45,7 @@ const Register: React.FC<AuthFormProps> = ({email, password, setEmail, setPasswo
     const {setUser} = useProjectContext();
     const handleRegister = async () => {
         try {
-            const res = await projectService.register({
+            const res = await userService.register({
                 email,
                 password,
             })

@@ -1,9 +1,12 @@
 package db
 
 import (
+	"context"
 	"github.com/google/uuid"
 	genapi "github.com/lunabrain-ai/lunabrain/gen"
-	model2 "github.com/lunabrain-ai/lunabrain/pkg/db/model"
+	"github.com/lunabrain-ai/lunabrain/gen/user"
+	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
+	"github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/pkg/errors"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
@@ -11,34 +14,62 @@ import (
 	"log/slog"
 )
 
+const (
+	UserIDCtxKey = "user"
+)
+
+var (
+	UserLoginError = errors.New("user not logged in")
+)
+
 type Session struct {
-	db *gorm.DB
+	db      *gorm.DB
+	sessMan *http.SessionManager
 }
 
-func NewSession(db *gorm.DB) (*Session, error) {
+func NewSession(db *gorm.DB, sessMan *http.SessionManager) (*Session, error) {
 	// TODO breadchris migration should be done via a migration tool, no automigrate
 	slog.Info("migrating database")
 	err := db.AutoMigrate(
-		&model2.Session{},
-		&model2.Segment{},
-		&model2.Prompt{},
-		&model2.User{},
+		&model.Session{},
+		&model.Segment{},
+		&model.Prompt{},
+		&model.User{},
 	)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not migrate database: %v", err)
 	}
-	return &Session{db: db}, nil
+	return &Session{
+		db:      db,
+		sessMan: sessMan,
+	}, nil
 }
 
-func (s *Session) NewSession(userID string, ps *genapi.Session) (*model2.Session, error) {
+func (s *Session) GetUserID(ctx context.Context) (string, error) {
+	id := s.sessMan.GetString(ctx, UserIDCtxKey)
+	if id == "" {
+		return "", UserLoginError
+	}
+	return id, nil
+}
+
+func (s *Session) SetUserID(ctx context.Context, id string) {
+	s.sessMan.Put(ctx, UserIDCtxKey, id)
+}
+
+func (s *Session) ClearUserID(ctx context.Context) {
+	s.sessMan.Remove(ctx, UserIDCtxKey)
+}
+
+func (s *Session) NewSession(userID string, ps *genapi.Session) (*model.Session, error) {
 	var id uuid.UUID
 	if ps.Id != "" {
 		id = uuid.MustParse(ps.Id)
 	} else {
 		id = uuid.New()
 	}
-	session := &model2.Session{
-		Base: model2.Base{
+	session := &model.Session{
+		Base: model.Base{
 			ID: id,
 		},
 		UserID: uuid.MustParse(userID),
@@ -54,8 +85,8 @@ func (s *Session) NewSession(userID string, ps *genapi.Session) (*model2.Session
 }
 
 func (s *Session) DeleteSession(id string) error {
-	res := s.db.Delete(&model2.Session{
-		Base: model2.Base{
+	res := s.db.Delete(&model.Session{
+		Base: model.Base{
 			ID: uuid.MustParse(id),
 		},
 	})
@@ -65,7 +96,7 @@ func (s *Session) DeleteSession(id string) error {
 	return nil
 }
 
-func (s *Session) SaveSegment(segment *model2.Segment) error {
+func (s *Session) SaveSegment(segment *model.Segment) error {
 	res := s.db.Save(segment)
 	if res.Error != nil {
 		return errors.Wrapf(res.Error, "could not save segment")
@@ -73,9 +104,9 @@ func (s *Session) SaveSegment(segment *model2.Segment) error {
 	return nil
 }
 
-func (s *Session) Get(id string) (*model2.Session, error) {
-	v := &model2.Session{
-		Base: model2.Base{
+func (s *Session) Get(id string) (*model.Session, error) {
+	v := &model.Session{
+		Base: model.Base{
 			ID: uuid.MustParse(id),
 		},
 	}
@@ -86,8 +117,8 @@ func (s *Session) Get(id string) (*model2.Session, error) {
 	return v, nil
 }
 
-func (s *Session) All(userID string, page, limit int) ([]model2.Session, *Pagination, error) {
-	var content []model2.Session
+func (s *Session) All(userID string, page, limit int) ([]model.Session, *Pagination, error) {
+	var content []model.Session
 	pagination := Pagination{
 		Limit: limit,
 		Page:  page,
@@ -103,8 +134,8 @@ func (s *Session) All(userID string, page, limit int) ([]model2.Session, *Pagina
 	return content, &pagination, nil
 }
 
-func (s *Session) AllPrompts(page, limit int) ([]model2.Prompt, *Pagination, error) {
-	var content []model2.Prompt
+func (s *Session) AllPrompts(page, limit int) ([]model.Prompt, *Pagination, error) {
+	var content []model.Prompt
 	pagination := Pagination{
 		Limit: limit,
 		Page:  page,
@@ -120,15 +151,15 @@ func (s *Session) AllPrompts(page, limit int) ([]model2.Prompt, *Pagination, err
 	return content, &pagination, nil
 }
 
-func (s *Session) NewPrompt(ps *genapi.Prompt) (*model2.Prompt, error) {
+func (s *Session) NewPrompt(ps *genapi.Prompt) (*model.Prompt, error) {
 	var id uuid.UUID
 	if ps.Id != "" {
 		id = uuid.MustParse(ps.Id)
 	} else {
 		id = uuid.New()
 	}
-	p := &model2.Prompt{
-		Base: model2.Base{
+	p := &model.Prompt{
+		Base: model.Base{
 			ID: id,
 		},
 		Data: datatypes.JSONType[*genapi.Prompt]{
@@ -142,9 +173,9 @@ func (s *Session) NewPrompt(ps *genapi.Prompt) (*model2.Prompt, error) {
 	return p, nil
 }
 
-func (s *Session) GetUserByID(id string) (*model2.User, error) {
-	p := &model2.User{
-		Base: model2.Base{
+func (s *Session) GetUserByID(id string) (*model.User, error) {
+	p := &model.User{
+		Base: model.Base{
 			ID: uuid.MustParse(id),
 		},
 	}
@@ -155,8 +186,8 @@ func (s *Session) GetUserByID(id string) (*model2.User, error) {
 	return p, nil
 }
 
-func (s *Session) GetUser(ps *genapi.User) (*model2.User, error) {
-	p := &model2.User{}
+func (s *Session) GetUser(ps *user.User) (*model.User, error) {
+	p := &model.User{}
 	res := s.db.First(&p, datatypes.JSONQuery("data").Equals(ps.Email, "email"))
 	if res.Error != nil {
 		return nil, errors.Wrapf(res.Error, "could not get user: %s", ps.Email)
@@ -164,14 +195,14 @@ func (s *Session) GetUser(ps *genapi.User) (*model2.User, error) {
 	return p, nil
 }
 
-func (s *Session) NewUser(ps *genapi.User) (*model2.User, error) {
+func (s *Session) NewUser(ps *user.User) (*model.User, error) {
 	id := uuid.New()
 	// TODO breadchris hash password
-	p := &model2.User{
-		Base: model2.Base{
+	p := &model.User{
+		Base: model.Base{
 			ID: id,
 		},
-		Data: datatypes.JSONType[*genapi.User]{
+		Data: datatypes.JSONType[*user.User]{
 			Data: ps,
 		},
 	}
@@ -180,4 +211,19 @@ func (s *Session) NewUser(ps *genapi.User) (*model2.User, error) {
 		return nil, errors.Wrapf(res.Error, "could not save p")
 	}
 	return p, nil
+}
+
+func (s *Session) UpdateUser(id string, ps *user.User) error {
+	// TODO breadchris update other user fields
+	u := &model.User{
+		Base: model.Base{
+			ID: uuid.MustParse(id),
+		},
+	}
+	if res := s.db.Model(u).Update("data", datatypes.JSONType[*user.User]{
+		Data: ps,
+	}); res.Error != nil {
+		return errors.Wrapf(res.Error, "could not update user")
+	}
+	return nil
 }

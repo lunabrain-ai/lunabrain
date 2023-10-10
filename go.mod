@@ -21,12 +21,14 @@ require (
 	github.com/geziyor/geziyor v0.0.0-20230315135110-a242b58aaa65
 	github.com/go-audio/wav v1.1.0
 	github.com/go-jet/jet/v2 v2.7.1
+	github.com/go-shiori/go-readability v0.0.0-20230421032831-c66949dfc0ad
 	github.com/golang/protobuf v1.5.3
 	github.com/google/uuid v1.3.1
 	github.com/google/wire v0.5.0
 	github.com/hajimehoshi/go-mp3 v0.3.4
 	github.com/kkdai/youtube/v2 v2.8.3
 	github.com/ledongthuc/pdf v0.0.0-20220302134840-0c2507a12d80
+	github.com/lmittmann/tint v1.0.2
 	github.com/makiuchi-d/arelo v1.12.0
 	github.com/pion/rtp v1.7.13
 	github.com/pion/webrtc/v3 v3.1.58
@@ -51,6 +53,7 @@ require (
 	gorm.io/driver/postgres v1.5.2
 	gorm.io/driver/sqlite v1.4.3
 	gorm.io/gorm v1.25.4
+	mvdan.cc/xurls/v2 v2.5.0
 )
 
 require (
@@ -81,7 +84,6 @@ require (
 	github.com/go-kit/kit v0.12.0 // indirect
 	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/go-shiori/dom v0.0.0-20230515143342-73569d674e1c // indirect
-	github.com/go-shiori/go-readability v0.0.0-20230421032831-c66949dfc0ad // indirect
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/gobwas/httphead v0.1.0 // indirect
@@ -110,7 +112,6 @@ require (
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/lib/pq v1.10.9 // indirect
-	github.com/lmittmann/tint v1.0.2 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect

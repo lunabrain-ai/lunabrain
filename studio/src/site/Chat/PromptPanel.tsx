@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {projectService} from "@/lib/service";
+import {projectService} from "@/service";
 import toast from "react-hot-toast";
 import {Prompt, Session} from "@/rpc/protoflow_pb";
 import {

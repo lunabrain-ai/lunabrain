@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Divider, SelectTabData, SelectTabEvent, Tab, TabList, TabValue} from "@fluentui/react-components";
-import {CollectPanel} from "@/pages/Chat/CollectPanel";
-import {PromptPanel} from "@/pages/Chat/PromptPanel";
+import {CollectPanel} from "@/site/Chat/CollectPanel";
+import {PromptPanel} from "@/site/Chat/PromptPanel";
 import {AccountCard} from "@/components/AccountCard";
 
 interface SidebarProps {

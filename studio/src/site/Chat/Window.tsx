@@ -1,11 +1,13 @@
 import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
 import {List, PrimaryButton, Spinner, SpinnerSize, Stack, TextField} from "@fluentui/react";
-import {Message, messageColumns, MessageList} from "@/pages/Chat/MessageList";
+import {Message, messageColumns, MessageList} from "@/site/Chat/MessageList";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {MarkdownEditor} from "@/components/Editor/MarkdownEditor";
 import YouTube from "react-youtube";
 import {AudioPlayer} from "@/components/AudioPlayer";
-import {ContentList} from "@/pages/Chat/ContentList";
+import {ContentList} from "@/site/Chat/ContentList";
+import {contentService} from "@/service";
+import {urlContent} from "@/extension/util";
 
 const MediaViewer: React.FC = ({  }) => {
     const { media } = useProjectContext();
@@ -26,26 +28,44 @@ const MediaViewer: React.FC = ({  }) => {
     return null;
 }
 
+const saveURL = async (url: string) => {
+    try {
+        const u = new URL(url);
+    } catch (e) {
+        console.error('invalid url', e);
+        return;
+    }
+    try {
+        const resp = await contentService.save({
+            content: urlContent(url, ['app/input']),
+            related: []
+        });
+        console.log(resp);
+    } catch (e) {
+        console.error('failed to save', e)
+    }
+}
+
 export const MessageWindow: React.FC = ({  }) => {
     const [inputValue, setInputValue] = useState<string | undefined>('');
-    const { loading, messages, setMessages, session, inferFromMessages } = useProjectContext();
+    const { content } = useProjectContext();
 
     const handleSend = () => {
         if (inputValue && inputValue.trim() !== '') {
+            void saveURL(inputValue);
             setInputValue('');
-            inferFromMessages(inputValue);
         }
     };
     return (
         <Stack styles={{ root: { height: '100vh' } }} verticalFill>
             <Stack.Item grow styles={{ root: { overflowY: 'auto' } }}>
-                <ContentList />
+                <ContentList content={content} />
             </Stack.Item>
             <Stack.Item grow disableShrink>
                 <Stack horizontal verticalAlign="end" horizontalAlign="center"
                        styles={{root: {width: '100%', gap: 15, marginBottom: 20, relative: true}}}>
                     <TextField
-                        placeholder="Type a message..."
+                        placeholder="Enter a URL..."
                         value={inputValue}
                         onChange={(e, newValue) => setInputValue(newValue)}
                         onKeyPress={(e) => {
@@ -64,21 +84,11 @@ export const MessageWindow: React.FC = ({  }) => {
 }
 
 const EditorWindow: React.FC = ({  }) => {
-    const { analyzedText } = useProjectContext();
     return (
         <>
             <Stack verticalFill verticalAlign="space-between"
                    styles={{root: {height: '90vh', overflowY: 'auto', width: '100%', margin: '0 auto', paddingTop: 10, display: 'flex', flexDirection: 'column'}}}>
                 <MarkdownEditor />
-            </Stack>
-            <Stack horizontal verticalAlign="end" horizontalAlign="center"
-                   styles={{root: {width: '100%', gap: 15, marginBottom: 20, relative: true}}}>
-                {analyzedText && (
-                    <>
-                        <p>{analyzedText.summary}</p>
-                        <p>{analyzedText.questions}</p>
-                    </>
-                )}
             </Stack>
         </>
     )

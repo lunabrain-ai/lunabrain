@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AnalyzeConversationRequest, ChatRequest, ChatResponse, ConvertFileRequest, DeleteSessionRequest, Empty, FilePath, GenerateImagesRequest, GenerateImagesResponse, GetPromptsRequest, GetPromptsResponse, GetSessionRequest, GetSessionResponse, GetSessionsRequest, GetSessionsResponse, InferRequest, InferResponse, Prompt, UploadContentRequest, User, YouTubeVideo, YouTubeVideoResponse } from "./protoflow_pb.js";
+import { AnalyzeConversationRequest, ChatRequest, ChatResponse, ConvertFileRequest, DeleteSessionRequest, Empty, FilePath, GenerateImagesRequest, GenerateImagesResponse, GetPromptsRequest, GetPromptsResponse, GetSessionRequest, GetSessionResponse, GetSessionsRequest, GetSessionsResponse, InferRequest, InferResponse, Prompt, UploadContentRequest, YouTubeVideo, YouTubeVideoResponse } from "./protoflow_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 import { AnalyzeConversationResponse } from "./ai_pb.js";
 
@@ -104,8 +104,6 @@ export const ProtoflowService = {
       kind: MethodKind.Unary,
     },
     /**
-     * rpc OCR (FilePath) returns (OCRText);
-     *
      * @generated from rpc protoflow.ProtoflowService.GenerateImages
      */
     generateImages: {
@@ -121,33 +119,6 @@ export const ProtoflowService = {
       name: "AnalyzeConversation",
       I: AnalyzeConversationRequest,
       O: AnalyzeConversationResponse,
-      kind: MethodKind.Unary,
-    },
-    /**
-     * @generated from rpc protoflow.ProtoflowService.Register
-     */
-    register: {
-      name: "Register",
-      I: User,
-      O: User,
-      kind: MethodKind.Unary,
-    },
-    /**
-     * @generated from rpc protoflow.ProtoflowService.Login
-     */
-    login: {
-      name: "Login",
-      I: User,
-      O: User,
-      kind: MethodKind.Unary,
-    },
-    /**
-     * @generated from rpc protoflow.ProtoflowService.Logout
-     */
-    logout: {
-      name: "Logout",
-      I: Empty,
-      O: Empty,
       kind: MethodKind.Unary,
     },
   }

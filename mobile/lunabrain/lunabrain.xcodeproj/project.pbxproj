@@ -41,6 +41,8 @@
 		4C4056F92ACE94F100F95A24 /* protoflow.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056F12ACE94F100F95A24 /* protoflow.connect.swift */; };
 		4C4056FA2ACE94F100F95A24 /* ai.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056F22ACE94F100F95A24 /* ai.pb.swift */; };
 		4C4056FC2ACE976300F95A24 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 4C4056FB2ACE976300F95A24 /* background.js */; };
+		4CAC7AD62AD4D27D00C6A2F8 /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = 4CAC7AD52AD4D27D00C6A2F8 /* Markdown */; };
+		4CAC7B092AD4D7AC00C6A2F8 /* EditableListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC7B082AD4D7AC00C6A2F8 /* EditableListItem.swift */; };
 		4CE6D1622ACCCBE1002D7E2C /* lunabrain_desktopApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE6D1612ACCCBE1002D7E2C /* lunabrain_desktopApp.swift */; };
 		4CE6D1642ACCCBE1002D7E2C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE6D1632ACCCBE1002D7E2C /* ContentView.swift */; };
 		4CE6D1662ACCCBE1002D7E2C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4CE6D1652ACCCBE1002D7E2C /* Assets.xcassets */; };
@@ -128,6 +130,7 @@
 		4C4056F12ACE94F100F95A24 /* protoflow.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = protoflow.connect.swift; sourceTree = "<group>"; };
 		4C4056F22ACE94F100F95A24 /* ai.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ai.pb.swift; sourceTree = "<group>"; };
 		4C4056FB2ACE976300F95A24 /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = background.js; sourceTree = "<group>"; };
+		4CAC7B082AD4D7AC00C6A2F8 /* EditableListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableListItem.swift; sourceTree = "<group>"; };
 		4CE6D15F2ACCCBE1002D7E2C /* lunabrain desktop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "lunabrain desktop.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CE6D1612ACCCBE1002D7E2C /* lunabrain_desktopApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = lunabrain_desktopApp.swift; sourceTree = "<group>"; };
 		4CE6D1632ACCCBE1002D7E2C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -144,6 +147,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C2324B12AAEEB4500AB937A /* Connect in Frameworks */,
+				4CAC7AD62AD4D27D00C6A2F8 /* Markdown in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,6 +211,7 @@
 				4C2324BB2AB0EFAB00AB937A /* AudioRecorder.swift */,
 				4C2324BD2AB0EFF300AB937A /* RecordingsView.swift */,
 				4C2324BF2AB8159500AB937A /* AIViewModel.swift */,
+				4CAC7B082AD4D7AC00C6A2F8 /* EditableListItem.swift */,
 			);
 			path = lunabrain;
 			sourceTree = "<group>";
@@ -339,6 +344,7 @@
 			name = lunabrain;
 			packageProductDependencies = (
 				4C2324B02AAEEB4500AB937A /* Connect */,
+				4CAC7AD52AD4D27D00C6A2F8 /* Markdown */,
 			);
 			productName = lunabrain;
 			productReference = 4C2324872AAE7FE200AB937A /* lunabrain.app */;
@@ -391,6 +397,8 @@
 			dependencies = (
 			);
 			name = "lunabrain desktop";
+			packageProductDependencies = (
+			);
 			productName = "lunabrain desktop";
 			productReference = 4CE6D15F2ACCCBE1002D7E2C /* lunabrain desktop.app */;
 			productType = "com.apple.product-type.application";
@@ -430,6 +438,7 @@
 			mainGroup = 4C23247E2AAE7FE200AB937A;
 			packageReferences = (
 				4C2324AF2AAEEB4500AB937A /* XCRemoteSwiftPackageReference "connect-swift" */,
+				4CAC7AD42AD4D27D00C6A2F8 /* XCRemoteSwiftPackageReference "swift-markdown" */,
 			);
 			productRefGroup = 4C2324882AAE7FE200AB937A /* Products */;
 			projectDirPath = "";
@@ -500,6 +509,7 @@
 				4C4056F62ACE94F100F95A24 /* chat.pb.swift in Sources */,
 				4C23248D2AAE7FE200AB937A /* ContentView.swift in Sources */,
 				4C4056FA2ACE94F100F95A24 /* ai.pb.swift in Sources */,
+				4CAC7B092AD4D7AC00C6A2F8 /* EditableListItem.swift in Sources */,
 				4C2324BA2AB0DFE500AB937A /* TranscriptionViewModel.swift in Sources */,
 				4C4056F52ACE94F100F95A24 /* chat.connect.swift in Sources */,
 				4C2324C02AB8159500AB937A /* AIViewModel.swift in Sources */,
@@ -979,6 +989,14 @@
 				minimumVersion = 0.6.0;
 			};
 		};
+		4CAC7AD42AD4D27D00C6A2F8 /* XCRemoteSwiftPackageReference "swift-markdown" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-markdown.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -986,6 +1004,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4C2324AF2AAEEB4500AB937A /* XCRemoteSwiftPackageReference "connect-swift" */;
 			productName = Connect;
+		};
+		4CAC7AD52AD4D27D00C6A2F8 /* Markdown */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CAC7AD42AD4D27D00C6A2F8 /* XCRemoteSwiftPackageReference "swift-markdown" */;
+			productName = Markdown;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

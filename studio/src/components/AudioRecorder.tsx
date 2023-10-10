@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Button } from "@fluentui/react-components";
-import {projectService} from "@/lib/service";
+import {projectService} from "@/service";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import toast from "react-hot-toast";
 

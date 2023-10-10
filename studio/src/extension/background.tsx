@@ -1,10 +1,20 @@
 /// <reference types="chrome"/>
-import {contentService} from "@/lib/service";
+import {contentService, projectService, userService} from "@/service";
 import {urlContent} from "@/extension/util";
+(
+    async () => {
+        const resp = await userService.login({}, {});
+        console.log(resp);
+    }
+)()
 
 chrome.runtime.onInstalled.addListener(function() {
     console.log('Extension Installed');
 });
+
+chrome.runtime.onStartup.addListener(function() {
+    console.log('Extension Started');
+})
 
 chrome.webNavigation.onCompleted.addListener((details) => {
     if (details.url && details.frameType === "outermost_frame") {
@@ -46,7 +56,7 @@ chrome.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
 
 chrome.webRequest.onBeforeRequest.addListener(
     (details) => {
-        if (!details.initiator) {
+        if (!details.initiator || details.type !== 'main_frame') {
             return;
         }
         const u = new URL(details.initiator);
@@ -60,7 +70,8 @@ chrome.webRequest.onBeforeRequest.addListener(
                 async () => {
                     try {
                         const resp = await contentService.save({
-                            contents: [urlContent(details.url, ['browser/history', u.host])]
+                            content: urlContent(details.url, ['browser/history', u.host]),
+                            related: []
                         });
                         console.log(resp);
                     } catch (e) {

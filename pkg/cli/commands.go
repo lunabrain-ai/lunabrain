@@ -47,27 +47,6 @@ func liveReload() error {
 	return reload.Reload(c)
 }
 
-func NewSyncCommand() *cli.Command {
-	return &cli.Command{
-		Name:  "sync",
-		Usage: "Sync a directory of notes",
-		Flags: []cli.Flag{
-			&cli.BoolFlag{
-				Name: "urls",
-			},
-		},
-		Action: func(ctx *cli.Context) error {
-			shouldSyncUrls := ctx.Bool("urls")
-			notesDir := ctx.Args().First()
-
-			if shouldSyncUrls {
-				return collect.WatchForUrls(notesDir)
-			}
-			return collect.WatchForAudioFiles(notesDir)
-		},
-	}
-}
-
 func NewCollectCommand(
 	discordCollect *collect.DiscordCollector,
 	hnCollect *collect.HNCollect,

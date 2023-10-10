@@ -48,9 +48,14 @@ export class ContentIDs extends Message<ContentIDs> {
  */
 export class Contents extends Message<Contents> {
   /**
-   * @generated from field: repeated content.Content contents = 1;
+   * @generated from field: content.Content content = 1;
    */
-  contents: Content[] = [];
+  content?: Content;
+
+  /**
+   * @generated from field: repeated content.Content related = 2;
+   */
+  related: Content[] = [];
 
   constructor(data?: PartialMessage<Contents>) {
     super();
@@ -60,7 +65,8 @@ export class Contents extends Message<Contents> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "content.Contents";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "contents", kind: "message", T: Content, repeated: true },
+    { no: 1, name: "content", kind: "message", T: Content },
+    { no: 2, name: "related", kind: "message", T: Content, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Contents {
@@ -180,6 +186,26 @@ export class StoredContent extends Message<StoredContent> {
    */
   id = "";
 
+  /**
+   * @generated from field: repeated content.Content related = 3;
+   */
+  related: Content[] = [];
+
+  /**
+   * @generated from field: string title = 4;
+   */
+  title = "";
+
+  /**
+   * @generated from field: string description = 5;
+   */
+  description = "";
+
+  /**
+   * @generated from field: string image = 6;
+   */
+  image = "";
+
   constructor(data?: PartialMessage<StoredContent>) {
     super();
     proto3.util.initPartial(data, this);
@@ -190,6 +216,10 @@ export class StoredContent extends Message<StoredContent> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "content", kind: "message", T: Content },
     { no: 2, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "related", kind: "message", T: Content, repeated: true },
+    { no: 4, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "description", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "image", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StoredContent {
@@ -289,6 +319,12 @@ export class Content extends Message<Content> {
      */
     value: Transformed;
     case: "transformed";
+  } | {
+    /**
+     * @generated from field: content.Source source = 9;
+     */
+    value: Source;
+    case: "source";
   } | { case: undefined; value?: undefined } = { case: undefined };
 
   constructor(data?: PartialMessage<Content>) {
@@ -304,6 +340,7 @@ export class Content extends Message<Content> {
     { no: 6, name: "data", kind: "message", T: Data, oneof: "type" },
     { no: 7, name: "normalized", kind: "message", T: Normalized, oneof: "type" },
     { no: 8, name: "transformed", kind: "message", T: Transformed, oneof: "type" },
+    { no: 9, name: "source", kind: "message", T: Source, oneof: "type" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Content {
@@ -320,6 +357,129 @@ export class Content extends Message<Content> {
 
   static equals(a: Content | PlainMessage<Content> | undefined, b: Content | PlainMessage<Content> | undefined): boolean {
     return proto3.util.equals(Content, a, b);
+  }
+}
+
+/**
+ * @generated from message content.Source
+ */
+export class Source extends Message<Source> {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name = "";
+
+  /**
+   * @generated from oneof content.Source.type
+   */
+  type: {
+    /**
+     * @generated from field: content.YouTubeChannel youtube_channel = 4;
+     */
+    value: YouTubeChannel;
+    case: "youtubeChannel";
+  } | { case: undefined; value?: undefined } = { case: undefined };
+
+  constructor(data?: PartialMessage<Source>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.Source";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "youtube_channel", kind: "message", T: YouTubeChannel, oneof: "type" },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Source {
+    return new Source().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Source {
+    return new Source().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Source {
+    return new Source().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Source | PlainMessage<Source> | undefined, b: Source | PlainMessage<Source> | undefined): boolean {
+    return proto3.util.equals(Source, a, b);
+  }
+}
+
+/**
+ * @generated from message content.YouTubeChannel
+ */
+export class YouTubeChannel extends Message<YouTubeChannel> {
+  /**
+   * @generated from field: string channel_id = 1;
+   */
+  channelId = "";
+
+  constructor(data?: PartialMessage<YouTubeChannel>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.YouTubeChannel";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "channel_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): YouTubeChannel {
+    return new YouTubeChannel().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): YouTubeChannel {
+    return new YouTubeChannel().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): YouTubeChannel {
+    return new YouTubeChannel().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: YouTubeChannel | PlainMessage<YouTubeChannel> | undefined, b: YouTubeChannel | PlainMessage<YouTubeChannel> | undefined): boolean {
+    return proto3.util.equals(YouTubeChannel, a, b);
+  }
+}
+
+/**
+ * @generated from message content.Group
+ */
+export class Group extends Message<Group> {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name = "";
+
+  constructor(data?: PartialMessage<Group>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.Group";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Group {
+    return new Group().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Group {
+    return new Group().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Group {
+    return new Group().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Group | PlainMessage<Group> | undefined, b: Group | PlainMessage<Group> | undefined): boolean {
+    return proto3.util.equals(Group, a, b);
   }
 }
 
@@ -509,9 +669,9 @@ export class Article extends Message<Article> {
   author = "";
 
   /**
-   * @generated from field: string length = 3;
+   * @generated from field: int32 length = 3;
    */
-  length = "";
+  length = 0;
 
   /**
    * @generated from field: string excerpt = 4;
@@ -548,7 +708,7 @@ export class Article extends Message<Article> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "author", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "length", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "length", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
     { no: 4, name: "excerpt", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "site_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 6, name: "image", kind: "scalar", T: 9 /* ScalarType.STRING */ },
@@ -815,6 +975,11 @@ export class URL extends Message<URL> {
    */
   crawl = false;
 
+  /**
+   * @generated from field: string title = 3;
+   */
+  title = "";
+
   constructor(data?: PartialMessage<URL>) {
     super();
     proto3.util.initPartial(data, this);
@@ -825,6 +990,7 @@ export class URL extends Message<URL> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "crawl", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 3, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): URL {

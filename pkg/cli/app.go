@@ -24,7 +24,6 @@ func NewApp(
 		Usage: "Save and search for information.",
 		Commands: []*cli.Command{
 			NewServeCommand(httpServer),
-			NewSyncCommand(),
 			NewCollectCommand(discordCollect, hnCollect),
 		},
 	}

@@ -1,11 +1,12 @@
 import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
-import {contentService, projectService} from "@/lib/service";
-import {Message} from "@/pages/Chat/MessageList";
+import {contentService, projectService} from "@/service";
+import {Message} from "@/site/Chat/MessageList";
 import {Code, ConnectError} from "@bufbuild/connect";
 import toast from "react-hot-toast";
 import {TabValue} from "@fluentui/react-components";
-import {ChatResponse, Segment, Session, User} from "@/rpc/protoflow_pb";
+import {ChatResponse, Segment, Session} from "@/rpc/protoflow_pb";
 import { Content, StoredContent } from "@/rpc/content/content_pb";
+import { User } from "@/rpc/user/user_pb";
 
 const ProjectContext = createContext<ProjectContextType>({} as any);
 export const useProjectContext = () => useContext(ProjectContext);
@@ -41,6 +42,9 @@ type ProjectContextType = {
     setLoading: (loading: boolean) => void;
     media?: Media;
     setMedia: (media?: Media) => void;
+
+    sidebarIsOpen: boolean;
+    setSidebarIsOpen: (sidebarIsOpen: boolean) => void;
 };
 
 export default function ProjectProvider({children}: ProjectProviderProps) {
@@ -53,28 +57,7 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     const [user, setUser] = useState<User|undefined>(undefined);
     const [loading, setLoading] = useState(false);
     const [media, setMedia] = useState<Media|undefined>(undefined);
-
-    const inferFromMessages = useCallback(async (prompt: string) => {
-        const mIdx = messages.length + 1;
-        const m: Message = {text: prompt, sender: 'user', segment: new Segment()};
-        setMessages((prev) => [...prev, m]);
-        let i = '';
-        try {
-            const res = projectService.infer( {
-                text: messages.map((m) => m.text),
-                prompt,
-            })
-            for await (const exec of res) {
-                setInference((prev) => exec.text || '');
-                i = exec.text || '';
-            }
-        } catch (e: any) {
-            toast.error(e.message);
-            console.log(e);
-        }
-        setInference('');
-        setMessages((prev) => [...prev, m, {...m, text: i}]);
-    }, [messages, setMessages]);
+    const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
 
     const loadContent = async () => {
         const res = await contentService.search({});
@@ -146,6 +129,28 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
         })();
     }, [isRecording]);
 
+    const inferFromMessages = useCallback(async (prompt: string) => {
+        const mIdx = messages.length + 1;
+        const m: Message = {text: prompt, sender: 'user', segment: new Segment()};
+        setMessages((prev) => [...prev, m]);
+        let i = '';
+        try {
+            const res = projectService.infer( {
+                text: messages.map((m) => m.text),
+                prompt,
+            })
+            for await (const exec of res) {
+                setInference((prev) => exec.text || '');
+                i = exec.text || '';
+            }
+        } catch (e: any) {
+            toast.error(e.message);
+            console.log(e);
+        }
+        setInference('');
+        setMessages((prev) => [...prev, m, {...m, text: i}]);
+    }, [messages, setMessages]);
+
     return (
         <ProjectContext.Provider
             value={{
@@ -168,6 +173,8 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
                 setLoading,
                 media,
                 setMedia,
+                sidebarIsOpen,
+                setSidebarIsOpen,
             }}
         >
             {children}

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {projectService} from "@/lib/service";
+import {projectService} from "@/service";
 import toast from "react-hot-toast";
 import {Session} from "@/rpc/protoflow_pb";
 import {
@@ -12,52 +12,11 @@ import {
     TabList,
     TabValue
 } from "@fluentui/react-components";
-import {Icon, Label} from "@fluentui/react";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {AudioRecorder} from "@/components/AudioRecorder";
 import {FileUpload} from "@/components/FileUpload";
 
 interface SidebarProps {
-}
-
-const CollectYouTube: React.FC = () => {
-    const { streamMessages, setMedia } = useProjectContext()
-    const [url, setUrl] = useState<string>('');
-
-    const onChange: InputProps["onChange"] = (ev, data) => {
-        setUrl(data.value);
-    }
-
-    const submitURL = async () => {
-        try {
-            setMedia({
-                type: 'youtube',
-                url,
-            })
-            const res = projectService.uploadContent({
-                content: {
-                    type: {
-                        case: 'url',
-                        value: {
-                            url,
-                        }
-                    },
-                },
-            })
-            streamMessages(res)
-        } catch (e: any) {
-            console.error(e)
-            toast.error('Failed to upload content: ' + e.message)
-        }
-    }
-
-    return (
-        <>
-            <Label style={{color: 'white'}} htmlFor={"url"}>URL</Label>
-            <Input id={"url"} onChange={onChange} />
-            <Button onClick={submitURL}>Submit</Button>
-        </>
-    )
 }
 
 export const CollectPanel: React.FC<SidebarProps> = () => {
@@ -88,8 +47,6 @@ export const CollectPanel: React.FC<SidebarProps> = () => {
     return (
         <>
             <Button onClick={() => setIsRecording(true)}>Live Transcribe</Button>
-            <Divider style={{margin: "10px"}} />
-            <CollectYouTube />
             <Divider style={{margin: "10px"}} />
             <AudioRecorder />
             <Divider style={{margin: "10px"}} />

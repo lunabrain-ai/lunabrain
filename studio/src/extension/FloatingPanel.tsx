@@ -11,8 +11,11 @@ import {
     TableRow,
     TabList, TabValue
 } from "@fluentui/react-components";
-import {contentService} from "@/lib/service";
+import {contentService} from "@/service";
 import {urlContent} from "@/extension/util";
+import { Content, StoredContent } from '@/rpc/content/content_pb';
+import {ContentList} from "@/site/Chat/ContentList";
+import {generateUUID} from "@/util/uuid";
 
 interface FloatingPanelProps {}
 
@@ -42,6 +45,7 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
     const [annotations, setAnnotations] = useState<string[]>([]);
     const [selectedValue, setSelectedValue] = useState<TabValue>("tags");
     const [visible, setVisible] = useState<boolean>(false);
+    const [analysis, setAnalysis] = useState<Content[]|undefined>(undefined);
 
     useEffect(() => {
         const listener = (event: KeyboardEvent) => {
@@ -81,11 +85,9 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
         }
     };
 
-    const handleAddTag = () => {
-        if (tag) {
-            setTags([...tags, tag]);
-            setTag('');
-        }
+    const handleAddTag = (addTag: string) => {
+        setTags([...tags, addTag]);
+        setTag('');
     }
 
     const handleAddAnnotation = () => {
@@ -95,11 +97,25 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
         }
     };
 
+    const analyze = async () => {
+        setAnalysis(undefined)
+        try {
+            const res = await contentService.analyze(
+                urlContent(url, tags)
+            )
+            console.log(res)
+            // setAnalysis(res.content)
+        } catch (e: any) {
+            console.error(e)
+        }
+    }
+
     const handleSave = async () => {
         setError(undefined);
         try {
             const res = await contentService.save({
-                contents: [urlContent(url, tags)]
+                content: urlContent(url, tags),
+                related: []
             })
             console.log(res)
         } catch (e: any) {
@@ -134,7 +150,18 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
             <div>
                 {selectedValue === 'analyze' && (
                     <Stack>
-                        <Button onClick={() => console.log('analyze')}>Analyze</Button>
+                        <Button onClick={analyze}>Analyze</Button>
+                        {analysis && (
+                            <ul>
+                                {analysis.map((content, idx) => (
+                                    <>
+                                        {content.tags.map((t, idx) => (
+                                            <Button key={idx} onClick={() => handleAddTag(t)}>{t}</Button>
+                                        ))}
+                                    </>
+                                ))}
+                            </ul>
+                        )}
                     </Stack>
                 )}
                 {selectedValue === 'tags' && (
@@ -144,7 +171,7 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
                             placeholder={'tag'}
                             onChange={(e, newValue) => setTag(newValue || '')}
                         />
-                        <PrimaryButton onClick={handleAddTag} text="Add" />
+                        <PrimaryButton onClick={() => tag && handleAddTag(tag)} text="Add" />
                         {tags.length > 0 && (
                             <Table style={{height: '100px', overflowY: 'auto'}}>
                                 {tags.map((tag, idx) => (

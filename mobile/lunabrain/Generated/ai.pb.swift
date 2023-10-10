@@ -39,8 +39,22 @@ public struct Ai_AnalyzeConversationResponse {
   public init() {}
 }
 
+public struct Ai_AnalyzeContent {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// Potential categories for the content in the form: category/subcategory/other-category. The category is all lowercase and spaces are replaced with dashes.
+  public var categories: [String] = []
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Ai_AnalyzeConversationResponse: @unchecked Sendable {}
+extension Ai_AnalyzeContent: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -86,6 +100,38 @@ extension Ai_AnalyzeConversationResponse: SwiftProtobuf.Message, SwiftProtobuf._
     if lhs.phoneNumbers != rhs.phoneNumbers {return false}
     if lhs.summary != rhs.summary {return false}
     if lhs.questions != rhs.questions {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Ai_AnalyzeContent: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".AnalyzeContent"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "categories"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedStringField(value: &self.categories) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.categories.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.categories, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Ai_AnalyzeContent, rhs: Ai_AnalyzeContent) -> Bool {
+    if lhs.categories != rhs.categories {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

@@ -9,29 +9,31 @@ import (
 	"github.com/lunabrain-ai/lunabrain/gen/content/contentconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
+	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/pkg/errors"
 	"log"
 	"time"
 )
 
 type Service struct {
-	db *db.Store
+	db     *db.Store
+	openai *openai.Agent
 }
 
 var _ contentconnect.ContentServiceHandler = (*Service)(nil)
 
 func (s *Service) Save(ctx context.Context, c *connect_go.Request[content.Contents]) (*connect_go.Response[content.ContentIDs], error) {
-	var ids []string
-	for _, ct := range c.Msg.Contents {
-		id, err := s.db.SaveContent(ct)
-		if err != nil {
-			return nil, errors.Wrapf(err, "unable to save content")
-		}
-		ids = append(ids, id.String())
-
-		// TODO breadchris upsert tags
+	norm, err := Normalize(c.Msg.Content)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to normalize content")
 	}
-	return connect_go.NewResponse(&content.ContentIDs{ContentIds: ids}), nil
+	norm = append(norm, c.Msg.Related...)
+
+	cnt, err := s.db.SaveContent(c.Msg.Content, norm)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to save content")
+	}
+	return connect_go.NewResponse(&content.ContentIDs{ContentIds: []string{cnt.String()}}), nil
 }
 
 func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Query]) (*connect_go.Response[content.Results], error) {
@@ -50,7 +52,7 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 		}
 		ct = append(ct, *singleContent)
 	} else {
-		ct, _, err = s.db.GetAllContent(0, 10)
+		ct, _, err = s.db.GetAllContent(0, 100)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to get stored content")
 		}
@@ -58,10 +60,26 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 
 	var storedContent []*content.StoredContent
 	for _, cn := range ct {
-		storedContent = append(storedContent, &content.StoredContent{
+		sc := &content.StoredContent{
 			Id:      cn.ID.String(),
 			Content: cn.Data,
-		})
+		}
+
+		var related []*content.Content
+		for _, r := range cn.RelatedContent {
+			related = append(related, r.ContentData.Data)
+			switch t := r.ContentData.Data.Type.(type) {
+			case *content.Content_Normalized:
+				switch u := t.Normalized.Type.(type) {
+				case *content.Normalized_Article:
+					sc.Title = u.Article.Title
+					sc.Description = u.Article.Excerpt
+					sc.Image = u.Article.Image
+				}
+			}
+		}
+		sc.Related = related
+		storedContent = append(storedContent, sc)
 	}
 	return connect_go.NewResponse(&content.Results{StoredContent: storedContent}), nil
 }
@@ -77,23 +95,61 @@ func (s *Service) Delete(ctx context.Context, c *connect_go.Request[content.Cont
 }
 
 func (s *Service) Analyze(ctx context.Context, c *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error) {
+	var nCnt []*content.Content
 	switch t := c.Msg.Type.(type) {
 	case *content.Content_Data:
 		switch u := t.Data.Type.(type) {
 		case *content.Data_Url:
-			_, err := readability.FromURL(u.Url.Url, 30*time.Second)
+			article, err := readability.FromURL(u.Url.Url, 30*time.Second)
 			if err != nil {
 				log.Fatalf("failed to parse %s, %v\n", u.Url.Url, err)
 			}
+
+			basePrompt := "This is an article about " + article.Title + `.
+You are a hierarchical classifier for a software engineer.
+You accept content and then only return a categorical path where that content would exist.
+The path should be in the form: category/subcategory/other-category. 
+For example, an article about how AI is affecting computers would have the category: technology/ai/computers
+Here is the content: \n\n`
+
+			cat, err := s.openai.Prompt(ctx, basePrompt+article.TextContent)
+			if err != nil {
+				return nil, errors.Wrapf(err, "unable to analyze content: %s", u.Url.Url)
+			}
+
+			nCnt = append(nCnt, &content.Content{
+				Tags: []string{cat},
+				Type: &content.Content_Normalized{
+					Normalized: &content.Normalized{
+						Type: &content.Normalized_Article{
+							Article: &content.Article{
+								Title:    article.Title,
+								Author:   article.Byline,
+								Length:   int32(article.Length),
+								Excerpt:  article.Excerpt,
+								SiteName: article.SiteName,
+								Image:    article.Image,
+								Favicon:  article.Favicon,
+								Text:     article.TextContent,
+							},
+						},
+					},
+				},
+			})
 		}
 	}
-	return connect_go.NewResponse(&content.Contents{}), nil
+	return connect_go.NewResponse(&content.Contents{
+		Content: c.Msg,
+		Related: nCnt,
+	}), nil
 }
 
-func NewAPIServer(
+func NewService(
 	db *db.Store,
+	openai *openai.Agent,
 ) *Service {
 	return &Service{
-		db: db,
+		db:     db,
+		openai: openai,
 	}
 }

@@ -10,7 +10,7 @@ import {ErrorBoundary} from "react-error-boundary";
 import {FallbackError} from "@/components/FallbackError";
 import "react-chat-elements/dist/main.css"
 import { initializeIcons } from '@fluentui/react/lib/Icons';
-import Home from "@/pages";
+import {Home} from "@/site";
 
 initializeIcons();
 
@@ -35,12 +35,12 @@ export default function App() {
               >
                   <HotkeysProvider initiallyActiveScopes={["editor"]}>
                       <ProjectProvider>
-                              <BrowserRouter>
-                                      <ProjectProvider>
-                                          <AppRoutes/>
-                                      </ProjectProvider>
-                              </BrowserRouter>
-                              <Toaster/>
+                          <BrowserRouter>
+                              <ProjectProvider>
+                                  <AppRoutes/>
+                              </ProjectProvider>
+                          </BrowserRouter>
+                          <Toaster/>
                       </ProjectProvider>
                   </HotkeysProvider>
               </ErrorBoundary>

@@ -70,6 +70,9 @@ struct ContentView: View {
             }.tabItem {
                 Label("Record", systemImage: "square.and.pencil").padding()
             }
+            EditableListView().tabItem {
+                Label("Markdown", systemImage: "list.dash").padding()
+            }
             RecordingsView().tabItem {
                 Label("History", systemImage: "list.dash").padding()
             }

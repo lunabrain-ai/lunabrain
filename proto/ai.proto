@@ -10,3 +10,8 @@ message AnalyzeConversationResponse {
   // Based on the content of the conversation, the system will generate a list of questions
   repeated string questions = 3;
 }
+
+message AnalyzeContent {
+  // Potential categories for the content in the form: category/subcategory/other-category. The category is all lowercase and spaces are replaced with dashes.
+  repeated string categories = 1;
+}

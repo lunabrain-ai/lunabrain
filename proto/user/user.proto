@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package user;
+
+service UserService {
+  rpc Register(User) returns (User);
+  rpc Login(User) returns (User);
+  rpc Logout(Empty) returns (Empty);
+  rpc UpdateConfig(Config) returns (Empty);
+
+  rpc CreateGroupInvite(Group) returns (GroupInvite);
+  rpc JoinGroup(GroupInvite) returns (Group);
+  rpc CreateGroup(Group) returns (Group);
+  rpc GetGroups(Empty) returns (Groups);
+  rpc DeleteGroup(Group) returns (Empty);
+}
+
+message GroupInvite {
+  string secret = 1;
+}
+
+message Groups {
+  repeated Group groups = 1;
+}
+
+message AnalyzeConversationRequest {
+  string text = 1;
+}
+
+message User {
+  string email = 1;
+  string password = 2;
+  Config config = 3;
+}
+
+message Group {
+  string id = 1;
+  string name = 2;
+  repeated string users = 3;
+}
+
+message Config {
+  repeated string domain_whitelist = 1;
+}
+
+message LoginResponse {
+}
+
+message Empty {}

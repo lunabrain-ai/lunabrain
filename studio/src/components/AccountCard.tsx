@@ -3,7 +3,7 @@ import { Image, Text } from '@fluentui/react';
 import {AuthForm} from './AuthForm';
 import {Button, Card, CardHeader} from "@fluentui/react-components";
 import {useProjectContext} from "@/providers/ProjectProvider";
-import {projectService} from "@/lib/service";
+import {projectService, userService} from "@/service";
 import toast from "react-hot-toast";
 
 interface User {
@@ -21,7 +21,7 @@ export const AccountCard: React.FC<AccountCardProps> = () => {
     useEffect(() => {
         (async () => {
             try {
-                const res = await projectService.login({})
+                const res = await userService.login({})
                 if (!res.email) {
                     console.warn('no user logged in')
                     return
@@ -35,7 +35,7 @@ export const AccountCard: React.FC<AccountCardProps> = () => {
 
     const logout = async () => {
         try {
-            await projectService.logout({})
+            await userService.logout({})
             setUser(undefined)
             toast.success('Successfully logged out!')
         } catch (e: any) {

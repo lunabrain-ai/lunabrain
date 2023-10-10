@@ -17,7 +17,8 @@ message ContentIDs {
 }
 
 message Contents {
-  repeated Content contents = 1;
+  Content content = 1;
+  repeated Content related = 2;
 }
 
 message Query {
@@ -33,6 +34,10 @@ message Results {
 message StoredContent {
   Content content = 1;
   string id = 2;
+  repeated Content related = 3;
+  string title = 4;
+  string description = 5;
+  string image = 6;
 }
 
 message Edge {
@@ -48,7 +53,23 @@ message Content {
     Data data = 6;
     Normalized normalized = 7;
     Transformed transformed = 8;
+    Source source = 9;
   };
+}
+
+message Source {
+  string name = 1;
+  oneof type {
+    YouTubeChannel youtube_channel = 4;
+  }
+}
+
+message YouTubeChannel {
+  string channel_id = 1;
+}
+
+message Group {
+  string name = 1;
 }
 
 message Data {
@@ -78,7 +99,7 @@ message Transformed {
 message Article {
   string title = 1;
   string author = 2;
-  string length = 3;
+  int32 length = 3;
   string excerpt = 4;
   string site_name = 5;
   string image = 6;
@@ -114,6 +135,7 @@ message Text {
 message URL {
   string url = 1;
   bool crawl = 2;
+  string title = 3;
 }
 
 message Token {

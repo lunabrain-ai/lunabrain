@@ -2,6 +2,9 @@ import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom/client';
 import {TextField, Stack, PrimaryButton, IconButton, Dropdown} from '@fluentui/react';
 import {initializeIcons} from "@fluentui/react/lib/Icons";
+import {Button} from "@fluentui/react-components";
+import {projectService, userService} from "@/service";
+import toast, {Toaster} from "react-hot-toast";
 
 initializeIcons();
 
@@ -11,6 +14,17 @@ const Options = () => {
     const [availableDomains, setAvailableDomains] = useState<string[]>([]);
 
     useEffect(() => {
+        (
+            async () => {
+                const res = await userService.login({});
+                if (res.config) {
+                    setWhitelist(res.config.domainWhitelist || []);
+                }
+            }
+        )()
+        if (!chrome) {
+            return;
+        }
         // Fetch all tabs and set their domains in state
         chrome.tabs.query({}, (tabs) => {
             const domainSet = new Set<string>();
@@ -20,7 +34,7 @@ const Options = () => {
             });
             setAvailableDomains([...domainSet]);
         });
-    }, []);
+    }, [setWhitelist]);
 
     const addDomain = () => {
         if (currentDomain && !whitelist.includes(currentDomain)) {
@@ -32,6 +46,18 @@ const Options = () => {
     const removeDomain = (domain: string) => {
         setWhitelist(prevWhitelist => prevWhitelist.filter(d => d !== domain));
     };
+
+    const saveWhitelist = async () => {
+        try {
+            await userService.updateConfig({
+                domainWhitelist: whitelist,
+            })
+            toast.success('Whitelist saved');
+        } catch (e: any) {
+            console.error(e);
+            toast.error(e.message);
+        }
+    }
 
     return (
         <Stack tokens={{ childrenGap: 10 }}>
@@ -58,6 +84,7 @@ const Options = () => {
                     </li>
                 ))}
             </ul>
+            <Button onClick={saveWhitelist}>Save Whitelist</Button>
         </Stack>
     );
 };
@@ -70,5 +97,6 @@ const root = ReactDOM.createRoot(rootElem as HTMLElement);
 root.render(
     <React.StrictMode>
         <Options />
+        <Toaster />
     </React.StrictMode>
 );

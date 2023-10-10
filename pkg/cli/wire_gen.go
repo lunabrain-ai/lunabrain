@@ -18,6 +18,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/protoflow"
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
+	"github.com/lunabrain-ai/lunabrain/pkg/user"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/urfave/cli/v2"
 )
@@ -58,7 +59,15 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	service := content.NewAPIServer(store)
+	openaiConfig, err := openai.NewConfig(provider)
+	if err != nil {
+		return nil, err
+	}
+	agent, err := openai.NewAgent(openaiConfig)
+	if err != nil {
+		return nil, err
+	}
+	service := content.NewService(store, agent)
 	discordConfig, err := discord.NewConfig(provider)
 	if err != nil {
 		return nil, err
@@ -72,19 +81,11 @@ func Wire() (*cli.App, error) {
 		return nil, err
 	}
 	discordService := discord.New(discordSession)
-	openaiConfig, err := openai.NewConfig(provider)
-	if err != nil {
-		return nil, err
-	}
-	agent, err := openai.NewAgent(openaiConfig)
-	if err != nil {
-		return nil, err
-	}
-	dbSession, err := db.NewSession(gormDB)
-	if err != nil {
-		return nil, err
-	}
 	sessionManager, err := http.NewSession(gormDB)
+	if err != nil {
+		return nil, err
+	}
+	dbSession, err := db.NewSession(gormDB, sessionManager)
 	if err != nil {
 		return nil, err
 	}
@@ -97,8 +98,9 @@ func Wire() (*cli.App, error) {
 		return nil, err
 	}
 	client := whisper.NewClient(whisperConfig, openaiConfig, bucketBucket)
-	protoflowProtoflow := protoflow.New(agent, dbSession, bucketBucket, sessionManager, protoflowConfig, client)
-	apihttpServer := server.NewAPIHTTPServer(contentConfig, service, store, bucketBucket, discordService, protoflowProtoflow, sessionManager)
+	protoflowProtoflow := protoflow.New(agent, dbSession, bucketBucket, protoflowConfig, client)
+	userService := user.NewService(store, dbSession)
+	apihttpServer := server.New(contentConfig, service, store, bucketBucket, discordService, protoflowProtoflow, sessionManager, userService)
 	discordCollector := collect.NewDiscordCollector(session, store)
 	hnCollect := collect.NewHNCollector(store)
 	app := NewApp(logLog, apihttpServer, discordCollector, hnCollect)

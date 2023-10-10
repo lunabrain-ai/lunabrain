@@ -61,3 +61,42 @@ export class AnalyzeConversationResponse extends Message<AnalyzeConversationResp
   }
 }
 
+/**
+ * @generated from message ai.AnalyzeContent
+ */
+export class AnalyzeContent extends Message<AnalyzeContent> {
+  /**
+   * Potential categories for the content in the form: category/subcategory/other-category. The category is all lowercase and spaces are replaced with dashes.
+   *
+   * @generated from field: repeated string categories = 1;
+   */
+  categories: string[] = [];
+
+  constructor(data?: PartialMessage<AnalyzeContent>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "ai.AnalyzeContent";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "categories", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AnalyzeContent {
+    return new AnalyzeContent().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AnalyzeContent {
+    return new AnalyzeContent().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AnalyzeContent {
+    return new AnalyzeContent().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AnalyzeContent | PlainMessage<AnalyzeContent> | undefined, b: AnalyzeContent | PlainMessage<AnalyzeContent> | undefined): boolean {
+    return proto3.util.equals(AnalyzeContent, a, b);
+  }
+}
+

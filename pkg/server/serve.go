@@ -9,12 +9,14 @@ import (
 	"github.com/lunabrain-ai/lunabrain/gen/chat/chatconnect"
 	"github.com/lunabrain-ai/lunabrain/gen/content/contentconnect"
 	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
+	"github.com/lunabrain-ai/lunabrain/gen/user/userconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
 	"github.com/lunabrain-ai/lunabrain/pkg/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
-	http3 "github.com/lunabrain-ai/lunabrain/pkg/http"
+	shttp "github.com/lunabrain-ai/lunabrain/pkg/http"
 	code "github.com/lunabrain-ai/lunabrain/pkg/protoflow"
+	"github.com/lunabrain-ai/lunabrain/pkg/user"
 	"github.com/lunabrain-ai/lunabrain/studio/dist/site"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -33,7 +35,8 @@ type APIHTTPServer struct {
 	bucket           *bucket.Bucket
 	discordService   *discord.DiscordService
 	protoflowService *code.Protoflow
-	sessionManager   *http3.SessionManager
+	sessionManager   *shttp.SessionManager
+	userService      *user.UserService
 }
 
 type HTTPServer interface {
@@ -42,22 +45,24 @@ type HTTPServer interface {
 
 var (
 	ProviderSet = wire.NewSet(
-		content.NewAPIServer,
-		NewAPIHTTPServer,
-		http3.NewSession,
+		content.NewService,
+		user.NewService,
+		shttp.NewSession,
 		content.NewConfig,
+		New,
 		wire.Bind(new(HTTPServer), new(*APIHTTPServer)),
 	)
 )
 
-func NewAPIHTTPServer(
+func New(
 	config content.Config,
 	apiServer *content.Service,
 	db *db.Store,
 	bucket *bucket.Bucket,
 	d *discord.DiscordService,
 	protoflowService *code.Protoflow,
-	sessionManager *http3.SessionManager,
+	sessionManager *shttp.SessionManager,
+	userService *user.UserService,
 ) *APIHTTPServer {
 	return &APIHTTPServer{
 		config:           config,
@@ -67,6 +72,7 @@ func NewAPIHTTPServer(
 		discordService:   d,
 		protoflowService: protoflowService,
 		sessionManager:   sessionManager,
+		userService:      userService,
 	}
 }
 
@@ -80,7 +86,7 @@ func NewLogInterceptor() connect.UnaryInterceptorFunc {
 			if err != nil {
 				// slog.Error("connect error", "error", fmt.Sprintf("%+v", err))
 				// TODO breadchris this should only be done for local dev
-				fmt.Printf("%+v", err)
+				fmt.Printf("%+v\n", err)
 			}
 			return resp, err
 		}
@@ -101,12 +107,14 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	apiRoot := http.NewServeMux()
 
 	apiRoot.Handle(contentconnect.NewContentServiceHandler(a.contentService, interceptors))
+	apiRoot.Handle(userconnect.NewUserServiceHandler(a.userService, interceptors))
 	apiRoot.Handle(chatconnect.NewDiscordServiceHandler(a.discordService, interceptors))
 	apiRoot.Handle(genconnect.NewProtoflowServiceHandler(a.protoflowService, interceptors))
 	reflector := grpcreflect.NewStaticReflector(
-		"lunabrain.Service",
-		"lunabrain.DiscordService",
+		"content.ContentService",
 		"protoflow.ProtoflowService",
+		"user.UserService",
+		"chat.DiscordService",
 	)
 	recoverCall := func(_ context.Context, spec connect.Spec, _ http.Header, p any) error {
 		slog.Error("panic", "err", fmt.Sprintf("%+v", p))
@@ -208,7 +216,10 @@ func (a *APIHTTPServer) Start() error {
 
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+
+		// TODO breadchris this should only be done for local dev
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Authorization, connect-protocol-version")
 		if r.Method == "OPTIONS" {
