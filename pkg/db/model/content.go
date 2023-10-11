@@ -1,28 +1,34 @@
 package model
 
-import (
-	"github.com/google/uuid"
-	"gorm.io/datatypes"
-)
+import "github.com/google/uuid"
 
 type Content struct {
 	Base
 
-	Type              int32 `json:"type"`
-	Metadata          datatypes.JSON
-	Data              string              `json:"data"`
-	NormalizedContent []NormalizedContent `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	LocatedContent    []LocatedContent    `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	IndexID           *uuid.UUID          `json:"index_id"`
-	Index             *Index              `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	*ContentData
+	UserID         uuid.UUID  `json:"user_id"`
+	User           *User      `json:"user"`
+	Root           bool       `json:"root"`
+	VisitCount     int64      `json:"visit_count"`
+	Tags           []*Tag     `gorm:"many2many:content_tags;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	RelatedContent []*Content `gorm:"many2many:related_content;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Votes          []*Vote    `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Groups         []*Group   `gorm:"many2many:group_content;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
-// LocatedContent is for content that must be located in a specific place, such as a URL. For larger content, data will be set to a location in a bucket.
-type LocatedContent struct {
+type Vote struct {
 	Base
 
-	Data       *string `json:"data"`
-	BucketData *string `json:"bucket_data"`
-	ContentID  uuid.UUID
-	Content    Content `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	ContentID uuid.UUID `json:"content_id"`
+	Content   *Content  `json:"content"`
+	UserID    uuid.UUID `json:"user_id"`
+	User      *User     `json:"user"`
+	Upvote    bool      `json:"upvote"`
+}
+
+type Tag struct {
+	Base
+
+	Name    string     `json:"name" gorm:"unique"`
+	Content []*Content `gorm:"many2many:content_tags;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }

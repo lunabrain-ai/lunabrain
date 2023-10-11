@@ -6,17 +6,21 @@ import (
 	"github.com/bufbuild/connect-go"
 	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
 	"github.com/google/wire"
+	"github.com/lunabrain-ai/lunabrain/gen/chat/chatconnect"
+	"github.com/lunabrain-ai/lunabrain/gen/content/contentconnect"
 	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
-	"github.com/lunabrain-ai/lunabrain/pkg/api"
+	"github.com/lunabrain-ai/lunabrain/gen/user/userconnect"
+	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
+	"github.com/lunabrain-ai/lunabrain/pkg/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
-	lhttp "github.com/lunabrain-ai/lunabrain/pkg/http"
+	shttp "github.com/lunabrain-ai/lunabrain/pkg/http"
 	code "github.com/lunabrain-ai/lunabrain/pkg/protoflow"
-	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
-	"github.com/lunabrain-ai/lunabrain/studio/public"
-	"github.com/rs/zerolog/log"
+	"github.com/lunabrain-ai/lunabrain/pkg/user"
+	"github.com/lunabrain-ai/lunabrain/studio/dist/site"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
+	"log/slog"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -25,13 +29,14 @@ import (
 )
 
 type APIHTTPServer struct {
-	config           api.Config
-	db               db.Store
-	apiServer        *api.Server
+	config           content.Config
+	db               *db.Store
+	contentService   *content.Service
 	bucket           *bucket.Bucket
 	discordService   *discord.DiscordService
 	protoflowService *code.Protoflow
-	sessionManager   *lhttp.SessionManager
+	sessionManager   *shttp.SessionManager
+	userService      *user.UserService
 }
 
 type HTTPServer interface {
@@ -40,31 +45,34 @@ type HTTPServer interface {
 
 var (
 	ProviderSet = wire.NewSet(
-		api.NewAPIServer,
-		NewAPIHTTPServer,
-		lhttp.NewSession,
-		api.NewConfig,
+		content.NewService,
+		user.NewService,
+		shttp.NewSession,
+		content.NewConfig,
+		New,
 		wire.Bind(new(HTTPServer), new(*APIHTTPServer)),
 	)
 )
 
-func NewAPIHTTPServer(
-	config api.Config,
-	apiServer *api.Server,
-	db db.Store,
+func New(
+	config content.Config,
+	apiServer *content.Service,
+	db *db.Store,
 	bucket *bucket.Bucket,
 	d *discord.DiscordService,
 	protoflowService *code.Protoflow,
-	sessionManager *lhttp.SessionManager,
+	sessionManager *shttp.SessionManager,
+	userService *user.UserService,
 ) *APIHTTPServer {
 	return &APIHTTPServer{
 		config:           config,
-		apiServer:        apiServer,
+		contentService:   apiServer,
 		db:               db,
 		bucket:           bucket,
 		discordService:   d,
 		protoflowService: protoflowService,
 		sessionManager:   sessionManager,
+		userService:      userService,
 	}
 }
 
@@ -76,7 +84,9 @@ func NewLogInterceptor() connect.UnaryInterceptorFunc {
 		) (connect.AnyResponse, error) {
 			resp, err := next(ctx, req)
 			if err != nil {
-				log.Error().Msgf("connect error: %+v\n", err)
+				// slog.Error("connect error", "error", fmt.Sprintf("%+v", err))
+				// TODO breadchris this should only be done for local dev
+				fmt.Printf("%+v\n", err)
 			}
 			return resp, err
 		}
@@ -86,7 +96,7 @@ func NewLogInterceptor() connect.UnaryInterceptorFunc {
 
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Debug().Str("method", r.Method).Str("path", r.URL.Path).Msg("request")
+		slog.Debug("request", "method", r.Method, "path", r.URL.Path)
 		next.ServeHTTP(w, r)
 	})
 }
@@ -96,28 +106,30 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 
 	apiRoot := http.NewServeMux()
 
-	apiRoot.Handle(genconnect.NewAPIHandler(a.apiServer, interceptors))
-	apiRoot.Handle(genconnect.NewDiscordServiceHandler(a.discordService, interceptors))
+	apiRoot.Handle(contentconnect.NewContentServiceHandler(a.contentService, interceptors))
+	apiRoot.Handle(userconnect.NewUserServiceHandler(a.userService, interceptors))
+	apiRoot.Handle(chatconnect.NewDiscordServiceHandler(a.discordService, interceptors))
 	apiRoot.Handle(genconnect.NewProtoflowServiceHandler(a.protoflowService, interceptors))
 	reflector := grpcreflect.NewStaticReflector(
-		"lunabrain.API",
-		"lunabrain.DiscordService",
+		"content.ContentService",
 		"protoflow.ProtoflowService",
+		"user.UserService",
+		"chat.DiscordService",
 	)
 	recoverCall := func(_ context.Context, spec connect.Spec, _ http.Header, p any) error {
-		log.Error().Msgf("%+v\n", p)
+		slog.Error("panic", "err", fmt.Sprintf("%+v", p))
 		if err, ok := p.(error); ok {
 			return err
 		}
 		return fmt.Errorf("panic: %v", p)
 	}
 	apiRoot.Handle(grpcreflect.NewHandlerV1(reflector, connect.WithRecover(recoverCall)))
-	// Many tools still expect the older version of the server reflection API, so
+	// Many tools still expect the older version of the server reflection Service, so
 	// most servers should mount both handlers.
 	apiRoot.Handle(grpcreflect.NewHandlerV1Alpha(reflector, connect.WithRecover(recoverCall)))
 
-	assets := public.Assets
-	fs := http.FS(public.Assets)
+	assets := site.Assets
+	fs := http.FS(site.Assets)
 	httpFileServer := http.FileServer(fs)
 
 	f := http.FS(os.DirFS("data"))
@@ -125,7 +137,7 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 
 	u, err := url.Parse(a.config.StudioProxy)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to parse studio proxy")
+		slog.Error("failed to parse studio proxy", "error", err)
 		return nil
 	}
 	proxy := httputil.NewSingleHostReverseProxy(u)
@@ -136,7 +148,7 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	muxRoot.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
 			// redirect to /studio
-			http.Redirect(w, r, "/studio", http.StatusFound)
+			http.Redirect(w, r, "/app", http.StatusFound)
 			return
 		}
 		if r.URL.Path == "/media" || strings.HasPrefix(r.URL.Path, "/media/") {
@@ -144,11 +156,10 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 			mediaFileServer.ServeHTTP(w, r)
 			return
 		}
-		if r.URL.Path == "/studio" || strings.HasPrefix(r.URL.Path, "/studio/") || r.URL.Path == "/esbuild" {
-			r.URL.Path = strings.Replace(r.URL.Path, "/studio", "", 1)
-
+		if r.URL.Path == "/app" || strings.HasPrefix(r.URL.Path, "/app/") || r.URL.Path == "/esbuild" {
+			r.URL.Path = strings.Replace(r.URL.Path, "/app", "", 1)
 			if a.config.StudioProxy != "" {
-				log.Debug().Msgf("proxying request: %s", r.URL.Path)
+				slog.Debug("proxying request", "path", r.URL.Path)
 				proxy.ServeHTTP(w, r)
 			} else {
 				filePath := r.URL.Path
@@ -163,7 +174,7 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 				if err == nil {
 					f.Close()
 				}
-				log.Debug().Msgf("serving file: %s", filePath)
+				slog.Debug("serving file", "path", filePath)
 				httpFileServer.ServeHTTP(w, r)
 			}
 			return
@@ -187,7 +198,7 @@ func (a *APIHTTPServer) Start() error {
 
 	addr := fmt.Sprintf(":%s", a.config.Port)
 
-	log.Info().Str("addr", addr).Msg("starting http server")
+	slog.Info("starting http server", "addr", addr)
 
 	//go func() {
 	//	log.Debug().Msg("starting protoflow server")
@@ -199,5 +210,21 @@ func (a *APIHTTPServer) Start() error {
 	//	}
 	//}()
 
-	return http.ListenAndServe(addr, h2c.NewHandler(httpApiHandler, &http2.Server{}))
+	return http.ListenAndServe(addr, h2c.NewHandler(corsMiddleware(httpApiHandler), &http2.Server{}))
+}
+
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		// TODO breadchris this should only be done for local dev
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Authorization, connect-protocol-version")
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }

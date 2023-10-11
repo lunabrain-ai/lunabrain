@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package chat;
+
+service DiscordService {
+  rpc ReadMessages(ReadMessagesRequest) returns (stream ReadMessagesResponse);
+  rpc WriteMessage(WriteMessageRequest) returns (WriteMessageResponse);
+}
+
+message ReadMessagesRequest {
+  string channelID = 1;
+  string lastMessageID = 2;
+}
+
+message ReadMessagesResponse {
+  string messageID = 1;
+  string content = 2;
+  string authorID = 3;
+  string authorUsername = 4;
+  string authorAvatar = 5;
+  string createdAt = 6;
+  string channelID = 7;
+}
+
+message WriteMessageRequest {
+  string channelID = 1;
+  string content = 2;
+}
+
+message WriteMessageResponse {
+  string messageID = 1;
+}
+

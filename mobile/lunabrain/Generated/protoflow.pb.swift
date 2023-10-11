@@ -32,25 +32,6 @@ public struct Protoflow_AnalyzeConversationRequest {
   public init() {}
 }
 
-public struct Protoflow_AnalyzeConversationResponse {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  /// Phone numbers of the participants
-  public var phoneNumbers: [String] = []
-
-  /// The summary of the conversation
-  public var summary: String = String()
-
-  /// Based on the content of the conversation, the system will generate a list of questions
-  public var questions: [String] = []
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-}
-
 public struct Protoflow_GenerateImagesRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -69,40 +50,6 @@ public struct Protoflow_GenerateImagesResponse {
   // methods supported on all messages.
 
   public var images: [String] = []
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-}
-
-public struct Protoflow_User {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  public var email: String = String()
-
-  public var password: String = String()
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-}
-
-public struct Protoflow_LoginResponse {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-}
-
-public struct Protoflow_Empty {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -188,8 +135,8 @@ public struct Protoflow_UploadContentRequest {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var content: Lunabrain_Content {
-    get {return _content ?? Lunabrain_Content()}
+  public var content: Content_Content {
+    get {return _content ?? Content_Content()}
     set {_content = newValue}
   }
   /// Returns true if `content` has been explicitly set.
@@ -201,7 +148,7 @@ public struct Protoflow_UploadContentRequest {
 
   public init() {}
 
-  fileprivate var _content: Lunabrain_Content? = nil
+  fileprivate var _content: Content_Content? = nil
 }
 
 public struct Protoflow_UploadContentResponse {
@@ -275,22 +222,6 @@ public struct Protoflow_GetSessionsResponse {
   public init() {}
 }
 
-public struct Protoflow_Session {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  public var id: String = String()
-
-  public var name: String = String()
-
-  public var segments: [Protoflow_Segment] = []
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-}
-
 public struct Protoflow_Token {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -325,6 +256,22 @@ public struct Protoflow_Segment {
   public var startTime: UInt64 = 0
 
   public var endTime: UInt64 = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Protoflow_Session {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var id: String = String()
+
+  public var name: String = String()
+
+  public var segments: [Protoflow_Segment] = []
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -516,12 +463,8 @@ public struct Protoflow_YouTubeVideoResponse {
 
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Protoflow_AnalyzeConversationRequest: @unchecked Sendable {}
-extension Protoflow_AnalyzeConversationResponse: @unchecked Sendable {}
 extension Protoflow_GenerateImagesRequest: @unchecked Sendable {}
 extension Protoflow_GenerateImagesResponse: @unchecked Sendable {}
-extension Protoflow_User: @unchecked Sendable {}
-extension Protoflow_LoginResponse: @unchecked Sendable {}
-extension Protoflow_Empty: @unchecked Sendable {}
 extension Protoflow_DeleteSessionRequest: @unchecked Sendable {}
 extension Protoflow_Prompt: @unchecked Sendable {}
 extension Protoflow_GetPromptsRequest: @unchecked Sendable {}
@@ -534,9 +477,9 @@ extension Protoflow_GetSessionRequest: @unchecked Sendable {}
 extension Protoflow_GetSessionResponse: @unchecked Sendable {}
 extension Protoflow_GetSessionsRequest: @unchecked Sendable {}
 extension Protoflow_GetSessionsResponse: @unchecked Sendable {}
-extension Protoflow_Session: @unchecked Sendable {}
 extension Protoflow_Token: @unchecked Sendable {}
 extension Protoflow_Segment: @unchecked Sendable {}
+extension Protoflow_Session: @unchecked Sendable {}
 extension Protoflow_TranscriptionRequest: @unchecked Sendable {}
 extension Protoflow_RegisterFlags: @unchecked Sendable {}
 extension Protoflow_OCRText: @unchecked Sendable {}
@@ -580,50 +523,6 @@ extension Protoflow_AnalyzeConversationRequest: SwiftProtobuf.Message, SwiftProt
 
   public static func ==(lhs: Protoflow_AnalyzeConversationRequest, rhs: Protoflow_AnalyzeConversationRequest) -> Bool {
     if lhs.text != rhs.text {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension Protoflow_AnalyzeConversationResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".AnalyzeConversationResponse"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "phone_numbers"),
-    2: .same(proto: "summary"),
-    3: .same(proto: "questions"),
-  ]
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeRepeatedStringField(value: &self.phoneNumbers) }()
-      case 2: try { try decoder.decodeSingularStringField(value: &self.summary) }()
-      case 3: try { try decoder.decodeRepeatedStringField(value: &self.questions) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.phoneNumbers.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.phoneNumbers, fieldNumber: 1)
-    }
-    if !self.summary.isEmpty {
-      try visitor.visitSingularStringField(value: self.summary, fieldNumber: 2)
-    }
-    if !self.questions.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.questions, fieldNumber: 3)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Protoflow_AnalyzeConversationResponse, rhs: Protoflow_AnalyzeConversationResponse) -> Bool {
-    if lhs.phoneNumbers != rhs.phoneNumbers {return false}
-    if lhs.summary != rhs.summary {return false}
-    if lhs.questions != rhs.questions {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -688,82 +587,6 @@ extension Protoflow_GenerateImagesResponse: SwiftProtobuf.Message, SwiftProtobuf
 
   public static func ==(lhs: Protoflow_GenerateImagesResponse, rhs: Protoflow_GenerateImagesResponse) -> Bool {
     if lhs.images != rhs.images {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension Protoflow_User: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".User"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "email"),
-    2: .same(proto: "password"),
-  ]
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.email) }()
-      case 2: try { try decoder.decodeSingularStringField(value: &self.password) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.email.isEmpty {
-      try visitor.visitSingularStringField(value: self.email, fieldNumber: 1)
-    }
-    if !self.password.isEmpty {
-      try visitor.visitSingularStringField(value: self.password, fieldNumber: 2)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Protoflow_User, rhs: Protoflow_User) -> Bool {
-    if lhs.email != rhs.email {return false}
-    if lhs.password != rhs.password {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension Protoflow_LoginResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".LoginResponse"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let _ = try decoder.nextFieldNumber() {
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Protoflow_LoginResponse, rhs: Protoflow_LoginResponse) -> Bool {
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension Protoflow_Empty: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".Empty"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let _ = try decoder.nextFieldNumber() {
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Protoflow_Empty, rhs: Protoflow_Empty) -> Bool {
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1166,50 +989,6 @@ extension Protoflow_GetSessionsResponse: SwiftProtobuf.Message, SwiftProtobuf._M
   }
 }
 
-extension Protoflow_Session: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".Session"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
-    2: .same(proto: "name"),
-    3: .same(proto: "segments"),
-  ]
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
-      case 2: try { try decoder.decodeSingularStringField(value: &self.name) }()
-      case 3: try { try decoder.decodeRepeatedMessageField(value: &self.segments) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.id.isEmpty {
-      try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
-    }
-    if !self.name.isEmpty {
-      try visitor.visitSingularStringField(value: self.name, fieldNumber: 2)
-    }
-    if !self.segments.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.segments, fieldNumber: 3)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Protoflow_Session, rhs: Protoflow_Session) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs.name != rhs.name {return false}
-    if lhs.segments != rhs.segments {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
 extension Protoflow_Token: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Token"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -1317,6 +1096,50 @@ extension Protoflow_Segment: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     if lhs.text != rhs.text {return false}
     if lhs.startTime != rhs.startTime {return false}
     if lhs.endTime != rhs.endTime {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Protoflow_Session: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".Session"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+    2: .same(proto: "name"),
+    3: .same(proto: "segments"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.name) }()
+      case 3: try { try decoder.decodeRepeatedMessageField(value: &self.segments) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.id.isEmpty {
+      try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
+    }
+    if !self.name.isEmpty {
+      try visitor.visitSingularStringField(value: self.name, fieldNumber: 2)
+    }
+    if !self.segments.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.segments, fieldNumber: 3)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Protoflow_Session, rhs: Protoflow_Session) -> Bool {
+    if lhs.id != rhs.id {return false}
+    if lhs.name != rhs.name {return false}
+    if lhs.segments != rhs.segments {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

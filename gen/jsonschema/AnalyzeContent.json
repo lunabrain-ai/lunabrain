@@ -1,0 +1,20 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/AnalyzeContent",
+    "definitions": {
+        "AnalyzeContent": {
+            "properties": {
+                "categories": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "description": "Potential categories for the content in the form: category/subcategory/other-category. The category is all lowercase and spaces are replaced with dashes."
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Analyze Content"
+        }
+    }
+}

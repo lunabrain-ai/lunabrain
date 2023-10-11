@@ -1,10 +1,13 @@
 import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
-import {projectService} from "@/lib/api";
-import {Message} from "@/pages/Chat/MessageList";
+import {contentService, projectService, userService} from "@/service";
+import {Message} from "@/site/Chat/MessageList";
 import {Code, ConnectError} from "@bufbuild/connect";
 import toast from "react-hot-toast";
 import {TabValue} from "@fluentui/react-components";
-import {AnalyzeConversationResponse, ChatResponse, Segment, Session, User} from "@/rpc/protoflow_pb";
+import {ChatResponse, Segment, Session} from "@/rpc/protoflow_pb";
+import { Content, StoredContent, Tag } from "@/rpc/content/content_pb";
+import {Group, User } from "@/rpc/user/user_pb";
+import {useQuery} from "@tanstack/react-query";
 
 const ProjectContext = createContext<ProjectContextType>({} as any);
 export const useProjectContext = () => useContext(ProjectContext);
@@ -21,6 +24,11 @@ type Media = {
 type ProjectContextType = {
     messages: Message[];
     setMessages: (messages: Message[]) => void;
+
+    content: StoredContent[];
+    setContent: (content: StoredContent[]) => void;
+    deleteContent: (ids: string[]) => void;
+
     isRecording: boolean;
     setIsRecording: (isRecording: boolean) => void;
     selectedValue: TabValue;
@@ -33,44 +41,101 @@ type ProjectContextType = {
     setUser: (user?: User) => void;
     loading: boolean;
     setLoading: (loading: boolean) => void;
-    analyzedText?: AnalyzeConversationResponse;
-    setAnalyzedText: (analyzedText?: AnalyzeConversationResponse) => void;
     media?: Media;
     setMedia: (media?: Media) => void;
+
+    sidebarIsOpen: boolean;
+    setSidebarIsOpen: (sidebarIsOpen: boolean) => void;
+    groups: Group[];
+    currentGroup: string;
+    setCurrentGroup: (groupID: string) => void;
+    tags: Tag[];
+
+    filteredTags: string[];
+    addFilteredTag: (tag: string) => void;
+    removeFilteredTag: (tag: string) => void;
 };
+
+export function groupURL(groupID: string) {
+    return `/app/group/${groupID}`;
+}
 
 export default function ProjectProvider({children}: ProjectProviderProps) {
     const [messages, setMessages] = useState<Message[]>([]);
+    const [content, setContent] = useState<StoredContent[]>([]);
     const [isRecording, setIsRecording] = useState<boolean>(false);
     const [selectedValue, setSelectedValue] = useState<TabValue>('');
     const [session, setSession] = useState<Session|undefined>(undefined);
     const [inference, setInference] = useState<string>('');
     const [user, setUser] = useState<User|undefined>(undefined);
     const [loading, setLoading] = useState(false);
-    const [analyzedText, setAnalyzedText] = useState<AnalyzeConversationResponse|undefined>(undefined);
     const [media, setMedia] = useState<Media|undefined>(undefined);
+    const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
+    const [groups, setGroups] = useState<Group[]>([]);
+    const [currentGroup, setCurrentGroup] = useState<string>('home');
+    const [tags, setTags] = useState<Tag[]>([]);
+    const [filteredTags, setFilteredTags] = useState<string[]>([]);
 
-    const inferFromMessages = useCallback(async (prompt: string) => {
-        const mIdx = messages.length + 1;
-        const m: Message = {text: prompt, sender: 'user', segment: new Segment()};
-        setMessages((prev) => [...prev, m]);
-        let i = '';
-        try {
-            const res = projectService.infer( {
-                text: messages.map((m) => m.text),
-                prompt,
-            })
-            for await (const exec of res) {
-                setInference((prev) => exec.text || '');
-                i = exec.text || '';
-            }
-        } catch (e: any) {
-            toast.error(e.message);
-            console.log(e);
+    const addFilteredTag = (tag: string) => {
+        setFilteredTags((prev) => [...prev, tag]);
+    }
+
+    const removeFilteredTag = (tag: string) => {
+        setFilteredTags((prev) => prev.filter((t) => t !== tag));
+    }
+
+    const loadContent = async () => {
+        const res = await contentService.search({
+            // TODO breadchris home is just the user's content
+            groupID: currentGroup === 'home' ? undefined : currentGroup,
+        });
+        setContent(res.storedContent);
+    }
+
+    const loadGroups = async () => {
+        const res = await userService.getGroups({});
+        setGroups(res.groups);
+    }
+
+    const loadTags = async () => {
+        const res = await contentService.getTags({});
+        setTags(res.tags);
+    }
+
+    useEffect(() => {
+        void loadContent();
+        if (user) {
+            window.history.pushState({}, '', groupURL(currentGroup));
         }
-        setInference('');
-        setMessages((prev) => [...prev, m, {...m, text: i}]);
-    }, [messages, setMessages]);
+    }, [user, currentGroup]);
+
+    useEffect(() => {
+        if (!user) {
+            (async () => {
+                try {
+                    const res = await userService.login({})
+                    if (!res.email) {
+                        console.warn('no user logged in')
+                        return
+                    }
+                    setUser(res)
+                } catch (e: any) {
+                    console.error(e)
+                }
+            })();
+        }
+        void loadGroups();
+        void loadTags();
+    }, [user]);
+
+    const deleteContent = async (ids: string[]) => {
+        const res = await contentService.delete({
+            contentIds: ids,
+        })
+        console.log(res)
+
+        void loadContent();
+    }
 
     useEffect(() => {
         if (selectedValue !== '') {
@@ -124,11 +189,36 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
         })();
     }, [isRecording]);
 
+    const inferFromMessages = useCallback(async (prompt: string) => {
+        const mIdx = messages.length + 1;
+        const m: Message = {text: prompt, sender: 'user', segment: new Segment()};
+        setMessages((prev) => [...prev, m]);
+        let i = '';
+        try {
+            const res = projectService.infer( {
+                text: messages.map((m) => m.text),
+                prompt,
+            })
+            for await (const exec of res) {
+                setInference((prev) => exec.text || '');
+                i = exec.text || '';
+            }
+        } catch (e: any) {
+            toast.error(e.message);
+            console.log(e);
+        }
+        setInference('');
+        setMessages((prev) => [...prev, m, {...m, text: i}]);
+    }, [messages, setMessages]);
+
     return (
         <ProjectContext.Provider
             value={{
                 messages,
                 setMessages,
+                content,
+                setContent,
+                deleteContent,
                 isRecording,
                 setIsRecording,
                 selectedValue,
@@ -141,10 +231,18 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
                 setUser,
                 loading,
                 setLoading,
-                analyzedText,
-                setAnalyzedText,
                 media,
                 setMedia,
+                sidebarIsOpen,
+                setSidebarIsOpen,
+                groups,
+                setCurrentGroup,
+                currentGroup,
+                tags,
+
+                filteredTags,
+                addFilteredTag,
+                removeFilteredTag,
             }}
         >
             {children}

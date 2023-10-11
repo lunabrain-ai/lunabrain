@@ -28,10 +28,10 @@ public protocol Protoflow_ProtoflowServiceClientInterface: Sendable {
     func `getSession`(request: Protoflow_GetSessionRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_GetSessionResponse>
 
     @discardableResult
-    func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_Empty>) -> Void) -> Connect.Cancelable
+    func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
-    func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_Empty>
+    func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers) async -> ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>
 
     @discardableResult
     func `getPrompts`(request: Protoflow_GetPromptsRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_GetPromptsResponse>) -> Void) -> Connect.Cancelable
@@ -66,37 +66,17 @@ public protocol Protoflow_ProtoflowServiceClientInterface: Sendable {
     @available(iOS 13, *)
     func `convertFile`(request: Protoflow_ConvertFileRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_FilePath>
 
-    ///  rpc OCR (FilePath) returns (OCRText);
     @discardableResult
     func `generateImages`(request: Protoflow_GenerateImagesRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_GenerateImagesResponse>) -> Void) -> Connect.Cancelable
 
-    ///  rpc OCR (FilePath) returns (OCRText);
     @available(iOS 13, *)
     func `generateImages`(request: Protoflow_GenerateImagesRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_GenerateImagesResponse>
 
     @discardableResult
-    func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_AnalyzeConversationResponse>) -> Void) -> Connect.Cancelable
+    func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Ai_AnalyzeConversationResponse>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
-    func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_AnalyzeConversationResponse>
-
-    @discardableResult
-    func `register`(request: Protoflow_User, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_User>) -> Void) -> Connect.Cancelable
-
-    @available(iOS 13, *)
-    func `register`(request: Protoflow_User, headers: Connect.Headers) async -> ResponseMessage<Protoflow_User>
-
-    @discardableResult
-    func `login`(request: Protoflow_User, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_User>) -> Void) -> Connect.Cancelable
-
-    @available(iOS 13, *)
-    func `login`(request: Protoflow_User, headers: Connect.Headers) async -> ResponseMessage<Protoflow_User>
-
-    @discardableResult
-    func `logout`(request: Protoflow_Empty, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_Empty>) -> Void) -> Connect.Cancelable
-
-    @available(iOS 13, *)
-    func `logout`(request: Protoflow_Empty, headers: Connect.Headers) async -> ResponseMessage<Protoflow_Empty>
+    func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers) async -> ResponseMessage<Ai_AnalyzeConversationResponse>
 }
 
 /// Concrete implementation of `Protoflow_ProtoflowServiceClientInterface`.
@@ -138,12 +118,12 @@ public final class Protoflow_ProtoflowServiceClient: Protoflow_ProtoflowServiceC
     }
 
     @discardableResult
-    public func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_Empty>) -> Void) -> Connect.Cancelable {
+    public func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable {
         return self.client.unary(path: "/protoflow.ProtoflowService/DeleteSession", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
-    public func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_Empty> {
+    public func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty> {
         return await self.client.unary(path: "/protoflow.ProtoflowService/DeleteSession", request: request, headers: headers)
     }
 
@@ -215,43 +195,13 @@ public final class Protoflow_ProtoflowServiceClient: Protoflow_ProtoflowServiceC
     }
 
     @discardableResult
-    public func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_AnalyzeConversationResponse>) -> Void) -> Connect.Cancelable {
+    public func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Ai_AnalyzeConversationResponse>) -> Void) -> Connect.Cancelable {
         return self.client.unary(path: "/protoflow.ProtoflowService/AnalyzeConversation", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
-    public func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_AnalyzeConversationResponse> {
+    public func `analyzeConversation`(request: Protoflow_AnalyzeConversationRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<Ai_AnalyzeConversationResponse> {
         return await self.client.unary(path: "/protoflow.ProtoflowService/AnalyzeConversation", request: request, headers: headers)
-    }
-
-    @discardableResult
-    public func `register`(request: Protoflow_User, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_User>) -> Void) -> Connect.Cancelable {
-        return self.client.unary(path: "/protoflow.ProtoflowService/Register", request: request, headers: headers, completion: completion)
-    }
-
-    @available(iOS 13, *)
-    public func `register`(request: Protoflow_User, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_User> {
-        return await self.client.unary(path: "/protoflow.ProtoflowService/Register", request: request, headers: headers)
-    }
-
-    @discardableResult
-    public func `login`(request: Protoflow_User, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_User>) -> Void) -> Connect.Cancelable {
-        return self.client.unary(path: "/protoflow.ProtoflowService/Login", request: request, headers: headers, completion: completion)
-    }
-
-    @available(iOS 13, *)
-    public func `login`(request: Protoflow_User, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_User> {
-        return await self.client.unary(path: "/protoflow.ProtoflowService/Login", request: request, headers: headers)
-    }
-
-    @discardableResult
-    public func `logout`(request: Protoflow_Empty, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_Empty>) -> Void) -> Connect.Cancelable {
-        return self.client.unary(path: "/protoflow.ProtoflowService/Logout", request: request, headers: headers, completion: completion)
-    }
-
-    @available(iOS 13, *)
-    public func `logout`(request: Protoflow_Empty, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_Empty> {
-        return await self.client.unary(path: "/protoflow.ProtoflowService/Logout", request: request, headers: headers)
     }
 
     public enum Metadata {
@@ -268,9 +218,6 @@ public final class Protoflow_ProtoflowServiceClient: Protoflow_ProtoflowServiceC
             public static let convertFile = Connect.MethodSpec(name: "ConvertFile", service: "protoflow.ProtoflowService", type: .unary)
             public static let generateImages = Connect.MethodSpec(name: "GenerateImages", service: "protoflow.ProtoflowService", type: .unary)
             public static let analyzeConversation = Connect.MethodSpec(name: "AnalyzeConversation", service: "protoflow.ProtoflowService", type: .unary)
-            public static let register = Connect.MethodSpec(name: "Register", service: "protoflow.ProtoflowService", type: .unary)
-            public static let login = Connect.MethodSpec(name: "Login", service: "protoflow.ProtoflowService", type: .unary)
-            public static let logout = Connect.MethodSpec(name: "Logout", service: "protoflow.ProtoflowService", type: .unary)
         }
     }
 }

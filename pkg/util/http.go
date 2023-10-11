@@ -1,7 +1,7 @@
 package util
 
 import (
-	"github.com/rs/zerolog/log"
+	"log/slog"
 	"net/http"
 	"net/http/httputil"
 )
@@ -9,7 +9,7 @@ import (
 func DumpRequest(r *http.Request) {
 	dumpedRequest, err := httputil.DumpRequest(r, true)
 	if err != nil {
-		log.Error().Err(err).Msg("unable to dump http request")
+		slog.Error("unable to dump http request", "err", err)
 		return
 	}
 	println(string(dumpedRequest))

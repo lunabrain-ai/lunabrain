@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {projectService} from "@/lib/api";
+import {projectService} from "@/service";
 import {useProjectContext} from "@/providers/ProjectProvider";
 
 interface FileDropProps {

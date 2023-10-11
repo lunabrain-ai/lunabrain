@@ -7,7 +7,7 @@ import {
 import { css } from '@emotion/css'
 import {Button, Icon, Menu, Portal} from './Components'
 import { CustomEditor } from './custom-types'
-import {projectService} from "@/lib/api";
+import {projectService} from "@/service";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import toast from "react-hot-toast";
 
@@ -94,7 +94,6 @@ const isMarkActive = (editor: CustomEditor, format: string) => {
 
 const FormatButton: React.FC<{format: any, icon: string}> = ({ format, icon }) => {
     const editor = useSlate()
-    const { setAnalyzedText } = useProjectContext();
     const getSelection = async () => {
         const { selection } = editor;
         if (selection) {
@@ -104,7 +103,6 @@ const FormatButton: React.FC<{format: any, icon: string}> = ({ format, icon }) =
                     text,
                 })
                 // Editor.insertText(editor, res.summary);
-                setAnalyzedText(res);
             } catch (e: any) {
                 toast.error(e.message);
                 console.log(e);

@@ -2,15 +2,15 @@ syntax = "proto3";
 
 package protoflow;
 
-import "api.proto";
-
-option go_package = "./gen";
+import "content/content.proto";
+import "ai.proto";
+import "google/protobuf/empty.proto";
 
 service ProtoflowService {
   rpc DownloadYouTubeVideo(YouTubeVideo) returns (YouTubeVideoResponse);
   rpc GetSessions(GetSessionsRequest) returns (GetSessionsResponse);
   rpc GetSession(GetSessionRequest) returns (GetSessionResponse);
-  rpc DeleteSession(DeleteSessionRequest) returns (Empty);
+  rpc DeleteSession(DeleteSessionRequest) returns (google.protobuf.Empty);
 
   rpc GetPrompts(GetPromptsRequest) returns (GetPromptsResponse);
   rpc NewPrompt(Prompt) returns (Prompt);
@@ -22,26 +22,11 @@ service ProtoflowService {
   rpc Chat(ChatRequest) returns (stream ChatResponse);
   rpc ConvertFile(ConvertFileRequest) returns (FilePath);
   rpc GenerateImages(GenerateImagesRequest) returns (GenerateImagesResponse);
-//  rpc OCR (FilePath) returns (OCRText);
 
-  rpc AnalyzeConversation(AnalyzeConversationRequest) returns (AnalyzeConversationResponse);
-
-  rpc Register(User) returns (User);
-  rpc Login(User) returns (User);
-  rpc Logout(Empty) returns (Empty);
+  rpc AnalyzeConversation(AnalyzeConversationRequest) returns (ai.AnalyzeConversationResponse);
 }
-
 message AnalyzeConversationRequest {
   string text = 1;
-}
-
-message AnalyzeConversationResponse {
-  // Phone numbers of the participants
-  repeated string phone_numbers = 1;
-  // The summary of the conversation
-  string summary = 2;
-  // Based on the content of the conversation, the system will generate a list of questions
-  repeated string questions = 3;
 }
 
 message GenerateImagesRequest {
@@ -51,16 +36,6 @@ message GenerateImagesRequest {
 message GenerateImagesResponse {
   repeated string images = 1;
 }
-
-message User {
-  string email = 1;
-  string password = 2;
-}
-
-message LoginResponse {
-}
-
-message Empty {}
 
 message DeleteSessionRequest {
   string id = 1;
@@ -87,7 +62,7 @@ message InferResponse {
 }
 
 message UploadContentRequest {
-  lunabrain.Content content = 1;
+  content.Content content = 1;
 }
 
 message UploadContentResponse {
@@ -111,12 +86,6 @@ message GetSessionsResponse {
   repeated Session sessions = 1;
 }
 
-message Session {
-  string id = 1;
-  string name = 2;
-  repeated Segment segments = 3;
-}
-
 message Token {
   uint32 id = 1;
   uint64 start_time = 2;
@@ -131,6 +100,12 @@ message Segment {
   string text = 3;
   uint64 start_time = 4;
   uint64 end_time = 5;
+}
+
+message Session {
+  string id = 1;
+  string name = 2;
+  repeated Segment segments = 3;
 }
 
 message TranscriptionRequest {

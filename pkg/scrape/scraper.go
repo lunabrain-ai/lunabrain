@@ -4,11 +4,10 @@ import (
 	"context"
 	"crypto/tls"
 	"github.com/chromedp/chromedp"
-	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
 	"io"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -22,11 +21,11 @@ type scraper struct {
 	httpClient     *http.Client
 	browserDomains []string
 	config         Config
-	db             db.Store
+	db             *db.Store
 	chromeCtx      context.Context
 }
 
-func NewScraper(config Config, db db.Store) *scraper {
+func NewScraper(config Config, db *db.Store) *scraper {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -54,7 +53,7 @@ func NewScraper(config Config, db db.Store) *scraper {
 
 	chromeCtx, cancel := chromedp.NewContext(
 		ctx,
-		chromedp.WithDebugf(log.Printf),
+		chromedp.WithDebugf(slog.Debug),
 	)
 	defer cancel()
 
@@ -74,18 +73,7 @@ func (p *scraper) Scrape(url string) (*Response, error) {
 	)
 
 	if p.config.UseCache {
-		// TODO breadchris this is a hack for now until the scraping is a collector
-		normalContent, err := p.db.GetNormalContentByData(url)
-		if err == nil {
-			for _, c := range normalContent {
-				if c.NormalizerID == int32(genapi.NormalizerID_URL_HTML) {
-					log.Info().Str("url", url).Msg("using cached content")
-					return &Response{
-						Content: c.Data,
-					}, nil
-				}
-			}
-		}
+		// TODO breadchris use cache
 	}
 
 	if p.config.Client == "chrome" {
@@ -110,21 +98,13 @@ func (p *scraper) Scrape(url string) (*Response, error) {
 func (p *scraper) scrapeWithClient(url string) (*Response, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		log.Error().
-			Err(err).
-			Str("url", url).
-			Msg("Failed to create request for reference Host")
-		return nil, err
+		return nil, errors.Wrapf(err, "failed to create request for %s", url)
 	}
 	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36")
 
 	resp, err := p.httpClient.Do(req)
 	if err != nil {
-		log.Error().
-			Err(err).
-			Str("url", url).
-			Msg("Failed to fetch reference Host")
-		return nil, err
+		return nil, errors.Wrapf(err, "failed to fetch reference Host %s", url)
 	}
 	defer resp.Body.Close()
 
@@ -165,9 +145,7 @@ func (p *scraper) scrapeWithChrome(url string) (*Response, error) {
 		return nil, errors.Wrapf(err, "failed to scrape Host with Chrome: %s", url)
 	}
 
-	log.Debug().
-		Float64("duration", time.Since(start).Seconds()).
-		Msg("Scraped Host with Chrome")
+	slog.Debug("scraped Host with Chrome", "url", url, "duration", time.Since(start).Seconds())
 	return &Response{
 		Title:       title,
 		Content:     html,

@@ -3,7 +3,7 @@ package publish
 import (
 	"github.com/google/uuid"
 	"github.com/google/wire"
-	"github.com/rs/zerolog/log"
+	"log/slog"
 )
 
 var ProviderSet = wire.NewSet(
@@ -24,9 +24,7 @@ type Publish struct {
 // TODO breadchris should there be context here?
 func (p *Publish) Publish(contentID uuid.UUID) error {
 	for _, publisher := range p.publishers {
-		log.Debug().
-			Str("contentID", contentID.String()).
-			Msg("attempting to publish content")
+		slog.Debug("attempting to publish content", "contentID", contentID.String())
 		if err := publisher.Publish(contentID); err != nil {
 			return err
 		}

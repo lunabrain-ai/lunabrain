@@ -1,13 +1,18 @@
 import SwiftUI
+import MarkupEditor
 import WatchConnectivity
 import Combine
 import Speech
 
 struct ContentView: View {
     @ObservedObject var viewModel: TranscriptionViewModel
-
+    @State private var demoHtml: String = "<h1>Hello</h1>"
+    
     var body: some View {
         TabView {
+            MarkupEditorView(html: $demoHtml).tabItem {
+                Label("Markdown", systemImage: "list.dash").padding()
+            }
             VStack {
                 Text(viewModel.liveTranscription)
                     .padding()

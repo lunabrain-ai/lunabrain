@@ -1,0 +1,175 @@
+syntax = "proto3";
+
+package content;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
+option go_package = "./gen";
+
+service ContentService {
+  rpc Save(Contents) returns (ContentIDs);
+  rpc Search(Query) returns (Results);
+  rpc Analyze(Content) returns (Contents);
+  rpc Delete(ContentIDs) returns (ContentIDs);
+  rpc GetTags(google.protobuf.Empty) returns (Tags);
+  rpc Vote(VoteRequest) returns (google.protobuf.Empty);
+}
+
+message VoteRequest {
+  string content_id = 1;
+}
+
+message Tags {
+  repeated Tag tags = 1;
+}
+
+message Tag {
+  string name = 1;
+  repeated Tag sub_tags = 2;
+}
+
+message ContentIDs {
+  repeated string content_ids = 1;
+}
+
+message Contents {
+  Content content = 1;
+  repeated Content related = 2;
+}
+
+message Query {
+  string query = 1;
+  uint32 page = 2;
+  string contentID = 3;
+  string groupID = 4;
+}
+
+message Results {
+  repeated StoredContent storedContent = 1;
+}
+
+message StoredContent {
+  Content content = 1;
+  string id = 2;
+  repeated Content related = 3;
+  string title = 4;
+  string description = 5;
+  string image = 6;
+  string url = 7;
+}
+
+message Edge {
+  string from = 1;
+  string to = 2;
+}
+
+// Content has data and metadata
+message Content {
+  repeated string tags = 1;
+  string created_at = 2;
+  oneof type {
+    Data data = 6;
+    Normalized normalized = 7;
+    Transformed transformed = 8;
+    Source source = 9;
+  };
+}
+
+message Source {
+  string name = 1;
+  oneof type {
+    YouTubeChannel youtube_channel = 4;
+  }
+}
+
+message YouTubeChannel {
+  string channel_id = 1;
+}
+
+message Data {
+  oneof type {
+    Text text = 4;
+    File file = 5;
+    URL url = 6;
+  }
+}
+
+message Normalized {
+  oneof type {
+    Article article = 3;
+    HTML html = 4;
+    Transcript transcript = 6;
+    GitHubReadme github_readme = 7;
+  }
+}
+
+message Transformed {
+  oneof type {
+    Summary summary = 1;
+    Categories categories = 2;
+  }
+}
+
+message Article {
+  string title = 1;
+  string author = 2;
+  int32 length = 3;
+  string excerpt = 4;
+  string site_name = 5;
+  string image = 6;
+  string favicon = 7;
+  string text = 8;
+}
+
+message HTML {
+  string html = 1;
+}
+
+message GitHubReadme {
+  string data = 1;
+}
+
+message Summary {
+  string summary = 1;
+}
+
+message Categories {
+  repeated string categories = 1;
+}
+
+message File {
+  string file = 1;
+  bytes data = 2;
+}
+
+message Text {
+  string data = 1;
+}
+
+message URL {
+  string url = 1;
+  bool crawl = 2;
+  string title = 3;
+}
+
+message Token {
+  uint32 id = 1;
+  uint64 start_time = 2;
+  uint64 end_time = 3;
+  string text = 4;
+  string p = 5;
+}
+
+message Segment {
+  uint32 num = 1;
+  repeated Token tokens = 2;
+  string text = 3;
+  uint64 start_time = 4;
+  uint64 end_time = 5;
+}
+
+message Transcript {
+  string id = 1;
+  string name = 2;
+  repeated Segment segments = 3;
+}

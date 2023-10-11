@@ -23,12 +23,33 @@
 		4C2324BC2AB0EFAB00AB937A /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324BB2AB0EFAB00AB937A /* AudioRecorder.swift */; };
 		4C2324BE2AB0EFF300AB937A /* RecordingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324BD2AB0EFF300AB937A /* RecordingsView.swift */; };
 		4C2324C02AB8159500AB937A /* AIViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324BF2AB8159500AB937A /* AIViewModel.swift */; };
-		4C2324CE2AB819C700AB937A /* protoflow.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324C62AB819C700AB937A /* protoflow.pb.swift */; };
-		4C2324CF2AB819C700AB937A /* api.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324C72AB819C700AB937A /* api.pb.swift */; };
-		4C2324D12AB819C700AB937A /* python.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324C92AB819C700AB937A /* python.pb.swift */; };
-		4C2324D22AB819C700AB937A /* api.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324CA2AB819C700AB937A /* api.connect.swift */; };
-		4C2324D42AB819C700AB937A /* protoflow.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324CC2AB819C700AB937A /* protoflow.connect.swift */; };
-		4C2324D52AB819C700AB937A /* python.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324CD2AB819C700AB937A /* python.connect.swift */; };
+		4C4056CE2ACE928A00F95A24 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056CD2ACE928A00F95A24 /* SafariWebExtensionHandler.swift */; };
+		4C4056D12ACE928A00F95A24 /* _locales in Resources */ = {isa = PBXBuildFile; fileRef = 4C4056D02ACE928A00F95A24 /* _locales */; };
+		4C4056D32ACE928A00F95A24 /* images in Resources */ = {isa = PBXBuildFile; fileRef = 4C4056D22ACE928A00F95A24 /* images */; };
+		4C4056D52ACE928A00F95A24 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 4C4056D42ACE928A00F95A24 /* manifest.json */; };
+		4C4056D72ACE928A00F95A24 /* background-bak.js in Resources */ = {isa = PBXBuildFile; fileRef = 4C4056D62ACE928A00F95A24 /* background-bak.js */; };
+		4C4056D92ACE928A00F95A24 /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = 4C4056D82ACE928A00F95A24 /* content.js */; };
+		4C4056DB2ACE928A00F95A24 /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = 4C4056DA2ACE928A00F95A24 /* popup.html */; };
+		4C4056DD2ACE928A00F95A24 /* popup.css in Resources */ = {isa = PBXBuildFile; fileRef = 4C4056DC2ACE928A00F95A24 /* popup.css */; };
+		4C4056DF2ACE928A00F95A24 /* popup.js in Resources */ = {isa = PBXBuildFile; fileRef = 4C4056DE2ACE928A00F95A24 /* popup.js */; };
+		4C4056E32ACE928A00F95A24 /* safari.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4C4056CB2ACE928A00F95A24 /* safari.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4C4056F32ACE94F100F95A24 /* protoflow.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056E92ACE94F100F95A24 /* protoflow.pb.swift */; };
+		4C4056F52ACE94F100F95A24 /* chat.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056EC2ACE94F100F95A24 /* chat.connect.swift */; };
+		4C4056F62ACE94F100F95A24 /* chat.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056ED2ACE94F100F95A24 /* chat.pb.swift */; };
+		4C4056F72ACE94F100F95A24 /* content.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056EF2ACE94F100F95A24 /* content.pb.swift */; };
+		4C4056F82ACE94F100F95A24 /* content.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056F02ACE94F100F95A24 /* content.connect.swift */; };
+		4C4056F92ACE94F100F95A24 /* protoflow.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056F12ACE94F100F95A24 /* protoflow.connect.swift */; };
+		4C4056FA2ACE94F100F95A24 /* ai.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056F22ACE94F100F95A24 /* ai.pb.swift */; };
+		4C4056FC2ACE976300F95A24 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 4C4056FB2ACE976300F95A24 /* background.js */; };
+		4CAC7AD62AD4D27D00C6A2F8 /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = 4CAC7AD52AD4D27D00C6A2F8 /* Markdown */; };
+		4CAC7B092AD4D7AC00C6A2F8 /* EditableListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC7B082AD4D7AC00C6A2F8 /* EditableListItem.swift */; };
+		4CAC7B0C2AD72EC700C6A2F8 /* MarkupEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 4CAC7B0B2AD72EC700C6A2F8 /* MarkupEditor */; };
+		4CE6D1622ACCCBE1002D7E2C /* lunabrain_desktopApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE6D1612ACCCBE1002D7E2C /* lunabrain_desktopApp.swift */; };
+		4CE6D1642ACCCBE1002D7E2C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE6D1632ACCCBE1002D7E2C /* ContentView.swift */; };
+		4CE6D1662ACCCBE1002D7E2C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4CE6D1652ACCCBE1002D7E2C /* Assets.xcassets */; };
+		4CE6D1692ACCCBE1002D7E2C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4CE6D1682ACCCBE1002D7E2C /* Preview Assets.xcassets */; };
+		4CE6D16F2ACCCC8C002D7E2C /* AudioRecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE6D16E2ACCCC8C002D7E2C /* AudioRecordingView.swift */; };
+		4CE6D1712ACCCC9D002D7E2C /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE6D1702ACCCC9D002D7E2C /* AudioRecorder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +59,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4C2324962AAE7FE300AB937A;
 			remoteInfo = "lunabrain Watch App";
+		};
+		4C4056E12ACE928A00F95A24 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4C23247F2AAE7FE200AB937A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4C4056CA2ACE928A00F95A24;
+			remoteInfo = safari;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -51,6 +79,17 @@
 				4C2324982AAE7FE300AB937A /* lunabrain Watch App.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C4056E42ACE928A00F95A24 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4C4056E32ACE928A00F95A24 /* safari.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -73,12 +112,34 @@
 		4C2324BB2AB0EFAB00AB937A /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
 		4C2324BD2AB0EFF300AB937A /* RecordingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingsView.swift; sourceTree = "<group>"; };
 		4C2324BF2AB8159500AB937A /* AIViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIViewModel.swift; sourceTree = "<group>"; };
-		4C2324C62AB819C700AB937A /* protoflow.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = protoflow.pb.swift; sourceTree = "<group>"; };
-		4C2324C72AB819C700AB937A /* api.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = api.pb.swift; sourceTree = "<group>"; };
-		4C2324C92AB819C700AB937A /* python.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = python.pb.swift; sourceTree = "<group>"; };
-		4C2324CA2AB819C700AB937A /* api.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = api.connect.swift; sourceTree = "<group>"; };
-		4C2324CC2AB819C700AB937A /* protoflow.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = protoflow.connect.swift; sourceTree = "<group>"; };
-		4C2324CD2AB819C700AB937A /* python.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = python.connect.swift; sourceTree = "<group>"; };
+		4C4056CB2ACE928A00F95A24 /* safari.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = safari.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C4056CD2ACE928A00F95A24 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		4C4056D02ACE928A00F95A24 /* _locales */ = {isa = PBXFileReference; lastKnownFileType = folder; path = _locales; sourceTree = "<group>"; };
+		4C4056D22ACE928A00F95A24 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = images; sourceTree = "<group>"; };
+		4C4056D42ACE928A00F95A24 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = manifest.json; sourceTree = "<group>"; };
+		4C4056D62ACE928A00F95A24 /* background-bak.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "background-bak.js"; sourceTree = "<group>"; };
+		4C4056D82ACE928A00F95A24 /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = content.js; sourceTree = "<group>"; };
+		4C4056DA2ACE928A00F95A24 /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = popup.html; sourceTree = "<group>"; };
+		4C4056DC2ACE928A00F95A24 /* popup.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = popup.css; sourceTree = "<group>"; };
+		4C4056DE2ACE928A00F95A24 /* popup.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = popup.js; sourceTree = "<group>"; };
+		4C4056E02ACE928A00F95A24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4C4056E92ACE94F100F95A24 /* protoflow.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = protoflow.pb.swift; sourceTree = "<group>"; };
+		4C4056EC2ACE94F100F95A24 /* chat.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = chat.connect.swift; sourceTree = "<group>"; };
+		4C4056ED2ACE94F100F95A24 /* chat.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = chat.pb.swift; sourceTree = "<group>"; };
+		4C4056EF2ACE94F100F95A24 /* content.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = content.pb.swift; sourceTree = "<group>"; };
+		4C4056F02ACE94F100F95A24 /* content.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = content.connect.swift; sourceTree = "<group>"; };
+		4C4056F12ACE94F100F95A24 /* protoflow.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = protoflow.connect.swift; sourceTree = "<group>"; };
+		4C4056F22ACE94F100F95A24 /* ai.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ai.pb.swift; sourceTree = "<group>"; };
+		4C4056FB2ACE976300F95A24 /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = background.js; sourceTree = "<group>"; };
+		4CAC7B082AD4D7AC00C6A2F8 /* EditableListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableListItem.swift; sourceTree = "<group>"; };
+		4CE6D15F2ACCCBE1002D7E2C /* lunabrain desktop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "lunabrain desktop.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CE6D1612ACCCBE1002D7E2C /* lunabrain_desktopApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = lunabrain_desktopApp.swift; sourceTree = "<group>"; };
+		4CE6D1632ACCCBE1002D7E2C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		4CE6D1652ACCCBE1002D7E2C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4CE6D1682ACCCBE1002D7E2C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		4CE6D16A2ACCCBE1002D7E2C /* lunabrain_desktop.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = lunabrain_desktop.entitlements; sourceTree = "<group>"; };
+		4CE6D16E2ACCCC8C002D7E2C /* AudioRecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecordingView.swift; sourceTree = "<group>"; };
+		4CE6D1702ACCCC9D002D7E2C /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,10 +148,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C2324B12AAEEB4500AB937A /* Connect in Frameworks */,
+				4CAC7AD62AD4D27D00C6A2F8 /* Markdown in Frameworks */,
+				4CAC7B0C2AD72EC700C6A2F8 /* MarkupEditor in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4C2324942AAE7FE300AB937A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4C4056C82ACE928A00F95A24 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CE6D15C2ACCCBE1002D7E2C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -106,6 +183,8 @@
 				4C2324B52AAFDD7200AB937A /* Storyboard.storyboard */,
 				4C2324892AAE7FE200AB937A /* lunabrain */,
 				4C23249B2AAE7FE300AB937A /* lunabrain Watch App */,
+				4CE6D1602ACCCBE1002D7E2C /* lunabrain desktop */,
+				4C4056CC2ACE928A00F95A24 /* safari */,
 				4C2324882AAE7FE200AB937A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -115,6 +194,8 @@
 			children = (
 				4C2324872AAE7FE200AB937A /* lunabrain.app */,
 				4C2324972AAE7FE300AB937A /* lunabrain Watch App.app */,
+				4CE6D15F2ACCCBE1002D7E2C /* lunabrain desktop.app */,
+				4C4056CB2ACE928A00F95A24 /* safari.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -122,7 +203,7 @@
 		4C2324892AAE7FE200AB937A /* lunabrain */ = {
 			isa = PBXGroup;
 			children = (
-				4C2324C52AB819C700AB937A /* Generated */,
+				4C4056E82ACE94F100F95A24 /* Generated */,
 				4C2324AE2AAEE30400AB937A /* Info.plist */,
 				4C23248A2AAE7FE200AB937A /* lunabrainApp.swift */,
 				4C23248C2AAE7FE200AB937A /* ContentView.swift */,
@@ -132,6 +213,7 @@
 				4C2324BB2AB0EFAB00AB937A /* AudioRecorder.swift */,
 				4C2324BD2AB0EFF300AB937A /* RecordingsView.swift */,
 				4C2324BF2AB8159500AB937A /* AIViewModel.swift */,
+				4CAC7B082AD4D7AC00C6A2F8 /* EditableListItem.swift */,
 			);
 			path = lunabrain;
 			sourceTree = "<group>";
@@ -164,18 +246,83 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		4C2324C52AB819C700AB937A /* Generated */ = {
+		4C4056CC2ACE928A00F95A24 /* safari */ = {
 			isa = PBXGroup;
 			children = (
-				4C2324C62AB819C700AB937A /* protoflow.pb.swift */,
-				4C2324C72AB819C700AB937A /* api.pb.swift */,
-				4C2324C92AB819C700AB937A /* python.pb.swift */,
-				4C2324CA2AB819C700AB937A /* api.connect.swift */,
-				4C2324CC2AB819C700AB937A /* protoflow.connect.swift */,
-				4C2324CD2AB819C700AB937A /* python.connect.swift */,
+				4C4056CD2ACE928A00F95A24 /* SafariWebExtensionHandler.swift */,
+				4C4056E02ACE928A00F95A24 /* Info.plist */,
+				4C4056CF2ACE928A00F95A24 /* Resources */,
+			);
+			path = safari;
+			sourceTree = "<group>";
+		};
+		4C4056CF2ACE928A00F95A24 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4C4056D02ACE928A00F95A24 /* _locales */,
+				4C4056D22ACE928A00F95A24 /* images */,
+				4C4056D42ACE928A00F95A24 /* manifest.json */,
+				4C4056D62ACE928A00F95A24 /* background-bak.js */,
+				4C4056D82ACE928A00F95A24 /* content.js */,
+				4C4056DA2ACE928A00F95A24 /* popup.html */,
+				4C4056DC2ACE928A00F95A24 /* popup.css */,
+				4C4056DE2ACE928A00F95A24 /* popup.js */,
+				4C4056FB2ACE976300F95A24 /* background.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		4C4056E82ACE94F100F95A24 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				4C4056E92ACE94F100F95A24 /* protoflow.pb.swift */,
+				4C4056EB2ACE94F100F95A24 /* chat */,
+				4C4056EE2ACE94F100F95A24 /* content */,
+				4C4056F12ACE94F100F95A24 /* protoflow.connect.swift */,
+				4C4056F22ACE94F100F95A24 /* ai.pb.swift */,
 			);
 			path = Generated;
 			sourceTree = SOURCE_ROOT;
+		};
+		4C4056EB2ACE94F100F95A24 /* chat */ = {
+			isa = PBXGroup;
+			children = (
+				4C4056EC2ACE94F100F95A24 /* chat.connect.swift */,
+				4C4056ED2ACE94F100F95A24 /* chat.pb.swift */,
+			);
+			path = chat;
+			sourceTree = "<group>";
+		};
+		4C4056EE2ACE94F100F95A24 /* content */ = {
+			isa = PBXGroup;
+			children = (
+				4C4056EF2ACE94F100F95A24 /* content.pb.swift */,
+				4C4056F02ACE94F100F95A24 /* content.connect.swift */,
+			);
+			path = content;
+			sourceTree = "<group>";
+		};
+		4CE6D1602ACCCBE1002D7E2C /* lunabrain desktop */ = {
+			isa = PBXGroup;
+			children = (
+				4CE6D1612ACCCBE1002D7E2C /* lunabrain_desktopApp.swift */,
+				4CE6D1632ACCCBE1002D7E2C /* ContentView.swift */,
+				4CE6D1652ACCCBE1002D7E2C /* Assets.xcassets */,
+				4CE6D16A2ACCCBE1002D7E2C /* lunabrain_desktop.entitlements */,
+				4CE6D1672ACCCBE1002D7E2C /* Preview Content */,
+				4CE6D16E2ACCCC8C002D7E2C /* AudioRecordingView.swift */,
+				4CE6D1702ACCCC9D002D7E2C /* AudioRecorder.swift */,
+			);
+			path = "lunabrain desktop";
+			sourceTree = "<group>";
+		};
+		4CE6D1672ACCCBE1002D7E2C /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				4CE6D1682ACCCBE1002D7E2C /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -188,15 +335,19 @@
 				4C2324842AAE7FE200AB937A /* Frameworks */,
 				4C2324852AAE7FE200AB937A /* Resources */,
 				4C2324AA2AAE7FE400AB937A /* Embed Watch Content */,
+				4C4056E42ACE928A00F95A24 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				4C23249A2AAE7FE300AB937A /* PBXTargetDependency */,
+				4C4056E22ACE928A00F95A24 /* PBXTargetDependency */,
 			);
 			name = lunabrain;
 			packageProductDependencies = (
 				4C2324B02AAEEB4500AB937A /* Connect */,
+				4CAC7AD52AD4D27D00C6A2F8 /* Markdown */,
+				4CAC7B0B2AD72EC700C6A2F8 /* MarkupEditor */,
 			);
 			productName = lunabrain;
 			productReference = 4C2324872AAE7FE200AB937A /* lunabrain.app */;
@@ -219,6 +370,42 @@
 			productReference = 4C2324972AAE7FE300AB937A /* lunabrain Watch App.app */;
 			productType = "com.apple.product-type.application";
 		};
+		4C4056CA2ACE928A00F95A24 /* safari */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C4056E72ACE928A00F95A24 /* Build configuration list for PBXNativeTarget "safari" */;
+			buildPhases = (
+				4C4056C72ACE928A00F95A24 /* Sources */,
+				4C4056C82ACE928A00F95A24 /* Frameworks */,
+				4C4056C92ACE928A00F95A24 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = safari;
+			productName = safari;
+			productReference = 4C4056CB2ACE928A00F95A24 /* safari.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		4CE6D15E2ACCCBE1002D7E2C /* lunabrain desktop */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4CE6D16D2ACCCBE1002D7E2C /* Build configuration list for PBXNativeTarget "lunabrain desktop" */;
+			buildPhases = (
+				4CE6D15B2ACCCBE1002D7E2C /* Sources */,
+				4CE6D15C2ACCCBE1002D7E2C /* Frameworks */,
+				4CE6D15D2ACCCBE1002D7E2C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "lunabrain desktop";
+			packageProductDependencies = (
+			);
+			productName = "lunabrain desktop";
+			productReference = 4CE6D15F2ACCCBE1002D7E2C /* lunabrain desktop.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -235,6 +422,12 @@
 					4C2324962AAE7FE300AB937A = {
 						CreatedOnToolsVersion = 14.3.1;
 					};
+					4C4056CA2ACE928A00F95A24 = {
+						CreatedOnToolsVersion = 14.3.1;
+					};
+					4CE6D15E2ACCCBE1002D7E2C = {
+						CreatedOnToolsVersion = 14.3.1;
+					};
 				};
 			};
 			buildConfigurationList = 4C2324822AAE7FE200AB937A /* Build configuration list for PBXProject "lunabrain" */;
@@ -248,6 +441,8 @@
 			mainGroup = 4C23247E2AAE7FE200AB937A;
 			packageReferences = (
 				4C2324AF2AAEEB4500AB937A /* XCRemoteSwiftPackageReference "connect-swift" */,
+				4CAC7AD42AD4D27D00C6A2F8 /* XCRemoteSwiftPackageReference "swift-markdown" */,
+				4CAC7B0A2AD72EC700C6A2F8 /* XCRemoteSwiftPackageReference "MarkupEditor" */,
 			);
 			productRefGroup = 4C2324882AAE7FE200AB937A /* Products */;
 			projectDirPath = "";
@@ -255,6 +450,8 @@
 			targets = (
 				4C2324862AAE7FE200AB937A /* lunabrain */,
 				4C2324962AAE7FE300AB937A /* lunabrain Watch App */,
+				4CE6D15E2ACCCBE1002D7E2C /* lunabrain desktop */,
+				4C4056CA2ACE928A00F95A24 /* safari */,
 			);
 		};
 /* End PBXProject section */
@@ -279,6 +476,31 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4C4056C92ACE928A00F95A24 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C4056D72ACE928A00F95A24 /* background-bak.js in Resources */,
+				4C4056DD2ACE928A00F95A24 /* popup.css in Resources */,
+				4C4056DB2ACE928A00F95A24 /* popup.html in Resources */,
+				4C4056D32ACE928A00F95A24 /* images in Resources */,
+				4C4056FC2ACE976300F95A24 /* background.js in Resources */,
+				4C4056D52ACE928A00F95A24 /* manifest.json in Resources */,
+				4C4056D12ACE928A00F95A24 /* _locales in Resources */,
+				4C4056D92ACE928A00F95A24 /* content.js in Resources */,
+				4C4056DF2ACE928A00F95A24 /* popup.js in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CE6D15D2ACCCBE1002D7E2C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CE6D1692ACCCBE1002D7E2C /* Preview Assets.xcassets in Resources */,
+				4CE6D1662ACCCBE1002D7E2C /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -286,18 +508,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C2324D52AB819C700AB937A /* python.connect.swift in Sources */,
-				4C2324D22AB819C700AB937A /* api.connect.swift in Sources */,
-				4C2324CE2AB819C700AB937A /* protoflow.pb.swift in Sources */,
-				4C2324D12AB819C700AB937A /* python.pb.swift in Sources */,
-				4C2324CF2AB819C700AB937A /* api.pb.swift in Sources */,
+				4C4056F32ACE94F100F95A24 /* protoflow.pb.swift in Sources */,
 				4C2324BE2AB0EFF300AB937A /* RecordingsView.swift in Sources */,
+				4C4056F62ACE94F100F95A24 /* chat.pb.swift in Sources */,
 				4C23248D2AAE7FE200AB937A /* ContentView.swift in Sources */,
-				4C2324D42AB819C700AB937A /* protoflow.connect.swift in Sources */,
+				4C4056FA2ACE94F100F95A24 /* ai.pb.swift in Sources */,
+				4CAC7B092AD4D7AC00C6A2F8 /* EditableListItem.swift in Sources */,
 				4C2324BA2AB0DFE500AB937A /* TranscriptionViewModel.swift in Sources */,
+				4C4056F52ACE94F100F95A24 /* chat.connect.swift in Sources */,
 				4C2324C02AB8159500AB937A /* AIViewModel.swift in Sources */,
+				4C4056F82ACE94F100F95A24 /* content.connect.swift in Sources */,
+				4C4056F92ACE94F100F95A24 /* protoflow.connect.swift in Sources */,
 				4C2324BC2AB0EFAB00AB937A /* AudioRecorder.swift in Sources */,
 				4C23248B2AAE7FE200AB937A /* lunabrainApp.swift in Sources */,
+				4C4056F72ACE94F100F95A24 /* content.pb.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,6 +535,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4C4056C72ACE928A00F95A24 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C4056CE2ACE928A00F95A24 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CE6D15B2ACCCBE1002D7E2C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4CE6D1642ACCCBE1002D7E2C /* ContentView.swift in Sources */,
+				4CE6D1622ACCCBE1002D7E2C /* lunabrain_desktopApp.swift in Sources */,
+				4CE6D1712ACCCC9D002D7E2C /* AudioRecorder.swift in Sources */,
+				4CE6D16F2ACCCC8C002D7E2C /* AudioRecordingView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -318,6 +561,11 @@
 			isa = PBXTargetDependency;
 			target = 4C2324962AAE7FE300AB937A /* lunabrain Watch App */;
 			targetProxy = 4C2324992AAE7FE300AB937A /* PBXContainerItemProxy */;
+		};
+		4C4056E22ACE928A00F95A24 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4C4056CA2ACE928A00F95A24 /* safari */;
+			targetProxy = 4C4056E12ACE928A00F95A24 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -565,6 +813,127 @@
 			};
 			name = Release;
 		};
+		4C4056E52ACE928A00F95A24 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = GXTMGDAFNK;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = safari/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = safari;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.breadchris.lunabrain.safari;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4C4056E62ACE928A00F95A24 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = GXTMGDAFNK;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = safari/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = safari;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.breadchris.lunabrain.safari;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4CE6D16B2ACCCBE1002D7E2C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "lunabrain desktop/lunabrain_desktop.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"lunabrain desktop/Preview Content\"";
+				DEVELOPMENT_TEAM = GXTMGDAFNK;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.breadchris.lunabrain-desktop";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		4CE6D16C2ACCCBE1002D7E2C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "lunabrain desktop/lunabrain_desktop.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"lunabrain desktop/Preview Content\"";
+				DEVELOPMENT_TEAM = GXTMGDAFNK;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.breadchris.lunabrain-desktop";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -595,12 +964,46 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		4C4056E72ACE928A00F95A24 /* Build configuration list for PBXNativeTarget "safari" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C4056E52ACE928A00F95A24 /* Debug */,
+				4C4056E62ACE928A00F95A24 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4CE6D16D2ACCCBE1002D7E2C /* Build configuration list for PBXNativeTarget "lunabrain desktop" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4CE6D16B2ACCCBE1002D7E2C /* Debug */,
+				4CE6D16C2ACCCBE1002D7E2C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
 		4C2324AF2AAEEB4500AB937A /* XCRemoteSwiftPackageReference "connect-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/bufbuild/connect-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.6.0;
+			};
+		};
+		4CAC7AD42AD4D27D00C6A2F8 /* XCRemoteSwiftPackageReference "swift-markdown" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-markdown.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
+		4CAC7B0A2AD72EC700C6A2F8 /* XCRemoteSwiftPackageReference "MarkupEditor" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stevengharris/MarkupEditor";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.6.0;
@@ -613,6 +1016,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4C2324AF2AAEEB4500AB937A /* XCRemoteSwiftPackageReference "connect-swift" */;
 			productName = Connect;
+		};
+		4CAC7AD52AD4D27D00C6A2F8 /* Markdown */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CAC7AD42AD4D27D00C6A2F8 /* XCRemoteSwiftPackageReference "swift-markdown" */;
+			productName = Markdown;
+		};
+		4CAC7B0B2AD72EC700C6A2F8 /* MarkupEditor */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CAC7B0A2AD72EC700C6A2F8 /* XCRemoteSwiftPackageReference "MarkupEditor" */;
+			productName = MarkupEditor;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

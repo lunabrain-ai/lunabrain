@@ -22,18 +22,18 @@ class AIViewModel: ObservableObject {
     }
     
     func send(text: String) async -> String {
-        let req = Protoflow_AnalyzeConversationRequest.with { $0.text = text }
-        let res = await self.client.analyzeConversation(request: req, headers: [:])
-        if let err = res.error {
-            print("error analyzing conversation \(err)")
-            return "none"
-        }
-        if (res.message?.phoneNumbers.count)! > 0 {
-            self.phoneNumber = res.message?.phoneNumbers[0]
-        }
-        self.text = res.message?.summary
-        print("ai summary: \(res.message)")
-        return res.message?.summary ?? "none"
+//        let req = Protoflow_AnalyzeConversationRequest.with { $0.text = text }
+//        let res = await self.client.analyzeConversation(request: req, headers: [:])
+//        if let err = res.error {
+//            print("error analyzing conversation \(err)")
+//            return "none"
+//        }
+//        if (res.message?.phoneNumbers.count)! > 0 {
+//            self.phoneNumber = res.message?.phoneNumbers[0]
+//        }
+//        self.text = res.message?.summary
+//        print("ai summary: \(res.message)")
+        return "none"
     }
     
 //    func send(text: String) async {

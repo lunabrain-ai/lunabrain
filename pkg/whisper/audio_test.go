@@ -1,12 +1,12 @@
 package whisper
 
 import (
-	"github.com/lunabrain-ai/lunabrain/pkg/store/bucket"
+	bucket2 "github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"testing"
 )
 
 func TestWAVAudioSplit(t *testing.T) {
-	fileStore, err := bucket.New(bucket.Config{
+	fileStore, err := bucket2.New(bucket2.Config{
 		Path: "/tmp/lunabrain",
 	})
 	if err != nil {
@@ -22,7 +22,7 @@ func TestWAVAudioSplit(t *testing.T) {
 }
 
 func TestMP3AudioSplit(t *testing.T) {
-	fileStore, err := bucket.New(bucket.Config{
+	fileStore, err := bucket2.New(bucket2.Config{
 		Path: "/tmp/lunabrain",
 	})
 	if err != nil {

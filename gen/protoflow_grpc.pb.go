@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -25,7 +26,7 @@ type ProtoflowServiceClient interface {
 	DownloadYouTubeVideo(ctx context.Context, in *YouTubeVideo, opts ...grpc.CallOption) (*YouTubeVideoResponse, error)
 	GetSessions(ctx context.Context, in *GetSessionsRequest, opts ...grpc.CallOption) (*GetSessionsResponse, error)
 	GetSession(ctx context.Context, in *GetSessionRequest, opts ...grpc.CallOption) (*GetSessionResponse, error)
-	DeleteSession(ctx context.Context, in *DeleteSessionRequest, opts ...grpc.CallOption) (*Empty, error)
+	DeleteSession(ctx context.Context, in *DeleteSessionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetPrompts(ctx context.Context, in *GetPromptsRequest, opts ...grpc.CallOption) (*GetPromptsResponse, error)
 	NewPrompt(ctx context.Context, in *Prompt, opts ...grpc.CallOption) (*Prompt, error)
 	UploadContent(ctx context.Context, in *UploadContentRequest, opts ...grpc.CallOption) (ProtoflowService_UploadContentClient, error)
@@ -34,9 +35,6 @@ type ProtoflowServiceClient interface {
 	ConvertFile(ctx context.Context, in *ConvertFileRequest, opts ...grpc.CallOption) (*FilePath, error)
 	GenerateImages(ctx context.Context, in *GenerateImagesRequest, opts ...grpc.CallOption) (*GenerateImagesResponse, error)
 	AnalyzeConversation(ctx context.Context, in *AnalyzeConversationRequest, opts ...grpc.CallOption) (*AnalyzeConversationResponse, error)
-	Register(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
-	Login(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
-	Logout(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type protoflowServiceClient struct {
@@ -74,8 +72,8 @@ func (c *protoflowServiceClient) GetSession(ctx context.Context, in *GetSessionR
 	return out, nil
 }
 
-func (c *protoflowServiceClient) DeleteSession(ctx context.Context, in *DeleteSessionRequest, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *protoflowServiceClient) DeleteSession(ctx context.Context, in *DeleteSessionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/DeleteSession", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -224,33 +222,6 @@ func (c *protoflowServiceClient) AnalyzeConversation(ctx context.Context, in *An
 	return out, nil
 }
 
-func (c *protoflowServiceClient) Register(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
-	out := new(User)
-	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/Register", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *protoflowServiceClient) Login(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
-	out := new(User)
-	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/Login", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *protoflowServiceClient) Logout(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
-	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/Logout", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ProtoflowServiceServer is the server API for ProtoflowService service.
 // All implementations should embed UnimplementedProtoflowServiceServer
 // for forward compatibility
@@ -258,7 +229,7 @@ type ProtoflowServiceServer interface {
 	DownloadYouTubeVideo(context.Context, *YouTubeVideo) (*YouTubeVideoResponse, error)
 	GetSessions(context.Context, *GetSessionsRequest) (*GetSessionsResponse, error)
 	GetSession(context.Context, *GetSessionRequest) (*GetSessionResponse, error)
-	DeleteSession(context.Context, *DeleteSessionRequest) (*Empty, error)
+	DeleteSession(context.Context, *DeleteSessionRequest) (*emptypb.Empty, error)
 	GetPrompts(context.Context, *GetPromptsRequest) (*GetPromptsResponse, error)
 	NewPrompt(context.Context, *Prompt) (*Prompt, error)
 	UploadContent(*UploadContentRequest, ProtoflowService_UploadContentServer) error
@@ -267,9 +238,6 @@ type ProtoflowServiceServer interface {
 	ConvertFile(context.Context, *ConvertFileRequest) (*FilePath, error)
 	GenerateImages(context.Context, *GenerateImagesRequest) (*GenerateImagesResponse, error)
 	AnalyzeConversation(context.Context, *AnalyzeConversationRequest) (*AnalyzeConversationResponse, error)
-	Register(context.Context, *User) (*User, error)
-	Login(context.Context, *User) (*User, error)
-	Logout(context.Context, *Empty) (*Empty, error)
 }
 
 // UnimplementedProtoflowServiceServer should be embedded to have forward compatible implementations.
@@ -285,7 +253,7 @@ func (UnimplementedProtoflowServiceServer) GetSessions(context.Context, *GetSess
 func (UnimplementedProtoflowServiceServer) GetSession(context.Context, *GetSessionRequest) (*GetSessionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSession not implemented")
 }
-func (UnimplementedProtoflowServiceServer) DeleteSession(context.Context, *DeleteSessionRequest) (*Empty, error) {
+func (UnimplementedProtoflowServiceServer) DeleteSession(context.Context, *DeleteSessionRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSession not implemented")
 }
 func (UnimplementedProtoflowServiceServer) GetPrompts(context.Context, *GetPromptsRequest) (*GetPromptsResponse, error) {
@@ -311,15 +279,6 @@ func (UnimplementedProtoflowServiceServer) GenerateImages(context.Context, *Gene
 }
 func (UnimplementedProtoflowServiceServer) AnalyzeConversation(context.Context, *AnalyzeConversationRequest) (*AnalyzeConversationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AnalyzeConversation not implemented")
-}
-func (UnimplementedProtoflowServiceServer) Register(context.Context, *User) (*User, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
-}
-func (UnimplementedProtoflowServiceServer) Login(context.Context, *User) (*User, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
-}
-func (UnimplementedProtoflowServiceServer) Logout(context.Context, *Empty) (*Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
 }
 
 // UnsafeProtoflowServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -558,60 +517,6 @@ func _ProtoflowService_AnalyzeConversation_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProtoflowService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(User)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProtoflowServiceServer).Register(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/protoflow.ProtoflowService/Register",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProtoflowServiceServer).Register(ctx, req.(*User))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProtoflowService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(User)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProtoflowServiceServer).Login(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/protoflow.ProtoflowService/Login",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProtoflowServiceServer).Login(ctx, req.(*User))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProtoflowService_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProtoflowServiceServer).Logout(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/protoflow.ProtoflowService/Logout",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProtoflowServiceServer).Logout(ctx, req.(*Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // ProtoflowService_ServiceDesc is the grpc.ServiceDesc for ProtoflowService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -654,18 +559,6 @@ var ProtoflowService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AnalyzeConversation",
 			Handler:    _ProtoflowService_AnalyzeConversation_Handler,
-		},
-		{
-			MethodName: "Register",
-			Handler:    _ProtoflowService_Register_Handler,
-		},
-		{
-			MethodName: "Login",
-			Handler:    _ProtoflowService_Login_Handler,
-		},
-		{
-			MethodName: "Logout",
-			Handler:    _ProtoflowService_Logout_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

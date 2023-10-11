@@ -1,7 +1,6 @@
 package normalize
 
 import (
-	"github.com/rs/zerolog/log"
 	"go.uber.org/config"
 )
 
@@ -13,15 +12,13 @@ type Config struct {
 	URL URLConfig `yaml:"url"`
 }
 
-func NewConfig(provider config.Provider) (config Config, err error) {
+func NewConfig(provider config.Provider) (Config, error) {
 	value := provider.Get("normalize")
 
-	err = value.Populate(&config)
+	var cfg Config
+	err := value.Populate(&cfg)
 	if err != nil {
-		log.Error().
-			Err(err).
-			Msg("unable populate normalize config")
-		return
+		return Config{}, err
 	}
-	return
+	return cfg, nil
 }

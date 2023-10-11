@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package user;
+
+import "google/protobuf/empty.proto";
+
+service UserService {
+  rpc Register(User) returns (User);
+  rpc Login(User) returns (User);
+  rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc UpdateConfig(Config) returns (google.protobuf.Empty);
+
+  rpc CreateGroupInvite(GroupID) returns (GroupInvite);
+  rpc JoinGroup(GroupInvite) returns (Group);
+  rpc GroupInfo(GroupInfoRequest) returns (Group);
+  rpc CreateGroup(Group) returns (Group);
+  rpc GetGroups(google.protobuf.Empty) returns (Groups);
+  rpc DeleteGroup(Group) returns (google.protobuf.Empty);
+  rpc Share(ShareRequest) returns (google.protobuf.Empty);
+}
+
+message GroupInfoRequest {
+  string secret = 1;
+}
+
+message GroupID {
+  string group_id = 1;
+}
+
+message ShareRequest {
+  string content_id = 1;
+  string group_id = 2;
+}
+
+message GroupInvite {
+  string secret = 1;
+}
+
+message Groups {
+  repeated Group groups = 1;
+}
+
+message AnalyzeConversationRequest {
+  string text = 1;
+}
+
+message User {
+  string email = 1;
+  string password = 2;
+  Config config = 3;
+}
+
+message Group {
+  string id = 1;
+  string name = 2;
+  repeated string users = 3;
+}
+
+message Config {
+  repeated string domain_whitelist = 1;
+}
+
+message LoginResponse {
+}

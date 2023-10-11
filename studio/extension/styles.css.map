@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../src/extension/styles.css"],
-  "sourcesContent": ["#floating-panel {\n    position: fixed;\n    bottom: 10px;\n    right: 10px;\n    background-color: rgba(0, 0, 0, 0.7);\n    color: white;\n    padding: 10px;\n    border-radius: 5px;\n    z-index: 9999;\n}\n"],
-  "mappings": ";AAAA;AACI;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AAAA;",
-  "names": []
-}

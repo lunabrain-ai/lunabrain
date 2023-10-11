@@ -21,7 +21,6 @@ venv3.*/
 
 
 # Distribution / packaging
-dist/
 *.egg-info/
 *.egg
 *.egg-info/

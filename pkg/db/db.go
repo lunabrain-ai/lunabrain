@@ -1,19 +1,17 @@
 package db
 
 import (
-	"encoding/json"
 	"github.com/alexferrari88/gohn/pkg/gohn"
 	"github.com/google/uuid"
 	"github.com/google/wire"
-	genapi "github.com/lunabrain-ai/lunabrain/gen"
-	model2 "github.com/lunabrain-ai/lunabrain/pkg/db/model"
-	normalcontent "github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize/content"
-	transformcontent "github.com/lunabrain-ai/lunabrain/pkg/pipeline/transform/content"
+	"github.com/lunabrain-ai/lunabrain/gen/content"
+	"github.com/lunabrain-ai/lunabrain/gen/user"
+	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog/log"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"log/slog"
 )
 
 var (
@@ -22,104 +20,90 @@ var (
 		NewGormDB,
 		New,
 		NewSession,
-		wire.Bind(new(Store), new(*dbStore)),
 	)
 )
 
-type Store interface {
-	SaveContent(contentType genapi.ContentType, data string, metadata json.RawMessage) (uuid.UUID, error)
-	SaveNormalizedContent(contentID uuid.UUID, normalContent []*normalcontent.Content) ([]uuid.UUID, error)
-	SaveTransformedContent(normalContentID uuid.UUID, transformedContent []*transformcontent.Content) ([]uuid.UUID, error)
-	SaveLocatedContent(contentID uuid.UUID, data string) (uuid.UUID, error)
-	GetAllContent(page, limit int) ([]model2.Content, *Pagination, error)
-	GetContentByID(contentID uuid.UUID) (*model2.Content, error)
-	GetNormalContentByData(data string) ([]model2.NormalizedContent, error)
-	StoreDiscordMessages(msgs []*model2.DiscordMessage) error
-	StoreDiscordTranscript(chanID, startMsg, endMsg, transcript string) error
-	GetDiscordMessages(chanID string) ([]*model2.DiscordMessage, error)
-	GetLatestDiscordTranscript() (*model2.DiscordTranscript, error)
-	GetLatestDiscordMessage() (*model2.DiscordMessage, error)
-	SaveHNStory(ID int, url string, position *int, contentID uuid.UUID, story *gohn.Item, comments gohn.ItemsIndex) (*model2.HNStory, error)
-	GetHNStory(ID int) (*model2.HNStory, error)
-	GetTopHNStories() ([]model2.HNStory, error)
-	AddContentToIndex(contentID uuid.UUID, indexID uuid.UUID) error
-}
-
-type dbStore struct {
+type Store struct {
 	db *gorm.DB
 }
 
-var _ Store = (*dbStore)(nil)
-
-func New(db *gorm.DB) (*dbStore, error) {
+func New(db *gorm.DB) (*Store, error) {
 	// TODO breadchris migration should be done via a migration tool, no automigrate
-	log.Info().Msg("migrating database")
+	slog.Info("migrating database")
 	err := db.AutoMigrate(
-		&model2.Content{},
-		&model2.NormalizedContent{},
-		&model2.TransformedContent{},
-		&model2.LocatedContent{},
-		&model2.Index{},
-		&model2.DiscordChannel{},
-		&model2.DiscordMessage{},
-		&model2.DiscordTranscript{},
-		&model2.HNStory{},
+		&model.Content{},
+		&model.DiscordChannel{},
+		&model.DiscordMessage{},
+		&model.DiscordTranscript{},
+		&model.HNStory{},
+		&model.GroupUser{},
+		&model.GroupInvite{},
+		&model.User{},
+		&model.Group{},
+		&model.Vote{},
+		&model.Tag{},
 	)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not migrate database: %v", err)
 	}
-	return &dbStore{db: db}, nil
+	return &Store{db: db}, nil
 }
 
-func (s *dbStore) GetAllContent(page, limit int) ([]model2.Content, *Pagination, error) {
-	var content []model2.Content
+func (s *Store) GetTags() ([]string, error) {
+	var tags []model.Tag
+	res := s.db.Find(&tags)
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not get tags")
+	}
+	var tagNames []string
+	for _, tag := range tags {
+		tagNames = append(tagNames, tag.Name)
+	}
+	return tagNames, nil
+}
+
+func (s *Store) GetGroupContent(groupID string) ([]model.Content, error) {
+	g := &model.Group{
+		Base: model.Base{
+			ID: uuid.MustParse(groupID),
+		},
+	}
+	res := s.db.Preload("Content").Preload("Content.RelatedContent").First(g)
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not get content")
+	}
+	return g.Content, nil
+}
+
+func (s *Store) GetAllContent(page, limit int) ([]model.Content, *Pagination, error) {
+	// TODO breadchris only get content for user
+	var c []model.Content
 	pagination := Pagination{
 		Limit: limit,
 		Page:  page,
 	}
 	res := s.db.Order("created_at desc").
-		Scopes(paginate(content, &pagination, s.db)).
+		Where("root = ?", true).
+		Scopes(paginate(c, &pagination, s.db)).
 		Preload(clause.Associations).
-		Find(&content)
+		Find(&c)
 	if res.Error != nil {
 		return nil, nil, errors.Wrapf(res.Error, "could not get content")
 	}
-
-	// TODO breadchris this seems like a problem with gorm and preloading associations
-	for i, c := range content {
-		for j, nc := range c.NormalizedContent {
-			var transformedContent []model2.TransformedContent
-			res = s.db.Find(&transformedContent, "normalized_content_id = ?", nc.ID)
-			if res.Error != nil {
-				return nil, nil, errors.Wrapf(res.Error, "could not get transformed content")
-			}
-			content[i].NormalizedContent[j].TransformedContent = transformedContent
-		}
-	}
-	return content, &pagination, nil
+	return c, &pagination, nil
 }
 
-func (s *dbStore) GetContentByID(contentID uuid.UUID) (*model2.Content, error) {
-	var content model2.Content
+func (s *Store) GetContentByID(contentID uuid.UUID) (*model.Content, error) {
+	var content model.Content
 	res := s.db.Where("id = ?", contentID).Preload(clause.Associations).First(&content)
 	if res.Error != nil {
 		return nil, errors.Wrapf(res.Error, "could not get content")
 	}
-
-	// TODO breadchris this seems like a problem with gorm and preloading associations
-	for j, nc := range content.NormalizedContent {
-		var transformedContent []model2.TransformedContent
-		res = s.db.Find(&transformedContent, "normalized_content_id = ?", nc.ID)
-		if res.Error != nil {
-			return nil, errors.Wrapf(res.Error, "could not get transformed content")
-		}
-		content.NormalizedContent[j].TransformedContent = transformedContent
-	}
 	return &content, nil
 }
 
-func (s *dbStore) SaveHNStory(ID int, url string, position *int, contentID uuid.UUID, story *gohn.Item, comments gohn.ItemsIndex) (*model2.HNStory, error) {
-	hnStory := &model2.HNStory{
+func (s *Store) SaveHNStory(ID int, url string, position *int, contentID uuid.UUID, story *gohn.Item, comments gohn.ItemsIndex) (*model.HNStory, error) {
+	hnStory := &model.HNStory{
 		ID:        ID,
 		URL:       url,
 		ContentID: contentID,
@@ -135,7 +119,7 @@ func (s *dbStore) SaveHNStory(ID int, url string, position *int, contentID uuid.
 		hnStory.Position = *position
 	}
 
-	var existingStory model2.HNStory
+	var existingStory model.HNStory
 	res := s.db.First(&existingStory, ID)
 	if res.Error != nil {
 		if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
@@ -149,7 +133,7 @@ func (s *dbStore) SaveHNStory(ID int, url string, position *int, contentID uuid.
 	}
 
 	if position != nil {
-		res = s.db.Model(&model2.HNStory{}).Where("position = ?", position).Update("position", nil)
+		res = s.db.Model(&model.HNStory{}).Where("position = ?", position).Update("position", nil)
 		if res.Error != nil && !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 			return nil, errors.Wrapf(res.Error, "could not update hn story position")
 		}
@@ -162,8 +146,8 @@ func (s *dbStore) SaveHNStory(ID int, url string, position *int, contentID uuid.
 	return hnStory, nil
 }
 
-func (s *dbStore) GetHNStory(ID int) (*model2.HNStory, error) {
-	var hnStory model2.HNStory
+func (s *Store) GetHNStory(ID int) (*model.HNStory, error) {
+	var hnStory model.HNStory
 	res := s.db.Where("id = ?", ID).First(&hnStory)
 	if res.Error != nil {
 		return nil, errors.Wrapf(res.Error, "could not get hn story")
@@ -171,8 +155,8 @@ func (s *dbStore) GetHNStory(ID int) (*model2.HNStory, error) {
 	return &hnStory, nil
 }
 
-func (s *dbStore) GetTopHNStories() ([]model2.HNStory, error) {
-	var hnStories []model2.HNStory
+func (s *Store) GetTopHNStories() ([]model.HNStory, error) {
+	var hnStories []model.HNStory
 	res := s.db.Where("position IS NOT NULL").Order("position asc").Limit(30).Preload("Content").Preload("Content.NormalizedContent").Preload("Content.NormalizedContent.TransformedContent").Find(&hnStories)
 	if res.Error != nil {
 		return nil, errors.Wrapf(res.Error, "could not get hn stories")
@@ -180,16 +164,16 @@ func (s *dbStore) GetTopHNStories() ([]model2.HNStory, error) {
 	return hnStories, nil
 }
 
-func (s *dbStore) AddContentToIndex(contentID uuid.UUID, indexID uuid.UUID) error {
-	res := s.db.Model(&model2.Content{}).Where("id = ?", contentID).Update("index_id", indexID)
+func (s *Store) AddContentToIndex(contentID uuid.UUID, indexID uuid.UUID) error {
+	res := s.db.Model(&model.Content{}).Where("id = ?", contentID).Update("index_id", indexID)
 	if res.Error != nil {
 		return errors.Wrapf(res.Error, "could not add content to index")
 	}
 	return nil
 }
 
-func (s *dbStore) GetDiscordMessages(chanID string) ([]*model2.DiscordMessage, error) {
-	var discordMessages []*model2.DiscordMessage
+func (s *Store) GetDiscordMessages(chanID string) ([]*model.DiscordMessage, error) {
+	var discordMessages []*model.DiscordMessage
 	res := s.db.Where("discord_channel_id = ?", chanID).Order("created_at DESC").Find(&discordMessages)
 	if res.Error != nil {
 		return nil, errors.Wrapf(res.Error, "could not get discord messages")
@@ -197,8 +181,8 @@ func (s *dbStore) GetDiscordMessages(chanID string) ([]*model2.DiscordMessage, e
 	return discordMessages, nil
 }
 
-func (s *dbStore) GetLatestDiscordMessage() (*model2.DiscordMessage, error) {
-	var discordMessage model2.DiscordMessage
+func (s *Store) GetLatestDiscordMessage() (*model.DiscordMessage, error) {
+	var discordMessage model.DiscordMessage
 	res := s.db.Model(&discordMessage).Order("created_at DESC").First(&discordMessage)
 	if res.Error != nil {
 		return nil, errors.Wrapf(res.Error, "could not get latest discord message")
@@ -206,8 +190,8 @@ func (s *dbStore) GetLatestDiscordMessage() (*model2.DiscordMessage, error) {
 	return &discordMessage, nil
 }
 
-func (s *dbStore) GetLatestDiscordTranscript() (*model2.DiscordTranscript, error) {
-	var discordTranscript model2.DiscordTranscript
+func (s *Store) GetLatestDiscordTranscript() (*model.DiscordTranscript, error) {
+	var discordTranscript model.DiscordTranscript
 	res := s.db.Model(&discordTranscript).Order("created_at DESC").First(&discordTranscript)
 	if res.Error != nil {
 		return nil, errors.Wrapf(res.Error, "could not get latest discord transcript")
@@ -215,8 +199,8 @@ func (s *dbStore) GetLatestDiscordTranscript() (*model2.DiscordTranscript, error
 	return &discordTranscript, nil
 }
 
-func (s *dbStore) StoreDiscordTranscript(chanID, startMsg, endMsg, transcript string) error {
-	res := s.db.Create(&model2.DiscordTranscript{
+func (s *Store) StoreDiscordTranscript(chanID, startMsg, endMsg, transcript string) error {
+	res := s.db.Create(&model.DiscordTranscript{
 		DiscordChannelID: chanID,
 		Transcript:       transcript,
 		StartMessageID:   startMsg,
@@ -228,85 +212,210 @@ func (s *dbStore) StoreDiscordTranscript(chanID, startMsg, endMsg, transcript st
 	return nil
 }
 
-func (s *dbStore) StoreDiscordMessages(msgs []*model2.DiscordMessage) error {
+func (s *Store) StoreDiscordMessages(msgs []*model.DiscordMessage) error {
 	for _, msg := range msgs {
 		res := s.db.Create(msg)
 		if res.Error != nil {
 			//return errors.Wrapf(res.Error, "could not save discord message: %v", msg.ID)
-			log.Warn().Str("msg_id", msg.MessageID).Err(res.Error).Msg("could not save discord message")
+			slog.Warn("could not save discord message", "error", res.Error, "msg_id", msg.MessageID)
 			continue
 		}
 	}
 	return nil
 }
 
-func (s *dbStore) GetNormalContentByData(data string) ([]model2.NormalizedContent, error) {
-	var content model2.Content
-	resp := s.db.Where("data = ?", data).Preload(clause.Associations).Find(&content)
-	if resp.Error != nil {
-		return nil, errors.Wrapf(resp.Error, "could not get content: %v", resp.Error)
+func (s *Store) ShareContentWithGroup(contentID, groupID string) error {
+	err := s.db.Model(&model.Content{
+		Base: model.Base{
+			ID: uuid.MustParse(contentID),
+		},
+	}).Association("Groups").Append(&model.Group{
+		Base: model.Base{
+			ID: uuid.MustParse(groupID),
+		},
+	})
+	if err != nil {
+		return errors.Wrapf(err, "could not share content with group")
 	}
-	return content.NormalizedContent, nil
+	return nil
 }
 
-func (s *dbStore) SaveContent(contentType genapi.ContentType, data string, metadata json.RawMessage) (uuid.UUID, error) {
-	content := model2.Content{
-		Type:     int32(contentType),
-		Data:     data,
-		Metadata: datatypes.JSON(metadata),
-	}
-	res := s.db.Create(&content)
-
+func (s *Store) DeleteContent(id string) error {
+	res := s.db.Delete(&model.Content{}, "id = ?", id)
 	if res.Error != nil {
-		return uuid.UUID{}, errors.Wrapf(res.Error, "could not save content")
+		return errors.Wrapf(res.Error, "could not delete content")
 	}
-	return content.ID, nil
+	return nil
 }
 
-func (s *dbStore) SaveNormalizedContent(contentID uuid.UUID, normalContent []*normalcontent.Content) ([]uuid.UUID, error) {
-	var normalContentIDs []uuid.UUID
-	for _, c := range normalContent {
-		nc := model2.NormalizedContent{
-			Data:         c.Data,
-			NormalizerID: int32(c.NormalizerID),
-			ContentID:    contentID,
-		}
+func (s *Store) saveOrUpdateContent(data *content.Content, root bool) (*model.Content, error) {
+	var (
+		c     *model.Content
+		found bool
+		tags  []*model.Tag
+	)
 
-		res := s.db.Create(&nc)
-		if res.Error != nil {
-			return nil, errors.Wrapf(res.Error, "could not save normalContent")
+	for _, tagName := range data.Tags {
+		var tag model.Tag
+		if err := s.db.FirstOrCreate(&tag, model.Tag{Name: tagName}).Error; err != nil {
+			return nil, err
 		}
-		normalContentIDs = append(normalContentIDs, nc.ID)
+		tags = append(tags, &tag)
 	}
-	return normalContentIDs, nil
-}
 
-func (s *dbStore) SaveTransformedContent(normalContentID uuid.UUID, transformedContent []*transformcontent.Content) ([]uuid.UUID, error) {
-	var transformedContentIDs []uuid.UUID
-	for _, c := range transformedContent {
-		tc := model2.TransformedContent{
-			Data:                c.Data,
-			TransformerID:       int32(c.TransformerID),
-			NormalizedContentID: normalContentID,
+	switch t := data.Type.(type) {
+	case *content.Content_Data:
+		switch u := t.Data.Type.(type) {
+		case *content.Data_Url:
+			if r := s.db.First(&c, datatypes.JSONQuery("content_data").Equals(u.Url.Url, "data", "url", "url")); r.Error != nil {
+				if !errors.Is(r.Error, gorm.ErrRecordNotFound) {
+					return nil, errors.Wrapf(r.Error, "could not get content")
+				}
+			} else {
+				found = true
+			}
 		}
-
-		res := s.db.Create(&tc)
-		if res.Error != nil {
-			return nil, errors.Wrapf(res.Error, "could not save transformedContent")
+	}
+	var res *gorm.DB
+	if !found {
+		c = &model.Content{
+			ContentData: &model.ContentData{
+				Data: data,
+			},
+			Root:       root,
+			VisitCount: 1,
+			Tags:       tags,
 		}
-		transformedContentIDs = append(transformedContentIDs, tc.ID)
+		res = s.db.Create(c)
+	} else {
+		// TODO breadchris we currently ignore tag updates for this case
+		res = s.db.Model(c).Update("visit_count", gorm.Expr("visit_count + ?", 1))
 	}
-	return transformedContentIDs, nil
-}
-
-func (s *dbStore) SaveLocatedContent(contentID uuid.UUID, data string) (uuid.UUID, error) {
-	locContent := model2.LocatedContent{
-		Data:      &data,
-		ContentID: contentID,
-	}
-	res := s.db.Create(&locContent)
 	if res.Error != nil {
-		return uuid.UUID{}, errors.Wrapf(res.Error, "could not save locContent")
+		return nil, errors.Wrapf(res.Error, "could not save content")
 	}
-	return locContent.ID, nil
+	return c, nil
+}
+
+func (s *Store) UpsertTags(tags []string) error {
+	for _, tag := range tags {
+		res := s.db.Clauses(clause.OnConflict{DoNothing: true}).Create(&model.Tag{
+			Name: tag,
+		})
+		if res.Error != nil {
+			return errors.Wrapf(res.Error, "could not save tag")
+		}
+	}
+	return nil
+}
+
+func (s *Store) SaveContent(data *content.Content, related []*content.Content) (uuid.UUID, error) {
+	c, err := s.saveOrUpdateContent(data, true)
+	if err != nil {
+		return uuid.Nil, errors.Wrapf(err, "unable to save content")
+	}
+	if related != nil {
+		var relMod []*model.Content
+		for _, rel := range related {
+			rm, err := s.saveOrUpdateContent(rel, false)
+			if err != nil {
+				return uuid.UUID{}, errors.Wrapf(err, "unable to save related content")
+			}
+			relMod = append(relMod, rm)
+		}
+		c.RelatedContent = relMod
+		if res := s.db.Save(c); res.Error != nil {
+			return uuid.UUID{}, errors.Wrapf(res.Error, "unable to save related content")
+		}
+	}
+	return c.ID, nil
+}
+
+func (s *Store) ValidGroupInvite(secret string) (uuid.UUID, error) {
+	var groupInvite model.GroupInvite
+	res := s.db.Where("secret = ?", secret).First(&groupInvite)
+	if res.Error != nil {
+		return uuid.UUID{}, errors.Wrapf(res.Error, "could not get group invite")
+	}
+	return groupInvite.GroupID, nil
+}
+
+func (s *Store) GetGroupByID(groupID uuid.UUID) (*model.Group, error) {
+	group := &model.Group{
+		Base: model.Base{
+			ID: groupID,
+		},
+	}
+	res := s.db.Model(group).First(group)
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not get group invite")
+	}
+	return group, nil
+}
+
+func (s *Store) CreateGroupInvite(groupID uuid.UUID) (string, error) {
+	secret := uuid.New().String()
+	res := s.db.Create(&model.GroupInvite{
+		GroupID: groupID,
+		Secret:  secret,
+	})
+	if res.Error != nil {
+		return "", errors.Wrapf(res.Error, "could not create group invite")
+	}
+	return secret, nil
+}
+
+func (s *Store) CreateGroup(creator uuid.UUID, data *user.Group) (uuid.UUID, error) {
+	group := &model.Group{
+		Data: datatypes.JSONType[*user.Group]{
+			Data: data,
+		},
+	}
+	res := s.db.Create(group)
+	if res.Error != nil {
+		return uuid.UUID{}, errors.Wrapf(res.Error, "could not create group")
+	}
+	groupUser := &model.GroupUser{
+		UserID:  creator,
+		GroupID: group.ID,
+		Role:    "admin",
+	}
+	res = s.db.Create(groupUser)
+	if res.Error != nil {
+		return uuid.UUID{}, errors.Wrapf(res.Error, "could not create group user")
+	}
+	return group.ID, nil
+}
+
+func (s *Store) DeleteGroup(groupID uuid.UUID) error {
+	g := &model.Group{
+		Base: model.Base{
+			ID: groupID,
+		},
+	}
+	res := s.db.Delete(g)
+	if res.Error != nil {
+		return errors.Wrapf(res.Error, "could not delete group")
+	}
+	return nil
+}
+
+func (s *Store) GetGroupsForUser(userID uuid.UUID) ([]model.GroupUser, error) {
+	u := &model.User{}
+	res := s.db.Preload("GroupUsers.Group").First(u, userID, "id = ?", userID)
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not get groups for user")
+	}
+	return u.GroupUsers, nil
+}
+
+func (s *Store) JoinGroup(userID, groupID uuid.UUID) error {
+	res := s.db.Create(&model.GroupUser{
+		UserID:  userID,
+		GroupID: groupID,
+	})
+	if res.Error != nil {
+		return errors.Wrapf(res.Error, "could not join group")
+	}
+	return nil
 }

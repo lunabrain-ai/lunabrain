@@ -3,18 +3,16 @@ package collect
 import (
 	"context"
 	"github.com/alexferrari88/gohn/pkg/gohn"
-	genapi "github.com/lunabrain-ai/lunabrain/gen"
+	"github.com/google/uuid"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline"
-	"github.com/rs/zerolog/log"
 	"gorm.io/datatypes"
+	"log/slog"
 )
 
 // HNCollect collects messages from Hacker News
 type HNCollect struct {
-	db       db.Store
-	workflow pipeline.Workflow
+	db *db.Store
 }
 
 type HNStory struct {
@@ -44,24 +42,22 @@ func (c *HNCollect) Collect() error {
 
 		comments, err := hn.Items.FetchAllDescendants(ctx, story, nil)
 		if err != nil {
-			log.Warn().Err(err).Msg("error fetching hn comments")
+			slog.Warn("error fetching hn comments", "error", err)
 			continue
 		}
 
-		log.Info().Str("story", *story.URL).Msg("processing story")
+		slog.Info("processing story", "story", *story.URL)
 
-		id, err := c.workflow.ProcessContent(ctx, &genapi.Content{
-			Data: []byte(*story.URL),
-			Type: genapi.ContentType_URL,
-		})
+		// TODO breadchris process story.URL
 		if err != nil {
-			log.Warn().Err(err).Msg("error processing content")
+			slog.Warn("error processing content", "error", err)
 			continue
 		}
 
-		_, err = c.db.SaveHNStory(*story.ID, *story.URL, &i, id, story, comments)
+		// TODO breadchris set the ID
+		_, err = c.db.SaveHNStory(*story.ID, *story.URL, &i, uuid.New(), story, comments)
 		if err != nil {
-			log.Warn().Err(err).Msg("error storing hn story")
+			slog.Warn("error storing hn story", "error", err)
 			continue
 		}
 	}
@@ -69,11 +65,9 @@ func (c *HNCollect) Collect() error {
 }
 
 func NewHNCollector(
-	db db.Store,
-	workflow pipeline.Workflow,
+	db *db.Store,
 ) *HNCollect {
 	return &HNCollect{
-		db:       db,
-		workflow: workflow,
+		db: db,
 	}
 }

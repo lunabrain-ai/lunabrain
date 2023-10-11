@@ -3,7 +3,8 @@ package discord
 import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/google/wire"
-	"github.com/rs/zerolog/log"
+	"github.com/pkg/errors"
+	"log/slog"
 )
 
 var ProviderSet = wire.NewSet(
@@ -21,7 +22,6 @@ type Session struct {
 
 func NewDiscordSession(config Config) (*discordgo.Session, error) {
 	if !config.Enabled {
-		log.Warn().Msg("discord is not enabled")
 		return nil, nil
 	}
 
@@ -29,8 +29,7 @@ func NewDiscordSession(config Config) (*discordgo.Session, error) {
 
 	s, err := discordgo.New(token)
 	if err != nil {
-		log.Error().Err(err).Msg("failed to create discord session")
-		return nil, err
+		return nil, errors.Wrapf(err, "failed to create discord session")
 	}
 
 	if config.Intent > 0 {
@@ -38,16 +37,16 @@ func NewDiscordSession(config Config) (*discordgo.Session, error) {
 	}
 
 	if t, err := ParseToken(token); err != nil {
-		log.Warn().Err(err).Msg("failed to parse discord token, verify token is correct in config")
+		slog.Warn("failed to parse discord token, verify token is correct in config", "error", err)
 	} else {
-		log.Info().Str("url", GenerateOAuthURL(t)).Msg("OAuth URL")
+		slog.Info("OAuth URL", "url", GenerateOAuthURL(t))
 	}
 	return s, nil
 }
 
 func NewSession(config Config, s *discordgo.Session) (*Session, error) {
 	if !config.Enabled {
-		log.Warn().Msg("discord is not enabled")
+		slog.Warn("discord is not enabled")
 		return nil, nil
 	}
 
@@ -55,8 +54,7 @@ func NewSession(config Config, s *discordgo.Session) (*Session, error) {
 
 	err := s.Open()
 	if err != nil {
-		log.Error().Err(err).Msg("failed to open discord session")
-		return nil, err
+		return nil, errors.Wrapf(err, "failed to open discord session")
 	}
 
 	sess := &Session{
@@ -69,30 +67,19 @@ func NewSession(config Config, s *discordgo.Session) (*Session, error) {
 
 func (s *Session) LogSessionEvents() {
 	s.AddHandler(func(sess *discordgo.Session, m *discordgo.MessageCreate) {
-		log.Info().
-			Interface("event", m).
-			Msg("message create")
+		slog.Info("message create", "content", m.Content)
 		s.Messages.Publish(MessageTopic, m)
 	})
 	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
-		log.Info().
-			Str("username", s.State.User.Username).
-			Str("discriminator", s.State.User.Discriminator).
-			Msg("connected")
+		slog.Info("connected", "username", s.State.User.Username, "discriminator", s.State.User.Discriminator)
 	})
 	s.AddHandler(func(s *discordgo.Session, m *discordgo.MessageEdit) {
-		log.Info().
-			Interface("event", m).
-			Msg("message edit")
+		slog.Info("message edit", "event", m)
 	})
 	s.AddHandler(func(s *discordgo.Session, m *discordgo.MessageDelete) {
-		log.Info().
-			Interface("event", m).
-			Msg("message delete")
+		slog.Info("message delete", "event", m)
 	})
 	s.AddHandler(func(s *discordgo.Session, m *discordgo.PresenceUpdate) {
-		log.Info().
-			Interface("event", m).
-			Msg("presence update")
+		slog.Info("presence update", "event", m)
 	})
 }

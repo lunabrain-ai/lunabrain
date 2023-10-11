@@ -2,6 +2,7 @@ package discord
 
 import (
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -32,7 +33,7 @@ func handleVoice(c chan *discordgo.Packet) {
 			var err error
 			file, err = oggwriter.New(fmt.Sprintf("%d.ogg", p.SSRC), 48000, 2)
 			if err != nil {
-				fmt.Printf("failed to create file %d.ogg, giving up on recording: %v\n", p.SSRC, err)
+				slog.Error("failed to create file", "error", err)
 				return
 			}
 			files[p.SSRC] = file
@@ -41,7 +42,7 @@ func handleVoice(c chan *discordgo.Packet) {
 		rtp := createPionRTPPacket(p)
 		err := file.WriteRTP(rtp)
 		if err != nil {
-			fmt.Printf("failed to write to file %d.ogg, giving up on recording: %v\n", p.SSRC, err)
+			slog.Error("failed to write to file", "error", err)
 		}
 	}
 
@@ -58,7 +59,6 @@ func NewListener(
 ) {
 	s, err := discordgo.New("Bot " + Token)
 	if err != nil {
-		fmt.Println("error creating DiscordService session:", err)
 		return
 	}
 	defer s.Close()
@@ -68,13 +68,13 @@ func NewListener(
 
 	err = s.Open()
 	if err != nil {
-		fmt.Println("error opening connection:", err)
+		slog.Error("error opening connection", "error", err)
 		return
 	}
 
 	v, err := s.ChannelVoiceJoin(GuildID, ChannelID, true, false)
 	if err != nil {
-		fmt.Println("failed to join voice channel:", err)
+		slog.Error("error joining voice channel", "error", err)
 		return
 	}
 

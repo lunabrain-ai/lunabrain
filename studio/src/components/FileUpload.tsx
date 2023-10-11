@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState } from 'react';
-import {projectService} from "@/lib/api";
+import {projectService} from "@/service";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {Button} from "@fluentui/react-components";
 import toast from "react-hot-toast";
@@ -60,8 +60,8 @@ export const FileUpload: React.FC = () => {
                     setLoading(true);
                     const res = projectService.uploadContent({
                         content: {
-                            options: {
-                                case: 'fileOptions',
+                            type: {
+                                case: 'file',
                                 value: {
                                     file: selectedFile.name,
                                     data: fileBytes,
