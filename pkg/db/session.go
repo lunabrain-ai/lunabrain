@@ -193,7 +193,7 @@ func (s *Session) GetUser(ps *user.User) (*model.User, error) {
 	}
 	ok := CheckPasswordHash(ps.Password, p.PasswordHash)
 	if !ok {
-		return nil, errors.Wrapf(res.Error, "could not get user: %s", ps.Email)
+		return nil, errors.Errorf("could not get user: %s", ps.Email)
 	}
 	return p, nil
 }

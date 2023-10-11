@@ -43,6 +43,7 @@
 		4C4056FC2ACE976300F95A24 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 4C4056FB2ACE976300F95A24 /* background.js */; };
 		4CAC7AD62AD4D27D00C6A2F8 /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = 4CAC7AD52AD4D27D00C6A2F8 /* Markdown */; };
 		4CAC7B092AD4D7AC00C6A2F8 /* EditableListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC7B082AD4D7AC00C6A2F8 /* EditableListItem.swift */; };
+		4CAC7B0C2AD72EC700C6A2F8 /* MarkupEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 4CAC7B0B2AD72EC700C6A2F8 /* MarkupEditor */; };
 		4CE6D1622ACCCBE1002D7E2C /* lunabrain_desktopApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE6D1612ACCCBE1002D7E2C /* lunabrain_desktopApp.swift */; };
 		4CE6D1642ACCCBE1002D7E2C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE6D1632ACCCBE1002D7E2C /* ContentView.swift */; };
 		4CE6D1662ACCCBE1002D7E2C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4CE6D1652ACCCBE1002D7E2C /* Assets.xcassets */; };
@@ -148,6 +149,7 @@
 			files = (
 				4C2324B12AAEEB4500AB937A /* Connect in Frameworks */,
 				4CAC7AD62AD4D27D00C6A2F8 /* Markdown in Frameworks */,
+				4CAC7B0C2AD72EC700C6A2F8 /* MarkupEditor in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,6 +347,7 @@
 			packageProductDependencies = (
 				4C2324B02AAEEB4500AB937A /* Connect */,
 				4CAC7AD52AD4D27D00C6A2F8 /* Markdown */,
+				4CAC7B0B2AD72EC700C6A2F8 /* MarkupEditor */,
 			);
 			productName = lunabrain;
 			productReference = 4C2324872AAE7FE200AB937A /* lunabrain.app */;
@@ -439,6 +442,7 @@
 			packageReferences = (
 				4C2324AF2AAEEB4500AB937A /* XCRemoteSwiftPackageReference "connect-swift" */,
 				4CAC7AD42AD4D27D00C6A2F8 /* XCRemoteSwiftPackageReference "swift-markdown" */,
+				4CAC7B0A2AD72EC700C6A2F8 /* XCRemoteSwiftPackageReference "MarkupEditor" */,
 			);
 			productRefGroup = 4C2324882AAE7FE200AB937A /* Products */;
 			projectDirPath = "";
@@ -997,6 +1001,14 @@
 				minimumVersion = 0.2.0;
 			};
 		};
+		4CAC7B0A2AD72EC700C6A2F8 /* XCRemoteSwiftPackageReference "MarkupEditor" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stevengharris/MarkupEditor";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.6.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1009,6 +1021,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4CAC7AD42AD4D27D00C6A2F8 /* XCRemoteSwiftPackageReference "swift-markdown" */;
 			productName = Markdown;
+		};
+		4CAC7B0B2AD72EC700C6A2F8 /* MarkupEditor */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4CAC7B0A2AD72EC700C6A2F8 /* XCRemoteSwiftPackageReference "MarkupEditor" */;
+			productName = MarkupEditor;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

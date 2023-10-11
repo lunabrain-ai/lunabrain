@@ -1,13 +1,18 @@
 import SwiftUI
+import MarkupEditor
 import WatchConnectivity
 import Combine
 import Speech
 
 struct ContentView: View {
     @ObservedObject var viewModel: TranscriptionViewModel
-
+    @State private var demoHtml: String = "<h1>Hello</h1>"
+    
     var body: some View {
         TabView {
+            MarkupEditorView(html: $demoHtml).tabItem {
+                Label("Markdown", systemImage: "list.dash").padding()
+            }
             VStack {
                 Text(viewModel.liveTranscription)
                     .padding()
@@ -69,9 +74,6 @@ struct ContentView: View {
                 }
             }.tabItem {
                 Label("Record", systemImage: "square.and.pencil").padding()
-            }
-            EditableListView().tabItem {
-                Label("Markdown", systemImage: "list.dash").padding()
             }
             RecordingsView().tabItem {
                 Label("History", systemImage: "list.dash").padding()

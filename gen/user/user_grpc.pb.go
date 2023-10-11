@@ -29,6 +29,7 @@ type UserServiceClient interface {
 	UpdateConfig(ctx context.Context, in *Config, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CreateGroupInvite(ctx context.Context, in *GroupID, opts ...grpc.CallOption) (*GroupInvite, error)
 	JoinGroup(ctx context.Context, in *GroupInvite, opts ...grpc.CallOption) (*Group, error)
+	GroupInfo(ctx context.Context, in *GroupInfoRequest, opts ...grpc.CallOption) (*Group, error)
 	CreateGroup(ctx context.Context, in *Group, opts ...grpc.CallOption) (*Group, error)
 	GetGroups(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Groups, error)
 	DeleteGroup(ctx context.Context, in *Group, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -97,6 +98,15 @@ func (c *userServiceClient) JoinGroup(ctx context.Context, in *GroupInvite, opts
 	return out, nil
 }
 
+func (c *userServiceClient) GroupInfo(ctx context.Context, in *GroupInfoRequest, opts ...grpc.CallOption) (*Group, error) {
+	out := new(Group)
+	err := c.cc.Invoke(ctx, "/user.UserService/GroupInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userServiceClient) CreateGroup(ctx context.Context, in *Group, opts ...grpc.CallOption) (*Group, error) {
 	out := new(Group)
 	err := c.cc.Invoke(ctx, "/user.UserService/CreateGroup", in, out, opts...)
@@ -143,6 +153,7 @@ type UserServiceServer interface {
 	UpdateConfig(context.Context, *Config) (*emptypb.Empty, error)
 	CreateGroupInvite(context.Context, *GroupID) (*GroupInvite, error)
 	JoinGroup(context.Context, *GroupInvite) (*Group, error)
+	GroupInfo(context.Context, *GroupInfoRequest) (*Group, error)
 	CreateGroup(context.Context, *Group) (*Group, error)
 	GetGroups(context.Context, *emptypb.Empty) (*Groups, error)
 	DeleteGroup(context.Context, *Group) (*emptypb.Empty, error)
@@ -170,6 +181,9 @@ func (UnimplementedUserServiceServer) CreateGroupInvite(context.Context, *GroupI
 }
 func (UnimplementedUserServiceServer) JoinGroup(context.Context, *GroupInvite) (*Group, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method JoinGroup not implemented")
+}
+func (UnimplementedUserServiceServer) GroupInfo(context.Context, *GroupInfoRequest) (*Group, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GroupInfo not implemented")
 }
 func (UnimplementedUserServiceServer) CreateGroup(context.Context, *Group) (*Group, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateGroup not implemented")
@@ -303,6 +317,24 @@ func _UserService_JoinGroup_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GroupInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GroupInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GroupInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/GroupInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GroupInfo(ctx, req.(*GroupInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_CreateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Group)
 	if err := dec(in); err != nil {
@@ -405,6 +437,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "JoinGroup",
 			Handler:    _UserService_JoinGroup_Handler,
+		},
+		{
+			MethodName: "GroupInfo",
+			Handler:    _UserService_GroupInfo_Handler,
 		},
 		{
 			MethodName: "CreateGroup",

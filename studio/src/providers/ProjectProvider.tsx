@@ -7,6 +7,7 @@ import {TabValue} from "@fluentui/react-components";
 import {ChatResponse, Segment, Session} from "@/rpc/protoflow_pb";
 import { Content, StoredContent, Tag } from "@/rpc/content/content_pb";
 import {Group, User } from "@/rpc/user/user_pb";
+import {useQuery} from "@tanstack/react-query";
 
 const ProjectContext = createContext<ProjectContextType>({} as any);
 export const useProjectContext = () => useContext(ProjectContext);
@@ -55,6 +56,10 @@ type ProjectContextType = {
     removeFilteredTag: (tag: string) => void;
 };
 
+export function groupURL(groupID: string) {
+    return `/app/group/${groupID}`;
+}
+
 export default function ProjectProvider({children}: ProjectProviderProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [content, setContent] = useState<StoredContent[]>([]);
@@ -99,14 +104,29 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
 
     useEffect(() => {
         void loadContent();
-        const newUrl = `/app/group/${currentGroup}`;
-        window.history.pushState({}, '', newUrl);
-    }, [currentGroup]);
+        if (user) {
+            window.history.pushState({}, '', groupURL(currentGroup));
+        }
+    }, [user, currentGroup]);
 
     useEffect(() => {
+        if (!user) {
+            (async () => {
+                try {
+                    const res = await userService.login({})
+                    if (!res.email) {
+                        console.warn('no user logged in')
+                        return
+                    }
+                    setUser(res)
+                } catch (e: any) {
+                    console.error(e)
+                }
+            })();
+        }
         void loadGroups();
         void loadTags();
-    }, []);
+    }, [user]);
 
     const deleteContent = async (ids: string[]) => {
         const res = await contentService.delete({

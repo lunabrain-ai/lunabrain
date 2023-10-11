@@ -123,6 +123,11 @@ func (s *Service) GetTags(ctx context.Context, c *connect_go.Request[emptypb.Emp
 	return connect_go.NewResponse(&content.Tags{Tags: root.SubTags}), nil
 }
 
+func (s *Service) Vote(ctx context.Context, c *connect_go.Request[content.VoteRequest]) (*connect_go.Response[emptypb.Empty], error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (s *Service) Analyze(ctx context.Context, c *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error) {
 	var nCnt []*content.Content
 	switch t := c.Msg.Type.(type) {

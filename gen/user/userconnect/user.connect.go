@@ -48,6 +48,8 @@ const (
 	UserServiceCreateGroupInviteProcedure = "/user.UserService/CreateGroupInvite"
 	// UserServiceJoinGroupProcedure is the fully-qualified name of the UserService's JoinGroup RPC.
 	UserServiceJoinGroupProcedure = "/user.UserService/JoinGroup"
+	// UserServiceGroupInfoProcedure is the fully-qualified name of the UserService's GroupInfo RPC.
+	UserServiceGroupInfoProcedure = "/user.UserService/GroupInfo"
 	// UserServiceCreateGroupProcedure is the fully-qualified name of the UserService's CreateGroup RPC.
 	UserServiceCreateGroupProcedure = "/user.UserService/CreateGroup"
 	// UserServiceGetGroupsProcedure is the fully-qualified name of the UserService's GetGroups RPC.
@@ -66,6 +68,7 @@ type UserServiceClient interface {
 	UpdateConfig(context.Context, *connect_go.Request[user.Config]) (*connect_go.Response[emptypb.Empty], error)
 	CreateGroupInvite(context.Context, *connect_go.Request[user.GroupID]) (*connect_go.Response[user.GroupInvite], error)
 	JoinGroup(context.Context, *connect_go.Request[user.GroupInvite]) (*connect_go.Response[user.Group], error)
+	GroupInfo(context.Context, *connect_go.Request[user.GroupInfoRequest]) (*connect_go.Response[user.Group], error)
 	CreateGroup(context.Context, *connect_go.Request[user.Group]) (*connect_go.Response[user.Group], error)
 	GetGroups(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[user.Groups], error)
 	DeleteGroup(context.Context, *connect_go.Request[user.Group]) (*connect_go.Response[emptypb.Empty], error)
@@ -112,6 +115,11 @@ func NewUserServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts
 			baseURL+UserServiceJoinGroupProcedure,
 			opts...,
 		),
+		groupInfo: connect_go.NewClient[user.GroupInfoRequest, user.Group](
+			httpClient,
+			baseURL+UserServiceGroupInfoProcedure,
+			opts...,
+		),
 		createGroup: connect_go.NewClient[user.Group, user.Group](
 			httpClient,
 			baseURL+UserServiceCreateGroupProcedure,
@@ -143,6 +151,7 @@ type userServiceClient struct {
 	updateConfig      *connect_go.Client[user.Config, emptypb.Empty]
 	createGroupInvite *connect_go.Client[user.GroupID, user.GroupInvite]
 	joinGroup         *connect_go.Client[user.GroupInvite, user.Group]
+	groupInfo         *connect_go.Client[user.GroupInfoRequest, user.Group]
 	createGroup       *connect_go.Client[user.Group, user.Group]
 	getGroups         *connect_go.Client[emptypb.Empty, user.Groups]
 	deleteGroup       *connect_go.Client[user.Group, emptypb.Empty]
@@ -179,6 +188,11 @@ func (c *userServiceClient) JoinGroup(ctx context.Context, req *connect_go.Reque
 	return c.joinGroup.CallUnary(ctx, req)
 }
 
+// GroupInfo calls user.UserService.GroupInfo.
+func (c *userServiceClient) GroupInfo(ctx context.Context, req *connect_go.Request[user.GroupInfoRequest]) (*connect_go.Response[user.Group], error) {
+	return c.groupInfo.CallUnary(ctx, req)
+}
+
 // CreateGroup calls user.UserService.CreateGroup.
 func (c *userServiceClient) CreateGroup(ctx context.Context, req *connect_go.Request[user.Group]) (*connect_go.Response[user.Group], error) {
 	return c.createGroup.CallUnary(ctx, req)
@@ -207,6 +221,7 @@ type UserServiceHandler interface {
 	UpdateConfig(context.Context, *connect_go.Request[user.Config]) (*connect_go.Response[emptypb.Empty], error)
 	CreateGroupInvite(context.Context, *connect_go.Request[user.GroupID]) (*connect_go.Response[user.GroupInvite], error)
 	JoinGroup(context.Context, *connect_go.Request[user.GroupInvite]) (*connect_go.Response[user.Group], error)
+	GroupInfo(context.Context, *connect_go.Request[user.GroupInfoRequest]) (*connect_go.Response[user.Group], error)
 	CreateGroup(context.Context, *connect_go.Request[user.Group]) (*connect_go.Response[user.Group], error)
 	GetGroups(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[user.Groups], error)
 	DeleteGroup(context.Context, *connect_go.Request[user.Group]) (*connect_go.Response[emptypb.Empty], error)
@@ -249,6 +264,11 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect_go.HandlerOpt
 		svc.JoinGroup,
 		opts...,
 	)
+	userServiceGroupInfoHandler := connect_go.NewUnaryHandler(
+		UserServiceGroupInfoProcedure,
+		svc.GroupInfo,
+		opts...,
+	)
 	userServiceCreateGroupHandler := connect_go.NewUnaryHandler(
 		UserServiceCreateGroupProcedure,
 		svc.CreateGroup,
@@ -283,6 +303,8 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect_go.HandlerOpt
 			userServiceCreateGroupInviteHandler.ServeHTTP(w, r)
 		case UserServiceJoinGroupProcedure:
 			userServiceJoinGroupHandler.ServeHTTP(w, r)
+		case UserServiceGroupInfoProcedure:
+			userServiceGroupInfoHandler.ServeHTTP(w, r)
 		case UserServiceCreateGroupProcedure:
 			userServiceCreateGroupHandler.ServeHTTP(w, r)
 		case UserServiceGetGroupsProcedure:
@@ -322,6 +344,10 @@ func (UnimplementedUserServiceHandler) CreateGroupInvite(context.Context, *conne
 
 func (UnimplementedUserServiceHandler) JoinGroup(context.Context, *connect_go.Request[user.GroupInvite]) (*connect_go.Response[user.Group], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("user.UserService.JoinGroup is not implemented"))
+}
+
+func (UnimplementedUserServiceHandler) GroupInfo(context.Context, *connect_go.Request[user.GroupInfoRequest]) (*connect_go.Response[user.Group], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("user.UserService.GroupInfo is not implemented"))
 }
 
 func (UnimplementedUserServiceHandler) CreateGroup(context.Context, *connect_go.Request[user.Group]) (*connect_go.Response[user.Group], error) {

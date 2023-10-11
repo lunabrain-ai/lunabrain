@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { Image, Text } from '@fluentui/react';
-import {AuthForm} from './AuthForm';
+import {AuthForm} from './Auth/AuthForm';
 import {Button, Card, CardHeader} from "@fluentui/react-components";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {projectService, userService} from "@/service";
@@ -16,22 +16,6 @@ interface AccountCardProps {
 
 export const AccountCard: React.FC<AccountCardProps> = () => {
     const { user, setUser } = useProjectContext();
-    const [showAuthForm, setShowAuthForm] = useState<boolean>(false);
-
-    useEffect(() => {
-        (async () => {
-            try {
-                const res = await userService.login({})
-                if (!res.email) {
-                    console.warn('no user logged in')
-                    return
-                }
-                setUser(res)
-            } catch (e: any) {
-                console.error(e)
-            }
-        })();
-    }, []);
 
     const logout = async () => {
         try {
@@ -44,24 +28,18 @@ export const AccountCard: React.FC<AccountCardProps> = () => {
         }
     }
 
-    if (showAuthForm && !user) {
-        return <AuthForm />;
+    if (!user) {
+        return <p>Not logged in</p>;
     }
 
     return (
         <div>
-            {user ? (
-                <Card>
-                    <CardHeader
-                        header={user.email}
-                        action={<Button onClick={logout}>logout</Button>}
-                        />
-                </Card>
-            ) : (
-                <Button onClick={() => setShowAuthForm(true)}>
-                    Login
-                </Button>
-            )}
+            <Card>
+                <CardHeader
+                    header={user.email}
+                    action={<Button onClick={logout}>logout</Button>}
+                    />
+            </Card>
         </div>
     );
 };

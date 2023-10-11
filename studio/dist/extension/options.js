@@ -6,7 +6,6 @@
   var __getOwnPropNames = Object.getOwnPropertyNames;
   var __getProtoOf = Object.getPrototypeOf;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
-  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
   var __commonJS = (cb, mod) => function __require() {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
@@ -30,10 +29,6 @@
     isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
     mod
   ));
-  var __publicField = (obj, key, value) => {
-    __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-    return value;
-  };
 
   // ../node_modules/react/cjs/react.development.js
   var require_react_development = __commonJS({
@@ -9333,10 +9328,10 @@
           function getOwnerDocumentFromRootContainer(rootContainerElement) {
             return rootContainerElement.nodeType === DOCUMENT_NODE ? rootContainerElement : rootContainerElement.ownerDocument;
           }
-          function noop2() {
+          function noop3() {
           }
           function trapClickOnNonInteractiveElement(node) {
-            node.onclick = noop2;
+            node.onclick = noop3;
           }
           function setInitialDOMProperties(tag, domElement, rootContainerElement, nextProps, isCustomComponentTag) {
             for (var propKey in nextProps) {
@@ -10315,7 +10310,7 @@
           var cancelTimeout = typeof clearTimeout === "function" ? clearTimeout : void 0;
           var noTimeout = -1;
           var localPromise = typeof Promise === "function" ? Promise : void 0;
-          var scheduleMicrotask = typeof queueMicrotask === "function" ? queueMicrotask : typeof localPromise !== "undefined" ? function(callback) {
+          var scheduleMicrotask2 = typeof queueMicrotask === "function" ? queueMicrotask : typeof localPromise !== "undefined" ? function(callback) {
             return localPromise.resolve(null).then(callback).catch(handleErrorInNextTick);
           } : scheduleTimeout;
           function handleErrorInNextTick(error2) {
@@ -20533,7 +20528,7 @@
                 if (ReactCurrentActQueue$1.current !== null) {
                   ReactCurrentActQueue$1.current.push(flushSyncCallbacks);
                 } else {
-                  scheduleMicrotask(function() {
+                  scheduleMicrotask2(function() {
                     if ((executionContext & (RenderContext | CommitContext)) === NoContext) {
                       flushSyncCallbacks();
                     }
@@ -46380,50 +46375,50 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
   })(MethodIdempotency || (MethodIdempotency = {}));
 
   // ../node_modules/@bufbuild/protobuf/dist/esm/google/protobuf/empty_pb.js
-  var Empty = class extends Message {
+  var Empty = class _Empty extends Message {
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
     }
     static fromBinary(bytes, options) {
-      return new Empty().fromBinary(bytes, options);
+      return new _Empty().fromBinary(bytes, options);
     }
     static fromJson(jsonValue, options) {
-      return new Empty().fromJson(jsonValue, options);
+      return new _Empty().fromJson(jsonValue, options);
     }
     static fromJsonString(jsonString, options) {
-      return new Empty().fromJsonString(jsonString, options);
+      return new _Empty().fromJsonString(jsonString, options);
     }
     static equals(a2, b3) {
-      return proto3.util.equals(Empty, a2, b3);
+      return proto3.util.equals(_Empty, a2, b3);
     }
   };
   Empty.runtime = proto3;
   Empty.typeName = "google.protobuf.Empty";
   Empty.fields = proto3.util.newFieldList(() => []);
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/code.js
+  // ../node_modules/@bufbuild/connect/dist/esm/code.js
   var Code;
-  (function(Code3) {
-    Code3[Code3["Canceled"] = 1] = "Canceled";
-    Code3[Code3["Unknown"] = 2] = "Unknown";
-    Code3[Code3["InvalidArgument"] = 3] = "InvalidArgument";
-    Code3[Code3["DeadlineExceeded"] = 4] = "DeadlineExceeded";
-    Code3[Code3["NotFound"] = 5] = "NotFound";
-    Code3[Code3["AlreadyExists"] = 6] = "AlreadyExists";
-    Code3[Code3["PermissionDenied"] = 7] = "PermissionDenied";
-    Code3[Code3["ResourceExhausted"] = 8] = "ResourceExhausted";
-    Code3[Code3["FailedPrecondition"] = 9] = "FailedPrecondition";
-    Code3[Code3["Aborted"] = 10] = "Aborted";
-    Code3[Code3["OutOfRange"] = 11] = "OutOfRange";
-    Code3[Code3["Unimplemented"] = 12] = "Unimplemented";
-    Code3[Code3["Internal"] = 13] = "Internal";
-    Code3[Code3["Unavailable"] = 14] = "Unavailable";
-    Code3[Code3["DataLoss"] = 15] = "DataLoss";
-    Code3[Code3["Unauthenticated"] = 16] = "Unauthenticated";
+  (function(Code2) {
+    Code2[Code2["Canceled"] = 1] = "Canceled";
+    Code2[Code2["Unknown"] = 2] = "Unknown";
+    Code2[Code2["InvalidArgument"] = 3] = "InvalidArgument";
+    Code2[Code2["DeadlineExceeded"] = 4] = "DeadlineExceeded";
+    Code2[Code2["NotFound"] = 5] = "NotFound";
+    Code2[Code2["AlreadyExists"] = 6] = "AlreadyExists";
+    Code2[Code2["PermissionDenied"] = 7] = "PermissionDenied";
+    Code2[Code2["ResourceExhausted"] = 8] = "ResourceExhausted";
+    Code2[Code2["FailedPrecondition"] = 9] = "FailedPrecondition";
+    Code2[Code2["Aborted"] = 10] = "Aborted";
+    Code2[Code2["OutOfRange"] = 11] = "OutOfRange";
+    Code2[Code2["Unimplemented"] = 12] = "Unimplemented";
+    Code2[Code2["Internal"] = 13] = "Internal";
+    Code2[Code2["Unavailable"] = 14] = "Unavailable";
+    Code2[Code2["DataLoss"] = 15] = "DataLoss";
+    Code2[Code2["Unauthenticated"] = 16] = "Unauthenticated";
   })(Code || (Code = {}));
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/protocol-connect/code-string.js
+  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/code-string.js
   function codeToString(value) {
     const name = Code[value];
     if (typeof name != "string") {
@@ -46445,8 +46440,8 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     return stringToCode[value];
   }
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/connect-error.js
-  var ConnectError = class extends Error {
+  // ../node_modules/@bufbuild/connect/dist/esm/connect-error.js
+  var ConnectError = class _ConnectError extends Error {
     /**
      * Create a new ConnectError.
      * If no code is provided, code "unknown" is used.
@@ -46477,16 +46472,16 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
      * ConnectError.
      */
     static from(reason, code = Code.Unknown) {
-      if (reason instanceof ConnectError) {
+      if (reason instanceof _ConnectError) {
         return reason;
       }
       if (reason instanceof Error) {
         if (reason.name == "AbortError") {
-          return new ConnectError(reason.message, Code.Canceled);
+          return new _ConnectError(reason.message, Code.Canceled);
         }
-        return new ConnectError(reason.message, code, void 0, void 0, reason);
+        return new _ConnectError(reason.message, code, void 0, void 0, reason);
       }
-      return new ConnectError(String(reason), code, void 0, void 0, reason);
+      return new _ConnectError(String(reason), code, void 0, void 0, reason);
     }
     findDetails(typeOrRegistry) {
       const registry = "typeName" in typeOrRegistry ? {
@@ -46515,7 +46510,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     return message.length ? `[${codeToString(code)}] ${message}` : `[${codeToString(code)}]`;
   }
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/http-headers.js
+  // ../node_modules/@bufbuild/connect/dist/esm/http-headers.js
   function appendHeaders(...headers) {
     const h3 = new Headers();
     for (const e2 of headers) {
@@ -46526,7 +46521,22 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     return h3;
   }
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/protocol/envelope.js
+  // ../node_modules/@bufbuild/connect/dist/esm/any-client.js
+  function makeAnyClient(service, createMethod) {
+    const client = {};
+    for (const [localName, methodInfo] of Object.entries(service.methods)) {
+      const method = createMethod(Object.assign(Object.assign({}, methodInfo), {
+        localName,
+        service
+      }));
+      if (method != null) {
+        client[localName] = method;
+      }
+    }
+    return client;
+  }
+
+  // ../node_modules/@bufbuild/connect/dist/esm/protocol/envelope.js
   function createEnvelopeReadableStream(stream) {
     let reader;
     let buffer = new Uint8Array(0);
@@ -46585,7 +46595,243 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     return bytes;
   }
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/protocol/signals.js
+  // ../node_modules/@bufbuild/connect/dist/esm/protocol/async-iterable.js
+  var __asyncValues = function(o2) {
+    if (!Symbol.asyncIterator)
+      throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m2 = o2[Symbol.asyncIterator], i2;
+    return m2 ? m2.call(o2) : (o2 = typeof __values === "function" ? __values(o2) : o2[Symbol.iterator](), i2 = {}, verb("next"), verb("throw"), verb("return"), i2[Symbol.asyncIterator] = function() {
+      return this;
+    }, i2);
+    function verb(n3) {
+      i2[n3] = o2[n3] && function(v2) {
+        return new Promise(function(resolve, reject) {
+          v2 = o2[n3](v2), settle(resolve, reject, v2.done, v2.value);
+        });
+      };
+    }
+    function settle(resolve, reject, d2, v2) {
+      Promise.resolve(v2).then(function(v3) {
+        resolve({ value: v3, done: d2 });
+      }, reject);
+    }
+  };
+  var __await = function(v2) {
+    return this instanceof __await ? (this.v = v2, this) : new __await(v2);
+  };
+  var __asyncGenerator = function(thisArg, _arguments, generator) {
+    if (!Symbol.asyncIterator)
+      throw new TypeError("Symbol.asyncIterator is not defined.");
+    var g2 = generator.apply(thisArg, _arguments || []), i2, q = [];
+    return i2 = {}, verb("next"), verb("throw"), verb("return"), i2[Symbol.asyncIterator] = function() {
+      return this;
+    }, i2;
+    function verb(n3) {
+      if (g2[n3])
+        i2[n3] = function(v2) {
+          return new Promise(function(a2, b3) {
+            q.push([n3, v2, a2, b3]) > 1 || resume(n3, v2);
+          });
+        };
+    }
+    function resume(n3, v2) {
+      try {
+        step(g2[n3](v2));
+      } catch (e2) {
+        settle(q[0][3], e2);
+      }
+    }
+    function step(r) {
+      r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
+    }
+    function fulfill(value) {
+      resume("next", value);
+    }
+    function reject(value) {
+      resume("throw", value);
+    }
+    function settle(f3, v2) {
+      if (f3(v2), q.shift(), q.length)
+        resume(q[0][0], q[0][1]);
+    }
+  };
+  var __asyncDelegator = function(o2) {
+    var i2, p2;
+    return i2 = {}, verb("next"), verb("throw", function(e2) {
+      throw e2;
+    }), verb("return"), i2[Symbol.iterator] = function() {
+      return this;
+    }, i2;
+    function verb(n3, f3) {
+      i2[n3] = o2[n3] ? function(v2) {
+        return (p2 = !p2) ? { value: __await(o2[n3](v2)), done: false } : f3 ? f3(v2) : v2;
+      } : f3;
+    }
+  };
+  function createAsyncIterable(items) {
+    return __asyncGenerator(this, arguments, function* createAsyncIterable_1() {
+      yield __await(yield* __asyncDelegator(__asyncValues(items)));
+    });
+  }
+
+  // ../node_modules/@bufbuild/connect/dist/esm/promise-client.js
+  var __asyncValues2 = function(o2) {
+    if (!Symbol.asyncIterator)
+      throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m2 = o2[Symbol.asyncIterator], i2;
+    return m2 ? m2.call(o2) : (o2 = typeof __values === "function" ? __values(o2) : o2[Symbol.iterator](), i2 = {}, verb("next"), verb("throw"), verb("return"), i2[Symbol.asyncIterator] = function() {
+      return this;
+    }, i2);
+    function verb(n3) {
+      i2[n3] = o2[n3] && function(v2) {
+        return new Promise(function(resolve, reject) {
+          v2 = o2[n3](v2), settle(resolve, reject, v2.done, v2.value);
+        });
+      };
+    }
+    function settle(resolve, reject, d2, v2) {
+      Promise.resolve(v2).then(function(v3) {
+        resolve({ value: v3, done: d2 });
+      }, reject);
+    }
+  };
+  var __await2 = function(v2) {
+    return this instanceof __await2 ? (this.v = v2, this) : new __await2(v2);
+  };
+  var __asyncDelegator2 = function(o2) {
+    var i2, p2;
+    return i2 = {}, verb("next"), verb("throw", function(e2) {
+      throw e2;
+    }), verb("return"), i2[Symbol.iterator] = function() {
+      return this;
+    }, i2;
+    function verb(n3, f3) {
+      i2[n3] = o2[n3] ? function(v2) {
+        return (p2 = !p2) ? { value: __await2(o2[n3](v2)), done: false } : f3 ? f3(v2) : v2;
+      } : f3;
+    }
+  };
+  var __asyncGenerator2 = function(thisArg, _arguments, generator) {
+    if (!Symbol.asyncIterator)
+      throw new TypeError("Symbol.asyncIterator is not defined.");
+    var g2 = generator.apply(thisArg, _arguments || []), i2, q = [];
+    return i2 = {}, verb("next"), verb("throw"), verb("return"), i2[Symbol.asyncIterator] = function() {
+      return this;
+    }, i2;
+    function verb(n3) {
+      if (g2[n3])
+        i2[n3] = function(v2) {
+          return new Promise(function(a2, b3) {
+            q.push([n3, v2, a2, b3]) > 1 || resume(n3, v2);
+          });
+        };
+    }
+    function resume(n3, v2) {
+      try {
+        step(g2[n3](v2));
+      } catch (e2) {
+        settle(q[0][3], e2);
+      }
+    }
+    function step(r) {
+      r.value instanceof __await2 ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
+    }
+    function fulfill(value) {
+      resume("next", value);
+    }
+    function reject(value) {
+      resume("throw", value);
+    }
+    function settle(f3, v2) {
+      if (f3(v2), q.shift(), q.length)
+        resume(q[0][0], q[0][1]);
+    }
+  };
+  function createPromiseClient(service, transport2) {
+    return makeAnyClient(service, (method) => {
+      switch (method.kind) {
+        case MethodKind.Unary:
+          return createUnaryFn(transport2, service, method);
+        case MethodKind.ServerStreaming:
+          return createServerStreamingFn(transport2, service, method);
+        case MethodKind.ClientStreaming:
+          return createClientStreamingFn(transport2, service, method);
+        case MethodKind.BiDiStreaming:
+          return createBiDiStreamingFn(transport2, service, method);
+        default:
+          return null;
+      }
+    });
+  }
+  function createUnaryFn(transport2, service, method) {
+    return async function(input, options) {
+      var _a7, _b3;
+      const response = await transport2.unary(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, input);
+      (_a7 = options === null || options === void 0 ? void 0 : options.onHeader) === null || _a7 === void 0 ? void 0 : _a7.call(options, response.header);
+      (_b3 = options === null || options === void 0 ? void 0 : options.onTrailer) === null || _b3 === void 0 ? void 0 : _b3.call(options, response.trailer);
+      return response.message;
+    };
+  }
+  function createServerStreamingFn(transport2, service, method) {
+    return function(input, options) {
+      return handleStreamResponse(transport2.stream(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, createAsyncIterable([input])), options);
+    };
+  }
+  function createClientStreamingFn(transport2, service, method) {
+    return async function(request, options) {
+      var _a7, e_1, _b3, _c3;
+      var _d3, _e2;
+      const response = await transport2.stream(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, request);
+      (_d3 = options === null || options === void 0 ? void 0 : options.onHeader) === null || _d3 === void 0 ? void 0 : _d3.call(options, response.header);
+      let singleMessage;
+      try {
+        for (var _f = true, _g = __asyncValues2(response.message), _h; _h = await _g.next(), _a7 = _h.done, !_a7; _f = true) {
+          _c3 = _h.value;
+          _f = false;
+          const message = _c3;
+          singleMessage = message;
+        }
+      } catch (e_1_1) {
+        e_1 = { error: e_1_1 };
+      } finally {
+        try {
+          if (!_f && !_a7 && (_b3 = _g.return))
+            await _b3.call(_g);
+        } finally {
+          if (e_1)
+            throw e_1.error;
+        }
+      }
+      if (!singleMessage) {
+        throw new ConnectError("protocol error: missing response message", Code.Internal);
+      }
+      (_e2 = options === null || options === void 0 ? void 0 : options.onTrailer) === null || _e2 === void 0 ? void 0 : _e2.call(options, response.trailer);
+      return singleMessage;
+    };
+  }
+  function createBiDiStreamingFn(transport2, service, method) {
+    return function(request, options) {
+      return handleStreamResponse(transport2.stream(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, request), options);
+    };
+  }
+  function handleStreamResponse(stream, options) {
+    const it = function() {
+      var _a7, _b3;
+      return __asyncGenerator2(this, arguments, function* () {
+        const response = yield __await2(stream);
+        (_a7 = options === null || options === void 0 ? void 0 : options.onHeader) === null || _a7 === void 0 ? void 0 : _a7.call(options, response.header);
+        yield __await2(yield* __asyncDelegator2(__asyncValues2(response.message)));
+        (_b3 = options === null || options === void 0 ? void 0 : options.onTrailer) === null || _b3 === void 0 ? void 0 : _b3.call(options, response.trailer);
+      });
+    }()[Symbol.asyncIterator]();
+    return {
+      [Symbol.asyncIterator]: () => ({
+        next: () => it.next()
+      })
+    };
+  }
+
+  // ../node_modules/@bufbuild/connect/dist/esm/protocol/signals.js
   function createLinkedAbortController(...signals) {
     const controller = new AbortController();
     const sa = signals.filter((s2) => s2 !== void 0).concat(controller.signal);
@@ -46635,14 +46881,14 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     return e2;
   }
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/protocol/create-method-url.js
+  // ../node_modules/@bufbuild/connect/dist/esm/protocol/create-method-url.js
   function createMethodUrl(baseUrl, service, method) {
     const s2 = typeof service == "string" ? service : service.typeName;
     const m2 = typeof method == "string" ? method : method.name;
     return baseUrl.toString().replace(/\/?$/, `/${s2}/${m2}`);
   }
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/protocol/serialization.js
+  // ../node_modules/@bufbuild/connect/dist/esm/protocol/serialization.js
   function getJsonOptions(options) {
     var _a7;
     const o2 = Object.assign({}, options);
@@ -46699,7 +46945,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     };
   }
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/protocol-connect/content-type.js
+  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/content-type.js
   var contentTypeRegExp = /^application\/(connect\+)?(?:(json)(?:; ?charset=utf-?8)?|(proto))$/i;
   var contentTypeUnaryProto = "application/proto";
   var contentTypeUnaryJson = "application/json";
@@ -46715,7 +46961,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     return { stream, binary };
   }
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/protocol-connect/error-json.js
+  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/error-json.js
   function errorFromJson(jsonValue, metadata, fallback2) {
     if (metadata) {
       new Headers(metadata).forEach((value, key) => fallback2.metadata.append(key, value));
@@ -46751,7 +46997,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     return error;
   }
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/protocol-connect/end-stream.js
+  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/end-stream.js
   var endStreamFlag = 2;
   function endStreamFromJson(data) {
     const parseErr = new ConnectError("invalid end stream", Code.InvalidArgument);
@@ -46782,7 +47028,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     return { metadata, error };
   }
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/protocol-connect/headers.js
+  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/headers.js
   var headerContentType = "Content-Type";
   var headerUnaryContentLength = "Content-Length";
   var headerUnaryEncoding = "Content-Encoding";
@@ -46790,7 +47036,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
   var headerTimeout = "Connect-Timeout-Ms";
   var headerProtocolVersion = "Connect-Protocol-Version";
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/protocol-connect/http-status.js
+  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/http-status.js
   function codeFromHttpStatus(httpStatus) {
     switch (httpStatus) {
       case 400:
@@ -46826,7 +47072,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     }
   }
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/protocol-connect/trailer-mux.js
+  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/trailer-mux.js
   function trailerDemux(header) {
     const h3 = new Headers(), t2 = new Headers();
     header.forEach((value, key) => {
@@ -46839,10 +47085,10 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     return [h3, t2];
   }
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/protocol-connect/version.js
+  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/version.js
   var protocolVersion = "1";
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/protocol-connect/request-header.js
+  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/request-header.js
   function requestHeader(methodKind, useBinaryFormat, timeoutMs, userProvidedHeaders) {
     const result = new Headers(userProvidedHeaders !== null && userProvidedHeaders !== void 0 ? userProvidedHeaders : {});
     if (timeoutMs !== void 0) {
@@ -46853,7 +47099,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     return result;
   }
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/protocol-connect/validate-response.js
+  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/validate-response.js
   function validateResponse(methodKind, status, headers) {
     const mimeType = headers.get("Content-Type");
     const parsedType = parseContentType(mimeType);
@@ -46867,7 +47113,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     return { isUnaryError: false };
   }
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/protocol-connect/get-request.js
+  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/get-request.js
   var contentTypePrefix = "application/";
   function encodeMessageForUrl(message, useBase64) {
     if (useBase64) {
@@ -46905,7 +47151,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     });
   }
 
-  // ../node_modules/@bufbuild/connect-web/node_modules/@bufbuild/connect/dist/esm/protocol/run-call.js
+  // ../node_modules/@bufbuild/connect/dist/esm/protocol/run-call.js
   function runUnaryCall(opt) {
     const next = applyInterceptors(opt.next, opt.interceptors);
     const [signal, abort, done] = setupSignal(opt);
@@ -47015,10 +47261,10 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
   }
 
   // ../node_modules/@bufbuild/connect-web/dist/esm/connect-transport.js
-  var __await = function(v2) {
-    return this instanceof __await ? (this.v = v2, this) : new __await(v2);
+  var __await3 = function(v2) {
+    return this instanceof __await3 ? (this.v = v2, this) : new __await3(v2);
   };
-  var __asyncGenerator = function(thisArg, _arguments, generator) {
+  var __asyncGenerator3 = function(thisArg, _arguments, generator) {
     if (!Symbol.asyncIterator)
       throw new TypeError("Symbol.asyncIterator is not defined.");
     var g2 = generator.apply(thisArg, _arguments || []), i2, q = [];
@@ -47041,7 +47287,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       }
     }
     function step(r) {
-      r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
+      r.value instanceof __await3 ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
     }
     function fulfill(value) {
       resume("next", value);
@@ -47111,11 +47357,11 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
         var _a8;
         const { serialize, parse } = createClientMethodSerializers(method, useBinaryFormat, options.jsonOptions, options.binaryOptions);
         function parseResponseBody(body, trailerTarget) {
-          return __asyncGenerator(this, arguments, function* parseResponseBody_1() {
+          return __asyncGenerator3(this, arguments, function* parseResponseBody_1() {
             const reader = createEnvelopeReadableStream(body).getReader();
             let endStreamReceived = false;
             for (; ; ) {
-              const result = yield __await(reader.read());
+              const result = yield __await3(reader.read());
               if (result.done) {
                 break;
               }
@@ -47129,7 +47375,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
                 endStream.metadata.forEach((value, key) => trailerTarget.set(key, value));
                 continue;
               }
-              yield yield __await(parse(data));
+              yield yield __await3(parse(data));
             }
             if (!endStreamReceived) {
               throw "missing EndStreamResponse";
@@ -47181,412 +47427,41 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     };
   }
 
-  // ../node_modules/@bufbuild/connect/dist/esm/code.js
-  var Code2;
-  (function(Code3) {
-    Code3[Code3["Canceled"] = 1] = "Canceled";
-    Code3[Code3["Unknown"] = 2] = "Unknown";
-    Code3[Code3["InvalidArgument"] = 3] = "InvalidArgument";
-    Code3[Code3["DeadlineExceeded"] = 4] = "DeadlineExceeded";
-    Code3[Code3["NotFound"] = 5] = "NotFound";
-    Code3[Code3["AlreadyExists"] = 6] = "AlreadyExists";
-    Code3[Code3["PermissionDenied"] = 7] = "PermissionDenied";
-    Code3[Code3["ResourceExhausted"] = 8] = "ResourceExhausted";
-    Code3[Code3["FailedPrecondition"] = 9] = "FailedPrecondition";
-    Code3[Code3["Aborted"] = 10] = "Aborted";
-    Code3[Code3["OutOfRange"] = 11] = "OutOfRange";
-    Code3[Code3["Unimplemented"] = 12] = "Unimplemented";
-    Code3[Code3["Internal"] = 13] = "Internal";
-    Code3[Code3["Unavailable"] = 14] = "Unavailable";
-    Code3[Code3["DataLoss"] = 15] = "DataLoss";
-    Code3[Code3["Unauthenticated"] = 16] = "Unauthenticated";
-  })(Code2 || (Code2 = {}));
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/code-string.js
-  function codeToString2(value) {
-    const name = Code2[value];
-    if (typeof name != "string") {
-      return value.toString();
-    }
-    return name[0].toLowerCase() + name.substring(1).replace(/[A-Z]/g, (c2) => "_" + c2.toLowerCase());
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/connect-error.js
-  var ConnectError2 = class extends Error {
-    /**
-     * Create a new ConnectError.
-     * If no code is provided, code "unknown" is used.
-     * Outgoing details are only relevant for the server side - a service may
-     * raise an error with details, and it is up to the protocol implementation
-     * to encode and send the details along with error.
-     */
-    constructor(message, code = Code2.Unknown, metadata, outgoingDetails, cause) {
-      super(createMessage2(message, code));
-      this.name = "ConnectError";
-      Object.setPrototypeOf(this, new.target.prototype);
-      this.rawMessage = message;
-      this.code = code;
-      this.metadata = new Headers(metadata !== null && metadata !== void 0 ? metadata : {});
-      this.details = outgoingDetails !== null && outgoingDetails !== void 0 ? outgoingDetails : [];
-      this.cause = cause;
-    }
-    /**
-     * Convert any value - typically a caught error into a ConnectError,
-     * following these rules:
-     * - If the value is already a ConnectError, return it as is.
-     * - If the value is an AbortError from the fetch API, return the message
-     *   of the AbortError with code Canceled.
-     * - For other Errors, return the error message with code Unknown by default.
-     * - For other values, return the values String representation as a message,
-     *   with the code Unknown by default.
-     */
-    static from(reason, code = Code2.Unknown) {
-      if (reason instanceof ConnectError2) {
-        return reason;
-      }
-      if (reason instanceof Error) {
-        if (reason.name == "AbortError") {
-          return new ConnectError2(reason.message, Code2.Canceled);
-        }
-        return new ConnectError2(reason.message, code);
-      }
-      return new ConnectError2(String(reason), code);
-    }
-    findDetails(typeOrRegistry) {
-      const registry = "typeName" in typeOrRegistry ? {
-        findMessage: (typeName) => typeName === typeOrRegistry.typeName ? typeOrRegistry : void 0
-      } : typeOrRegistry;
-      const details = [];
-      for (const data of this.details) {
-        if (data instanceof Message) {
-          if (registry.findMessage(data.getType().typeName)) {
-            details.push(data);
-          }
-          continue;
-        }
-        const type = registry.findMessage(data.type);
-        if (type) {
-          try {
-            details.push(type.fromBinary(data.value));
-          } catch (_2) {
-          }
-        }
-      }
-      return details;
-    }
-  };
-  function createMessage2(message, code) {
-    return message.length ? `[${codeToString2(code)}] ${message}` : `[${codeToString2(code)}]`;
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/any-client.js
-  function makeAnyClient(service, createMethod) {
-    const client = {};
-    for (const [localName, methodInfo] of Object.entries(service.methods)) {
-      const method = createMethod(Object.assign(Object.assign({}, methodInfo), {
-        localName,
-        service
-      }));
-      if (method != null) {
-        client[localName] = method;
-      }
-    }
-    return client;
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol/async-iterable.js
-  var __asyncValues = function(o2) {
-    if (!Symbol.asyncIterator)
-      throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m2 = o2[Symbol.asyncIterator], i2;
-    return m2 ? m2.call(o2) : (o2 = typeof __values === "function" ? __values(o2) : o2[Symbol.iterator](), i2 = {}, verb("next"), verb("throw"), verb("return"), i2[Symbol.asyncIterator] = function() {
-      return this;
-    }, i2);
-    function verb(n3) {
-      i2[n3] = o2[n3] && function(v2) {
-        return new Promise(function(resolve, reject) {
-          v2 = o2[n3](v2), settle(resolve, reject, v2.done, v2.value);
-        });
-      };
-    }
-    function settle(resolve, reject, d2, v2) {
-      Promise.resolve(v2).then(function(v3) {
-        resolve({ value: v3, done: d2 });
-      }, reject);
-    }
-  };
-  var __await2 = function(v2) {
-    return this instanceof __await2 ? (this.v = v2, this) : new __await2(v2);
-  };
-  var __asyncGenerator2 = function(thisArg, _arguments, generator) {
-    if (!Symbol.asyncIterator)
-      throw new TypeError("Symbol.asyncIterator is not defined.");
-    var g2 = generator.apply(thisArg, _arguments || []), i2, q = [];
-    return i2 = {}, verb("next"), verb("throw"), verb("return"), i2[Symbol.asyncIterator] = function() {
-      return this;
-    }, i2;
-    function verb(n3) {
-      if (g2[n3])
-        i2[n3] = function(v2) {
-          return new Promise(function(a2, b3) {
-            q.push([n3, v2, a2, b3]) > 1 || resume(n3, v2);
-          });
-        };
-    }
-    function resume(n3, v2) {
-      try {
-        step(g2[n3](v2));
-      } catch (e2) {
-        settle(q[0][3], e2);
-      }
-    }
-    function step(r) {
-      r.value instanceof __await2 ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
-    }
-    function fulfill(value) {
-      resume("next", value);
-    }
-    function reject(value) {
-      resume("throw", value);
-    }
-    function settle(f3, v2) {
-      if (f3(v2), q.shift(), q.length)
-        resume(q[0][0], q[0][1]);
-    }
-  };
-  var __asyncDelegator = function(o2) {
-    var i2, p2;
-    return i2 = {}, verb("next"), verb("throw", function(e2) {
-      throw e2;
-    }), verb("return"), i2[Symbol.iterator] = function() {
-      return this;
-    }, i2;
-    function verb(n3, f3) {
-      i2[n3] = o2[n3] ? function(v2) {
-        return (p2 = !p2) ? { value: __await2(o2[n3](v2)), done: false } : f3 ? f3(v2) : v2;
-      } : f3;
-    }
-  };
-  function createAsyncIterable(items) {
-    return __asyncGenerator2(this, arguments, function* createAsyncIterable_1() {
-      yield __await2(yield* __asyncDelegator(__asyncValues(items)));
-    });
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/promise-client.js
-  var __await3 = function(v2) {
-    return this instanceof __await3 ? (this.v = v2, this) : new __await3(v2);
-  };
-  var __asyncValues2 = function(o2) {
-    if (!Symbol.asyncIterator)
-      throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m2 = o2[Symbol.asyncIterator], i2;
-    return m2 ? m2.call(o2) : (o2 = typeof __values === "function" ? __values(o2) : o2[Symbol.iterator](), i2 = {}, verb("next"), verb("throw"), verb("return"), i2[Symbol.asyncIterator] = function() {
-      return this;
-    }, i2);
-    function verb(n3) {
-      i2[n3] = o2[n3] && function(v2) {
-        return new Promise(function(resolve, reject) {
-          v2 = o2[n3](v2), settle(resolve, reject, v2.done, v2.value);
-        });
-      };
-    }
-    function settle(resolve, reject, d2, v2) {
-      Promise.resolve(v2).then(function(v3) {
-        resolve({ value: v3, done: d2 });
-      }, reject);
-    }
-  };
-  var __asyncDelegator2 = function(o2) {
-    var i2, p2;
-    return i2 = {}, verb("next"), verb("throw", function(e2) {
-      throw e2;
-    }), verb("return"), i2[Symbol.iterator] = function() {
-      return this;
-    }, i2;
-    function verb(n3, f3) {
-      i2[n3] = o2[n3] ? function(v2) {
-        return (p2 = !p2) ? { value: __await3(o2[n3](v2)), done: false } : f3 ? f3(v2) : v2;
-      } : f3;
-    }
-  };
-  var __asyncGenerator3 = function(thisArg, _arguments, generator) {
-    if (!Symbol.asyncIterator)
-      throw new TypeError("Symbol.asyncIterator is not defined.");
-    var g2 = generator.apply(thisArg, _arguments || []), i2, q = [];
-    return i2 = {}, verb("next"), verb("throw"), verb("return"), i2[Symbol.asyncIterator] = function() {
-      return this;
-    }, i2;
-    function verb(n3) {
-      if (g2[n3])
-        i2[n3] = function(v2) {
-          return new Promise(function(a2, b3) {
-            q.push([n3, v2, a2, b3]) > 1 || resume(n3, v2);
-          });
-        };
-    }
-    function resume(n3, v2) {
-      try {
-        step(g2[n3](v2));
-      } catch (e2) {
-        settle(q[0][3], e2);
-      }
-    }
-    function step(r) {
-      r.value instanceof __await3 ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
-    }
-    function fulfill(value) {
-      resume("next", value);
-    }
-    function reject(value) {
-      resume("throw", value);
-    }
-    function settle(f3, v2) {
-      if (f3(v2), q.shift(), q.length)
-        resume(q[0][0], q[0][1]);
-    }
-  };
-  function createPromiseClient(service, transport2) {
-    return makeAnyClient(service, (method) => {
-      switch (method.kind) {
-        case MethodKind.Unary:
-          return createUnaryFn(transport2, service, method);
-        case MethodKind.ServerStreaming:
-          return createServerStreamingFn(transport2, service, method);
-        case MethodKind.ClientStreaming:
-          return createClientStreamingFn(transport2, service, method);
-        case MethodKind.BiDiStreaming:
-          return createBiDiStreamingFn(transport2, service, method);
-        default:
-          return null;
-      }
-    });
-  }
-  function createUnaryFn(transport2, service, method) {
-    return async function(input, options) {
-      var _a7, _b3;
-      const response = await transport2.unary(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, input);
-      (_a7 = options === null || options === void 0 ? void 0 : options.onHeader) === null || _a7 === void 0 ? void 0 : _a7.call(options, response.header);
-      (_b3 = options === null || options === void 0 ? void 0 : options.onTrailer) === null || _b3 === void 0 ? void 0 : _b3.call(options, response.trailer);
-      return response.message;
-    };
-  }
-  function createServerStreamingFn(transport2, service, method) {
-    return function(input, options) {
-      var _a7, _b3;
-      return __asyncGenerator3(this, arguments, function* () {
-        const inputMessage = input instanceof method.I ? input : new method.I(input);
-        const response = yield __await3(transport2.stream(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, createAsyncIterable([inputMessage])));
-        (_a7 = options === null || options === void 0 ? void 0 : options.onHeader) === null || _a7 === void 0 ? void 0 : _a7.call(options, response.header);
-        yield __await3(yield* __asyncDelegator2(__asyncValues2(response.message)));
-        (_b3 = options === null || options === void 0 ? void 0 : options.onTrailer) === null || _b3 === void 0 ? void 0 : _b3.call(options, response.trailer);
-      });
-    };
-  }
-  function createClientStreamingFn(transport2, service, method) {
-    return async function(request, options) {
-      var _a7, e_1, _b3, _c3;
-      var _d3, _e2;
-      function input() {
-        return __asyncGenerator3(this, arguments, function* input_1() {
-          var _a8, e_2, _b4, _c4;
-          try {
-            for (var _d4 = true, request_1 = __asyncValues2(request), request_1_1; request_1_1 = yield __await3(request_1.next()), _a8 = request_1_1.done, !_a8; ) {
-              _c4 = request_1_1.value;
-              _d4 = false;
-              try {
-                const partial = _c4;
-                yield yield __await3(partial instanceof method.I ? partial : new method.I(partial));
-              } finally {
-                _d4 = true;
-              }
-            }
-          } catch (e_2_1) {
-            e_2 = { error: e_2_1 };
-          } finally {
-            try {
-              if (!_d4 && !_a8 && (_b4 = request_1.return))
-                yield __await3(_b4.call(request_1));
-            } finally {
-              if (e_2)
-                throw e_2.error;
-            }
-          }
-        });
-      }
-      const response = await transport2.stream(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, input());
-      (_d3 = options === null || options === void 0 ? void 0 : options.onHeader) === null || _d3 === void 0 ? void 0 : _d3.call(options, response.header);
-      let singleMessage;
-      try {
-        for (var _f = true, _g = __asyncValues2(response.message), _h; _h = await _g.next(), _a7 = _h.done, !_a7; ) {
-          _c3 = _h.value;
-          _f = false;
-          try {
-            const message = _c3;
-            singleMessage = message;
-          } finally {
-            _f = true;
-          }
-        }
-      } catch (e_1_1) {
-        e_1 = { error: e_1_1 };
-      } finally {
-        try {
-          if (!_f && !_a7 && (_b3 = _g.return))
-            await _b3.call(_g);
-        } finally {
-          if (e_1)
-            throw e_1.error;
-        }
-      }
-      if (!singleMessage) {
-        throw new ConnectError2("protocol error: missing response message", Code2.Internal);
-      }
-      (_e2 = options === null || options === void 0 ? void 0 : options.onTrailer) === null || _e2 === void 0 ? void 0 : _e2.call(options, response.trailer);
-      return singleMessage;
-    };
-  }
-  function createBiDiStreamingFn(transport2, service, method) {
-    return function(request, options) {
-      var _a7, _b3;
-      return __asyncGenerator3(this, arguments, function* () {
-        function input() {
-          return __asyncGenerator3(this, arguments, function* input_2() {
-            var _a8, e_3, _b4, _c3;
-            try {
-              for (var _d3 = true, request_2 = __asyncValues2(request), request_2_1; request_2_1 = yield __await3(request_2.next()), _a8 = request_2_1.done, !_a8; ) {
-                _c3 = request_2_1.value;
-                _d3 = false;
-                try {
-                  const partial = _c3;
-                  yield yield __await3(partial instanceof method.I ? partial : new method.I(partial));
-                } finally {
-                  _d3 = true;
-                }
-              }
-            } catch (e_3_1) {
-              e_3 = { error: e_3_1 };
-            } finally {
-              try {
-                if (!_d3 && !_a8 && (_b4 = request_2.return))
-                  yield __await3(_b4.call(request_2));
-              } finally {
-                if (e_3)
-                  throw e_3.error;
-              }
-            }
-          });
-        }
-        const response = yield __await3(transport2.stream(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, input()));
-        (_a7 = options === null || options === void 0 ? void 0 : options.onHeader) === null || _a7 === void 0 ? void 0 : _a7.call(options, response.header);
-        yield __await3(yield* __asyncDelegator2(__asyncValues2(response.message)));
-        (_b3 = options === null || options === void 0 ? void 0 : options.onTrailer) === null || _b3 === void 0 ? void 0 : _b3.call(options, response.trailer);
-      });
-    };
-  }
-
   // src/rpc/content/content_pb.ts
-  var _Tags = class extends Message {
+  var VoteRequest = class _VoteRequest extends Message {
+    /**
+     * @generated from field: string content_id = 1;
+     */
+    contentId = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.VoteRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "content_id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _VoteRequest().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _VoteRequest().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _VoteRequest().fromJsonString(jsonString, options);
+    }
+    static equals(a2, b3) {
+      return proto3.util.equals(_VoteRequest, a2, b3);
+    }
+  };
+  var Tags = class _Tags extends Message {
     /**
      * @generated from field: repeated content.Tag tags = 1;
      */
@@ -47595,6 +47470,11 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Tags";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "tags", kind: "message", T: Tag, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _Tags().fromBinary(bytes, options);
     }
@@ -47608,13 +47488,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Tags, a2, b3);
     }
   };
-  var Tags = _Tags;
-  __publicField(Tags, "runtime", proto3);
-  __publicField(Tags, "typeName", "content.Tags");
-  __publicField(Tags, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "tags", kind: "message", T: Tag, repeated: true }
-  ]));
-  var _Tag = class extends Message {
+  var Tag = class _Tag extends Message {
     /**
      * @generated from field: string name = 1;
      */
@@ -47627,6 +47501,18 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Tag";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "name",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 2, name: "sub_tags", kind: "message", T: _Tag, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _Tag().fromBinary(bytes, options);
     }
@@ -47640,20 +47526,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Tag, a2, b3);
     }
   };
-  var Tag = _Tag;
-  __publicField(Tag, "runtime", proto3);
-  __publicField(Tag, "typeName", "content.Tag");
-  __publicField(Tag, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "name",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    { no: 2, name: "sub_tags", kind: "message", T: _Tag, repeated: true }
-  ]));
-  var _ContentIDs = class extends Message {
+  var ContentIDs = class _ContentIDs extends Message {
     /**
      * @generated from field: repeated string content_ids = 1;
      */
@@ -47662,6 +47535,11 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.ContentIDs";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "content_ids", kind: "scalar", T: 9, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _ContentIDs().fromBinary(bytes, options);
     }
@@ -47675,13 +47553,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_ContentIDs, a2, b3);
     }
   };
-  var ContentIDs = _ContentIDs;
-  __publicField(ContentIDs, "runtime", proto3);
-  __publicField(ContentIDs, "typeName", "content.ContentIDs");
-  __publicField(ContentIDs, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "content_ids", kind: "scalar", T: 9, repeated: true }
-  ]));
-  var _Contents = class extends Message {
+  var Contents = class _Contents extends Message {
     /**
      * @generated from field: content.Content content = 1;
      */
@@ -47694,6 +47566,12 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Contents";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "content", kind: "message", T: Content },
+      { no: 2, name: "related", kind: "message", T: Content, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _Contents().fromBinary(bytes, options);
     }
@@ -47707,14 +47585,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Contents, a2, b3);
     }
   };
-  var Contents = _Contents;
-  __publicField(Contents, "runtime", proto3);
-  __publicField(Contents, "typeName", "content.Contents");
-  __publicField(Contents, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "content", kind: "message", T: Content },
-    { no: 2, name: "related", kind: "message", T: Content, repeated: true }
-  ]));
-  var _Query = class extends Message {
+  var Query = class _Query extends Message {
     /**
      * @generated from field: string query = 1;
      */
@@ -47735,6 +47606,38 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Query";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "query",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "page",
+        kind: "scalar",
+        T: 13
+        /* ScalarType.UINT32 */
+      },
+      {
+        no: 3,
+        name: "contentID",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 4,
+        name: "groupID",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _Query().fromBinary(bytes, options);
     }
@@ -47748,40 +47651,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Query, a2, b3);
     }
   };
-  var Query = _Query;
-  __publicField(Query, "runtime", proto3);
-  __publicField(Query, "typeName", "content.Query");
-  __publicField(Query, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "query",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 2,
-      name: "page",
-      kind: "scalar",
-      T: 13
-      /* ScalarType.UINT32 */
-    },
-    {
-      no: 3,
-      name: "contentID",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 4,
-      name: "groupID",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _Results = class extends Message {
+  var Results = class _Results extends Message {
     /**
      * @generated from field: repeated content.StoredContent storedContent = 1;
      */
@@ -47790,6 +47660,11 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Results";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "storedContent", kind: "message", T: StoredContent, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _Results().fromBinary(bytes, options);
     }
@@ -47803,13 +47678,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Results, a2, b3);
     }
   };
-  var Results = _Results;
-  __publicField(Results, "runtime", proto3);
-  __publicField(Results, "typeName", "content.Results");
-  __publicField(Results, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "storedContent", kind: "message", T: StoredContent, repeated: true }
-  ]));
-  var _StoredContent = class extends Message {
+  var StoredContent = class _StoredContent extends Message {
     /**
      * @generated from field: content.Content content = 1;
      */
@@ -47842,6 +47711,47 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.StoredContent";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "content", kind: "message", T: Content },
+      {
+        no: 2,
+        name: "id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 3, name: "related", kind: "message", T: Content, repeated: true },
+      {
+        no: 4,
+        name: "title",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 5,
+        name: "description",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 6,
+        name: "image",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 7,
+        name: "url",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _StoredContent().fromBinary(bytes, options);
     }
@@ -47855,49 +47765,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_StoredContent, a2, b3);
     }
   };
-  var StoredContent = _StoredContent;
-  __publicField(StoredContent, "runtime", proto3);
-  __publicField(StoredContent, "typeName", "content.StoredContent");
-  __publicField(StoredContent, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "content", kind: "message", T: Content },
-    {
-      no: 2,
-      name: "id",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    { no: 3, name: "related", kind: "message", T: Content, repeated: true },
-    {
-      no: 4,
-      name: "title",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 5,
-      name: "description",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 6,
-      name: "image",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 7,
-      name: "url",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _Edge = class extends Message {
+  var Edge = class _Edge extends Message {
     /**
      * @generated from field: string from = 1;
      */
@@ -47910,6 +47778,24 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Edge";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "from",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "to",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _Edge().fromBinary(bytes, options);
     }
@@ -47923,26 +47809,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Edge, a2, b3);
     }
   };
-  var Edge = _Edge;
-  __publicField(Edge, "runtime", proto3);
-  __publicField(Edge, "typeName", "content.Edge");
-  __publicField(Edge, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "from",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 2,
-      name: "to",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _Content = class extends Message {
+  var Content = class _Content extends Message {
     /**
      * @generated from field: repeated string tags = 1;
      */
@@ -47959,6 +47826,22 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Content";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "tags", kind: "scalar", T: 9, repeated: true },
+      {
+        no: 2,
+        name: "created_at",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 6, name: "data", kind: "message", T: Data, oneof: "type" },
+      { no: 7, name: "normalized", kind: "message", T: Normalized, oneof: "type" },
+      { no: 8, name: "transformed", kind: "message", T: Transformed, oneof: "type" },
+      { no: 9, name: "source", kind: "message", T: Source, oneof: "type" }
+    ]);
     static fromBinary(bytes, options) {
       return new _Content().fromBinary(bytes, options);
     }
@@ -47972,24 +47855,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Content, a2, b3);
     }
   };
-  var Content = _Content;
-  __publicField(Content, "runtime", proto3);
-  __publicField(Content, "typeName", "content.Content");
-  __publicField(Content, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "tags", kind: "scalar", T: 9, repeated: true },
-    {
-      no: 2,
-      name: "created_at",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    { no: 6, name: "data", kind: "message", T: Data, oneof: "type" },
-    { no: 7, name: "normalized", kind: "message", T: Normalized, oneof: "type" },
-    { no: 8, name: "transformed", kind: "message", T: Transformed, oneof: "type" },
-    { no: 9, name: "source", kind: "message", T: Source, oneof: "type" }
-  ]));
-  var _Source = class extends Message {
+  var Source = class _Source extends Message {
     /**
      * @generated from field: string name = 1;
      */
@@ -48002,6 +47868,18 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Source";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "name",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 4, name: "youtube_channel", kind: "message", T: YouTubeChannel, oneof: "type" }
+    ]);
     static fromBinary(bytes, options) {
       return new _Source().fromBinary(bytes, options);
     }
@@ -48015,20 +47893,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Source, a2, b3);
     }
   };
-  var Source = _Source;
-  __publicField(Source, "runtime", proto3);
-  __publicField(Source, "typeName", "content.Source");
-  __publicField(Source, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "name",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    { no: 4, name: "youtube_channel", kind: "message", T: YouTubeChannel, oneof: "type" }
-  ]));
-  var _YouTubeChannel = class extends Message {
+  var YouTubeChannel = class _YouTubeChannel extends Message {
     /**
      * @generated from field: string channel_id = 1;
      */
@@ -48037,6 +47902,17 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.YouTubeChannel";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "channel_id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _YouTubeChannel().fromBinary(bytes, options);
     }
@@ -48050,19 +47926,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_YouTubeChannel, a2, b3);
     }
   };
-  var YouTubeChannel = _YouTubeChannel;
-  __publicField(YouTubeChannel, "runtime", proto3);
-  __publicField(YouTubeChannel, "typeName", "content.YouTubeChannel");
-  __publicField(YouTubeChannel, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "channel_id",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _Data = class extends Message {
+  var Data = class _Data extends Message {
     /**
      * @generated from oneof content.Data.type
      */
@@ -48071,6 +47935,13 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Data";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 4, name: "text", kind: "message", T: Text, oneof: "type" },
+      { no: 5, name: "file", kind: "message", T: File, oneof: "type" },
+      { no: 6, name: "url", kind: "message", T: URL2, oneof: "type" }
+    ]);
     static fromBinary(bytes, options) {
       return new _Data().fromBinary(bytes, options);
     }
@@ -48084,15 +47955,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Data, a2, b3);
     }
   };
-  var Data = _Data;
-  __publicField(Data, "runtime", proto3);
-  __publicField(Data, "typeName", "content.Data");
-  __publicField(Data, "fields", proto3.util.newFieldList(() => [
-    { no: 4, name: "text", kind: "message", T: Text, oneof: "type" },
-    { no: 5, name: "file", kind: "message", T: File, oneof: "type" },
-    { no: 6, name: "url", kind: "message", T: URL2, oneof: "type" }
-  ]));
-  var _Normalized = class extends Message {
+  var Normalized = class _Normalized extends Message {
     /**
      * @generated from oneof content.Normalized.type
      */
@@ -48101,6 +47964,14 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Normalized";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 3, name: "article", kind: "message", T: Article, oneof: "type" },
+      { no: 4, name: "html", kind: "message", T: HTML, oneof: "type" },
+      { no: 6, name: "transcript", kind: "message", T: Transcript, oneof: "type" },
+      { no: 7, name: "github_readme", kind: "message", T: GitHubReadme, oneof: "type" }
+    ]);
     static fromBinary(bytes, options) {
       return new _Normalized().fromBinary(bytes, options);
     }
@@ -48114,16 +47985,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Normalized, a2, b3);
     }
   };
-  var Normalized = _Normalized;
-  __publicField(Normalized, "runtime", proto3);
-  __publicField(Normalized, "typeName", "content.Normalized");
-  __publicField(Normalized, "fields", proto3.util.newFieldList(() => [
-    { no: 3, name: "article", kind: "message", T: Article, oneof: "type" },
-    { no: 4, name: "html", kind: "message", T: HTML, oneof: "type" },
-    { no: 6, name: "transcript", kind: "message", T: Transcript, oneof: "type" },
-    { no: 7, name: "github_readme", kind: "message", T: GitHubReadme, oneof: "type" }
-  ]));
-  var _Transformed = class extends Message {
+  var Transformed = class _Transformed extends Message {
     /**
      * @generated from oneof content.Transformed.type
      */
@@ -48132,6 +47994,12 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Transformed";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "summary", kind: "message", T: Summary, oneof: "type" },
+      { no: 2, name: "categories", kind: "message", T: Categories, oneof: "type" }
+    ]);
     static fromBinary(bytes, options) {
       return new _Transformed().fromBinary(bytes, options);
     }
@@ -48145,14 +48013,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Transformed, a2, b3);
     }
   };
-  var Transformed = _Transformed;
-  __publicField(Transformed, "runtime", proto3);
-  __publicField(Transformed, "typeName", "content.Transformed");
-  __publicField(Transformed, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "summary", kind: "message", T: Summary, oneof: "type" },
-    { no: 2, name: "categories", kind: "message", T: Categories, oneof: "type" }
-  ]));
-  var _Article = class extends Message {
+  var Article = class _Article extends Message {
     /**
      * @generated from field: string title = 1;
      */
@@ -48189,6 +48050,66 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Article";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "title",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "author",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 3,
+        name: "length",
+        kind: "scalar",
+        T: 5
+        /* ScalarType.INT32 */
+      },
+      {
+        no: 4,
+        name: "excerpt",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 5,
+        name: "site_name",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 6,
+        name: "image",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 7,
+        name: "favicon",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 8,
+        name: "text",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _Article().fromBinary(bytes, options);
     }
@@ -48202,68 +48123,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Article, a2, b3);
     }
   };
-  var Article = _Article;
-  __publicField(Article, "runtime", proto3);
-  __publicField(Article, "typeName", "content.Article");
-  __publicField(Article, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "title",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 2,
-      name: "author",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 3,
-      name: "length",
-      kind: "scalar",
-      T: 5
-      /* ScalarType.INT32 */
-    },
-    {
-      no: 4,
-      name: "excerpt",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 5,
-      name: "site_name",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 6,
-      name: "image",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 7,
-      name: "favicon",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 8,
-      name: "text",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _HTML = class extends Message {
+  var HTML = class _HTML extends Message {
     /**
      * @generated from field: string html = 1;
      */
@@ -48272,6 +48132,17 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.HTML";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "html",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _HTML().fromBinary(bytes, options);
     }
@@ -48285,19 +48156,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_HTML, a2, b3);
     }
   };
-  var HTML = _HTML;
-  __publicField(HTML, "runtime", proto3);
-  __publicField(HTML, "typeName", "content.HTML");
-  __publicField(HTML, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "html",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _GitHubReadme = class extends Message {
+  var GitHubReadme = class _GitHubReadme extends Message {
     /**
      * @generated from field: string data = 1;
      */
@@ -48306,6 +48165,17 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.GitHubReadme";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "data",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _GitHubReadme().fromBinary(bytes, options);
     }
@@ -48319,19 +48189,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_GitHubReadme, a2, b3);
     }
   };
-  var GitHubReadme = _GitHubReadme;
-  __publicField(GitHubReadme, "runtime", proto3);
-  __publicField(GitHubReadme, "typeName", "content.GitHubReadme");
-  __publicField(GitHubReadme, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "data",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _Summary = class extends Message {
+  var Summary = class _Summary extends Message {
     /**
      * @generated from field: string summary = 1;
      */
@@ -48340,6 +48198,17 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Summary";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "summary",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _Summary().fromBinary(bytes, options);
     }
@@ -48353,19 +48222,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Summary, a2, b3);
     }
   };
-  var Summary = _Summary;
-  __publicField(Summary, "runtime", proto3);
-  __publicField(Summary, "typeName", "content.Summary");
-  __publicField(Summary, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "summary",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _Categories = class extends Message {
+  var Categories = class _Categories extends Message {
     /**
      * @generated from field: repeated string categories = 1;
      */
@@ -48374,6 +48231,11 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Categories";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "categories", kind: "scalar", T: 9, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _Categories().fromBinary(bytes, options);
     }
@@ -48387,13 +48249,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Categories, a2, b3);
     }
   };
-  var Categories = _Categories;
-  __publicField(Categories, "runtime", proto3);
-  __publicField(Categories, "typeName", "content.Categories");
-  __publicField(Categories, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "categories", kind: "scalar", T: 9, repeated: true }
-  ]));
-  var _File = class extends Message {
+  var File = class _File extends Message {
     /**
      * @generated from field: string file = 1;
      */
@@ -48406,6 +48262,24 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.File";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "file",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "data",
+        kind: "scalar",
+        T: 12
+        /* ScalarType.BYTES */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _File().fromBinary(bytes, options);
     }
@@ -48419,26 +48293,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_File, a2, b3);
     }
   };
-  var File = _File;
-  __publicField(File, "runtime", proto3);
-  __publicField(File, "typeName", "content.File");
-  __publicField(File, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "file",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 2,
-      name: "data",
-      kind: "scalar",
-      T: 12
-      /* ScalarType.BYTES */
-    }
-  ]));
-  var _Text = class extends Message {
+  var Text = class _Text extends Message {
     /**
      * @generated from field: string data = 1;
      */
@@ -48447,6 +48302,17 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Text";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "data",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _Text().fromBinary(bytes, options);
     }
@@ -48460,19 +48326,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Text, a2, b3);
     }
   };
-  var Text = _Text;
-  __publicField(Text, "runtime", proto3);
-  __publicField(Text, "typeName", "content.Text");
-  __publicField(Text, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "data",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _URL = class extends Message {
+  var URL2 = class _URL extends Message {
     /**
      * @generated from field: string url = 1;
      */
@@ -48489,6 +48343,31 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.URL";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "url",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "crawl",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      },
+      {
+        no: 3,
+        name: "title",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _URL().fromBinary(bytes, options);
     }
@@ -48502,33 +48381,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_URL, a2, b3);
     }
   };
-  var URL2 = _URL;
-  __publicField(URL2, "runtime", proto3);
-  __publicField(URL2, "typeName", "content.URL");
-  __publicField(URL2, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "url",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 2,
-      name: "crawl",
-      kind: "scalar",
-      T: 8
-      /* ScalarType.BOOL */
-    },
-    {
-      no: 3,
-      name: "title",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _Token = class extends Message {
+  var Token = class _Token extends Message {
     /**
      * @generated from field: uint32 id = 1;
      */
@@ -48553,6 +48406,45 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Token";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "id",
+        kind: "scalar",
+        T: 13
+        /* ScalarType.UINT32 */
+      },
+      {
+        no: 2,
+        name: "start_time",
+        kind: "scalar",
+        T: 4
+        /* ScalarType.UINT64 */
+      },
+      {
+        no: 3,
+        name: "end_time",
+        kind: "scalar",
+        T: 4
+        /* ScalarType.UINT64 */
+      },
+      {
+        no: 4,
+        name: "text",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 5,
+        name: "p",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _Token().fromBinary(bytes, options);
     }
@@ -48566,47 +48458,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Token, a2, b3);
     }
   };
-  var Token = _Token;
-  __publicField(Token, "runtime", proto3);
-  __publicField(Token, "typeName", "content.Token");
-  __publicField(Token, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "id",
-      kind: "scalar",
-      T: 13
-      /* ScalarType.UINT32 */
-    },
-    {
-      no: 2,
-      name: "start_time",
-      kind: "scalar",
-      T: 4
-      /* ScalarType.UINT64 */
-    },
-    {
-      no: 3,
-      name: "end_time",
-      kind: "scalar",
-      T: 4
-      /* ScalarType.UINT64 */
-    },
-    {
-      no: 4,
-      name: "text",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 5,
-      name: "p",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _Segment = class extends Message {
+  var Segment = class _Segment extends Message {
     /**
      * @generated from field: uint32 num = 1;
      */
@@ -48631,6 +48483,39 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Segment";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "num",
+        kind: "scalar",
+        T: 13
+        /* ScalarType.UINT32 */
+      },
+      { no: 2, name: "tokens", kind: "message", T: Token, repeated: true },
+      {
+        no: 3,
+        name: "text",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 4,
+        name: "start_time",
+        kind: "scalar",
+        T: 4
+        /* ScalarType.UINT64 */
+      },
+      {
+        no: 5,
+        name: "end_time",
+        kind: "scalar",
+        T: 4
+        /* ScalarType.UINT64 */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _Segment().fromBinary(bytes, options);
     }
@@ -48644,41 +48529,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Segment, a2, b3);
     }
   };
-  var Segment = _Segment;
-  __publicField(Segment, "runtime", proto3);
-  __publicField(Segment, "typeName", "content.Segment");
-  __publicField(Segment, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "num",
-      kind: "scalar",
-      T: 13
-      /* ScalarType.UINT32 */
-    },
-    { no: 2, name: "tokens", kind: "message", T: Token, repeated: true },
-    {
-      no: 3,
-      name: "text",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 4,
-      name: "start_time",
-      kind: "scalar",
-      T: 4
-      /* ScalarType.UINT64 */
-    },
-    {
-      no: 5,
-      name: "end_time",
-      kind: "scalar",
-      T: 4
-      /* ScalarType.UINT64 */
-    }
-  ]));
-  var _Transcript = class extends Message {
+  var Transcript = class _Transcript extends Message {
     /**
      * @generated from field: string id = 1;
      */
@@ -48695,6 +48546,25 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "content.Transcript";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "name",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 3, name: "segments", kind: "message", T: Segment, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _Transcript().fromBinary(bytes, options);
     }
@@ -48708,29 +48578,9 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Transcript, a2, b3);
     }
   };
-  var Transcript = _Transcript;
-  __publicField(Transcript, "runtime", proto3);
-  __publicField(Transcript, "typeName", "content.Transcript");
-  __publicField(Transcript, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "id",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 2,
-      name: "name",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    { no: 3, name: "segments", kind: "message", T: Segment, repeated: true }
-  ]));
 
   // src/rpc/protoflow_pb.ts
-  var _AnalyzeConversationRequest = class extends Message {
+  var AnalyzeConversationRequest = class _AnalyzeConversationRequest extends Message {
     /**
      * @generated from field: string text = 1;
      */
@@ -48739,6 +48589,17 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.AnalyzeConversationRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "text",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _AnalyzeConversationRequest().fromBinary(bytes, options);
     }
@@ -48752,19 +48613,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_AnalyzeConversationRequest, a2, b3);
     }
   };
-  var AnalyzeConversationRequest = _AnalyzeConversationRequest;
-  __publicField(AnalyzeConversationRequest, "runtime", proto3);
-  __publicField(AnalyzeConversationRequest, "typeName", "protoflow.AnalyzeConversationRequest");
-  __publicField(AnalyzeConversationRequest, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "text",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _GenerateImagesRequest = class extends Message {
+  var GenerateImagesRequest = class _GenerateImagesRequest extends Message {
     /**
      * @generated from field: string prompt = 1;
      */
@@ -48773,6 +48622,17 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.GenerateImagesRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "prompt",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _GenerateImagesRequest().fromBinary(bytes, options);
     }
@@ -48786,19 +48646,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_GenerateImagesRequest, a2, b3);
     }
   };
-  var GenerateImagesRequest = _GenerateImagesRequest;
-  __publicField(GenerateImagesRequest, "runtime", proto3);
-  __publicField(GenerateImagesRequest, "typeName", "protoflow.GenerateImagesRequest");
-  __publicField(GenerateImagesRequest, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "prompt",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _GenerateImagesResponse = class extends Message {
+  var GenerateImagesResponse = class _GenerateImagesResponse extends Message {
     /**
      * @generated from field: repeated string images = 1;
      */
@@ -48807,6 +48655,11 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.GenerateImagesResponse";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "images", kind: "scalar", T: 9, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _GenerateImagesResponse().fromBinary(bytes, options);
     }
@@ -48820,13 +48673,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_GenerateImagesResponse, a2, b3);
     }
   };
-  var GenerateImagesResponse = _GenerateImagesResponse;
-  __publicField(GenerateImagesResponse, "runtime", proto3);
-  __publicField(GenerateImagesResponse, "typeName", "protoflow.GenerateImagesResponse");
-  __publicField(GenerateImagesResponse, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "images", kind: "scalar", T: 9, repeated: true }
-  ]));
-  var _DeleteSessionRequest = class extends Message {
+  var DeleteSessionRequest = class _DeleteSessionRequest extends Message {
     /**
      * @generated from field: string id = 1;
      */
@@ -48835,6 +48682,17 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.DeleteSessionRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _DeleteSessionRequest().fromBinary(bytes, options);
     }
@@ -48848,19 +48706,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_DeleteSessionRequest, a2, b3);
     }
   };
-  var DeleteSessionRequest = _DeleteSessionRequest;
-  __publicField(DeleteSessionRequest, "runtime", proto3);
-  __publicField(DeleteSessionRequest, "typeName", "protoflow.DeleteSessionRequest");
-  __publicField(DeleteSessionRequest, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "id",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _Prompt = class extends Message {
+  var Prompt = class _Prompt extends Message {
     /**
      * @generated from field: string id = 1;
      */
@@ -48873,6 +48719,24 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.Prompt";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "text",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _Prompt().fromBinary(bytes, options);
     }
@@ -48886,30 +48750,14 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Prompt, a2, b3);
     }
   };
-  var Prompt = _Prompt;
-  __publicField(Prompt, "runtime", proto3);
-  __publicField(Prompt, "typeName", "protoflow.Prompt");
-  __publicField(Prompt, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "id",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 2,
-      name: "text",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _GetPromptsRequest = class extends Message {
+  var GetPromptsRequest = class _GetPromptsRequest extends Message {
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.GetPromptsRequest";
+    static fields = proto3.util.newFieldList(() => []);
     static fromBinary(bytes, options) {
       return new _GetPromptsRequest().fromBinary(bytes, options);
     }
@@ -48923,11 +48771,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_GetPromptsRequest, a2, b3);
     }
   };
-  var GetPromptsRequest = _GetPromptsRequest;
-  __publicField(GetPromptsRequest, "runtime", proto3);
-  __publicField(GetPromptsRequest, "typeName", "protoflow.GetPromptsRequest");
-  __publicField(GetPromptsRequest, "fields", proto3.util.newFieldList(() => []));
-  var _GetPromptsResponse = class extends Message {
+  var GetPromptsResponse = class _GetPromptsResponse extends Message {
     /**
      * @generated from field: repeated protoflow.Prompt prompts = 1;
      */
@@ -48936,6 +48780,11 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.GetPromptsResponse";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "prompts", kind: "message", T: Prompt, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _GetPromptsResponse().fromBinary(bytes, options);
     }
@@ -48949,13 +48798,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_GetPromptsResponse, a2, b3);
     }
   };
-  var GetPromptsResponse = _GetPromptsResponse;
-  __publicField(GetPromptsResponse, "runtime", proto3);
-  __publicField(GetPromptsResponse, "typeName", "protoflow.GetPromptsResponse");
-  __publicField(GetPromptsResponse, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "prompts", kind: "message", T: Prompt, repeated: true }
-  ]));
-  var _InferRequest = class extends Message {
+  var InferRequest = class _InferRequest extends Message {
     /**
      * @generated from field: string prompt = 1;
      */
@@ -48968,6 +48811,18 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.InferRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "prompt",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 2, name: "text", kind: "scalar", T: 9, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _InferRequest().fromBinary(bytes, options);
     }
@@ -48981,20 +48836,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_InferRequest, a2, b3);
     }
   };
-  var InferRequest = _InferRequest;
-  __publicField(InferRequest, "runtime", proto3);
-  __publicField(InferRequest, "typeName", "protoflow.InferRequest");
-  __publicField(InferRequest, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "prompt",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    { no: 2, name: "text", kind: "scalar", T: 9, repeated: true }
-  ]));
-  var _InferResponse = class extends Message {
+  var InferResponse = class _InferResponse extends Message {
     /**
      * @generated from field: string text = 1;
      */
@@ -49003,6 +48845,17 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.InferResponse";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "text",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _InferResponse().fromBinary(bytes, options);
     }
@@ -49016,19 +48869,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_InferResponse, a2, b3);
     }
   };
-  var InferResponse = _InferResponse;
-  __publicField(InferResponse, "runtime", proto3);
-  __publicField(InferResponse, "typeName", "protoflow.InferResponse");
-  __publicField(InferResponse, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "text",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _UploadContentRequest = class extends Message {
+  var UploadContentRequest = class _UploadContentRequest extends Message {
     /**
      * @generated from field: content.Content content = 1;
      */
@@ -49037,6 +48878,11 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.UploadContentRequest";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "content", kind: "message", T: Content }
+    ]);
     static fromBinary(bytes, options) {
       return new _UploadContentRequest().fromBinary(bytes, options);
     }
@@ -49050,13 +48896,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_UploadContentRequest, a2, b3);
     }
   };
-  var UploadContentRequest = _UploadContentRequest;
-  __publicField(UploadContentRequest, "runtime", proto3);
-  __publicField(UploadContentRequest, "typeName", "protoflow.UploadContentRequest");
-  __publicField(UploadContentRequest, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "content", kind: "message", T: Content }
-  ]));
-  var _UploadContentResponse = class extends Message {
+  var UploadContentResponse = class _UploadContentResponse extends Message {
     /**
      * @generated from field: string id = 1;
      */
@@ -49065,6 +48905,17 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.UploadContentResponse";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _UploadContentResponse().fromBinary(bytes, options);
     }
@@ -49078,19 +48929,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_UploadContentResponse, a2, b3);
     }
   };
-  var UploadContentResponse = _UploadContentResponse;
-  __publicField(UploadContentResponse, "runtime", proto3);
-  __publicField(UploadContentResponse, "typeName", "protoflow.UploadContentResponse");
-  __publicField(UploadContentResponse, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "id",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _GetSessionRequest = class extends Message {
+  var GetSessionRequest = class _GetSessionRequest extends Message {
     /**
      * @generated from field: string id = 1;
      */
@@ -49099,6 +48938,17 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.GetSessionRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _GetSessionRequest().fromBinary(bytes, options);
     }
@@ -49112,19 +48962,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_GetSessionRequest, a2, b3);
     }
   };
-  var GetSessionRequest = _GetSessionRequest;
-  __publicField(GetSessionRequest, "runtime", proto3);
-  __publicField(GetSessionRequest, "typeName", "protoflow.GetSessionRequest");
-  __publicField(GetSessionRequest, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "id",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _GetSessionResponse = class extends Message {
+  var GetSessionResponse = class _GetSessionResponse extends Message {
     /**
      * @generated from field: protoflow.Session session = 1;
      */
@@ -49133,6 +48971,11 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.GetSessionResponse";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "session", kind: "message", T: Session }
+    ]);
     static fromBinary(bytes, options) {
       return new _GetSessionResponse().fromBinary(bytes, options);
     }
@@ -49146,13 +48989,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_GetSessionResponse, a2, b3);
     }
   };
-  var GetSessionResponse = _GetSessionResponse;
-  __publicField(GetSessionResponse, "runtime", proto3);
-  __publicField(GetSessionResponse, "typeName", "protoflow.GetSessionResponse");
-  __publicField(GetSessionResponse, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "session", kind: "message", T: Session }
-  ]));
-  var _GetSessionsRequest = class extends Message {
+  var GetSessionsRequest = class _GetSessionsRequest extends Message {
     /**
      * @generated from field: uint64 page = 1;
      */
@@ -49165,6 +49002,24 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.GetSessionsRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "page",
+        kind: "scalar",
+        T: 4
+        /* ScalarType.UINT64 */
+      },
+      {
+        no: 2,
+        name: "limit",
+        kind: "scalar",
+        T: 4
+        /* ScalarType.UINT64 */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _GetSessionsRequest().fromBinary(bytes, options);
     }
@@ -49178,26 +49033,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_GetSessionsRequest, a2, b3);
     }
   };
-  var GetSessionsRequest = _GetSessionsRequest;
-  __publicField(GetSessionsRequest, "runtime", proto3);
-  __publicField(GetSessionsRequest, "typeName", "protoflow.GetSessionsRequest");
-  __publicField(GetSessionsRequest, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "page",
-      kind: "scalar",
-      T: 4
-      /* ScalarType.UINT64 */
-    },
-    {
-      no: 2,
-      name: "limit",
-      kind: "scalar",
-      T: 4
-      /* ScalarType.UINT64 */
-    }
-  ]));
-  var _GetSessionsResponse = class extends Message {
+  var GetSessionsResponse = class _GetSessionsResponse extends Message {
     /**
      * @generated from field: repeated protoflow.Session sessions = 1;
      */
@@ -49206,6 +49042,11 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.GetSessionsResponse";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "sessions", kind: "message", T: Session, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _GetSessionsResponse().fromBinary(bytes, options);
     }
@@ -49219,13 +49060,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_GetSessionsResponse, a2, b3);
     }
   };
-  var GetSessionsResponse = _GetSessionsResponse;
-  __publicField(GetSessionsResponse, "runtime", proto3);
-  __publicField(GetSessionsResponse, "typeName", "protoflow.GetSessionsResponse");
-  __publicField(GetSessionsResponse, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "sessions", kind: "message", T: Session, repeated: true }
-  ]));
-  var _Token2 = class extends Message {
+  var Token2 = class _Token extends Message {
     /**
      * @generated from field: uint32 id = 1;
      */
@@ -49250,60 +49085,59 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.Token";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "id",
+        kind: "scalar",
+        T: 13
+        /* ScalarType.UINT32 */
+      },
+      {
+        no: 2,
+        name: "start_time",
+        kind: "scalar",
+        T: 4
+        /* ScalarType.UINT64 */
+      },
+      {
+        no: 3,
+        name: "end_time",
+        kind: "scalar",
+        T: 4
+        /* ScalarType.UINT64 */
+      },
+      {
+        no: 4,
+        name: "text",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 5,
+        name: "p",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
-      return new _Token2().fromBinary(bytes, options);
+      return new _Token().fromBinary(bytes, options);
     }
     static fromJson(jsonValue, options) {
-      return new _Token2().fromJson(jsonValue, options);
+      return new _Token().fromJson(jsonValue, options);
     }
     static fromJsonString(jsonString, options) {
-      return new _Token2().fromJsonString(jsonString, options);
+      return new _Token().fromJsonString(jsonString, options);
     }
     static equals(a2, b3) {
-      return proto3.util.equals(_Token2, a2, b3);
+      return proto3.util.equals(_Token, a2, b3);
     }
   };
-  var Token2 = _Token2;
-  __publicField(Token2, "runtime", proto3);
-  __publicField(Token2, "typeName", "protoflow.Token");
-  __publicField(Token2, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "id",
-      kind: "scalar",
-      T: 13
-      /* ScalarType.UINT32 */
-    },
-    {
-      no: 2,
-      name: "start_time",
-      kind: "scalar",
-      T: 4
-      /* ScalarType.UINT64 */
-    },
-    {
-      no: 3,
-      name: "end_time",
-      kind: "scalar",
-      T: 4
-      /* ScalarType.UINT64 */
-    },
-    {
-      no: 4,
-      name: "text",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 5,
-      name: "p",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _Segment2 = class extends Message {
+  var Segment2 = class _Segment extends Message {
     /**
      * @generated from field: uint32 num = 1;
      */
@@ -49328,54 +49162,53 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.Segment";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "num",
+        kind: "scalar",
+        T: 13
+        /* ScalarType.UINT32 */
+      },
+      { no: 2, name: "tokens", kind: "message", T: Token2, repeated: true },
+      {
+        no: 3,
+        name: "text",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 4,
+        name: "start_time",
+        kind: "scalar",
+        T: 4
+        /* ScalarType.UINT64 */
+      },
+      {
+        no: 5,
+        name: "end_time",
+        kind: "scalar",
+        T: 4
+        /* ScalarType.UINT64 */
+      }
+    ]);
     static fromBinary(bytes, options) {
-      return new _Segment2().fromBinary(bytes, options);
+      return new _Segment().fromBinary(bytes, options);
     }
     static fromJson(jsonValue, options) {
-      return new _Segment2().fromJson(jsonValue, options);
+      return new _Segment().fromJson(jsonValue, options);
     }
     static fromJsonString(jsonString, options) {
-      return new _Segment2().fromJsonString(jsonString, options);
+      return new _Segment().fromJsonString(jsonString, options);
     }
     static equals(a2, b3) {
-      return proto3.util.equals(_Segment2, a2, b3);
+      return proto3.util.equals(_Segment, a2, b3);
     }
   };
-  var Segment2 = _Segment2;
-  __publicField(Segment2, "runtime", proto3);
-  __publicField(Segment2, "typeName", "protoflow.Segment");
-  __publicField(Segment2, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "num",
-      kind: "scalar",
-      T: 13
-      /* ScalarType.UINT32 */
-    },
-    { no: 2, name: "tokens", kind: "message", T: Token2, repeated: true },
-    {
-      no: 3,
-      name: "text",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 4,
-      name: "start_time",
-      kind: "scalar",
-      T: 4
-      /* ScalarType.UINT64 */
-    },
-    {
-      no: 5,
-      name: "end_time",
-      kind: "scalar",
-      T: 4
-      /* ScalarType.UINT64 */
-    }
-  ]));
-  var _Session = class extends Message {
+  var Session = class _Session extends Message {
     /**
      * @generated from field: string id = 1;
      */
@@ -49392,6 +49225,25 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.Session";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "name",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 3, name: "segments", kind: "message", T: Segment2, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _Session().fromBinary(bytes, options);
     }
@@ -49405,27 +49257,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Session, a2, b3);
     }
   };
-  var Session = _Session;
-  __publicField(Session, "runtime", proto3);
-  __publicField(Session, "typeName", "protoflow.Session");
-  __publicField(Session, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "id",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 2,
-      name: "name",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    { no: 3, name: "segments", kind: "message", T: Segment2, repeated: true }
-  ]));
-  var _TranscriptionRequest = class extends Message {
+  var TranscriptionRequest = class _TranscriptionRequest extends Message {
     /**
      * @generated from field: string file_path = 14;
      */
@@ -49512,6 +49344,108 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.TranscriptionRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 14,
+        name: "file_path",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 1,
+        name: "model",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "language",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 3,
+        name: "translate",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      },
+      {
+        no: 4,
+        name: "offset",
+        kind: "scalar",
+        T: 3
+        /* ScalarType.INT64 */
+      },
+      {
+        no: 5,
+        name: "duration",
+        kind: "scalar",
+        T: 3
+        /* ScalarType.INT64 */
+      },
+      {
+        no: 6,
+        name: "threads",
+        kind: "scalar",
+        T: 13
+        /* ScalarType.UINT32 */
+      },
+      {
+        no: 7,
+        name: "speedup",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      },
+      {
+        no: 8,
+        name: "max_len",
+        kind: "scalar",
+        T: 13
+        /* ScalarType.UINT32 */
+      },
+      {
+        no: 9,
+        name: "max_tokens",
+        kind: "scalar",
+        T: 13
+        /* ScalarType.UINT32 */
+      },
+      {
+        no: 10,
+        name: "word_threshold",
+        kind: "scalar",
+        T: 1
+        /* ScalarType.DOUBLE */
+      },
+      {
+        no: 11,
+        name: "tokens",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      },
+      {
+        no: 12,
+        name: "colorize",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      },
+      {
+        no: 13,
+        name: "out",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _TranscriptionRequest().fromBinary(bytes, options);
     }
@@ -49525,114 +49459,14 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_TranscriptionRequest, a2, b3);
     }
   };
-  var TranscriptionRequest = _TranscriptionRequest;
-  __publicField(TranscriptionRequest, "runtime", proto3);
-  __publicField(TranscriptionRequest, "typeName", "protoflow.TranscriptionRequest");
-  __publicField(TranscriptionRequest, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 14,
-      name: "file_path",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 1,
-      name: "model",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 2,
-      name: "language",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 3,
-      name: "translate",
-      kind: "scalar",
-      T: 8
-      /* ScalarType.BOOL */
-    },
-    {
-      no: 4,
-      name: "offset",
-      kind: "scalar",
-      T: 3
-      /* ScalarType.INT64 */
-    },
-    {
-      no: 5,
-      name: "duration",
-      kind: "scalar",
-      T: 3
-      /* ScalarType.INT64 */
-    },
-    {
-      no: 6,
-      name: "threads",
-      kind: "scalar",
-      T: 13
-      /* ScalarType.UINT32 */
-    },
-    {
-      no: 7,
-      name: "speedup",
-      kind: "scalar",
-      T: 8
-      /* ScalarType.BOOL */
-    },
-    {
-      no: 8,
-      name: "max_len",
-      kind: "scalar",
-      T: 13
-      /* ScalarType.UINT32 */
-    },
-    {
-      no: 9,
-      name: "max_tokens",
-      kind: "scalar",
-      T: 13
-      /* ScalarType.UINT32 */
-    },
-    {
-      no: 10,
-      name: "word_threshold",
-      kind: "scalar",
-      T: 1
-      /* ScalarType.DOUBLE */
-    },
-    {
-      no: 11,
-      name: "tokens",
-      kind: "scalar",
-      T: 8
-      /* ScalarType.BOOL */
-    },
-    {
-      no: 12,
-      name: "colorize",
-      kind: "scalar",
-      T: 8
-      /* ScalarType.BOOL */
-    },
-    {
-      no: 13,
-      name: "out",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _RegisterFlags = class extends Message {
+  var RegisterFlags = class _RegisterFlags extends Message {
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.RegisterFlags";
+    static fields = proto3.util.newFieldList(() => []);
     static fromBinary(bytes, options) {
       return new _RegisterFlags().fromBinary(bytes, options);
     }
@@ -49646,11 +49480,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_RegisterFlags, a2, b3);
     }
   };
-  var RegisterFlags = _RegisterFlags;
-  __publicField(RegisterFlags, "runtime", proto3);
-  __publicField(RegisterFlags, "typeName", "protoflow.RegisterFlags");
-  __publicField(RegisterFlags, "fields", proto3.util.newFieldList(() => []));
-  var _OCRText = class extends Message {
+  var OCRText = class _OCRText extends Message {
     /**
      * @generated from field: string text = 1;
      */
@@ -49659,6 +49489,17 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.OCRText";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "text",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _OCRText().fromBinary(bytes, options);
     }
@@ -49672,19 +49513,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_OCRText, a2, b3);
     }
   };
-  var OCRText = _OCRText;
-  __publicField(OCRText, "runtime", proto3);
-  __publicField(OCRText, "typeName", "protoflow.OCRText");
-  __publicField(OCRText, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "text",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _Image = class extends Message {
+  var Image2 = class _Image extends Message {
     /**
      * @generated from field: bytes image = 1;
      */
@@ -49693,6 +49522,17 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.Image";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "image",
+        kind: "scalar",
+        T: 12
+        /* ScalarType.BYTES */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _Image().fromBinary(bytes, options);
     }
@@ -49706,19 +49546,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Image, a2, b3);
     }
   };
-  var Image2 = _Image;
-  __publicField(Image2, "runtime", proto3);
-  __publicField(Image2, "typeName", "protoflow.Image");
-  __publicField(Image2, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "image",
-      kind: "scalar",
-      T: 12
-      /* ScalarType.BYTES */
-    }
-  ]));
-  var _ConvertFileRequest = class extends Message {
+  var ConvertFileRequest = class _ConvertFileRequest extends Message {
     /**
      * @generated from field: string from = 1;
      */
@@ -49731,6 +49559,24 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.ConvertFileRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "from",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "to",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _ConvertFileRequest().fromBinary(bytes, options);
     }
@@ -49744,26 +49590,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_ConvertFileRequest, a2, b3);
     }
   };
-  var ConvertFileRequest = _ConvertFileRequest;
-  __publicField(ConvertFileRequest, "runtime", proto3);
-  __publicField(ConvertFileRequest, "typeName", "protoflow.ConvertFileRequest");
-  __publicField(ConvertFileRequest, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "from",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 2,
-      name: "to",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _ChatRequest = class extends Message {
+  var ChatRequest = class _ChatRequest extends Message {
     /**
      * @generated from field: int32 capture_device = 1;
      */
@@ -49772,6 +49599,17 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.ChatRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "capture_device",
+        kind: "scalar",
+        T: 5
+        /* ScalarType.INT32 */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _ChatRequest().fromBinary(bytes, options);
     }
@@ -49785,19 +49623,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_ChatRequest, a2, b3);
     }
   };
-  var ChatRequest = _ChatRequest;
-  __publicField(ChatRequest, "runtime", proto3);
-  __publicField(ChatRequest, "typeName", "protoflow.ChatRequest");
-  __publicField(ChatRequest, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "capture_device",
-      kind: "scalar",
-      T: 5
-      /* ScalarType.INT32 */
-    }
-  ]));
-  var _ChatResponse = class extends Message {
+  var ChatResponse = class _ChatResponse extends Message {
     /**
      * @generated from field: protoflow.Segment segment = 1;
      */
@@ -49806,6 +49632,11 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.ChatResponse";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "segment", kind: "message", T: Segment2 }
+    ]);
     static fromBinary(bytes, options) {
       return new _ChatResponse().fromBinary(bytes, options);
     }
@@ -49819,13 +49650,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_ChatResponse, a2, b3);
     }
   };
-  var ChatResponse = _ChatResponse;
-  __publicField(ChatResponse, "runtime", proto3);
-  __publicField(ChatResponse, "typeName", "protoflow.ChatResponse");
-  __publicField(ChatResponse, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "segment", kind: "message", T: Segment2 }
-  ]));
-  var _YouTubeVideo = class extends Message {
+  var YouTubeVideo = class _YouTubeVideo extends Message {
     /**
      * @generated from field: string id = 1;
      */
@@ -49838,6 +49663,24 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.YouTubeVideo";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "file",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _YouTubeVideo().fromBinary(bytes, options);
     }
@@ -49851,26 +49694,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_YouTubeVideo, a2, b3);
     }
   };
-  var YouTubeVideo = _YouTubeVideo;
-  __publicField(YouTubeVideo, "runtime", proto3);
-  __publicField(YouTubeVideo, "typeName", "protoflow.YouTubeVideo");
-  __publicField(YouTubeVideo, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "id",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 2,
-      name: "file",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _FilePath = class extends Message {
+  var FilePath = class _FilePath extends Message {
     /**
      * @generated from field: string file = 1;
      */
@@ -49879,6 +49703,17 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.FilePath";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "file",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _FilePath().fromBinary(bytes, options);
     }
@@ -49892,19 +49727,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_FilePath, a2, b3);
     }
   };
-  var FilePath = _FilePath;
-  __publicField(FilePath, "runtime", proto3);
-  __publicField(FilePath, "typeName", "protoflow.FilePath");
-  __publicField(FilePath, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "file",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _YouTubeVideoResponse = class extends Message {
+  var YouTubeVideoResponse = class _YouTubeVideoResponse extends Message {
     /**
      * @generated from field: string title = 1;
      */
@@ -49921,6 +49744,19 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "protoflow.YouTubeVideoResponse";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "title",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 2, name: "file_path", kind: "message", T: FilePath },
+      { no: 3, name: "transcript", kind: "message", T: Segment2, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _YouTubeVideoResponse().fromBinary(bytes, options);
     }
@@ -49934,23 +49770,9 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_YouTubeVideoResponse, a2, b3);
     }
   };
-  var YouTubeVideoResponse = _YouTubeVideoResponse;
-  __publicField(YouTubeVideoResponse, "runtime", proto3);
-  __publicField(YouTubeVideoResponse, "typeName", "protoflow.YouTubeVideoResponse");
-  __publicField(YouTubeVideoResponse, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "title",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    { no: 2, name: "file_path", kind: "message", T: FilePath },
-    { no: 3, name: "transcript", kind: "message", T: Segment2, repeated: true }
-  ]));
 
   // src/rpc/ai_pb.ts
-  var _AnalyzeConversationResponse = class extends Message {
+  var AnalyzeConversationResponse = class _AnalyzeConversationResponse extends Message {
     /**
      * Phone numbers of the participants
      *
@@ -49973,6 +49795,19 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "ai.AnalyzeConversationResponse";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "phone_numbers", kind: "scalar", T: 9, repeated: true },
+      {
+        no: 2,
+        name: "summary",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 3, name: "questions", kind: "scalar", T: 9, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _AnalyzeConversationResponse().fromBinary(bytes, options);
     }
@@ -49986,21 +49821,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_AnalyzeConversationResponse, a2, b3);
     }
   };
-  var AnalyzeConversationResponse = _AnalyzeConversationResponse;
-  __publicField(AnalyzeConversationResponse, "runtime", proto3);
-  __publicField(AnalyzeConversationResponse, "typeName", "ai.AnalyzeConversationResponse");
-  __publicField(AnalyzeConversationResponse, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "phone_numbers", kind: "scalar", T: 9, repeated: true },
-    {
-      no: 2,
-      name: "summary",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    { no: 3, name: "questions", kind: "scalar", T: 9, repeated: true }
-  ]));
-  var _AnalyzeContent = class extends Message {
+  var AnalyzeContent = class _AnalyzeContent extends Message {
     /**
      * Potential categories for the content in the form: category/subcategory/other-category. The category is all lowercase and spaces are replaced with dashes.
      *
@@ -50011,6 +49832,11 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "ai.AnalyzeContent";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "categories", kind: "scalar", T: 9, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _AnalyzeContent().fromBinary(bytes, options);
     }
@@ -50024,12 +49850,6 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_AnalyzeContent, a2, b3);
     }
   };
-  var AnalyzeContent = _AnalyzeContent;
-  __publicField(AnalyzeContent, "runtime", proto3);
-  __publicField(AnalyzeContent, "typeName", "ai.AnalyzeContent");
-  __publicField(AnalyzeContent, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "categories", kind: "scalar", T: 9, repeated: true }
-  ]));
 
   // src/rpc/protoflow_connect.ts
   var ProtoflowService = {
@@ -50194,12 +50014,54 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
         I: Empty,
         O: Tags,
         kind: MethodKind.Unary
+      },
+      /**
+       * @generated from rpc content.ContentService.Vote
+       */
+      vote: {
+        name: "Vote",
+        I: VoteRequest,
+        O: Empty,
+        kind: MethodKind.Unary
       }
     }
   };
 
   // src/rpc/user/user_pb.ts
-  var _GroupID = class extends Message {
+  var GroupInfoRequest = class _GroupInfoRequest extends Message {
+    /**
+     * @generated from field: string secret = 1;
+     */
+    secret = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "user.GroupInfoRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "secret",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _GroupInfoRequest().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _GroupInfoRequest().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _GroupInfoRequest().fromJsonString(jsonString, options);
+    }
+    static equals(a2, b3) {
+      return proto3.util.equals(_GroupInfoRequest, a2, b3);
+    }
+  };
+  var GroupID = class _GroupID extends Message {
     /**
      * @generated from field: string group_id = 1;
      */
@@ -50208,6 +50070,17 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "user.GroupID";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "group_id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _GroupID().fromBinary(bytes, options);
     }
@@ -50221,19 +50094,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_GroupID, a2, b3);
     }
   };
-  var GroupID = _GroupID;
-  __publicField(GroupID, "runtime", proto3);
-  __publicField(GroupID, "typeName", "user.GroupID");
-  __publicField(GroupID, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "group_id",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _ShareRequest = class extends Message {
+  var ShareRequest = class _ShareRequest extends Message {
     /**
      * @generated from field: string content_id = 1;
      */
@@ -50246,6 +50107,24 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "user.ShareRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "content_id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "group_id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _ShareRequest().fromBinary(bytes, options);
     }
@@ -50259,26 +50138,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_ShareRequest, a2, b3);
     }
   };
-  var ShareRequest = _ShareRequest;
-  __publicField(ShareRequest, "runtime", proto3);
-  __publicField(ShareRequest, "typeName", "user.ShareRequest");
-  __publicField(ShareRequest, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "content_id",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 2,
-      name: "group_id",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _GroupInvite = class extends Message {
+  var GroupInvite = class _GroupInvite extends Message {
     /**
      * @generated from field: string secret = 1;
      */
@@ -50287,6 +50147,17 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "user.GroupInvite";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "secret",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
       return new _GroupInvite().fromBinary(bytes, options);
     }
@@ -50300,19 +50171,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_GroupInvite, a2, b3);
     }
   };
-  var GroupInvite = _GroupInvite;
-  __publicField(GroupInvite, "runtime", proto3);
-  __publicField(GroupInvite, "typeName", "user.GroupInvite");
-  __publicField(GroupInvite, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "secret",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _Groups = class extends Message {
+  var Groups = class _Groups extends Message {
     /**
      * @generated from field: repeated user.Group groups = 1;
      */
@@ -50321,6 +50180,11 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "user.Groups";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "groups", kind: "message", T: Group, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _Groups().fromBinary(bytes, options);
     }
@@ -50334,13 +50198,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Groups, a2, b3);
     }
   };
-  var Groups = _Groups;
-  __publicField(Groups, "runtime", proto3);
-  __publicField(Groups, "typeName", "user.Groups");
-  __publicField(Groups, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "groups", kind: "message", T: Group, repeated: true }
-  ]));
-  var _AnalyzeConversationRequest2 = class extends Message {
+  var AnalyzeConversationRequest2 = class _AnalyzeConversationRequest extends Message {
     /**
      * @generated from field: string text = 1;
      */
@@ -50349,32 +50207,31 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "user.AnalyzeConversationRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "text",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
     static fromBinary(bytes, options) {
-      return new _AnalyzeConversationRequest2().fromBinary(bytes, options);
+      return new _AnalyzeConversationRequest().fromBinary(bytes, options);
     }
     static fromJson(jsonValue, options) {
-      return new _AnalyzeConversationRequest2().fromJson(jsonValue, options);
+      return new _AnalyzeConversationRequest().fromJson(jsonValue, options);
     }
     static fromJsonString(jsonString, options) {
-      return new _AnalyzeConversationRequest2().fromJsonString(jsonString, options);
+      return new _AnalyzeConversationRequest().fromJsonString(jsonString, options);
     }
     static equals(a2, b3) {
-      return proto3.util.equals(_AnalyzeConversationRequest2, a2, b3);
+      return proto3.util.equals(_AnalyzeConversationRequest, a2, b3);
     }
   };
-  var AnalyzeConversationRequest2 = _AnalyzeConversationRequest2;
-  __publicField(AnalyzeConversationRequest2, "runtime", proto3);
-  __publicField(AnalyzeConversationRequest2, "typeName", "user.AnalyzeConversationRequest");
-  __publicField(AnalyzeConversationRequest2, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "text",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    }
-  ]));
-  var _User = class extends Message {
+  var User = class _User extends Message {
     /**
      * @generated from field: string email = 1;
      */
@@ -50391,6 +50248,25 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "user.User";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "email",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "password",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 3, name: "config", kind: "message", T: Config }
+    ]);
     static fromBinary(bytes, options) {
       return new _User().fromBinary(bytes, options);
     }
@@ -50404,27 +50280,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_User, a2, b3);
     }
   };
-  var User = _User;
-  __publicField(User, "runtime", proto3);
-  __publicField(User, "typeName", "user.User");
-  __publicField(User, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "email",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 2,
-      name: "password",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    { no: 3, name: "config", kind: "message", T: Config }
-  ]));
-  var _Group = class extends Message {
+  var Group = class _Group extends Message {
     /**
      * @generated from field: string id = 1;
      */
@@ -50441,6 +50297,25 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "user.Group";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "name",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 3, name: "users", kind: "scalar", T: 9, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _Group().fromBinary(bytes, options);
     }
@@ -50454,27 +50329,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Group, a2, b3);
     }
   };
-  var Group = _Group;
-  __publicField(Group, "runtime", proto3);
-  __publicField(Group, "typeName", "user.Group");
-  __publicField(Group, "fields", proto3.util.newFieldList(() => [
-    {
-      no: 1,
-      name: "id",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    {
-      no: 2,
-      name: "name",
-      kind: "scalar",
-      T: 9
-      /* ScalarType.STRING */
-    },
-    { no: 3, name: "users", kind: "scalar", T: 9, repeated: true }
-  ]));
-  var _Config = class extends Message {
+  var Config = class _Config extends Message {
     /**
      * @generated from field: repeated string domain_whitelist = 1;
      */
@@ -50483,6 +50338,11 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "user.Config";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "domain_whitelist", kind: "scalar", T: 9, repeated: true }
+    ]);
     static fromBinary(bytes, options) {
       return new _Config().fromBinary(bytes, options);
     }
@@ -50496,17 +50356,14 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Config, a2, b3);
     }
   };
-  var Config = _Config;
-  __publicField(Config, "runtime", proto3);
-  __publicField(Config, "typeName", "user.Config");
-  __publicField(Config, "fields", proto3.util.newFieldList(() => [
-    { no: 1, name: "domain_whitelist", kind: "scalar", T: 9, repeated: true }
-  ]));
-  var _LoginResponse = class extends Message {
+  var LoginResponse = class _LoginResponse extends Message {
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
     }
+    static runtime = proto3;
+    static typeName = "user.LoginResponse";
+    static fields = proto3.util.newFieldList(() => []);
     static fromBinary(bytes, options) {
       return new _LoginResponse().fromBinary(bytes, options);
     }
@@ -50520,10 +50377,6 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_LoginResponse, a2, b3);
     }
   };
-  var LoginResponse = _LoginResponse;
-  __publicField(LoginResponse, "runtime", proto3);
-  __publicField(LoginResponse, "typeName", "user.LoginResponse");
-  __publicField(LoginResponse, "fields", proto3.util.newFieldList(() => []));
 
   // src/rpc/user/user_connect.ts
   var UserService = {
@@ -50584,6 +50437,15 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
         kind: MethodKind.Unary
       },
       /**
+       * @generated from rpc user.UserService.GroupInfo
+       */
+      groupInfo: {
+        name: "GroupInfo",
+        I: GroupInfoRequest,
+        O: Group,
+        kind: MethodKind.Unary
+      },
+      /**
        * @generated from rpc user.UserService.CreateGroup
        */
       createGroup: {
@@ -50622,8 +50484,1760 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     }
   };
 
+  // ../node_modules/@tanstack/query-core/build/lib/subscribable.mjs
+  var Subscribable = class {
+    constructor() {
+      this.listeners = /* @__PURE__ */ new Set();
+      this.subscribe = this.subscribe.bind(this);
+    }
+    subscribe(listener) {
+      const identity = {
+        listener
+      };
+      this.listeners.add(identity);
+      this.onSubscribe();
+      return () => {
+        this.listeners.delete(identity);
+        this.onUnsubscribe();
+      };
+    }
+    hasListeners() {
+      return this.listeners.size > 0;
+    }
+    onSubscribe() {
+    }
+    onUnsubscribe() {
+    }
+  };
+
+  // ../node_modules/@tanstack/query-core/build/lib/utils.mjs
+  var isServer = typeof window === "undefined" || "Deno" in window;
+  function noop2() {
+    return void 0;
+  }
+  function functionalUpdate(updater, input) {
+    return typeof updater === "function" ? updater(input) : updater;
+  }
+  function isValidTimeout(value) {
+    return typeof value === "number" && value >= 0 && value !== Infinity;
+  }
+  function timeUntilStale(updatedAt, staleTime) {
+    return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0);
+  }
+  function parseQueryArgs(arg1, arg2, arg3) {
+    if (!isQueryKey(arg1)) {
+      return arg1;
+    }
+    if (typeof arg2 === "function") {
+      return {
+        ...arg3,
+        queryKey: arg1,
+        queryFn: arg2
+      };
+    }
+    return {
+      ...arg2,
+      queryKey: arg1
+    };
+  }
+  function parseFilterArgs(arg1, arg2, arg3) {
+    return isQueryKey(arg1) ? [{
+      ...arg2,
+      queryKey: arg1
+    }, arg3] : [arg1 || {}, arg2];
+  }
+  function matchQuery(filters, query) {
+    const {
+      type = "all",
+      exact,
+      fetchStatus,
+      predicate,
+      queryKey,
+      stale
+    } = filters;
+    if (isQueryKey(queryKey)) {
+      if (exact) {
+        if (query.queryHash !== hashQueryKeyByOptions(queryKey, query.options)) {
+          return false;
+        }
+      } else if (!partialMatchKey(query.queryKey, queryKey)) {
+        return false;
+      }
+    }
+    if (type !== "all") {
+      const isActive = query.isActive();
+      if (type === "active" && !isActive) {
+        return false;
+      }
+      if (type === "inactive" && isActive) {
+        return false;
+      }
+    }
+    if (typeof stale === "boolean" && query.isStale() !== stale) {
+      return false;
+    }
+    if (typeof fetchStatus !== "undefined" && fetchStatus !== query.state.fetchStatus) {
+      return false;
+    }
+    if (predicate && !predicate(query)) {
+      return false;
+    }
+    return true;
+  }
+  function matchMutation(filters, mutation) {
+    const {
+      exact,
+      fetching,
+      predicate,
+      mutationKey
+    } = filters;
+    if (isQueryKey(mutationKey)) {
+      if (!mutation.options.mutationKey) {
+        return false;
+      }
+      if (exact) {
+        if (hashQueryKey(mutation.options.mutationKey) !== hashQueryKey(mutationKey)) {
+          return false;
+        }
+      } else if (!partialMatchKey(mutation.options.mutationKey, mutationKey)) {
+        return false;
+      }
+    }
+    if (typeof fetching === "boolean" && mutation.state.status === "loading" !== fetching) {
+      return false;
+    }
+    if (predicate && !predicate(mutation)) {
+      return false;
+    }
+    return true;
+  }
+  function hashQueryKeyByOptions(queryKey, options) {
+    const hashFn = (options == null ? void 0 : options.queryKeyHashFn) || hashQueryKey;
+    return hashFn(queryKey);
+  }
+  function hashQueryKey(queryKey) {
+    return JSON.stringify(queryKey, (_2, val) => isPlainObject(val) ? Object.keys(val).sort().reduce((result, key) => {
+      result[key] = val[key];
+      return result;
+    }, {}) : val);
+  }
+  function partialMatchKey(a2, b3) {
+    return partialDeepEqual(a2, b3);
+  }
+  function partialDeepEqual(a2, b3) {
+    if (a2 === b3) {
+      return true;
+    }
+    if (typeof a2 !== typeof b3) {
+      return false;
+    }
+    if (a2 && b3 && typeof a2 === "object" && typeof b3 === "object") {
+      return !Object.keys(b3).some((key) => !partialDeepEqual(a2[key], b3[key]));
+    }
+    return false;
+  }
+  function replaceEqualDeep(a2, b3) {
+    if (a2 === b3) {
+      return a2;
+    }
+    const array = isPlainArray(a2) && isPlainArray(b3);
+    if (array || isPlainObject(a2) && isPlainObject(b3)) {
+      const aSize = array ? a2.length : Object.keys(a2).length;
+      const bItems = array ? b3 : Object.keys(b3);
+      const bSize = bItems.length;
+      const copy = array ? [] : {};
+      let equalItems = 0;
+      for (let i2 = 0; i2 < bSize; i2++) {
+        const key = array ? i2 : bItems[i2];
+        copy[key] = replaceEqualDeep(a2[key], b3[key]);
+        if (copy[key] === a2[key]) {
+          equalItems++;
+        }
+      }
+      return aSize === bSize && equalItems === aSize ? a2 : copy;
+    }
+    return b3;
+  }
+  function isPlainArray(value) {
+    return Array.isArray(value) && value.length === Object.keys(value).length;
+  }
+  function isPlainObject(o2) {
+    if (!hasObjectPrototype(o2)) {
+      return false;
+    }
+    const ctor = o2.constructor;
+    if (typeof ctor === "undefined") {
+      return true;
+    }
+    const prot = ctor.prototype;
+    if (!hasObjectPrototype(prot)) {
+      return false;
+    }
+    if (!prot.hasOwnProperty("isPrototypeOf")) {
+      return false;
+    }
+    return true;
+  }
+  function hasObjectPrototype(o2) {
+    return Object.prototype.toString.call(o2) === "[object Object]";
+  }
+  function isQueryKey(value) {
+    return Array.isArray(value);
+  }
+  function sleep(timeout) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, timeout);
+    });
+  }
+  function scheduleMicrotask(callback) {
+    sleep(0).then(callback);
+  }
+  function getAbortController() {
+    if (typeof AbortController === "function") {
+      return new AbortController();
+    }
+    return;
+  }
+  function replaceData(prevData, data, options) {
+    if (options.isDataEqual != null && options.isDataEqual(prevData, data)) {
+      return prevData;
+    } else if (typeof options.structuralSharing === "function") {
+      return options.structuralSharing(prevData, data);
+    } else if (options.structuralSharing !== false) {
+      return replaceEqualDeep(prevData, data);
+    }
+    return data;
+  }
+
+  // ../node_modules/@tanstack/query-core/build/lib/focusManager.mjs
+  var FocusManager = class extends Subscribable {
+    constructor() {
+      super();
+      this.setup = (onFocus) => {
+        if (!isServer && window.addEventListener) {
+          const listener = () => onFocus();
+          window.addEventListener("visibilitychange", listener, false);
+          window.addEventListener("focus", listener, false);
+          return () => {
+            window.removeEventListener("visibilitychange", listener);
+            window.removeEventListener("focus", listener);
+          };
+        }
+        return;
+      };
+    }
+    onSubscribe() {
+      if (!this.cleanup) {
+        this.setEventListener(this.setup);
+      }
+    }
+    onUnsubscribe() {
+      if (!this.hasListeners()) {
+        var _this$cleanup;
+        (_this$cleanup = this.cleanup) == null ? void 0 : _this$cleanup.call(this);
+        this.cleanup = void 0;
+      }
+    }
+    setEventListener(setup) {
+      var _this$cleanup2;
+      this.setup = setup;
+      (_this$cleanup2 = this.cleanup) == null ? void 0 : _this$cleanup2.call(this);
+      this.cleanup = setup((focused) => {
+        if (typeof focused === "boolean") {
+          this.setFocused(focused);
+        } else {
+          this.onFocus();
+        }
+      });
+    }
+    setFocused(focused) {
+      const changed = this.focused !== focused;
+      if (changed) {
+        this.focused = focused;
+        this.onFocus();
+      }
+    }
+    onFocus() {
+      this.listeners.forEach(({
+        listener
+      }) => {
+        listener();
+      });
+    }
+    isFocused() {
+      if (typeof this.focused === "boolean") {
+        return this.focused;
+      }
+      if (typeof document === "undefined") {
+        return true;
+      }
+      return [void 0, "visible", "prerender"].includes(document.visibilityState);
+    }
+  };
+  var focusManager = new FocusManager();
+
+  // ../node_modules/@tanstack/query-core/build/lib/onlineManager.mjs
+  var onlineEvents = ["online", "offline"];
+  var OnlineManager = class extends Subscribable {
+    constructor() {
+      super();
+      this.setup = (onOnline) => {
+        if (!isServer && window.addEventListener) {
+          const listener = () => onOnline();
+          onlineEvents.forEach((event) => {
+            window.addEventListener(event, listener, false);
+          });
+          return () => {
+            onlineEvents.forEach((event) => {
+              window.removeEventListener(event, listener);
+            });
+          };
+        }
+        return;
+      };
+    }
+    onSubscribe() {
+      if (!this.cleanup) {
+        this.setEventListener(this.setup);
+      }
+    }
+    onUnsubscribe() {
+      if (!this.hasListeners()) {
+        var _this$cleanup;
+        (_this$cleanup = this.cleanup) == null ? void 0 : _this$cleanup.call(this);
+        this.cleanup = void 0;
+      }
+    }
+    setEventListener(setup) {
+      var _this$cleanup2;
+      this.setup = setup;
+      (_this$cleanup2 = this.cleanup) == null ? void 0 : _this$cleanup2.call(this);
+      this.cleanup = setup((online) => {
+        if (typeof online === "boolean") {
+          this.setOnline(online);
+        } else {
+          this.onOnline();
+        }
+      });
+    }
+    setOnline(online) {
+      const changed = this.online !== online;
+      if (changed) {
+        this.online = online;
+        this.onOnline();
+      }
+    }
+    onOnline() {
+      this.listeners.forEach(({
+        listener
+      }) => {
+        listener();
+      });
+    }
+    isOnline() {
+      if (typeof this.online === "boolean") {
+        return this.online;
+      }
+      if (typeof navigator === "undefined" || typeof navigator.onLine === "undefined") {
+        return true;
+      }
+      return navigator.onLine;
+    }
+  };
+  var onlineManager = new OnlineManager();
+
+  // ../node_modules/@tanstack/query-core/build/lib/retryer.mjs
+  function defaultRetryDelay(failureCount) {
+    return Math.min(1e3 * 2 ** failureCount, 3e4);
+  }
+  function canFetch(networkMode) {
+    return (networkMode != null ? networkMode : "online") === "online" ? onlineManager.isOnline() : true;
+  }
+  var CancelledError = class {
+    constructor(options) {
+      this.revert = options == null ? void 0 : options.revert;
+      this.silent = options == null ? void 0 : options.silent;
+    }
+  };
+  function isCancelledError(value) {
+    return value instanceof CancelledError;
+  }
+  function createRetryer(config) {
+    let isRetryCancelled = false;
+    let failureCount = 0;
+    let isResolved = false;
+    let continueFn;
+    let promiseResolve;
+    let promiseReject;
+    const promise = new Promise((outerResolve, outerReject) => {
+      promiseResolve = outerResolve;
+      promiseReject = outerReject;
+    });
+    const cancel = (cancelOptions) => {
+      if (!isResolved) {
+        reject(new CancelledError(cancelOptions));
+        config.abort == null ? void 0 : config.abort();
+      }
+    };
+    const cancelRetry = () => {
+      isRetryCancelled = true;
+    };
+    const continueRetry = () => {
+      isRetryCancelled = false;
+    };
+    const shouldPause = () => !focusManager.isFocused() || config.networkMode !== "always" && !onlineManager.isOnline();
+    const resolve = (value) => {
+      if (!isResolved) {
+        isResolved = true;
+        config.onSuccess == null ? void 0 : config.onSuccess(value);
+        continueFn == null ? void 0 : continueFn();
+        promiseResolve(value);
+      }
+    };
+    const reject = (value) => {
+      if (!isResolved) {
+        isResolved = true;
+        config.onError == null ? void 0 : config.onError(value);
+        continueFn == null ? void 0 : continueFn();
+        promiseReject(value);
+      }
+    };
+    const pause = () => {
+      return new Promise((continueResolve) => {
+        continueFn = (value) => {
+          const canContinue = isResolved || !shouldPause();
+          if (canContinue) {
+            continueResolve(value);
+          }
+          return canContinue;
+        };
+        config.onPause == null ? void 0 : config.onPause();
+      }).then(() => {
+        continueFn = void 0;
+        if (!isResolved) {
+          config.onContinue == null ? void 0 : config.onContinue();
+        }
+      });
+    };
+    const run = () => {
+      if (isResolved) {
+        return;
+      }
+      let promiseOrValue;
+      try {
+        promiseOrValue = config.fn();
+      } catch (error) {
+        promiseOrValue = Promise.reject(error);
+      }
+      Promise.resolve(promiseOrValue).then(resolve).catch((error) => {
+        var _config$retry, _config$retryDelay;
+        if (isResolved) {
+          return;
+        }
+        const retry = (_config$retry = config.retry) != null ? _config$retry : 3;
+        const retryDelay = (_config$retryDelay = config.retryDelay) != null ? _config$retryDelay : defaultRetryDelay;
+        const delay = typeof retryDelay === "function" ? retryDelay(failureCount, error) : retryDelay;
+        const shouldRetry = retry === true || typeof retry === "number" && failureCount < retry || typeof retry === "function" && retry(failureCount, error);
+        if (isRetryCancelled || !shouldRetry) {
+          reject(error);
+          return;
+        }
+        failureCount++;
+        config.onFail == null ? void 0 : config.onFail(failureCount, error);
+        sleep(delay).then(() => {
+          if (shouldPause()) {
+            return pause();
+          }
+          return;
+        }).then(() => {
+          if (isRetryCancelled) {
+            reject(error);
+          } else {
+            run();
+          }
+        });
+      });
+    };
+    if (canFetch(config.networkMode)) {
+      run();
+    } else {
+      pause().then(run);
+    }
+    return {
+      promise,
+      cancel,
+      continue: () => {
+        const didContinue = continueFn == null ? void 0 : continueFn();
+        return didContinue ? promise : Promise.resolve();
+      },
+      cancelRetry,
+      continueRetry
+    };
+  }
+
+  // ../node_modules/@tanstack/query-core/build/lib/logger.mjs
+  var defaultLogger = console;
+
+  // ../node_modules/@tanstack/query-core/build/lib/notifyManager.mjs
+  function createNotifyManager() {
+    let queue = [];
+    let transactions = 0;
+    let notifyFn = (callback) => {
+      callback();
+    };
+    let batchNotifyFn = (callback) => {
+      callback();
+    };
+    const batch = (callback) => {
+      let result;
+      transactions++;
+      try {
+        result = callback();
+      } finally {
+        transactions--;
+        if (!transactions) {
+          flush();
+        }
+      }
+      return result;
+    };
+    const schedule = (callback) => {
+      if (transactions) {
+        queue.push(callback);
+      } else {
+        scheduleMicrotask(() => {
+          notifyFn(callback);
+        });
+      }
+    };
+    const batchCalls = (callback) => {
+      return (...args) => {
+        schedule(() => {
+          callback(...args);
+        });
+      };
+    };
+    const flush = () => {
+      const originalQueue = queue;
+      queue = [];
+      if (originalQueue.length) {
+        scheduleMicrotask(() => {
+          batchNotifyFn(() => {
+            originalQueue.forEach((callback) => {
+              notifyFn(callback);
+            });
+          });
+        });
+      }
+    };
+    const setNotifyFunction = (fn) => {
+      notifyFn = fn;
+    };
+    const setBatchNotifyFunction = (fn) => {
+      batchNotifyFn = fn;
+    };
+    return {
+      batch,
+      batchCalls,
+      schedule,
+      setNotifyFunction,
+      setBatchNotifyFunction
+    };
+  }
+  var notifyManager = createNotifyManager();
+
+  // ../node_modules/@tanstack/query-core/build/lib/removable.mjs
+  var Removable = class {
+    destroy() {
+      this.clearGcTimeout();
+    }
+    scheduleGc() {
+      this.clearGcTimeout();
+      if (isValidTimeout(this.cacheTime)) {
+        this.gcTimeout = setTimeout(() => {
+          this.optionalRemove();
+        }, this.cacheTime);
+      }
+    }
+    updateCacheTime(newCacheTime) {
+      this.cacheTime = Math.max(this.cacheTime || 0, newCacheTime != null ? newCacheTime : isServer ? Infinity : 5 * 60 * 1e3);
+    }
+    clearGcTimeout() {
+      if (this.gcTimeout) {
+        clearTimeout(this.gcTimeout);
+        this.gcTimeout = void 0;
+      }
+    }
+  };
+
+  // ../node_modules/@tanstack/query-core/build/lib/query.mjs
+  var Query2 = class extends Removable {
+    constructor(config) {
+      super();
+      this.abortSignalConsumed = false;
+      this.defaultOptions = config.defaultOptions;
+      this.setOptions(config.options);
+      this.observers = [];
+      this.cache = config.cache;
+      this.logger = config.logger || defaultLogger;
+      this.queryKey = config.queryKey;
+      this.queryHash = config.queryHash;
+      this.initialState = config.state || getDefaultState(this.options);
+      this.state = this.initialState;
+      this.scheduleGc();
+    }
+    get meta() {
+      return this.options.meta;
+    }
+    setOptions(options) {
+      this.options = {
+        ...this.defaultOptions,
+        ...options
+      };
+      this.updateCacheTime(this.options.cacheTime);
+    }
+    optionalRemove() {
+      if (!this.observers.length && this.state.fetchStatus === "idle") {
+        this.cache.remove(this);
+      }
+    }
+    setData(newData, options) {
+      const data = replaceData(this.state.data, newData, this.options);
+      this.dispatch({
+        data,
+        type: "success",
+        dataUpdatedAt: options == null ? void 0 : options.updatedAt,
+        manual: options == null ? void 0 : options.manual
+      });
+      return data;
+    }
+    setState(state, setStateOptions) {
+      this.dispatch({
+        type: "setState",
+        state,
+        setStateOptions
+      });
+    }
+    cancel(options) {
+      var _this$retryer;
+      const promise = this.promise;
+      (_this$retryer = this.retryer) == null ? void 0 : _this$retryer.cancel(options);
+      return promise ? promise.then(noop2).catch(noop2) : Promise.resolve();
+    }
+    destroy() {
+      super.destroy();
+      this.cancel({
+        silent: true
+      });
+    }
+    reset() {
+      this.destroy();
+      this.setState(this.initialState);
+    }
+    isActive() {
+      return this.observers.some((observer) => observer.options.enabled !== false);
+    }
+    isDisabled() {
+      return this.getObserversCount() > 0 && !this.isActive();
+    }
+    isStale() {
+      return this.state.isInvalidated || !this.state.dataUpdatedAt || this.observers.some((observer) => observer.getCurrentResult().isStale);
+    }
+    isStaleByTime(staleTime = 0) {
+      return this.state.isInvalidated || !this.state.dataUpdatedAt || !timeUntilStale(this.state.dataUpdatedAt, staleTime);
+    }
+    onFocus() {
+      var _this$retryer2;
+      const observer = this.observers.find((x) => x.shouldFetchOnWindowFocus());
+      if (observer) {
+        observer.refetch({
+          cancelRefetch: false
+        });
+      }
+      (_this$retryer2 = this.retryer) == null ? void 0 : _this$retryer2.continue();
+    }
+    onOnline() {
+      var _this$retryer3;
+      const observer = this.observers.find((x) => x.shouldFetchOnReconnect());
+      if (observer) {
+        observer.refetch({
+          cancelRefetch: false
+        });
+      }
+      (_this$retryer3 = this.retryer) == null ? void 0 : _this$retryer3.continue();
+    }
+    addObserver(observer) {
+      if (!this.observers.includes(observer)) {
+        this.observers.push(observer);
+        this.clearGcTimeout();
+        this.cache.notify({
+          type: "observerAdded",
+          query: this,
+          observer
+        });
+      }
+    }
+    removeObserver(observer) {
+      if (this.observers.includes(observer)) {
+        this.observers = this.observers.filter((x) => x !== observer);
+        if (!this.observers.length) {
+          if (this.retryer) {
+            if (this.abortSignalConsumed) {
+              this.retryer.cancel({
+                revert: true
+              });
+            } else {
+              this.retryer.cancelRetry();
+            }
+          }
+          this.scheduleGc();
+        }
+        this.cache.notify({
+          type: "observerRemoved",
+          query: this,
+          observer
+        });
+      }
+    }
+    getObserversCount() {
+      return this.observers.length;
+    }
+    invalidate() {
+      if (!this.state.isInvalidated) {
+        this.dispatch({
+          type: "invalidate"
+        });
+      }
+    }
+    fetch(options, fetchOptions) {
+      var _this$options$behavio, _context$fetchOptions;
+      if (this.state.fetchStatus !== "idle") {
+        if (this.state.dataUpdatedAt && fetchOptions != null && fetchOptions.cancelRefetch) {
+          this.cancel({
+            silent: true
+          });
+        } else if (this.promise) {
+          var _this$retryer4;
+          (_this$retryer4 = this.retryer) == null ? void 0 : _this$retryer4.continueRetry();
+          return this.promise;
+        }
+      }
+      if (options) {
+        this.setOptions(options);
+      }
+      if (!this.options.queryFn) {
+        const observer = this.observers.find((x) => x.options.queryFn);
+        if (observer) {
+          this.setOptions(observer.options);
+        }
+      }
+      if (true) {
+        if (!Array.isArray(this.options.queryKey)) {
+          this.logger.error("As of v4, queryKey needs to be an Array. If you are using a string like 'repoData', please change it to an Array, e.g. ['repoData']");
+        }
+      }
+      const abortController = getAbortController();
+      const queryFnContext = {
+        queryKey: this.queryKey,
+        pageParam: void 0,
+        meta: this.meta
+      };
+      const addSignalProperty = (object) => {
+        Object.defineProperty(object, "signal", {
+          enumerable: true,
+          get: () => {
+            if (abortController) {
+              this.abortSignalConsumed = true;
+              return abortController.signal;
+            }
+            return void 0;
+          }
+        });
+      };
+      addSignalProperty(queryFnContext);
+      const fetchFn = () => {
+        if (!this.options.queryFn) {
+          return Promise.reject("Missing queryFn for queryKey '" + this.options.queryHash + "'");
+        }
+        this.abortSignalConsumed = false;
+        return this.options.queryFn(queryFnContext);
+      };
+      const context = {
+        fetchOptions,
+        options: this.options,
+        queryKey: this.queryKey,
+        state: this.state,
+        fetchFn
+      };
+      addSignalProperty(context);
+      (_this$options$behavio = this.options.behavior) == null ? void 0 : _this$options$behavio.onFetch(context);
+      this.revertState = this.state;
+      if (this.state.fetchStatus === "idle" || this.state.fetchMeta !== ((_context$fetchOptions = context.fetchOptions) == null ? void 0 : _context$fetchOptions.meta)) {
+        var _context$fetchOptions2;
+        this.dispatch({
+          type: "fetch",
+          meta: (_context$fetchOptions2 = context.fetchOptions) == null ? void 0 : _context$fetchOptions2.meta
+        });
+      }
+      const onError = (error) => {
+        if (!(isCancelledError(error) && error.silent)) {
+          this.dispatch({
+            type: "error",
+            error
+          });
+        }
+        if (!isCancelledError(error)) {
+          var _this$cache$config$on, _this$cache$config, _this$cache$config$on2, _this$cache$config2;
+          (_this$cache$config$on = (_this$cache$config = this.cache.config).onError) == null ? void 0 : _this$cache$config$on.call(_this$cache$config, error, this);
+          (_this$cache$config$on2 = (_this$cache$config2 = this.cache.config).onSettled) == null ? void 0 : _this$cache$config$on2.call(_this$cache$config2, this.state.data, error, this);
+          if (true) {
+            this.logger.error(error);
+          }
+        }
+        if (!this.isFetchingOptimistic) {
+          this.scheduleGc();
+        }
+        this.isFetchingOptimistic = false;
+      };
+      this.retryer = createRetryer({
+        fn: context.fetchFn,
+        abort: abortController == null ? void 0 : abortController.abort.bind(abortController),
+        onSuccess: (data) => {
+          var _this$cache$config$on3, _this$cache$config3, _this$cache$config$on4, _this$cache$config4;
+          if (typeof data === "undefined") {
+            if (true) {
+              this.logger.error("Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: " + this.queryHash);
+            }
+            onError(new Error(this.queryHash + " data is undefined"));
+            return;
+          }
+          this.setData(data);
+          (_this$cache$config$on3 = (_this$cache$config3 = this.cache.config).onSuccess) == null ? void 0 : _this$cache$config$on3.call(_this$cache$config3, data, this);
+          (_this$cache$config$on4 = (_this$cache$config4 = this.cache.config).onSettled) == null ? void 0 : _this$cache$config$on4.call(_this$cache$config4, data, this.state.error, this);
+          if (!this.isFetchingOptimistic) {
+            this.scheduleGc();
+          }
+          this.isFetchingOptimistic = false;
+        },
+        onError,
+        onFail: (failureCount, error) => {
+          this.dispatch({
+            type: "failed",
+            failureCount,
+            error
+          });
+        },
+        onPause: () => {
+          this.dispatch({
+            type: "pause"
+          });
+        },
+        onContinue: () => {
+          this.dispatch({
+            type: "continue"
+          });
+        },
+        retry: context.options.retry,
+        retryDelay: context.options.retryDelay,
+        networkMode: context.options.networkMode
+      });
+      this.promise = this.retryer.promise;
+      return this.promise;
+    }
+    dispatch(action) {
+      const reducer = (state) => {
+        var _action$meta, _action$dataUpdatedAt;
+        switch (action.type) {
+          case "failed":
+            return {
+              ...state,
+              fetchFailureCount: action.failureCount,
+              fetchFailureReason: action.error
+            };
+          case "pause":
+            return {
+              ...state,
+              fetchStatus: "paused"
+            };
+          case "continue":
+            return {
+              ...state,
+              fetchStatus: "fetching"
+            };
+          case "fetch":
+            return {
+              ...state,
+              fetchFailureCount: 0,
+              fetchFailureReason: null,
+              fetchMeta: (_action$meta = action.meta) != null ? _action$meta : null,
+              fetchStatus: canFetch(this.options.networkMode) ? "fetching" : "paused",
+              ...!state.dataUpdatedAt && {
+                error: null,
+                status: "loading"
+              }
+            };
+          case "success":
+            return {
+              ...state,
+              data: action.data,
+              dataUpdateCount: state.dataUpdateCount + 1,
+              dataUpdatedAt: (_action$dataUpdatedAt = action.dataUpdatedAt) != null ? _action$dataUpdatedAt : Date.now(),
+              error: null,
+              isInvalidated: false,
+              status: "success",
+              ...!action.manual && {
+                fetchStatus: "idle",
+                fetchFailureCount: 0,
+                fetchFailureReason: null
+              }
+            };
+          case "error":
+            const error = action.error;
+            if (isCancelledError(error) && error.revert && this.revertState) {
+              return {
+                ...this.revertState,
+                fetchStatus: "idle"
+              };
+            }
+            return {
+              ...state,
+              error,
+              errorUpdateCount: state.errorUpdateCount + 1,
+              errorUpdatedAt: Date.now(),
+              fetchFailureCount: state.fetchFailureCount + 1,
+              fetchFailureReason: error,
+              fetchStatus: "idle",
+              status: "error"
+            };
+          case "invalidate":
+            return {
+              ...state,
+              isInvalidated: true
+            };
+          case "setState":
+            return {
+              ...state,
+              ...action.state
+            };
+        }
+      };
+      this.state = reducer(this.state);
+      notifyManager.batch(() => {
+        this.observers.forEach((observer) => {
+          observer.onQueryUpdate(action);
+        });
+        this.cache.notify({
+          query: this,
+          type: "updated",
+          action
+        });
+      });
+    }
+  };
+  function getDefaultState(options) {
+    const data = typeof options.initialData === "function" ? options.initialData() : options.initialData;
+    const hasData = typeof data !== "undefined";
+    const initialDataUpdatedAt = hasData ? typeof options.initialDataUpdatedAt === "function" ? options.initialDataUpdatedAt() : options.initialDataUpdatedAt : 0;
+    return {
+      data,
+      dataUpdateCount: 0,
+      dataUpdatedAt: hasData ? initialDataUpdatedAt != null ? initialDataUpdatedAt : Date.now() : 0,
+      error: null,
+      errorUpdateCount: 0,
+      errorUpdatedAt: 0,
+      fetchFailureCount: 0,
+      fetchFailureReason: null,
+      fetchMeta: null,
+      isInvalidated: false,
+      status: hasData ? "success" : "loading",
+      fetchStatus: "idle"
+    };
+  }
+
+  // ../node_modules/@tanstack/query-core/build/lib/queryCache.mjs
+  var QueryCache = class extends Subscribable {
+    constructor(config) {
+      super();
+      this.config = config || {};
+      this.queries = [];
+      this.queriesMap = {};
+    }
+    build(client, options, state) {
+      var _options$queryHash;
+      const queryKey = options.queryKey;
+      const queryHash = (_options$queryHash = options.queryHash) != null ? _options$queryHash : hashQueryKeyByOptions(queryKey, options);
+      let query = this.get(queryHash);
+      if (!query) {
+        query = new Query2({
+          cache: this,
+          logger: client.getLogger(),
+          queryKey,
+          queryHash,
+          options: client.defaultQueryOptions(options),
+          state,
+          defaultOptions: client.getQueryDefaults(queryKey)
+        });
+        this.add(query);
+      }
+      return query;
+    }
+    add(query) {
+      if (!this.queriesMap[query.queryHash]) {
+        this.queriesMap[query.queryHash] = query;
+        this.queries.push(query);
+        this.notify({
+          type: "added",
+          query
+        });
+      }
+    }
+    remove(query) {
+      const queryInMap = this.queriesMap[query.queryHash];
+      if (queryInMap) {
+        query.destroy();
+        this.queries = this.queries.filter((x) => x !== query);
+        if (queryInMap === query) {
+          delete this.queriesMap[query.queryHash];
+        }
+        this.notify({
+          type: "removed",
+          query
+        });
+      }
+    }
+    clear() {
+      notifyManager.batch(() => {
+        this.queries.forEach((query) => {
+          this.remove(query);
+        });
+      });
+    }
+    get(queryHash) {
+      return this.queriesMap[queryHash];
+    }
+    getAll() {
+      return this.queries;
+    }
+    find(arg1, arg2) {
+      const [filters] = parseFilterArgs(arg1, arg2);
+      if (typeof filters.exact === "undefined") {
+        filters.exact = true;
+      }
+      return this.queries.find((query) => matchQuery(filters, query));
+    }
+    findAll(arg1, arg2) {
+      const [filters] = parseFilterArgs(arg1, arg2);
+      return Object.keys(filters).length > 0 ? this.queries.filter((query) => matchQuery(filters, query)) : this.queries;
+    }
+    notify(event) {
+      notifyManager.batch(() => {
+        this.listeners.forEach(({
+          listener
+        }) => {
+          listener(event);
+        });
+      });
+    }
+    onFocus() {
+      notifyManager.batch(() => {
+        this.queries.forEach((query) => {
+          query.onFocus();
+        });
+      });
+    }
+    onOnline() {
+      notifyManager.batch(() => {
+        this.queries.forEach((query) => {
+          query.onOnline();
+        });
+      });
+    }
+  };
+
+  // ../node_modules/@tanstack/query-core/build/lib/mutation.mjs
+  var Mutation = class extends Removable {
+    constructor(config) {
+      super();
+      this.defaultOptions = config.defaultOptions;
+      this.mutationId = config.mutationId;
+      this.mutationCache = config.mutationCache;
+      this.logger = config.logger || defaultLogger;
+      this.observers = [];
+      this.state = config.state || getDefaultState2();
+      this.setOptions(config.options);
+      this.scheduleGc();
+    }
+    setOptions(options) {
+      this.options = {
+        ...this.defaultOptions,
+        ...options
+      };
+      this.updateCacheTime(this.options.cacheTime);
+    }
+    get meta() {
+      return this.options.meta;
+    }
+    setState(state) {
+      this.dispatch({
+        type: "setState",
+        state
+      });
+    }
+    addObserver(observer) {
+      if (!this.observers.includes(observer)) {
+        this.observers.push(observer);
+        this.clearGcTimeout();
+        this.mutationCache.notify({
+          type: "observerAdded",
+          mutation: this,
+          observer
+        });
+      }
+    }
+    removeObserver(observer) {
+      this.observers = this.observers.filter((x) => x !== observer);
+      this.scheduleGc();
+      this.mutationCache.notify({
+        type: "observerRemoved",
+        mutation: this,
+        observer
+      });
+    }
+    optionalRemove() {
+      if (!this.observers.length) {
+        if (this.state.status === "loading") {
+          this.scheduleGc();
+        } else {
+          this.mutationCache.remove(this);
+        }
+      }
+    }
+    continue() {
+      var _this$retryer$continu, _this$retryer;
+      return (_this$retryer$continu = (_this$retryer = this.retryer) == null ? void 0 : _this$retryer.continue()) != null ? _this$retryer$continu : this.execute();
+    }
+    async execute() {
+      const executeMutation = () => {
+        var _this$options$retry;
+        this.retryer = createRetryer({
+          fn: () => {
+            if (!this.options.mutationFn) {
+              return Promise.reject("No mutationFn found");
+            }
+            return this.options.mutationFn(this.state.variables);
+          },
+          onFail: (failureCount, error) => {
+            this.dispatch({
+              type: "failed",
+              failureCount,
+              error
+            });
+          },
+          onPause: () => {
+            this.dispatch({
+              type: "pause"
+            });
+          },
+          onContinue: () => {
+            this.dispatch({
+              type: "continue"
+            });
+          },
+          retry: (_this$options$retry = this.options.retry) != null ? _this$options$retry : 0,
+          retryDelay: this.options.retryDelay,
+          networkMode: this.options.networkMode
+        });
+        return this.retryer.promise;
+      };
+      const restored = this.state.status === "loading";
+      try {
+        var _this$mutationCache$c3, _this$mutationCache$c4, _this$options$onSucce, _this$options2, _this$mutationCache$c5, _this$mutationCache$c6, _this$options$onSettl, _this$options3;
+        if (!restored) {
+          var _this$mutationCache$c, _this$mutationCache$c2, _this$options$onMutat, _this$options;
+          this.dispatch({
+            type: "loading",
+            variables: this.options.variables
+          });
+          await ((_this$mutationCache$c = (_this$mutationCache$c2 = this.mutationCache.config).onMutate) == null ? void 0 : _this$mutationCache$c.call(_this$mutationCache$c2, this.state.variables, this));
+          const context = await ((_this$options$onMutat = (_this$options = this.options).onMutate) == null ? void 0 : _this$options$onMutat.call(_this$options, this.state.variables));
+          if (context !== this.state.context) {
+            this.dispatch({
+              type: "loading",
+              context,
+              variables: this.state.variables
+            });
+          }
+        }
+        const data = await executeMutation();
+        await ((_this$mutationCache$c3 = (_this$mutationCache$c4 = this.mutationCache.config).onSuccess) == null ? void 0 : _this$mutationCache$c3.call(_this$mutationCache$c4, data, this.state.variables, this.state.context, this));
+        await ((_this$options$onSucce = (_this$options2 = this.options).onSuccess) == null ? void 0 : _this$options$onSucce.call(_this$options2, data, this.state.variables, this.state.context));
+        await ((_this$mutationCache$c5 = (_this$mutationCache$c6 = this.mutationCache.config).onSettled) == null ? void 0 : _this$mutationCache$c5.call(_this$mutationCache$c6, data, null, this.state.variables, this.state.context, this));
+        await ((_this$options$onSettl = (_this$options3 = this.options).onSettled) == null ? void 0 : _this$options$onSettl.call(_this$options3, data, null, this.state.variables, this.state.context));
+        this.dispatch({
+          type: "success",
+          data
+        });
+        return data;
+      } catch (error) {
+        try {
+          var _this$mutationCache$c7, _this$mutationCache$c8, _this$options$onError, _this$options4, _this$mutationCache$c9, _this$mutationCache$c10, _this$options$onSettl2, _this$options5;
+          await ((_this$mutationCache$c7 = (_this$mutationCache$c8 = this.mutationCache.config).onError) == null ? void 0 : _this$mutationCache$c7.call(_this$mutationCache$c8, error, this.state.variables, this.state.context, this));
+          if (true) {
+            this.logger.error(error);
+          }
+          await ((_this$options$onError = (_this$options4 = this.options).onError) == null ? void 0 : _this$options$onError.call(_this$options4, error, this.state.variables, this.state.context));
+          await ((_this$mutationCache$c9 = (_this$mutationCache$c10 = this.mutationCache.config).onSettled) == null ? void 0 : _this$mutationCache$c9.call(_this$mutationCache$c10, void 0, error, this.state.variables, this.state.context, this));
+          await ((_this$options$onSettl2 = (_this$options5 = this.options).onSettled) == null ? void 0 : _this$options$onSettl2.call(_this$options5, void 0, error, this.state.variables, this.state.context));
+          throw error;
+        } finally {
+          this.dispatch({
+            type: "error",
+            error
+          });
+        }
+      }
+    }
+    dispatch(action) {
+      const reducer = (state) => {
+        switch (action.type) {
+          case "failed":
+            return {
+              ...state,
+              failureCount: action.failureCount,
+              failureReason: action.error
+            };
+          case "pause":
+            return {
+              ...state,
+              isPaused: true
+            };
+          case "continue":
+            return {
+              ...state,
+              isPaused: false
+            };
+          case "loading":
+            return {
+              ...state,
+              context: action.context,
+              data: void 0,
+              failureCount: 0,
+              failureReason: null,
+              error: null,
+              isPaused: !canFetch(this.options.networkMode),
+              status: "loading",
+              variables: action.variables
+            };
+          case "success":
+            return {
+              ...state,
+              data: action.data,
+              failureCount: 0,
+              failureReason: null,
+              error: null,
+              status: "success",
+              isPaused: false
+            };
+          case "error":
+            return {
+              ...state,
+              data: void 0,
+              error: action.error,
+              failureCount: state.failureCount + 1,
+              failureReason: action.error,
+              isPaused: false,
+              status: "error"
+            };
+          case "setState":
+            return {
+              ...state,
+              ...action.state
+            };
+        }
+      };
+      this.state = reducer(this.state);
+      notifyManager.batch(() => {
+        this.observers.forEach((observer) => {
+          observer.onMutationUpdate(action);
+        });
+        this.mutationCache.notify({
+          mutation: this,
+          type: "updated",
+          action
+        });
+      });
+    }
+  };
+  function getDefaultState2() {
+    return {
+      context: void 0,
+      data: void 0,
+      error: null,
+      failureCount: 0,
+      failureReason: null,
+      isPaused: false,
+      status: "idle",
+      variables: void 0
+    };
+  }
+
+  // ../node_modules/@tanstack/query-core/build/lib/mutationCache.mjs
+  var MutationCache = class extends Subscribable {
+    constructor(config) {
+      super();
+      this.config = config || {};
+      this.mutations = [];
+      this.mutationId = 0;
+    }
+    build(client, options, state) {
+      const mutation = new Mutation({
+        mutationCache: this,
+        logger: client.getLogger(),
+        mutationId: ++this.mutationId,
+        options: client.defaultMutationOptions(options),
+        state,
+        defaultOptions: options.mutationKey ? client.getMutationDefaults(options.mutationKey) : void 0
+      });
+      this.add(mutation);
+      return mutation;
+    }
+    add(mutation) {
+      this.mutations.push(mutation);
+      this.notify({
+        type: "added",
+        mutation
+      });
+    }
+    remove(mutation) {
+      this.mutations = this.mutations.filter((x) => x !== mutation);
+      this.notify({
+        type: "removed",
+        mutation
+      });
+    }
+    clear() {
+      notifyManager.batch(() => {
+        this.mutations.forEach((mutation) => {
+          this.remove(mutation);
+        });
+      });
+    }
+    getAll() {
+      return this.mutations;
+    }
+    find(filters) {
+      if (typeof filters.exact === "undefined") {
+        filters.exact = true;
+      }
+      return this.mutations.find((mutation) => matchMutation(filters, mutation));
+    }
+    findAll(filters) {
+      return this.mutations.filter((mutation) => matchMutation(filters, mutation));
+    }
+    notify(event) {
+      notifyManager.batch(() => {
+        this.listeners.forEach(({
+          listener
+        }) => {
+          listener(event);
+        });
+      });
+    }
+    resumePausedMutations() {
+      var _this$resuming;
+      this.resuming = ((_this$resuming = this.resuming) != null ? _this$resuming : Promise.resolve()).then(() => {
+        const pausedMutations = this.mutations.filter((x) => x.state.isPaused);
+        return notifyManager.batch(() => pausedMutations.reduce((promise, mutation) => promise.then(() => mutation.continue().catch(noop2)), Promise.resolve()));
+      }).then(() => {
+        this.resuming = void 0;
+      });
+      return this.resuming;
+    }
+  };
+
+  // ../node_modules/@tanstack/query-core/build/lib/infiniteQueryBehavior.mjs
+  function infiniteQueryBehavior() {
+    return {
+      onFetch: (context) => {
+        context.fetchFn = () => {
+          var _context$fetchOptions, _context$fetchOptions2, _context$fetchOptions3, _context$fetchOptions4, _context$state$data, _context$state$data2;
+          const refetchPage = (_context$fetchOptions = context.fetchOptions) == null ? void 0 : (_context$fetchOptions2 = _context$fetchOptions.meta) == null ? void 0 : _context$fetchOptions2.refetchPage;
+          const fetchMore = (_context$fetchOptions3 = context.fetchOptions) == null ? void 0 : (_context$fetchOptions4 = _context$fetchOptions3.meta) == null ? void 0 : _context$fetchOptions4.fetchMore;
+          const pageParam = fetchMore == null ? void 0 : fetchMore.pageParam;
+          const isFetchingNextPage = (fetchMore == null ? void 0 : fetchMore.direction) === "forward";
+          const isFetchingPreviousPage = (fetchMore == null ? void 0 : fetchMore.direction) === "backward";
+          const oldPages = ((_context$state$data = context.state.data) == null ? void 0 : _context$state$data.pages) || [];
+          const oldPageParams = ((_context$state$data2 = context.state.data) == null ? void 0 : _context$state$data2.pageParams) || [];
+          let newPageParams = oldPageParams;
+          let cancelled = false;
+          const addSignalProperty = (object) => {
+            Object.defineProperty(object, "signal", {
+              enumerable: true,
+              get: () => {
+                var _context$signal;
+                if ((_context$signal = context.signal) != null && _context$signal.aborted) {
+                  cancelled = true;
+                } else {
+                  var _context$signal2;
+                  (_context$signal2 = context.signal) == null ? void 0 : _context$signal2.addEventListener("abort", () => {
+                    cancelled = true;
+                  });
+                }
+                return context.signal;
+              }
+            });
+          };
+          const queryFn = context.options.queryFn || (() => Promise.reject("Missing queryFn for queryKey '" + context.options.queryHash + "'"));
+          const buildNewPages = (pages, param, page, previous) => {
+            newPageParams = previous ? [param, ...newPageParams] : [...newPageParams, param];
+            return previous ? [page, ...pages] : [...pages, page];
+          };
+          const fetchPage = (pages, manual, param, previous) => {
+            if (cancelled) {
+              return Promise.reject("Cancelled");
+            }
+            if (typeof param === "undefined" && !manual && pages.length) {
+              return Promise.resolve(pages);
+            }
+            const queryFnContext = {
+              queryKey: context.queryKey,
+              pageParam: param,
+              meta: context.options.meta
+            };
+            addSignalProperty(queryFnContext);
+            const queryFnResult = queryFn(queryFnContext);
+            const promise2 = Promise.resolve(queryFnResult).then((page) => buildNewPages(pages, param, page, previous));
+            return promise2;
+          };
+          let promise;
+          if (!oldPages.length) {
+            promise = fetchPage([]);
+          } else if (isFetchingNextPage) {
+            const manual = typeof pageParam !== "undefined";
+            const param = manual ? pageParam : getNextPageParam(context.options, oldPages);
+            promise = fetchPage(oldPages, manual, param);
+          } else if (isFetchingPreviousPage) {
+            const manual = typeof pageParam !== "undefined";
+            const param = manual ? pageParam : getPreviousPageParam(context.options, oldPages);
+            promise = fetchPage(oldPages, manual, param, true);
+          } else {
+            newPageParams = [];
+            const manual = typeof context.options.getNextPageParam === "undefined";
+            const shouldFetchFirstPage = refetchPage && oldPages[0] ? refetchPage(oldPages[0], 0, oldPages) : true;
+            promise = shouldFetchFirstPage ? fetchPage([], manual, oldPageParams[0]) : Promise.resolve(buildNewPages([], oldPageParams[0], oldPages[0]));
+            for (let i2 = 1; i2 < oldPages.length; i2++) {
+              promise = promise.then((pages) => {
+                const shouldFetchNextPage = refetchPage && oldPages[i2] ? refetchPage(oldPages[i2], i2, oldPages) : true;
+                if (shouldFetchNextPage) {
+                  const param = manual ? oldPageParams[i2] : getNextPageParam(context.options, pages);
+                  return fetchPage(pages, manual, param);
+                }
+                return Promise.resolve(buildNewPages(pages, oldPageParams[i2], oldPages[i2]));
+              });
+            }
+          }
+          const finalPromise = promise.then((pages) => ({
+            pages,
+            pageParams: newPageParams
+          }));
+          return finalPromise;
+        };
+      }
+    };
+  }
+  function getNextPageParam(options, pages) {
+    return options.getNextPageParam == null ? void 0 : options.getNextPageParam(pages[pages.length - 1], pages);
+  }
+  function getPreviousPageParam(options, pages) {
+    return options.getPreviousPageParam == null ? void 0 : options.getPreviousPageParam(pages[0], pages);
+  }
+
+  // ../node_modules/@tanstack/query-core/build/lib/queryClient.mjs
+  var QueryClient = class {
+    constructor(config = {}) {
+      this.queryCache = config.queryCache || new QueryCache();
+      this.mutationCache = config.mutationCache || new MutationCache();
+      this.logger = config.logger || defaultLogger;
+      this.defaultOptions = config.defaultOptions || {};
+      this.queryDefaults = [];
+      this.mutationDefaults = [];
+      this.mountCount = 0;
+      if (config.logger) {
+        this.logger.error("Passing a custom logger has been deprecated and will be removed in the next major version.");
+      }
+    }
+    mount() {
+      this.mountCount++;
+      if (this.mountCount !== 1)
+        return;
+      this.unsubscribeFocus = focusManager.subscribe(() => {
+        if (focusManager.isFocused()) {
+          this.resumePausedMutations();
+          this.queryCache.onFocus();
+        }
+      });
+      this.unsubscribeOnline = onlineManager.subscribe(() => {
+        if (onlineManager.isOnline()) {
+          this.resumePausedMutations();
+          this.queryCache.onOnline();
+        }
+      });
+    }
+    unmount() {
+      var _this$unsubscribeFocu, _this$unsubscribeOnli;
+      this.mountCount--;
+      if (this.mountCount !== 0)
+        return;
+      (_this$unsubscribeFocu = this.unsubscribeFocus) == null ? void 0 : _this$unsubscribeFocu.call(this);
+      this.unsubscribeFocus = void 0;
+      (_this$unsubscribeOnli = this.unsubscribeOnline) == null ? void 0 : _this$unsubscribeOnli.call(this);
+      this.unsubscribeOnline = void 0;
+    }
+    isFetching(arg1, arg2) {
+      const [filters] = parseFilterArgs(arg1, arg2);
+      filters.fetchStatus = "fetching";
+      return this.queryCache.findAll(filters).length;
+    }
+    isMutating(filters) {
+      return this.mutationCache.findAll({
+        ...filters,
+        fetching: true
+      }).length;
+    }
+    getQueryData(queryKey, filters) {
+      var _this$queryCache$find;
+      return (_this$queryCache$find = this.queryCache.find(queryKey, filters)) == null ? void 0 : _this$queryCache$find.state.data;
+    }
+    ensureQueryData(arg1, arg2, arg3) {
+      const parsedOptions = parseQueryArgs(arg1, arg2, arg3);
+      const cachedData = this.getQueryData(parsedOptions.queryKey);
+      return cachedData ? Promise.resolve(cachedData) : this.fetchQuery(parsedOptions);
+    }
+    getQueriesData(queryKeyOrFilters) {
+      return this.getQueryCache().findAll(queryKeyOrFilters).map(({
+        queryKey,
+        state
+      }) => {
+        const data = state.data;
+        return [queryKey, data];
+      });
+    }
+    setQueryData(queryKey, updater, options) {
+      const query = this.queryCache.find(queryKey);
+      const prevData = query == null ? void 0 : query.state.data;
+      const data = functionalUpdate(updater, prevData);
+      if (typeof data === "undefined") {
+        return void 0;
+      }
+      const parsedOptions = parseQueryArgs(queryKey);
+      const defaultedOptions = this.defaultQueryOptions(parsedOptions);
+      return this.queryCache.build(this, defaultedOptions).setData(data, {
+        ...options,
+        manual: true
+      });
+    }
+    setQueriesData(queryKeyOrFilters, updater, options) {
+      return notifyManager.batch(() => this.getQueryCache().findAll(queryKeyOrFilters).map(({
+        queryKey
+      }) => [queryKey, this.setQueryData(queryKey, updater, options)]));
+    }
+    getQueryState(queryKey, filters) {
+      var _this$queryCache$find2;
+      return (_this$queryCache$find2 = this.queryCache.find(queryKey, filters)) == null ? void 0 : _this$queryCache$find2.state;
+    }
+    removeQueries(arg1, arg2) {
+      const [filters] = parseFilterArgs(arg1, arg2);
+      const queryCache = this.queryCache;
+      notifyManager.batch(() => {
+        queryCache.findAll(filters).forEach((query) => {
+          queryCache.remove(query);
+        });
+      });
+    }
+    resetQueries(arg1, arg2, arg3) {
+      const [filters, options] = parseFilterArgs(arg1, arg2, arg3);
+      const queryCache = this.queryCache;
+      const refetchFilters = {
+        type: "active",
+        ...filters
+      };
+      return notifyManager.batch(() => {
+        queryCache.findAll(filters).forEach((query) => {
+          query.reset();
+        });
+        return this.refetchQueries(refetchFilters, options);
+      });
+    }
+    cancelQueries(arg1, arg2, arg3) {
+      const [filters, cancelOptions = {}] = parseFilterArgs(arg1, arg2, arg3);
+      if (typeof cancelOptions.revert === "undefined") {
+        cancelOptions.revert = true;
+      }
+      const promises = notifyManager.batch(() => this.queryCache.findAll(filters).map((query) => query.cancel(cancelOptions)));
+      return Promise.all(promises).then(noop2).catch(noop2);
+    }
+    invalidateQueries(arg1, arg2, arg3) {
+      const [filters, options] = parseFilterArgs(arg1, arg2, arg3);
+      return notifyManager.batch(() => {
+        var _ref, _filters$refetchType;
+        this.queryCache.findAll(filters).forEach((query) => {
+          query.invalidate();
+        });
+        if (filters.refetchType === "none") {
+          return Promise.resolve();
+        }
+        const refetchFilters = {
+          ...filters,
+          type: (_ref = (_filters$refetchType = filters.refetchType) != null ? _filters$refetchType : filters.type) != null ? _ref : "active"
+        };
+        return this.refetchQueries(refetchFilters, options);
+      });
+    }
+    refetchQueries(arg1, arg2, arg3) {
+      const [filters, options] = parseFilterArgs(arg1, arg2, arg3);
+      const promises = notifyManager.batch(() => this.queryCache.findAll(filters).filter((query) => !query.isDisabled()).map((query) => {
+        var _options$cancelRefetc;
+        return query.fetch(void 0, {
+          ...options,
+          cancelRefetch: (_options$cancelRefetc = options == null ? void 0 : options.cancelRefetch) != null ? _options$cancelRefetc : true,
+          meta: {
+            refetchPage: filters.refetchPage
+          }
+        });
+      }));
+      let promise = Promise.all(promises).then(noop2);
+      if (!(options != null && options.throwOnError)) {
+        promise = promise.catch(noop2);
+      }
+      return promise;
+    }
+    fetchQuery(arg1, arg2, arg3) {
+      const parsedOptions = parseQueryArgs(arg1, arg2, arg3);
+      const defaultedOptions = this.defaultQueryOptions(parsedOptions);
+      if (typeof defaultedOptions.retry === "undefined") {
+        defaultedOptions.retry = false;
+      }
+      const query = this.queryCache.build(this, defaultedOptions);
+      return query.isStaleByTime(defaultedOptions.staleTime) ? query.fetch(defaultedOptions) : Promise.resolve(query.state.data);
+    }
+    prefetchQuery(arg1, arg2, arg3) {
+      return this.fetchQuery(arg1, arg2, arg3).then(noop2).catch(noop2);
+    }
+    fetchInfiniteQuery(arg1, arg2, arg3) {
+      const parsedOptions = parseQueryArgs(arg1, arg2, arg3);
+      parsedOptions.behavior = infiniteQueryBehavior();
+      return this.fetchQuery(parsedOptions);
+    }
+    prefetchInfiniteQuery(arg1, arg2, arg3) {
+      return this.fetchInfiniteQuery(arg1, arg2, arg3).then(noop2).catch(noop2);
+    }
+    resumePausedMutations() {
+      return this.mutationCache.resumePausedMutations();
+    }
+    getQueryCache() {
+      return this.queryCache;
+    }
+    getMutationCache() {
+      return this.mutationCache;
+    }
+    getLogger() {
+      return this.logger;
+    }
+    getDefaultOptions() {
+      return this.defaultOptions;
+    }
+    setDefaultOptions(options) {
+      this.defaultOptions = options;
+    }
+    setQueryDefaults(queryKey, options) {
+      const result = this.queryDefaults.find((x) => hashQueryKey(queryKey) === hashQueryKey(x.queryKey));
+      if (result) {
+        result.defaultOptions = options;
+      } else {
+        this.queryDefaults.push({
+          queryKey,
+          defaultOptions: options
+        });
+      }
+    }
+    getQueryDefaults(queryKey) {
+      if (!queryKey) {
+        return void 0;
+      }
+      const firstMatchingDefaults = this.queryDefaults.find((x) => partialMatchKey(queryKey, x.queryKey));
+      if (true) {
+        const matchingDefaults = this.queryDefaults.filter((x) => partialMatchKey(queryKey, x.queryKey));
+        if (matchingDefaults.length > 1) {
+          this.logger.error("[QueryClient] Several query defaults match with key '" + JSON.stringify(queryKey) + "'. The first matching query defaults are used. Please check how query defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetquerydefaults.");
+        }
+      }
+      return firstMatchingDefaults == null ? void 0 : firstMatchingDefaults.defaultOptions;
+    }
+    setMutationDefaults(mutationKey, options) {
+      const result = this.mutationDefaults.find((x) => hashQueryKey(mutationKey) === hashQueryKey(x.mutationKey));
+      if (result) {
+        result.defaultOptions = options;
+      } else {
+        this.mutationDefaults.push({
+          mutationKey,
+          defaultOptions: options
+        });
+      }
+    }
+    getMutationDefaults(mutationKey) {
+      if (!mutationKey) {
+        return void 0;
+      }
+      const firstMatchingDefaults = this.mutationDefaults.find((x) => partialMatchKey(mutationKey, x.mutationKey));
+      if (true) {
+        const matchingDefaults = this.mutationDefaults.filter((x) => partialMatchKey(mutationKey, x.mutationKey));
+        if (matchingDefaults.length > 1) {
+          this.logger.error("[QueryClient] Several mutation defaults match with key '" + JSON.stringify(mutationKey) + "'. The first matching mutation defaults are used. Please check how mutation defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetmutationdefaults.");
+        }
+      }
+      return firstMatchingDefaults == null ? void 0 : firstMatchingDefaults.defaultOptions;
+    }
+    defaultQueryOptions(options) {
+      if (options != null && options._defaulted) {
+        return options;
+      }
+      const defaultedOptions = {
+        ...this.defaultOptions.queries,
+        ...this.getQueryDefaults(options == null ? void 0 : options.queryKey),
+        ...options,
+        _defaulted: true
+      };
+      if (!defaultedOptions.queryHash && defaultedOptions.queryKey) {
+        defaultedOptions.queryHash = hashQueryKeyByOptions(defaultedOptions.queryKey, defaultedOptions);
+      }
+      if (typeof defaultedOptions.refetchOnReconnect === "undefined") {
+        defaultedOptions.refetchOnReconnect = defaultedOptions.networkMode !== "always";
+      }
+      if (typeof defaultedOptions.useErrorBoundary === "undefined") {
+        defaultedOptions.useErrorBoundary = !!defaultedOptions.suspense;
+      }
+      return defaultedOptions;
+    }
+    defaultMutationOptions(options) {
+      if (options != null && options._defaulted) {
+        return options;
+      }
+      return {
+        ...this.defaultOptions.mutations,
+        ...this.getMutationDefaults(options == null ? void 0 : options.mutationKey),
+        ...options,
+        _defaulted: true
+      };
+    }
+    clear() {
+      this.queryCache.clear();
+      this.mutationCache.clear();
+    }
+  };
+
   // src/service.ts
-  var baseURL = process.env.BASE_URL;
+  var baseURL = "http://localhost:8080";
+  var queryClient = new QueryClient();
   var transport = createConnectTransport({
     baseUrl: `${baseURL}/api` || "error"
     // credentials: "include",

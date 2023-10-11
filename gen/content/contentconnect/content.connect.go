@@ -44,6 +44,8 @@ const (
 	ContentServiceDeleteProcedure = "/content.ContentService/Delete"
 	// ContentServiceGetTagsProcedure is the fully-qualified name of the ContentService's GetTags RPC.
 	ContentServiceGetTagsProcedure = "/content.ContentService/GetTags"
+	// ContentServiceVoteProcedure is the fully-qualified name of the ContentService's Vote RPC.
+	ContentServiceVoteProcedure = "/content.ContentService/Vote"
 )
 
 // ContentServiceClient is a client for the content.ContentService service.
@@ -53,6 +55,7 @@ type ContentServiceClient interface {
 	Analyze(context.Context, *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error)
 	Delete(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
 	GetTags(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Tags], error)
+	Vote(context.Context, *connect_go.Request[content.VoteRequest]) (*connect_go.Response[emptypb.Empty], error)
 }
 
 // NewContentServiceClient constructs a client for the content.ContentService service. By default,
@@ -90,6 +93,11 @@ func NewContentServiceClient(httpClient connect_go.HTTPClient, baseURL string, o
 			baseURL+ContentServiceGetTagsProcedure,
 			opts...,
 		),
+		vote: connect_go.NewClient[content.VoteRequest, emptypb.Empty](
+			httpClient,
+			baseURL+ContentServiceVoteProcedure,
+			opts...,
+		),
 	}
 }
 
@@ -100,6 +108,7 @@ type contentServiceClient struct {
 	analyze *connect_go.Client[content.Content, content.Contents]
 	delete  *connect_go.Client[content.ContentIDs, content.ContentIDs]
 	getTags *connect_go.Client[emptypb.Empty, content.Tags]
+	vote    *connect_go.Client[content.VoteRequest, emptypb.Empty]
 }
 
 // Save calls content.ContentService.Save.
@@ -127,6 +136,11 @@ func (c *contentServiceClient) GetTags(ctx context.Context, req *connect_go.Requ
 	return c.getTags.CallUnary(ctx, req)
 }
 
+// Vote calls content.ContentService.Vote.
+func (c *contentServiceClient) Vote(ctx context.Context, req *connect_go.Request[content.VoteRequest]) (*connect_go.Response[emptypb.Empty], error) {
+	return c.vote.CallUnary(ctx, req)
+}
+
 // ContentServiceHandler is an implementation of the content.ContentService service.
 type ContentServiceHandler interface {
 	Save(context.Context, *connect_go.Request[content.Contents]) (*connect_go.Response[content.ContentIDs], error)
@@ -134,6 +148,7 @@ type ContentServiceHandler interface {
 	Analyze(context.Context, *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error)
 	Delete(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
 	GetTags(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Tags], error)
+	Vote(context.Context, *connect_go.Request[content.VoteRequest]) (*connect_go.Response[emptypb.Empty], error)
 }
 
 // NewContentServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -167,6 +182,11 @@ func NewContentServiceHandler(svc ContentServiceHandler, opts ...connect_go.Hand
 		svc.GetTags,
 		opts...,
 	)
+	contentServiceVoteHandler := connect_go.NewUnaryHandler(
+		ContentServiceVoteProcedure,
+		svc.Vote,
+		opts...,
+	)
 	return "/content.ContentService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ContentServiceSaveProcedure:
@@ -179,6 +199,8 @@ func NewContentServiceHandler(svc ContentServiceHandler, opts ...connect_go.Hand
 			contentServiceDeleteHandler.ServeHTTP(w, r)
 		case ContentServiceGetTagsProcedure:
 			contentServiceGetTagsHandler.ServeHTTP(w, r)
+		case ContentServiceVoteProcedure:
+			contentServiceVoteHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -206,4 +228,8 @@ func (UnimplementedContentServiceHandler) Delete(context.Context, *connect_go.Re
 
 func (UnimplementedContentServiceHandler) GetTags(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Tags], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.GetTags is not implemented"))
+}
+
+func (UnimplementedContentServiceHandler) Vote(context.Context, *connect_go.Request[content.VoteRequest]) (*connect_go.Response[emptypb.Empty], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.Vote is not implemented"))
 }

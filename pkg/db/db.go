@@ -340,6 +340,19 @@ func (s *Store) ValidGroupInvite(secret string) (uuid.UUID, error) {
 	return groupInvite.GroupID, nil
 }
 
+func (s *Store) GetGroupByID(groupID uuid.UUID) (*model.Group, error) {
+	group := &model.Group{
+		Base: model.Base{
+			ID: groupID,
+		},
+	}
+	res := s.db.Model(group).First(group)
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not get group invite")
+	}
+	return group, nil
+}
+
 func (s *Store) CreateGroupInvite(groupID uuid.UUID) (string, error) {
 	secret := uuid.New().String()
 	res := s.db.Create(&model.GroupInvite{

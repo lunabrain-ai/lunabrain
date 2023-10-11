@@ -28,6 +28,7 @@ type ContentServiceClient interface {
 	Analyze(ctx context.Context, in *Content, opts ...grpc.CallOption) (*Contents, error)
 	Delete(ctx context.Context, in *ContentIDs, opts ...grpc.CallOption) (*ContentIDs, error)
 	GetTags(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Tags, error)
+	Vote(ctx context.Context, in *VoteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type contentServiceClient struct {
@@ -83,6 +84,15 @@ func (c *contentServiceClient) GetTags(ctx context.Context, in *emptypb.Empty, o
 	return out, nil
 }
 
+func (c *contentServiceClient) Vote(ctx context.Context, in *VoteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/content.ContentService/Vote", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ContentServiceServer is the server API for ContentService service.
 // All implementations should embed UnimplementedContentServiceServer
 // for forward compatibility
@@ -92,6 +102,7 @@ type ContentServiceServer interface {
 	Analyze(context.Context, *Content) (*Contents, error)
 	Delete(context.Context, *ContentIDs) (*ContentIDs, error)
 	GetTags(context.Context, *emptypb.Empty) (*Tags, error)
+	Vote(context.Context, *VoteRequest) (*emptypb.Empty, error)
 }
 
 // UnimplementedContentServiceServer should be embedded to have forward compatible implementations.
@@ -112,6 +123,9 @@ func (UnimplementedContentServiceServer) Delete(context.Context, *ContentIDs) (*
 }
 func (UnimplementedContentServiceServer) GetTags(context.Context, *emptypb.Empty) (*Tags, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTags not implemented")
+}
+func (UnimplementedContentServiceServer) Vote(context.Context, *VoteRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Vote not implemented")
 }
 
 // UnsafeContentServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -215,6 +229,24 @@ func _ContentService_GetTags_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ContentService_Vote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VoteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContentServiceServer).Vote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/content.ContentService/Vote",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContentServiceServer).Vote(ctx, req.(*VoteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ContentService_ServiceDesc is the grpc.ServiceDesc for ContentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -241,6 +273,10 @@ var ContentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTags",
 			Handler:    _ContentService_GetTags_Handler,
+		},
+		{
+			MethodName: "Vote",
+			Handler:    _ContentService_Vote_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

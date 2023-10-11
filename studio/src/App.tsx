@@ -8,39 +8,16 @@ import toast, {Toaster} from "react-hot-toast";
 import {BrowserRouter, useRoutes} from "react-router-dom";
 import {ErrorBoundary} from "react-error-boundary";
 import {FallbackError} from "@/components/FallbackError";
-import "react-chat-elements/dist/main.css"
 import { initializeIcons } from '@fluentui/react/lib/Icons';
 import {Home} from "@/site";
 import {useParams} from "react-router";
 import {useEffect, useState} from "react";
-import {userService} from "@/service";
+import {queryClient, transport, userService} from "@/service";
+import {TransportProvider} from "@connectrpc/connect-query";
+import {QueryClientProvider} from "@tanstack/react-query";
+import {Join} from "@/site/JoinGroupPage";
 
 initializeIcons();
-
-const Join = () => {
-    const [success, setSuccess] = useState<boolean>(false);
-    const { secret } = useParams();
-    useEffect(() => {
-        if (secret) {
-            try {
-                const res = userService.joinGroup({secret});
-                toast.success('Joined group');
-                setSuccess(true)
-            } catch (e: any) {
-                console.error(e)
-                toast.error('Failed to join group');
-            }
-        }
-    }, []);
-    if (success) {
-        return <Home />
-    }
-    return (
-        <>
-            <h1>Joining Group</h1>
-        </>
-    );
-}
 
 const AppRoutes = () => {
     const commonRoutes = [{
@@ -63,21 +40,23 @@ const AppRoutes = () => {
 
 export default function App() {
   return (
-          <FluentProvider theme={webDarkTheme}>
-              <ErrorBoundary
-                  FallbackComponent={FallbackError}
-              >
-                  <HotkeysProvider initiallyActiveScopes={["editor"]}>
-                      <ProjectProvider>
-                          <BrowserRouter>
-                              <ProjectProvider>
+      <FluentProvider theme={webDarkTheme}>
+          <ErrorBoundary
+              FallbackComponent={FallbackError}
+          >
+              <HotkeysProvider initiallyActiveScopes={["editor"]}>
+                  <ProjectProvider>
+                      <BrowserRouter>
+                          <TransportProvider transport={transport}>
+                              <QueryClientProvider client={queryClient}>
                                   <AppRoutes/>
-                              </ProjectProvider>
-                          </BrowserRouter>
-                          <Toaster/>
-                      </ProjectProvider>
-                  </HotkeysProvider>
-              </ErrorBoundary>
-          </FluentProvider>
+                              </QueryClientProvider>
+                          </TransportProvider>
+                      </BrowserRouter>
+                      <Toaster/>
+                  </ProjectProvider>
+              </HotkeysProvider>
+          </ErrorBoundary>
+      </FluentProvider>
   )
 }

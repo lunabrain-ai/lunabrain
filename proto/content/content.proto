@@ -12,6 +12,11 @@ service ContentService {
   rpc Analyze(Content) returns (Contents);
   rpc Delete(ContentIDs) returns (ContentIDs);
   rpc GetTags(google.protobuf.Empty) returns (Tags);
+  rpc Vote(VoteRequest) returns (google.protobuf.Empty);
+}
+
+message VoteRequest {
+  string content_id = 1;
 }
 
 message Tags {

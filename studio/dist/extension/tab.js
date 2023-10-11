@@ -28519,7 +28519,7 @@ ${error.stack}`);
       }
     }
   };
-  var Keyborg = class {
+  var Keyborg = class _Keyborg {
     constructor(win, props) {
       this._cb = [];
       this._id = "k" + ++_lastId;
@@ -28539,7 +28539,7 @@ ${error.stack}`);
       }
     }
     static create(win, props) {
-      return new Keyborg(win, props);
+      return new _Keyborg(win, props);
     }
     static dispose(instance) {
       instance.dispose();

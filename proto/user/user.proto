@@ -12,10 +12,15 @@ service UserService {
 
   rpc CreateGroupInvite(GroupID) returns (GroupInvite);
   rpc JoinGroup(GroupInvite) returns (Group);
+  rpc GroupInfo(GroupInfoRequest) returns (Group);
   rpc CreateGroup(Group) returns (Group);
   rpc GetGroups(google.protobuf.Empty) returns (Groups);
   rpc DeleteGroup(Group) returns (google.protobuf.Empty);
   rpc Share(ShareRequest) returns (google.protobuf.Empty);
+}
+
+message GroupInfoRequest {
+  string secret = 1;
 }
 
 message GroupID {

@@ -132,6 +132,21 @@ func (s *UserService) JoinGroup(ctx context.Context, c *connectgo.Request[user.G
 	}), nil
 }
 
+func (s *UserService) GroupInfo(ctx context.Context, c *connectgo.Request[user.GroupInfoRequest]) (*connectgo.Response[user.Group], error) {
+	gID, err := s.db.ValidGroupInvite(c.Msg.Secret)
+	if err != nil {
+		return nil, errors.New("invalid group invite")
+	}
+	g, err := s.db.GetGroupByID(gID)
+	if err != nil {
+		return nil, err
+	}
+	return connectgo.NewResponse(&user.Group{
+		Id:   gID.String(),
+		Name: g.Data.Data.Name,
+	}), nil
+}
+
 func (s *UserService) CreateGroup(ctx context.Context, c *connectgo.Request[user.Group]) (*connectgo.Response[user.Group], error) {
 	id, err := s.sess.GetUserID(ctx)
 	if err != nil {

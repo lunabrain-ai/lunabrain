@@ -46,6 +46,12 @@ public protocol User_UserServiceClientInterface: Sendable {
     func `joinGroup`(request: User_GroupInvite, headers: Connect.Headers) async -> ResponseMessage<User_Group>
 
     @discardableResult
+    func `groupInfo`(request: User_GroupInfoRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<User_Group>) -> Void) -> Connect.Cancelable
+
+    @available(iOS 13, *)
+    func `groupInfo`(request: User_GroupInfoRequest, headers: Connect.Headers) async -> ResponseMessage<User_Group>
+
+    @discardableResult
     func `createGroup`(request: User_Group, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<User_Group>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
@@ -139,6 +145,16 @@ public final class User_UserServiceClient: User_UserServiceClientInterface, Send
     }
 
     @discardableResult
+    public func `groupInfo`(request: User_GroupInfoRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<User_Group>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/user.UserService/GroupInfo", request: request, headers: headers, completion: completion)
+    }
+
+    @available(iOS 13, *)
+    public func `groupInfo`(request: User_GroupInfoRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<User_Group> {
+        return await self.client.unary(path: "/user.UserService/GroupInfo", request: request, headers: headers)
+    }
+
+    @discardableResult
     public func `createGroup`(request: User_Group, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<User_Group>) -> Void) -> Connect.Cancelable {
         return self.client.unary(path: "/user.UserService/CreateGroup", request: request, headers: headers, completion: completion)
     }
@@ -186,6 +202,7 @@ public final class User_UserServiceClient: User_UserServiceClientInterface, Send
             public static let updateConfig = Connect.MethodSpec(name: "UpdateConfig", service: "user.UserService", type: .unary)
             public static let createGroupInvite = Connect.MethodSpec(name: "CreateGroupInvite", service: "user.UserService", type: .unary)
             public static let joinGroup = Connect.MethodSpec(name: "JoinGroup", service: "user.UserService", type: .unary)
+            public static let groupInfo = Connect.MethodSpec(name: "GroupInfo", service: "user.UserService", type: .unary)
             public static let createGroup = Connect.MethodSpec(name: "CreateGroup", service: "user.UserService", type: .unary)
             public static let getGroups = Connect.MethodSpec(name: "GetGroups", service: "user.UserService", type: .unary)
             public static let deleteGroup = Connect.MethodSpec(name: "DeleteGroup", service: "user.UserService", type: .unary)
