@@ -9,6 +9,7 @@ import (
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
 	gen "github.com/lunabrain-ai/lunabrain/gen"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	http "net/http"
 	strings "strings"
 )
@@ -74,7 +75,7 @@ type ProtoflowServiceClient interface {
 	DownloadYouTubeVideo(context.Context, *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.YouTubeVideoResponse], error)
 	GetSessions(context.Context, *connect_go.Request[gen.GetSessionsRequest]) (*connect_go.Response[gen.GetSessionsResponse], error)
 	GetSession(context.Context, *connect_go.Request[gen.GetSessionRequest]) (*connect_go.Response[gen.GetSessionResponse], error)
-	DeleteSession(context.Context, *connect_go.Request[gen.DeleteSessionRequest]) (*connect_go.Response[gen.Empty], error)
+	DeleteSession(context.Context, *connect_go.Request[gen.DeleteSessionRequest]) (*connect_go.Response[emptypb.Empty], error)
 	GetPrompts(context.Context, *connect_go.Request[gen.GetPromptsRequest]) (*connect_go.Response[gen.GetPromptsResponse], error)
 	NewPrompt(context.Context, *connect_go.Request[gen.Prompt]) (*connect_go.Response[gen.Prompt], error)
 	UploadContent(context.Context, *connect_go.Request[gen.UploadContentRequest]) (*connect_go.ServerStreamForClient[gen.ChatResponse], error)
@@ -110,7 +111,7 @@ func NewProtoflowServiceClient(httpClient connect_go.HTTPClient, baseURL string,
 			baseURL+ProtoflowServiceGetSessionProcedure,
 			opts...,
 		),
-		deleteSession: connect_go.NewClient[gen.DeleteSessionRequest, gen.Empty](
+		deleteSession: connect_go.NewClient[gen.DeleteSessionRequest, emptypb.Empty](
 			httpClient,
 			baseURL+ProtoflowServiceDeleteSessionProcedure,
 			opts...,
@@ -163,7 +164,7 @@ type protoflowServiceClient struct {
 	downloadYouTubeVideo *connect_go.Client[gen.YouTubeVideo, gen.YouTubeVideoResponse]
 	getSessions          *connect_go.Client[gen.GetSessionsRequest, gen.GetSessionsResponse]
 	getSession           *connect_go.Client[gen.GetSessionRequest, gen.GetSessionResponse]
-	deleteSession        *connect_go.Client[gen.DeleteSessionRequest, gen.Empty]
+	deleteSession        *connect_go.Client[gen.DeleteSessionRequest, emptypb.Empty]
 	getPrompts           *connect_go.Client[gen.GetPromptsRequest, gen.GetPromptsResponse]
 	newPrompt            *connect_go.Client[gen.Prompt, gen.Prompt]
 	uploadContent        *connect_go.Client[gen.UploadContentRequest, gen.ChatResponse]
@@ -190,7 +191,7 @@ func (c *protoflowServiceClient) GetSession(ctx context.Context, req *connect_go
 }
 
 // DeleteSession calls protoflow.ProtoflowService.DeleteSession.
-func (c *protoflowServiceClient) DeleteSession(ctx context.Context, req *connect_go.Request[gen.DeleteSessionRequest]) (*connect_go.Response[gen.Empty], error) {
+func (c *protoflowServiceClient) DeleteSession(ctx context.Context, req *connect_go.Request[gen.DeleteSessionRequest]) (*connect_go.Response[emptypb.Empty], error) {
 	return c.deleteSession.CallUnary(ctx, req)
 }
 
@@ -239,7 +240,7 @@ type ProtoflowServiceHandler interface {
 	DownloadYouTubeVideo(context.Context, *connect_go.Request[gen.YouTubeVideo]) (*connect_go.Response[gen.YouTubeVideoResponse], error)
 	GetSessions(context.Context, *connect_go.Request[gen.GetSessionsRequest]) (*connect_go.Response[gen.GetSessionsResponse], error)
 	GetSession(context.Context, *connect_go.Request[gen.GetSessionRequest]) (*connect_go.Response[gen.GetSessionResponse], error)
-	DeleteSession(context.Context, *connect_go.Request[gen.DeleteSessionRequest]) (*connect_go.Response[gen.Empty], error)
+	DeleteSession(context.Context, *connect_go.Request[gen.DeleteSessionRequest]) (*connect_go.Response[emptypb.Empty], error)
 	GetPrompts(context.Context, *connect_go.Request[gen.GetPromptsRequest]) (*connect_go.Response[gen.GetPromptsResponse], error)
 	NewPrompt(context.Context, *connect_go.Request[gen.Prompt]) (*connect_go.Response[gen.Prompt], error)
 	UploadContent(context.Context, *connect_go.Request[gen.UploadContentRequest], *connect_go.ServerStream[gen.ChatResponse]) error
@@ -363,7 +364,7 @@ func (UnimplementedProtoflowServiceHandler) GetSession(context.Context, *connect
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.GetSession is not implemented"))
 }
 
-func (UnimplementedProtoflowServiceHandler) DeleteSession(context.Context, *connect_go.Request[gen.DeleteSessionRequest]) (*connect_go.Response[gen.Empty], error) {
+func (UnimplementedProtoflowServiceHandler) DeleteSession(context.Context, *connect_go.Request[gen.DeleteSessionRequest]) (*connect_go.Response[emptypb.Empty], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("protoflow.ProtoflowService.DeleteSession is not implemented"))
 }
 

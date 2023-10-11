@@ -119,37 +119,6 @@ export class GenerateImagesResponse extends Message<GenerateImagesResponse> {
 }
 
 /**
- * @generated from message protoflow.Empty
- */
-export class Empty extends Message<Empty> {
-  constructor(data?: PartialMessage<Empty>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "protoflow.Empty";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Empty {
-    return new Empty().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Empty {
-    return new Empty().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Empty {
-    return new Empty().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: Empty | PlainMessage<Empty> | undefined, b: Empty | PlainMessage<Empty> | undefined): boolean {
-    return proto3.util.equals(Empty, a, b);
-  }
-}
-
-/**
  * @generated from message protoflow.DeleteSessionRequest
  */
 export class DeleteSessionRequest extends Message<DeleteSessionRequest> {

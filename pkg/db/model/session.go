@@ -36,19 +36,28 @@ type Prompt struct {
 type User struct {
 	Base
 
-	Data            datatypes.JSONType[*user.User]
-	Content         []Content `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	Groups          []Group   `gorm:"many2many:group_users;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	ModeratorGroups []Group   `gorm:"many2many:group_moderators;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	PasswordHash string
+	Data         datatypes.JSONType[*user.User]
+	Content      []Content   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	GroupUsers   []GroupUser `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+}
+
+type GroupUser struct {
+	ID      uint `gorm:"primaryKey"`
+	UserID  uuid.UUID
+	GroupID uuid.UUID
+	User    User  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Group   Group `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Role    string
 }
 
 type Group struct {
 	Base
 
 	Data       datatypes.JSONType[*user.Group]
-	Users      []User        `gorm:"many2many:group_users;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	Moderators []User        `gorm:"many2many:group_moderators;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	GroupUsers []GroupUser   `gorm:"foreignKey:GroupID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Invites    []GroupInvite `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Content    []Content     `gorm:"many2many:group_content;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
 type GroupInvite struct {

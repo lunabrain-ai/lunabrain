@@ -2,17 +2,29 @@ syntax = "proto3";
 
 package user;
 
+import "google/protobuf/empty.proto";
+
 service UserService {
   rpc Register(User) returns (User);
   rpc Login(User) returns (User);
-  rpc Logout(Empty) returns (Empty);
-  rpc UpdateConfig(Config) returns (Empty);
+  rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc UpdateConfig(Config) returns (google.protobuf.Empty);
 
-  rpc CreateGroupInvite(Group) returns (GroupInvite);
+  rpc CreateGroupInvite(GroupID) returns (GroupInvite);
   rpc JoinGroup(GroupInvite) returns (Group);
   rpc CreateGroup(Group) returns (Group);
-  rpc GetGroups(Empty) returns (Groups);
-  rpc DeleteGroup(Group) returns (Empty);
+  rpc GetGroups(google.protobuf.Empty) returns (Groups);
+  rpc DeleteGroup(Group) returns (google.protobuf.Empty);
+  rpc Share(ShareRequest) returns (google.protobuf.Empty);
+}
+
+message GroupID {
+  string group_id = 1;
+}
+
+message ShareRequest {
+  string content_id = 1;
+  string group_id = 2;
 }
 
 message GroupInvite {
@@ -45,5 +57,3 @@ message Config {
 
 message LoginResponse {
 }
-
-message Empty {}

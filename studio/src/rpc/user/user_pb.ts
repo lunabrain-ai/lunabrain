@@ -7,6 +7,86 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { Message, proto3 } from "@bufbuild/protobuf";
 
 /**
+ * @generated from message user.GroupID
+ */
+export class GroupID extends Message<GroupID> {
+  /**
+   * @generated from field: string group_id = 1;
+   */
+  groupId = "";
+
+  constructor(data?: PartialMessage<GroupID>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "user.GroupID";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "group_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GroupID {
+    return new GroupID().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GroupID {
+    return new GroupID().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GroupID {
+    return new GroupID().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GroupID | PlainMessage<GroupID> | undefined, b: GroupID | PlainMessage<GroupID> | undefined): boolean {
+    return proto3.util.equals(GroupID, a, b);
+  }
+}
+
+/**
+ * @generated from message user.ShareRequest
+ */
+export class ShareRequest extends Message<ShareRequest> {
+  /**
+   * @generated from field: string content_id = 1;
+   */
+  contentId = "";
+
+  /**
+   * @generated from field: string group_id = 2;
+   */
+  groupId = "";
+
+  constructor(data?: PartialMessage<ShareRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "user.ShareRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "content_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "group_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ShareRequest {
+    return new ShareRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ShareRequest {
+    return new ShareRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ShareRequest {
+    return new ShareRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ShareRequest | PlainMessage<ShareRequest> | undefined, b: ShareRequest | PlainMessage<ShareRequest> | undefined): boolean {
+    return proto3.util.equals(ShareRequest, a, b);
+  }
+}
+
+/**
  * @generated from message user.GroupInvite
  */
 export class GroupInvite extends Message<GroupInvite> {
@@ -280,37 +360,6 @@ export class LoginResponse extends Message<LoginResponse> {
 
   static equals(a: LoginResponse | PlainMessage<LoginResponse> | undefined, b: LoginResponse | PlainMessage<LoginResponse> | undefined): boolean {
     return proto3.util.equals(LoginResponse, a, b);
-  }
-}
-
-/**
- * @generated from message user.Empty
- */
-export class Empty extends Message<Empty> {
-  constructor(data?: PartialMessage<Empty>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "user.Empty";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Empty {
-    return new Empty().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Empty {
-    return new Empty().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Empty {
-    return new Empty().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: Empty | PlainMessage<Empty> | undefined, b: Empty | PlainMessage<Empty> | undefined): boolean {
-    return proto3.util.equals(Empty, a, b);
   }
 }
 

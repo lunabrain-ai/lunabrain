@@ -13,6 +13,7 @@ type Content struct {
 	Tags           []*Tag     `gorm:"many2many:content_tags;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	RelatedContent []*Content `gorm:"many2many:related_content;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Votes          []*Vote    `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Groups         []*Group   `gorm:"many2many:group_content;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
 type Vote struct {
@@ -28,6 +29,6 @@ type Vote struct {
 type Tag struct {
 	Base
 
-	Tag     string     `json:"tag"`
+	Name    string     `json:"name" gorm:"unique"`
 	Content []*Content `gorm:"many2many:content_tags;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }

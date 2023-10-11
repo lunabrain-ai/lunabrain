@@ -3,8 +3,8 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AnalyzeConversationRequest, ChatRequest, ChatResponse, ConvertFileRequest, DeleteSessionRequest, Empty, FilePath, GenerateImagesRequest, GenerateImagesResponse, GetPromptsRequest, GetPromptsResponse, GetSessionRequest, GetSessionResponse, GetSessionsRequest, GetSessionsResponse, InferRequest, InferResponse, Prompt, UploadContentRequest, YouTubeVideo, YouTubeVideoResponse } from "./protoflow_pb.js";
-import { MethodKind } from "@bufbuild/protobuf";
+import { AnalyzeConversationRequest, ChatRequest, ChatResponse, ConvertFileRequest, DeleteSessionRequest, FilePath, GenerateImagesRequest, GenerateImagesResponse, GetPromptsRequest, GetPromptsResponse, GetSessionRequest, GetSessionResponse, GetSessionsRequest, GetSessionsResponse, InferRequest, InferResponse, Prompt, UploadContentRequest, YouTubeVideo, YouTubeVideoResponse } from "./protoflow_pb.js";
+import { Empty, MethodKind } from "@bufbuild/protobuf";
 import { AnalyzeConversationResponse } from "./ai_pb.js";
 
 /**

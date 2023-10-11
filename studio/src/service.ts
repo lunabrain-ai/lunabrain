@@ -6,10 +6,10 @@ import { ProtoflowService } from "@/rpc/protoflow_connect";
 import { ContentService } from "@/rpc/content/content_connect";
 import { UserService } from "./rpc/user/user_connect";
 
-const apiURL = process.env.API_URL;
+export const baseURL = process.env.BASE_URL;
 
 const transport = createConnectTransport({
-  baseUrl: apiURL || 'http://localhost:8080/api',
+  baseUrl: `${baseURL}/api` || 'error',
   // credentials: "include",
 });
 

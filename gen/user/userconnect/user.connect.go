@@ -9,6 +9,7 @@ import (
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
 	user "github.com/lunabrain-ai/lunabrain/gen/user"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	http "net/http"
 	strings "strings"
 )
@@ -53,19 +54,22 @@ const (
 	UserServiceGetGroupsProcedure = "/user.UserService/GetGroups"
 	// UserServiceDeleteGroupProcedure is the fully-qualified name of the UserService's DeleteGroup RPC.
 	UserServiceDeleteGroupProcedure = "/user.UserService/DeleteGroup"
+	// UserServiceShareProcedure is the fully-qualified name of the UserService's Share RPC.
+	UserServiceShareProcedure = "/user.UserService/Share"
 )
 
 // UserServiceClient is a client for the user.UserService service.
 type UserServiceClient interface {
 	Register(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[user.User], error)
 	Login(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[user.User], error)
-	Logout(context.Context, *connect_go.Request[user.Empty]) (*connect_go.Response[user.Empty], error)
-	UpdateConfig(context.Context, *connect_go.Request[user.Config]) (*connect_go.Response[user.Empty], error)
-	CreateGroupInvite(context.Context, *connect_go.Request[user.Group]) (*connect_go.Response[user.GroupInvite], error)
+	Logout(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[emptypb.Empty], error)
+	UpdateConfig(context.Context, *connect_go.Request[user.Config]) (*connect_go.Response[emptypb.Empty], error)
+	CreateGroupInvite(context.Context, *connect_go.Request[user.GroupID]) (*connect_go.Response[user.GroupInvite], error)
 	JoinGroup(context.Context, *connect_go.Request[user.GroupInvite]) (*connect_go.Response[user.Group], error)
 	CreateGroup(context.Context, *connect_go.Request[user.Group]) (*connect_go.Response[user.Group], error)
-	GetGroups(context.Context, *connect_go.Request[user.Empty]) (*connect_go.Response[user.Groups], error)
-	DeleteGroup(context.Context, *connect_go.Request[user.Group]) (*connect_go.Response[user.Empty], error)
+	GetGroups(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[user.Groups], error)
+	DeleteGroup(context.Context, *connect_go.Request[user.Group]) (*connect_go.Response[emptypb.Empty], error)
+	Share(context.Context, *connect_go.Request[user.ShareRequest]) (*connect_go.Response[emptypb.Empty], error)
 }
 
 // NewUserServiceClient constructs a client for the user.UserService service. By default, it uses
@@ -88,17 +92,17 @@ func NewUserServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts
 			baseURL+UserServiceLoginProcedure,
 			opts...,
 		),
-		logout: connect_go.NewClient[user.Empty, user.Empty](
+		logout: connect_go.NewClient[emptypb.Empty, emptypb.Empty](
 			httpClient,
 			baseURL+UserServiceLogoutProcedure,
 			opts...,
 		),
-		updateConfig: connect_go.NewClient[user.Config, user.Empty](
+		updateConfig: connect_go.NewClient[user.Config, emptypb.Empty](
 			httpClient,
 			baseURL+UserServiceUpdateConfigProcedure,
 			opts...,
 		),
-		createGroupInvite: connect_go.NewClient[user.Group, user.GroupInvite](
+		createGroupInvite: connect_go.NewClient[user.GroupID, user.GroupInvite](
 			httpClient,
 			baseURL+UserServiceCreateGroupInviteProcedure,
 			opts...,
@@ -113,14 +117,19 @@ func NewUserServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts
 			baseURL+UserServiceCreateGroupProcedure,
 			opts...,
 		),
-		getGroups: connect_go.NewClient[user.Empty, user.Groups](
+		getGroups: connect_go.NewClient[emptypb.Empty, user.Groups](
 			httpClient,
 			baseURL+UserServiceGetGroupsProcedure,
 			opts...,
 		),
-		deleteGroup: connect_go.NewClient[user.Group, user.Empty](
+		deleteGroup: connect_go.NewClient[user.Group, emptypb.Empty](
 			httpClient,
 			baseURL+UserServiceDeleteGroupProcedure,
+			opts...,
+		),
+		share: connect_go.NewClient[user.ShareRequest, emptypb.Empty](
+			httpClient,
+			baseURL+UserServiceShareProcedure,
 			opts...,
 		),
 	}
@@ -130,13 +139,14 @@ func NewUserServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts
 type userServiceClient struct {
 	register          *connect_go.Client[user.User, user.User]
 	login             *connect_go.Client[user.User, user.User]
-	logout            *connect_go.Client[user.Empty, user.Empty]
-	updateConfig      *connect_go.Client[user.Config, user.Empty]
-	createGroupInvite *connect_go.Client[user.Group, user.GroupInvite]
+	logout            *connect_go.Client[emptypb.Empty, emptypb.Empty]
+	updateConfig      *connect_go.Client[user.Config, emptypb.Empty]
+	createGroupInvite *connect_go.Client[user.GroupID, user.GroupInvite]
 	joinGroup         *connect_go.Client[user.GroupInvite, user.Group]
 	createGroup       *connect_go.Client[user.Group, user.Group]
-	getGroups         *connect_go.Client[user.Empty, user.Groups]
-	deleteGroup       *connect_go.Client[user.Group, user.Empty]
+	getGroups         *connect_go.Client[emptypb.Empty, user.Groups]
+	deleteGroup       *connect_go.Client[user.Group, emptypb.Empty]
+	share             *connect_go.Client[user.ShareRequest, emptypb.Empty]
 }
 
 // Register calls user.UserService.Register.
@@ -150,17 +160,17 @@ func (c *userServiceClient) Login(ctx context.Context, req *connect_go.Request[u
 }
 
 // Logout calls user.UserService.Logout.
-func (c *userServiceClient) Logout(ctx context.Context, req *connect_go.Request[user.Empty]) (*connect_go.Response[user.Empty], error) {
+func (c *userServiceClient) Logout(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[emptypb.Empty], error) {
 	return c.logout.CallUnary(ctx, req)
 }
 
 // UpdateConfig calls user.UserService.UpdateConfig.
-func (c *userServiceClient) UpdateConfig(ctx context.Context, req *connect_go.Request[user.Config]) (*connect_go.Response[user.Empty], error) {
+func (c *userServiceClient) UpdateConfig(ctx context.Context, req *connect_go.Request[user.Config]) (*connect_go.Response[emptypb.Empty], error) {
 	return c.updateConfig.CallUnary(ctx, req)
 }
 
 // CreateGroupInvite calls user.UserService.CreateGroupInvite.
-func (c *userServiceClient) CreateGroupInvite(ctx context.Context, req *connect_go.Request[user.Group]) (*connect_go.Response[user.GroupInvite], error) {
+func (c *userServiceClient) CreateGroupInvite(ctx context.Context, req *connect_go.Request[user.GroupID]) (*connect_go.Response[user.GroupInvite], error) {
 	return c.createGroupInvite.CallUnary(ctx, req)
 }
 
@@ -175,26 +185,32 @@ func (c *userServiceClient) CreateGroup(ctx context.Context, req *connect_go.Req
 }
 
 // GetGroups calls user.UserService.GetGroups.
-func (c *userServiceClient) GetGroups(ctx context.Context, req *connect_go.Request[user.Empty]) (*connect_go.Response[user.Groups], error) {
+func (c *userServiceClient) GetGroups(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[user.Groups], error) {
 	return c.getGroups.CallUnary(ctx, req)
 }
 
 // DeleteGroup calls user.UserService.DeleteGroup.
-func (c *userServiceClient) DeleteGroup(ctx context.Context, req *connect_go.Request[user.Group]) (*connect_go.Response[user.Empty], error) {
+func (c *userServiceClient) DeleteGroup(ctx context.Context, req *connect_go.Request[user.Group]) (*connect_go.Response[emptypb.Empty], error) {
 	return c.deleteGroup.CallUnary(ctx, req)
+}
+
+// Share calls user.UserService.Share.
+func (c *userServiceClient) Share(ctx context.Context, req *connect_go.Request[user.ShareRequest]) (*connect_go.Response[emptypb.Empty], error) {
+	return c.share.CallUnary(ctx, req)
 }
 
 // UserServiceHandler is an implementation of the user.UserService service.
 type UserServiceHandler interface {
 	Register(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[user.User], error)
 	Login(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[user.User], error)
-	Logout(context.Context, *connect_go.Request[user.Empty]) (*connect_go.Response[user.Empty], error)
-	UpdateConfig(context.Context, *connect_go.Request[user.Config]) (*connect_go.Response[user.Empty], error)
-	CreateGroupInvite(context.Context, *connect_go.Request[user.Group]) (*connect_go.Response[user.GroupInvite], error)
+	Logout(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[emptypb.Empty], error)
+	UpdateConfig(context.Context, *connect_go.Request[user.Config]) (*connect_go.Response[emptypb.Empty], error)
+	CreateGroupInvite(context.Context, *connect_go.Request[user.GroupID]) (*connect_go.Response[user.GroupInvite], error)
 	JoinGroup(context.Context, *connect_go.Request[user.GroupInvite]) (*connect_go.Response[user.Group], error)
 	CreateGroup(context.Context, *connect_go.Request[user.Group]) (*connect_go.Response[user.Group], error)
-	GetGroups(context.Context, *connect_go.Request[user.Empty]) (*connect_go.Response[user.Groups], error)
-	DeleteGroup(context.Context, *connect_go.Request[user.Group]) (*connect_go.Response[user.Empty], error)
+	GetGroups(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[user.Groups], error)
+	DeleteGroup(context.Context, *connect_go.Request[user.Group]) (*connect_go.Response[emptypb.Empty], error)
+	Share(context.Context, *connect_go.Request[user.ShareRequest]) (*connect_go.Response[emptypb.Empty], error)
 }
 
 // NewUserServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -248,6 +264,11 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect_go.HandlerOpt
 		svc.DeleteGroup,
 		opts...,
 	)
+	userServiceShareHandler := connect_go.NewUnaryHandler(
+		UserServiceShareProcedure,
+		svc.Share,
+		opts...,
+	)
 	return "/user.UserService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case UserServiceRegisterProcedure:
@@ -268,6 +289,8 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect_go.HandlerOpt
 			userServiceGetGroupsHandler.ServeHTTP(w, r)
 		case UserServiceDeleteGroupProcedure:
 			userServiceDeleteGroupHandler.ServeHTTP(w, r)
+		case UserServiceShareProcedure:
+			userServiceShareHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -285,15 +308,15 @@ func (UnimplementedUserServiceHandler) Login(context.Context, *connect_go.Reques
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("user.UserService.Login is not implemented"))
 }
 
-func (UnimplementedUserServiceHandler) Logout(context.Context, *connect_go.Request[user.Empty]) (*connect_go.Response[user.Empty], error) {
+func (UnimplementedUserServiceHandler) Logout(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[emptypb.Empty], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("user.UserService.Logout is not implemented"))
 }
 
-func (UnimplementedUserServiceHandler) UpdateConfig(context.Context, *connect_go.Request[user.Config]) (*connect_go.Response[user.Empty], error) {
+func (UnimplementedUserServiceHandler) UpdateConfig(context.Context, *connect_go.Request[user.Config]) (*connect_go.Response[emptypb.Empty], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("user.UserService.UpdateConfig is not implemented"))
 }
 
-func (UnimplementedUserServiceHandler) CreateGroupInvite(context.Context, *connect_go.Request[user.Group]) (*connect_go.Response[user.GroupInvite], error) {
+func (UnimplementedUserServiceHandler) CreateGroupInvite(context.Context, *connect_go.Request[user.GroupID]) (*connect_go.Response[user.GroupInvite], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("user.UserService.CreateGroupInvite is not implemented"))
 }
 
@@ -305,10 +328,14 @@ func (UnimplementedUserServiceHandler) CreateGroup(context.Context, *connect_go.
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("user.UserService.CreateGroup is not implemented"))
 }
 
-func (UnimplementedUserServiceHandler) GetGroups(context.Context, *connect_go.Request[user.Empty]) (*connect_go.Response[user.Groups], error) {
+func (UnimplementedUserServiceHandler) GetGroups(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[user.Groups], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("user.UserService.GetGroups is not implemented"))
 }
 
-func (UnimplementedUserServiceHandler) DeleteGroup(context.Context, *connect_go.Request[user.Group]) (*connect_go.Response[user.Empty], error) {
+func (UnimplementedUserServiceHandler) DeleteGroup(context.Context, *connect_go.Request[user.Group]) (*connect_go.Response[emptypb.Empty], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("user.UserService.DeleteGroup is not implemented"))
+}
+
+func (UnimplementedUserServiceHandler) Share(context.Context, *connect_go.Request[user.ShareRequest]) (*connect_go.Response[emptypb.Empty], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("user.UserService.Share is not implemented"))
 }

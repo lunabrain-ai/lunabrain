@@ -1,11 +1,24 @@
 import * as React from "react";
 import {
-    shorthands, Card, CardHeader, CardPreview, CardFooter, Badge, makeStyles, tokens,
+    shorthands,
+    Card,
+    CardHeader,
+    CardPreview,
+    CardFooter,
+    Badge,
+    makeStyles,
+    tokens,
+    Menu,
+    MenuTrigger,
+    MenuButton,
+    MenuPopover, MenuList, MenuItem,
 } from "@fluentui/react-components";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {Article, Content, StoredContent } from "@/rpc/content/content_pb";
 import {IconButton, IStackTokens, Stack} from "@fluentui/react";
 import {Vote} from "@/components/Vote";
+import {userService} from "@/service";
+import toast from "react-hot-toast";
 
 interface ContentListProps {
     style?: React.CSSProperties;
@@ -76,8 +89,37 @@ const ArticleCard: React.FC<{ article: Article, tags: string[] }> = ({ tags, art
     )
 }
 
+const GroupButton: React.FC<{ contentId: string}> = ({ contentId }) => {
+    const { groups } = useProjectContext();
+    const shareContent = async (groupId: string) => {
+        try {
+            const res = userService.share({
+                groupId,
+                contentId
+            })
+            toast.success('Shared content')
+        } catch (e: any) {
+            toast.error(e.message);
+        }
+    }
+    return (
+        <Menu>
+            <MenuTrigger disableButtonEnhancement>
+                <MenuButton>Share</MenuButton>
+            </MenuTrigger>
+
+            <MenuPopover>
+                <MenuList>
+                    {groups.map((g) => {
+                        return <MenuItem key={g.id} onClick={() => shareContent(g.id)}>{g.name}</MenuItem>
+                    })}
+                </MenuList>
+            </MenuPopover>
+        </Menu>
+    )
+}
+
 export const ContentList: React.FC<ContentListProps> = ({ style, content }) => {
-    const { deleteContent } = useProjectContext();
     const styles = useStyles();
 
     const tc = (item: StoredContent, tags?: string[]): JSX.Element | null => {
@@ -134,11 +176,14 @@ export const ContentList: React.FC<ContentListProps> = ({ style, content }) => {
                                 header={<b>{item.title}</b>}
                                 description={item.description}
                                 image={<img className={styles.headerImage} src={item.image} /> }
+                                onClick={() => window.location.href = item.url}
+                                style={{cursor: 'pointer'}}
                             />
                             <CardFooter>
                                 <Stack horizontal>
                                     <Vote />
                                     {item.content?.tags.map((t, i) => <Badge key={i}>{t}</Badge>)}
+                                    <GroupButton contentId={item.id} />
                                 </Stack>
                             </CardFooter>
                         </Card>

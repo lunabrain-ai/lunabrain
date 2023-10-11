@@ -4,12 +4,13 @@ package protoflow;
 
 import "content/content.proto";
 import "ai.proto";
+import "google/protobuf/empty.proto";
 
 service ProtoflowService {
   rpc DownloadYouTubeVideo(YouTubeVideo) returns (YouTubeVideoResponse);
   rpc GetSessions(GetSessionsRequest) returns (GetSessionsResponse);
   rpc GetSession(GetSessionRequest) returns (GetSessionResponse);
-  rpc DeleteSession(DeleteSessionRequest) returns (Empty);
+  rpc DeleteSession(DeleteSessionRequest) returns (google.protobuf.Empty);
 
   rpc GetPrompts(GetPromptsRequest) returns (GetPromptsResponse);
   rpc NewPrompt(Prompt) returns (Prompt);
@@ -35,7 +36,6 @@ message GenerateImagesRequest {
 message GenerateImagesResponse {
   repeated string images = 1;
 }
-message Empty {}
 
 message DeleteSessionRequest {
   string id = 1;

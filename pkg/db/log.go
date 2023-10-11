@@ -29,7 +29,7 @@ func (l Logger) Info(ctx context.Context, msg string, opts ...interface{}) {
 
 func (l Logger) Trace(ctx context.Context, begin time.Time, f func() (string, int64), err error) {
 	// TODO breadchris make this configurable, too noisy for local dev
-	// sql, rows := f()
-	// slog.DebugContext(ctx, "gorm trace", "sql", sql, "rows", rows)
+	//sql, rows := f()
+	//slog.DebugContext(ctx, "gorm trace", "sql", sql, "rows", rows)
 	return
 }

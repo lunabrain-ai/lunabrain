@@ -3,6 +3,7 @@ syntax = "proto3";
 package content;
 
 import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
 option go_package = "./gen";
 
 service ContentService {
@@ -10,6 +11,16 @@ service ContentService {
   rpc Search(Query) returns (Results);
   rpc Analyze(Content) returns (Contents);
   rpc Delete(ContentIDs) returns (ContentIDs);
+  rpc GetTags(google.protobuf.Empty) returns (Tags);
+}
+
+message Tags {
+  repeated Tag tags = 1;
+}
+
+message Tag {
+  string name = 1;
+  repeated Tag sub_tags = 2;
 }
 
 message ContentIDs {
@@ -25,6 +36,7 @@ message Query {
   string query = 1;
   uint32 page = 2;
   string contentID = 3;
+  string groupID = 4;
 }
 
 message Results {
@@ -38,6 +50,7 @@ message StoredContent {
   string title = 4;
   string description = 5;
   string image = 6;
+  string url = 7;
 }
 
 message Edge {
@@ -66,10 +79,6 @@ message Source {
 
 message YouTubeChannel {
   string channel_id = 1;
-}
-
-message Group {
-  string name = 1;
 }
 
 message Data {

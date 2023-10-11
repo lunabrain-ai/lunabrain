@@ -20,6 +20,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/reactivex/rxgo/v2"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"gorm.io/datatypes"
 	"image"
 	"io"
@@ -215,9 +216,9 @@ func (p *Protoflow) GetSession(ctx context.Context, c *connect_go.Request[genapi
 	}), nil
 }
 
-func (p *Protoflow) DeleteSession(ctx context.Context, c *connect_go.Request[genapi.DeleteSessionRequest]) (*connect_go.Response[genapi.Empty], error) {
+func (p *Protoflow) DeleteSession(ctx context.Context, c *connect_go.Request[genapi.DeleteSessionRequest]) (*connect_go.Response[emptypb.Empty], error) {
 	err := p.sess.DeleteSession(c.Msg.Id)
-	return connect_go.NewResponse(&genapi.Empty{}), err
+	return connect_go.NewResponse(&emptypb.Empty{}), err
 }
 
 func (p *Protoflow) observeSegments(

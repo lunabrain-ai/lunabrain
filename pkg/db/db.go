@@ -36,6 +36,9 @@ func New(db *gorm.DB) (*Store, error) {
 		&model.DiscordMessage{},
 		&model.DiscordTranscript{},
 		&model.HNStory{},
+		&model.GroupUser{},
+		&model.GroupInvite{},
+		&model.User{},
 		&model.Group{},
 		&model.Vote{},
 		&model.Tag{},
@@ -46,7 +49,34 @@ func New(db *gorm.DB) (*Store, error) {
 	return &Store{db: db}, nil
 }
 
+func (s *Store) GetTags() ([]string, error) {
+	var tags []model.Tag
+	res := s.db.Find(&tags)
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not get tags")
+	}
+	var tagNames []string
+	for _, tag := range tags {
+		tagNames = append(tagNames, tag.Name)
+	}
+	return tagNames, nil
+}
+
+func (s *Store) GetGroupContent(groupID string) ([]model.Content, error) {
+	g := &model.Group{
+		Base: model.Base{
+			ID: uuid.MustParse(groupID),
+		},
+	}
+	res := s.db.Preload("Content").Preload("Content.RelatedContent").First(g)
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not get content")
+	}
+	return g.Content, nil
+}
+
 func (s *Store) GetAllContent(page, limit int) ([]model.Content, *Pagination, error) {
+	// TODO breadchris only get content for user
 	var c []model.Content
 	pagination := Pagination{
 		Limit: limit,
@@ -194,6 +224,22 @@ func (s *Store) StoreDiscordMessages(msgs []*model.DiscordMessage) error {
 	return nil
 }
 
+func (s *Store) ShareContentWithGroup(contentID, groupID string) error {
+	err := s.db.Model(&model.Content{
+		Base: model.Base{
+			ID: uuid.MustParse(contentID),
+		},
+	}).Association("Groups").Append(&model.Group{
+		Base: model.Base{
+			ID: uuid.MustParse(groupID),
+		},
+	})
+	if err != nil {
+		return errors.Wrapf(err, "could not share content with group")
+	}
+	return nil
+}
+
 func (s *Store) DeleteContent(id string) error {
 	res := s.db.Delete(&model.Content{}, "id = ?", id)
 	if res.Error != nil {
@@ -206,7 +252,17 @@ func (s *Store) saveOrUpdateContent(data *content.Content, root bool) (*model.Co
 	var (
 		c     *model.Content
 		found bool
+		tags  []*model.Tag
 	)
+
+	for _, tagName := range data.Tags {
+		var tag model.Tag
+		if err := s.db.FirstOrCreate(&tag, model.Tag{Name: tagName}).Error; err != nil {
+			return nil, err
+		}
+		tags = append(tags, &tag)
+	}
+
 	switch t := data.Type.(type) {
 	case *content.Content_Data:
 		switch u := t.Data.Type.(type) {
@@ -228,15 +284,29 @@ func (s *Store) saveOrUpdateContent(data *content.Content, root bool) (*model.Co
 			},
 			Root:       root,
 			VisitCount: 1,
+			Tags:       tags,
 		}
 		res = s.db.Create(c)
 	} else {
+		// TODO breadchris we currently ignore tag updates for this case
 		res = s.db.Model(c).Update("visit_count", gorm.Expr("visit_count + ?", 1))
 	}
 	if res.Error != nil {
 		return nil, errors.Wrapf(res.Error, "could not save content")
 	}
 	return c, nil
+}
+
+func (s *Store) UpsertTags(tags []string) error {
+	for _, tag := range tags {
+		res := s.db.Clauses(clause.OnConflict{DoNothing: true}).Create(&model.Tag{
+			Name: tag,
+		})
+		if res.Error != nil {
+			return errors.Wrapf(res.Error, "could not save tag")
+		}
+	}
+	return nil
 }
 
 func (s *Store) SaveContent(data *content.Content, related []*content.Content) (uuid.UUID, error) {
@@ -252,7 +322,6 @@ func (s *Store) SaveContent(data *content.Content, related []*content.Content) (
 				return uuid.UUID{}, errors.Wrapf(err, "unable to save related content")
 			}
 			relMod = append(relMod, rm)
-			// TODO breadchris upsert tags
 		}
 		c.RelatedContent = relMod
 		if res := s.db.Save(c); res.Error != nil {
@@ -288,46 +357,52 @@ func (s *Store) CreateGroup(creator uuid.UUID, data *user.Group) (uuid.UUID, err
 		Data: datatypes.JSONType[*user.Group]{
 			Data: data,
 		},
-		Moderators: []model.User{
-			{
-				Base: model.Base{
-					ID: creator,
-				},
-			},
-		},
 	}
 	res := s.db.Create(group)
 	if res.Error != nil {
 		return uuid.UUID{}, errors.Wrapf(res.Error, "could not create group")
 	}
+	groupUser := &model.GroupUser{
+		UserID:  creator,
+		GroupID: group.ID,
+		Role:    "admin",
+	}
+	res = s.db.Create(groupUser)
+	if res.Error != nil {
+		return uuid.UUID{}, errors.Wrapf(res.Error, "could not create group user")
+	}
 	return group.ID, nil
 }
 
 func (s *Store) DeleteGroup(groupID uuid.UUID) error {
-	res := s.db.Delete(&model.Group{}, "id = ?", groupID)
+	g := &model.Group{
+		Base: model.Base{
+			ID: groupID,
+		},
+	}
+	res := s.db.Delete(g)
 	if res.Error != nil {
 		return errors.Wrapf(res.Error, "could not delete group")
 	}
 	return nil
 }
 
-func (s *Store) GetGroupsForUser(userID uuid.UUID) ([]model.Group, error) {
-	var groups []model.Group
-	res := s.db.Model(&model.User{}).Where("id = ?", userID).Association("groups").Find(&groups)
+func (s *Store) GetGroupsForUser(userID uuid.UUID) ([]model.GroupUser, error) {
+	u := &model.User{}
+	res := s.db.Preload("GroupUsers.Group").First(u, userID, "id = ?", userID)
 	if res.Error != nil {
-		return nil, errors.Wrapf(res, "could not get groups for user")
+		return nil, errors.Wrapf(res.Error, "could not get groups for user")
 	}
-	return groups, nil
+	return u.GroupUsers, nil
 }
 
 func (s *Store) JoinGroup(userID, groupID uuid.UUID) error {
-	res := s.db.Model(&model.User{}).Where("id = ?", userID).Association("groups").Append(&model.Group{
-		Base: model.Base{
-			ID: groupID,
-		},
+	res := s.db.Create(&model.GroupUser{
+		UserID:  userID,
+		GroupID: groupID,
 	})
 	if res.Error != nil {
-		return errors.Wrapf(res, "could not join group")
+		return errors.Wrapf(res.Error, "could not join group")
 	}
 	return nil
 }

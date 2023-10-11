@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -25,7 +26,7 @@ type ProtoflowServiceClient interface {
 	DownloadYouTubeVideo(ctx context.Context, in *YouTubeVideo, opts ...grpc.CallOption) (*YouTubeVideoResponse, error)
 	GetSessions(ctx context.Context, in *GetSessionsRequest, opts ...grpc.CallOption) (*GetSessionsResponse, error)
 	GetSession(ctx context.Context, in *GetSessionRequest, opts ...grpc.CallOption) (*GetSessionResponse, error)
-	DeleteSession(ctx context.Context, in *DeleteSessionRequest, opts ...grpc.CallOption) (*Empty, error)
+	DeleteSession(ctx context.Context, in *DeleteSessionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetPrompts(ctx context.Context, in *GetPromptsRequest, opts ...grpc.CallOption) (*GetPromptsResponse, error)
 	NewPrompt(ctx context.Context, in *Prompt, opts ...grpc.CallOption) (*Prompt, error)
 	UploadContent(ctx context.Context, in *UploadContentRequest, opts ...grpc.CallOption) (ProtoflowService_UploadContentClient, error)
@@ -71,8 +72,8 @@ func (c *protoflowServiceClient) GetSession(ctx context.Context, in *GetSessionR
 	return out, nil
 }
 
-func (c *protoflowServiceClient) DeleteSession(ctx context.Context, in *DeleteSessionRequest, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *protoflowServiceClient) DeleteSession(ctx context.Context, in *DeleteSessionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/protoflow.ProtoflowService/DeleteSession", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -228,7 +229,7 @@ type ProtoflowServiceServer interface {
 	DownloadYouTubeVideo(context.Context, *YouTubeVideo) (*YouTubeVideoResponse, error)
 	GetSessions(context.Context, *GetSessionsRequest) (*GetSessionsResponse, error)
 	GetSession(context.Context, *GetSessionRequest) (*GetSessionResponse, error)
-	DeleteSession(context.Context, *DeleteSessionRequest) (*Empty, error)
+	DeleteSession(context.Context, *DeleteSessionRequest) (*emptypb.Empty, error)
 	GetPrompts(context.Context, *GetPromptsRequest) (*GetPromptsResponse, error)
 	NewPrompt(context.Context, *Prompt) (*Prompt, error)
 	UploadContent(*UploadContentRequest, ProtoflowService_UploadContentServer) error
@@ -252,7 +253,7 @@ func (UnimplementedProtoflowServiceServer) GetSessions(context.Context, *GetSess
 func (UnimplementedProtoflowServiceServer) GetSession(context.Context, *GetSessionRequest) (*GetSessionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSession not implemented")
 }
-func (UnimplementedProtoflowServiceServer) DeleteSession(context.Context, *DeleteSessionRequest) (*Empty, error) {
+func (UnimplementedProtoflowServiceServer) DeleteSession(context.Context, *DeleteSessionRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSession not implemented")
 }
 func (UnimplementedProtoflowServiceServer) GetPrompts(context.Context, *GetPromptsRequest) (*GetPromptsResponse, error) {

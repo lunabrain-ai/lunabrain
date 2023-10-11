@@ -11,6 +11,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/pkg/errors"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
 	"time"
 )
@@ -52,9 +53,16 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 		}
 		ct = append(ct, *singleContent)
 	} else {
-		ct, _, err = s.db.GetAllContent(0, 100)
-		if err != nil {
-			return nil, errors.Wrapf(err, "unable to get stored content")
+		if c.Msg.GroupID != "" {
+			ct, err = s.db.GetGroupContent(c.Msg.GroupID)
+			if err != nil {
+				return nil, errors.Wrapf(err, "unable to get stored content")
+			}
+		} else {
+			ct, _, err = s.db.GetAllContent(0, 100)
+			if err != nil {
+				return nil, errors.Wrapf(err, "unable to get stored content")
+			}
 		}
 	}
 
@@ -63,6 +71,14 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 		sc := &content.StoredContent{
 			Id:      cn.ID.String(),
 			Content: cn.Data,
+		}
+
+		switch t := cn.ContentData.Data.Type.(type) {
+		case *content.Content_Data:
+			switch u := t.Data.Type.(type) {
+			case *content.Data_Url:
+				sc.Url = u.Url.Url
+			}
 		}
 
 		var related []*content.Content
@@ -92,6 +108,19 @@ func (s *Service) Delete(ctx context.Context, c *connect_go.Request[content.Cont
 		}
 	}
 	return connect_go.NewResponse(&content.ContentIDs{ContentIds: c.Msg.GetContentIds()}), nil
+}
+
+func (s *Service) GetTags(ctx context.Context, c *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Tags], error) {
+	ts, err := s.db.GetTags()
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to get tags")
+	}
+
+	root := &content.Tag{Name: "root"}
+	for _, t := range ts {
+		processTags(root, t)
+	}
+	return connect_go.NewResponse(&content.Tags{Tags: root.SubTags}), nil
 }
 
 func (s *Service) Analyze(ctx context.Context, c *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error) {

@@ -3,8 +3,8 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Content, ContentIDs, Contents, Query, Results } from "./content_pb.js";
-import { MethodKind } from "@bufbuild/protobuf";
+import { Content, ContentIDs, Contents, Query, Results, Tags } from "./content_pb.js";
+import { Empty, MethodKind } from "@bufbuild/protobuf";
 
 /**
  * @generated from service content.ContentService
@@ -46,6 +46,15 @@ export const ContentService = {
       name: "Delete",
       I: ContentIDs,
       O: ContentIDs,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc content.ContentService.GetTags
+     */
+    getTags: {
+      name: "GetTags",
+      I: Empty,
+      O: Tags,
       kind: MethodKind.Unary,
     },
   }

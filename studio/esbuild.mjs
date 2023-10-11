@@ -21,7 +21,7 @@ const baseOptions = {
     sourcemap: "linked",
     define: {
         "global": "window",
-        "process.env.API_URL": prodBuild ? '"https://demo.lunabrain.com/api"' : '"http://localhost:8080/api"'
+        "process.env.BASE_URL": prodBuild ? '"https://demo.lunabrain.com"' : '"http://localhost:8080"'
     },
     logLevel: 'info'
 }
@@ -38,6 +38,10 @@ async function doBuild(options, serve) {
             if (serve) {
                 context.serve({
                     servedir: 'dist/site',
+                    fallback: 'dist/site/index.html',
+                    onRequest: args => {
+                        console.log(args.method, args.path)
+                    }
                 })
             }
             await context.watch()

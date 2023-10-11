@@ -3,8 +3,8 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Config, Empty, Group, GroupInvite, Groups, User } from "./user_pb.js";
-import { MethodKind } from "@bufbuild/protobuf";
+import { Config, Group, GroupID, GroupInvite, Groups, ShareRequest, User } from "./user_pb.js";
+import { Empty, MethodKind } from "@bufbuild/protobuf";
 
 /**
  * @generated from service user.UserService
@@ -53,7 +53,7 @@ export const UserService = {
      */
     createGroupInvite: {
       name: "CreateGroupInvite",
-      I: Group,
+      I: GroupID,
       O: GroupInvite,
       kind: MethodKind.Unary,
     },
@@ -90,6 +90,15 @@ export const UserService = {
     deleteGroup: {
       name: "DeleteGroup",
       I: Group,
+      O: Empty,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc user.UserService.Share
+     */
+    share: {
+      name: "Share",
+      I: ShareRequest,
       O: Empty,
       kind: MethodKind.Unary,
     },

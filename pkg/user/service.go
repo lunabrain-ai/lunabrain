@@ -8,9 +8,8 @@ import (
 	"github.com/lunabrain-ai/lunabrain/gen/user"
 	"github.com/lunabrain-ai/lunabrain/gen/user/userconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
-	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/pkg/errors"
-	"github.com/samber/lo"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"log/slog"
 )
 
@@ -35,7 +34,7 @@ func NewService(
 	}
 }
 
-func (s *UserService) UpdateConfig(ctx context.Context, c *connectgo.Request[user.Config]) (*connectgo.Response[user.Empty], error) {
+func (s *UserService) UpdateConfig(ctx context.Context, c *connectgo.Request[user.Config]) (*connectgo.Response[emptypb.Empty], error) {
 	id, err := s.sess.GetUserID(ctx)
 	if err != nil {
 		return nil, err
@@ -49,7 +48,7 @@ func (s *UserService) UpdateConfig(ctx context.Context, c *connectgo.Request[use
 	if err != nil {
 		return nil, err
 	}
-	return connectgo.NewResponse(&user.Empty{}), err
+	return connectgo.NewResponse(&emptypb.Empty{}), err
 }
 
 func (s *UserService) Register(ctx context.Context, c *connectgo.Request[user.User]) (*connectgo.Response[user.User], error) {
@@ -86,39 +85,27 @@ func (s *UserService) Login(ctx context.Context, c *connectgo.Request[user.User]
 			Email: "",
 		}), nil
 	}
-
-	// TODO breadchris compare hashed passwords
-	if u.Data.Data.Password != c.Msg.Password {
-		return nil, errors.New("invalid password")
-	}
 	s.sess.SetUserID(ctx, u.ID.String())
 	return connectgo.NewResponse(&user.User{
 		Email: u.Data.Data.Email,
 	}), nil
 }
 
-func (s *UserService) Logout(ctx context.Context, c *connectgo.Request[user.Empty]) (*connectgo.Response[user.Empty], error) {
+func (s *UserService) Logout(ctx context.Context, c *connectgo.Request[emptypb.Empty]) (*connectgo.Response[emptypb.Empty], error) {
 	s.sess.ClearUserID(ctx)
-	return connectgo.NewResponse(&user.Empty{}), nil
+	return connectgo.NewResponse(&emptypb.Empty{}), nil
 }
 
-func (s *UserService) CreateGroupInvite(ctx context.Context, c *connectgo.Request[user.Group]) (*connectgo.Response[user.GroupInvite], error) {
-	id, err := s.sess.GetUserID(ctx)
+func (s *UserService) CreateGroupInvite(ctx context.Context, c *connectgo.Request[user.GroupID]) (*connectgo.Response[user.GroupInvite], error) {
+	role, err := s.userGroupRole(ctx, c.Msg.GroupId)
 	if err != nil {
 		return nil, err
 	}
-	groups, err := s.db.GetGroupsForUser(uuid.MustParse(id))
-	if err != nil {
-		return nil, err
+	if role != "admin" {
+		return nil, errors.New("user is not an admin of this group")
 	}
 
-	if !lo.ContainsBy(groups, func(g model.Group) bool {
-		return g.ID == uuid.MustParse(c.Msg.Id)
-	}) {
-		return nil, errors.New("user is not a member of this group")
-	}
-
-	secret, err := s.db.CreateGroupInvite(uuid.MustParse(c.Msg.Id))
+	secret, err := s.db.CreateGroupInvite(uuid.MustParse(c.Msg.GroupId))
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +146,7 @@ func (s *UserService) CreateGroup(ctx context.Context, c *connectgo.Request[user
 	}), nil
 }
 
-func (s *UserService) GetGroups(ctx context.Context, c *connectgo.Request[user.Empty]) (*connectgo.Response[user.Groups], error) {
+func (s *UserService) GetGroups(ctx context.Context, c *connectgo.Request[emptypb.Empty]) (*connectgo.Response[user.Groups], error) {
 	id, err := s.sess.GetUserID(ctx)
 	if err != nil {
 		return nil, err
@@ -170,18 +157,60 @@ func (s *UserService) GetGroups(ctx context.Context, c *connectgo.Request[user.E
 	}
 	var groupsProto []*user.Group
 	for _, g := range groups {
-		groupsProto = append(groupsProto, g.Data.Data)
+		d := g.Group.Data.Data
+		if d == nil {
+			slog.Warn("group data is nil", "group", g.GroupID)
+			continue
+		}
+		d.Id = g.GroupID.String()
+		groupsProto = append(groupsProto, d)
 	}
 	return connectgo.NewResponse(&user.Groups{
 		Groups: groupsProto,
 	}), nil
 }
 
-func (s *UserService) DeleteGroup(ctx context.Context, c *connectgo.Request[user.Group]) (*connectgo.Response[user.Empty], error) {
+func (s *UserService) userGroupRole(ctx context.Context, groupID string) (string, error) {
 	id, err := s.sess.GetUserID(ctx)
+	if err != nil {
+		return "", err
+	}
+	groups, err := s.db.GetGroupsForUser(uuid.MustParse(id))
+	if err != nil {
+		return "", err
+	}
+
+	for _, g := range groups {
+		if g.GroupID.String() == groupID {
+			return g.Role, nil
+		}
+	}
+	return "", errors.Errorf("user is not a member of this group: %s", groupID)
+}
+
+func (s *UserService) DeleteGroup(ctx context.Context, c *connectgo.Request[user.Group]) (*connectgo.Response[emptypb.Empty], error) {
+	role, err := s.userGroupRole(ctx, c.Msg.Id)
 	if err != nil {
 		return nil, err
 	}
-	err = s.db.DeleteGroup(uuid.MustParse(id))
-	return connectgo.NewResponse(&user.Empty{}), err
+	if role != "admin" {
+		return nil, errors.New("user is not an admin of this group")
+	}
+	err = s.db.DeleteGroup(uuid.MustParse(c.Msg.Id))
+	return connectgo.NewResponse(&emptypb.Empty{}), err
+}
+
+func (s *UserService) Share(ctx context.Context, c *connectgo.Request[user.ShareRequest]) (*connectgo.Response[emptypb.Empty], error) {
+	role, err := s.userGroupRole(ctx, c.Msg.GroupId)
+	if err != nil {
+		return nil, err
+	}
+	if role == "" {
+		return nil, errors.New("user does not have valid role")
+	}
+	err = s.db.ShareContentWithGroup(c.Msg.ContentId, c.Msg.GroupId)
+	if err != nil {
+		return nil, err
+	}
+	return connectgo.NewResponse(&emptypb.Empty{}), nil
 }

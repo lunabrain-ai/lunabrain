@@ -34,7 +34,6 @@ func NewSession(db *gorm.DB, sessMan *http.SessionManager) (*Session, error) {
 		&model.Session{},
 		&model.Segment{},
 		&model.Prompt{},
-		&model.User{},
 	)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not migrate database: %v", err)
@@ -192,16 +191,26 @@ func (s *Session) GetUser(ps *user.User) (*model.User, error) {
 	if res.Error != nil {
 		return nil, errors.Wrapf(res.Error, "could not get user: %s", ps.Email)
 	}
+	ok := CheckPasswordHash(ps.Password, p.PasswordHash)
+	if !ok {
+		return nil, errors.Wrapf(res.Error, "could not get user: %s", ps.Email)
+	}
 	return p, nil
 }
 
 func (s *Session) NewUser(ps *user.User) (*model.User, error) {
 	id := uuid.New()
 	// TODO breadchris hash password
+	hash, err := HashPassword(ps.Password)
+	if err != nil {
+		return nil, errors.Wrapf(err, "could not hash password")
+	}
+	ps.Password = ""
 	p := &model.User{
 		Base: model.Base{
 			ID: id,
 		},
+		PasswordHash: hash,
 		Data: datatypes.JSONType[*user.User]{
 			Data: ps,
 		},

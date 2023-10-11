@@ -148,7 +148,7 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	muxRoot.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
 			// redirect to /studio
-			http.Redirect(w, r, "/studio", http.StatusFound)
+			http.Redirect(w, r, "/app", http.StatusFound)
 			return
 		}
 		if r.URL.Path == "/media" || strings.HasPrefix(r.URL.Path, "/media/") {
@@ -156,9 +156,8 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 			mediaFileServer.ServeHTTP(w, r)
 			return
 		}
-		if r.URL.Path == "/studio" || strings.HasPrefix(r.URL.Path, "/studio/") || r.URL.Path == "/esbuild" {
-			r.URL.Path = strings.Replace(r.URL.Path, "/studio", "", 1)
-
+		if r.URL.Path == "/app" || strings.HasPrefix(r.URL.Path, "/app/") || r.URL.Path == "/esbuild" {
+			r.URL.Path = strings.Replace(r.URL.Path, "/app", "", 1)
 			if a.config.StudioProxy != "" {
 				slog.Debug("proxying request", "path", r.URL.Path)
 				proxy.ServeHTTP(w, r)

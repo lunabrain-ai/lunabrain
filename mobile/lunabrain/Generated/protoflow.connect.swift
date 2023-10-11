@@ -28,10 +28,10 @@ public protocol Protoflow_ProtoflowServiceClientInterface: Sendable {
     func `getSession`(request: Protoflow_GetSessionRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_GetSessionResponse>
 
     @discardableResult
-    func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_Empty>) -> Void) -> Connect.Cancelable
+    func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
-    func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers) async -> ResponseMessage<Protoflow_Empty>
+    func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers) async -> ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>
 
     @discardableResult
     func `getPrompts`(request: Protoflow_GetPromptsRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Protoflow_GetPromptsResponse>) -> Void) -> Connect.Cancelable
@@ -118,12 +118,12 @@ public final class Protoflow_ProtoflowServiceClient: Protoflow_ProtoflowServiceC
     }
 
     @discardableResult
-    public func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Protoflow_Empty>) -> Void) -> Connect.Cancelable {
+    public func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable {
         return self.client.unary(path: "/protoflow.ProtoflowService/DeleteSession", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
-    public func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<Protoflow_Empty> {
+    public func `deleteSession`(request: Protoflow_DeleteSessionRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty> {
         return await self.client.unary(path: "/protoflow.ProtoflowService/DeleteSession", request: request, headers: headers)
     }
 

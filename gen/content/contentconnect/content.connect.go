@@ -9,6 +9,7 @@ import (
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
 	content "github.com/lunabrain-ai/lunabrain/gen/content"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	http "net/http"
 	strings "strings"
 )
@@ -41,6 +42,8 @@ const (
 	ContentServiceAnalyzeProcedure = "/content.ContentService/Analyze"
 	// ContentServiceDeleteProcedure is the fully-qualified name of the ContentService's Delete RPC.
 	ContentServiceDeleteProcedure = "/content.ContentService/Delete"
+	// ContentServiceGetTagsProcedure is the fully-qualified name of the ContentService's GetTags RPC.
+	ContentServiceGetTagsProcedure = "/content.ContentService/GetTags"
 )
 
 // ContentServiceClient is a client for the content.ContentService service.
@@ -49,6 +52,7 @@ type ContentServiceClient interface {
 	Search(context.Context, *connect_go.Request[content.Query]) (*connect_go.Response[content.Results], error)
 	Analyze(context.Context, *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error)
 	Delete(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
+	GetTags(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Tags], error)
 }
 
 // NewContentServiceClient constructs a client for the content.ContentService service. By default,
@@ -81,6 +85,11 @@ func NewContentServiceClient(httpClient connect_go.HTTPClient, baseURL string, o
 			baseURL+ContentServiceDeleteProcedure,
 			opts...,
 		),
+		getTags: connect_go.NewClient[emptypb.Empty, content.Tags](
+			httpClient,
+			baseURL+ContentServiceGetTagsProcedure,
+			opts...,
+		),
 	}
 }
 
@@ -90,6 +99,7 @@ type contentServiceClient struct {
 	search  *connect_go.Client[content.Query, content.Results]
 	analyze *connect_go.Client[content.Content, content.Contents]
 	delete  *connect_go.Client[content.ContentIDs, content.ContentIDs]
+	getTags *connect_go.Client[emptypb.Empty, content.Tags]
 }
 
 // Save calls content.ContentService.Save.
@@ -112,12 +122,18 @@ func (c *contentServiceClient) Delete(ctx context.Context, req *connect_go.Reque
 	return c.delete.CallUnary(ctx, req)
 }
 
+// GetTags calls content.ContentService.GetTags.
+func (c *contentServiceClient) GetTags(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Tags], error) {
+	return c.getTags.CallUnary(ctx, req)
+}
+
 // ContentServiceHandler is an implementation of the content.ContentService service.
 type ContentServiceHandler interface {
 	Save(context.Context, *connect_go.Request[content.Contents]) (*connect_go.Response[content.ContentIDs], error)
 	Search(context.Context, *connect_go.Request[content.Query]) (*connect_go.Response[content.Results], error)
 	Analyze(context.Context, *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error)
 	Delete(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
+	GetTags(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Tags], error)
 }
 
 // NewContentServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -146,6 +162,11 @@ func NewContentServiceHandler(svc ContentServiceHandler, opts ...connect_go.Hand
 		svc.Delete,
 		opts...,
 	)
+	contentServiceGetTagsHandler := connect_go.NewUnaryHandler(
+		ContentServiceGetTagsProcedure,
+		svc.GetTags,
+		opts...,
+	)
 	return "/content.ContentService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ContentServiceSaveProcedure:
@@ -156,6 +177,8 @@ func NewContentServiceHandler(svc ContentServiceHandler, opts ...connect_go.Hand
 			contentServiceAnalyzeHandler.ServeHTTP(w, r)
 		case ContentServiceDeleteProcedure:
 			contentServiceDeleteHandler.ServeHTTP(w, r)
+		case ContentServiceGetTagsProcedure:
+			contentServiceGetTagsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -179,4 +202,8 @@ func (UnimplementedContentServiceHandler) Analyze(context.Context, *connect_go.R
 
 func (UnimplementedContentServiceHandler) Delete(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.Delete is not implemented"))
+}
+
+func (UnimplementedContentServiceHandler) GetTags(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Tags], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.GetTags is not implemented"))
 }

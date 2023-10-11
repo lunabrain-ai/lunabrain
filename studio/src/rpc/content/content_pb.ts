@@ -7,6 +7,86 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { Message, proto3, protoInt64 } from "@bufbuild/protobuf";
 
 /**
+ * @generated from message content.Tags
+ */
+export class Tags extends Message<Tags> {
+  /**
+   * @generated from field: repeated content.Tag tags = 1;
+   */
+  tags: Tag[] = [];
+
+  constructor(data?: PartialMessage<Tags>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.Tags";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "tags", kind: "message", T: Tag, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Tags {
+    return new Tags().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Tags {
+    return new Tags().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Tags {
+    return new Tags().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Tags | PlainMessage<Tags> | undefined, b: Tags | PlainMessage<Tags> | undefined): boolean {
+    return proto3.util.equals(Tags, a, b);
+  }
+}
+
+/**
+ * @generated from message content.Tag
+ */
+export class Tag extends Message<Tag> {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name = "";
+
+  /**
+   * @generated from field: repeated content.Tag sub_tags = 2;
+   */
+  subTags: Tag[] = [];
+
+  constructor(data?: PartialMessage<Tag>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.Tag";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "sub_tags", kind: "message", T: Tag, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Tag {
+    return new Tag().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Tag {
+    return new Tag().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Tag {
+    return new Tag().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Tag | PlainMessage<Tag> | undefined, b: Tag | PlainMessage<Tag> | undefined): boolean {
+    return proto3.util.equals(Tag, a, b);
+  }
+}
+
+/**
  * @generated from message content.ContentIDs
  */
 export class ContentIDs extends Message<ContentIDs> {
@@ -105,6 +185,11 @@ export class Query extends Message<Query> {
    */
   contentID = "";
 
+  /**
+   * @generated from field: string groupID = 4;
+   */
+  groupID = "";
+
   constructor(data?: PartialMessage<Query>) {
     super();
     proto3.util.initPartial(data, this);
@@ -116,6 +201,7 @@ export class Query extends Message<Query> {
     { no: 1, name: "query", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "page", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
     { no: 3, name: "contentID", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "groupID", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Query {
@@ -206,6 +292,11 @@ export class StoredContent extends Message<StoredContent> {
    */
   image = "";
 
+  /**
+   * @generated from field: string url = 7;
+   */
+  url = "";
+
   constructor(data?: PartialMessage<StoredContent>) {
     super();
     proto3.util.initPartial(data, this);
@@ -220,6 +311,7 @@ export class StoredContent extends Message<StoredContent> {
     { no: 4, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "description", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 6, name: "image", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StoredContent {
@@ -443,43 +535,6 @@ export class YouTubeChannel extends Message<YouTubeChannel> {
 
   static equals(a: YouTubeChannel | PlainMessage<YouTubeChannel> | undefined, b: YouTubeChannel | PlainMessage<YouTubeChannel> | undefined): boolean {
     return proto3.util.equals(YouTubeChannel, a, b);
-  }
-}
-
-/**
- * @generated from message content.Group
- */
-export class Group extends Message<Group> {
-  /**
-   * @generated from field: string name = 1;
-   */
-  name = "";
-
-  constructor(data?: PartialMessage<Group>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "content.Group";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Group {
-    return new Group().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Group {
-    return new Group().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Group {
-    return new Group().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: Group | PlainMessage<Group> | undefined, b: Group | PlainMessage<Group> | undefined): boolean {
-    return proto3.util.equals(Group, a, b);
   }
 }
 

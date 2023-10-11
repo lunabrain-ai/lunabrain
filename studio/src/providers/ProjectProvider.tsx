@@ -1,12 +1,12 @@
 import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
-import {contentService, projectService} from "@/service";
+import {contentService, projectService, userService} from "@/service";
 import {Message} from "@/site/Chat/MessageList";
 import {Code, ConnectError} from "@bufbuild/connect";
 import toast from "react-hot-toast";
 import {TabValue} from "@fluentui/react-components";
 import {ChatResponse, Segment, Session} from "@/rpc/protoflow_pb";
-import { Content, StoredContent } from "@/rpc/content/content_pb";
-import { User } from "@/rpc/user/user_pb";
+import { Content, StoredContent, Tag } from "@/rpc/content/content_pb";
+import {Group, User } from "@/rpc/user/user_pb";
 
 const ProjectContext = createContext<ProjectContextType>({} as any);
 export const useProjectContext = () => useContext(ProjectContext);
@@ -45,6 +45,14 @@ type ProjectContextType = {
 
     sidebarIsOpen: boolean;
     setSidebarIsOpen: (sidebarIsOpen: boolean) => void;
+    groups: Group[];
+    currentGroup: string;
+    setCurrentGroup: (groupID: string) => void;
+    tags: Tag[];
+
+    filteredTags: string[];
+    addFilteredTag: (tag: string) => void;
+    removeFilteredTag: (tag: string) => void;
 };
 
 export default function ProjectProvider({children}: ProjectProviderProps) {
@@ -58,14 +66,46 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     const [loading, setLoading] = useState(false);
     const [media, setMedia] = useState<Media|undefined>(undefined);
     const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
+    const [groups, setGroups] = useState<Group[]>([]);
+    const [currentGroup, setCurrentGroup] = useState<string>('home');
+    const [tags, setTags] = useState<Tag[]>([]);
+    const [filteredTags, setFilteredTags] = useState<string[]>([]);
+
+    const addFilteredTag = (tag: string) => {
+        setFilteredTags((prev) => [...prev, tag]);
+    }
+
+    const removeFilteredTag = (tag: string) => {
+        setFilteredTags((prev) => prev.filter((t) => t !== tag));
+    }
 
     const loadContent = async () => {
-        const res = await contentService.search({});
+        const res = await contentService.search({
+            // TODO breadchris home is just the user's content
+            groupID: currentGroup === 'home' ? undefined : currentGroup,
+        });
         setContent(res.storedContent);
+    }
+
+    const loadGroups = async () => {
+        const res = await userService.getGroups({});
+        setGroups(res.groups);
+    }
+
+    const loadTags = async () => {
+        const res = await contentService.getTags({});
+        setTags(res.tags);
     }
 
     useEffect(() => {
         void loadContent();
+        const newUrl = `/app/group/${currentGroup}`;
+        window.history.pushState({}, '', newUrl);
+    }, [currentGroup]);
+
+    useEffect(() => {
+        void loadGroups();
+        void loadTags();
     }, []);
 
     const deleteContent = async (ids: string[]) => {
@@ -175,6 +215,14 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
                 setMedia,
                 sidebarIsOpen,
                 setSidebarIsOpen,
+                groups,
+                setCurrentGroup,
+                currentGroup,
+                tags,
+
+                filteredTags,
+                addFilteredTag,
+                removeFilteredTag,
             }}
         >
             {children}

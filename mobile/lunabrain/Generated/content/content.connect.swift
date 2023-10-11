@@ -32,6 +32,12 @@ public protocol Content_ContentServiceClientInterface: Sendable {
 
     @available(iOS 13, *)
     func `delete`(request: Content_ContentIDs, headers: Connect.Headers) async -> ResponseMessage<Content_ContentIDs>
+
+    @discardableResult
+    func `getTags`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Content_Tags>) -> Void) -> Connect.Cancelable
+
+    @available(iOS 13, *)
+    func `getTags`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers) async -> ResponseMessage<Content_Tags>
 }
 
 /// Concrete implementation of `Content_ContentServiceClientInterface`.
@@ -82,12 +88,23 @@ public final class Content_ContentServiceClient: Content_ContentServiceClientInt
         return await self.client.unary(path: "/content.ContentService/Delete", request: request, headers: headers)
     }
 
+    @discardableResult
+    public func `getTags`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Content_Tags>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/content.ContentService/GetTags", request: request, headers: headers, completion: completion)
+    }
+
+    @available(iOS 13, *)
+    public func `getTags`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers = [:]) async -> ResponseMessage<Content_Tags> {
+        return await self.client.unary(path: "/content.ContentService/GetTags", request: request, headers: headers)
+    }
+
     public enum Metadata {
         public enum Methods {
             public static let save = Connect.MethodSpec(name: "Save", service: "content.ContentService", type: .unary)
             public static let search = Connect.MethodSpec(name: "Search", service: "content.ContentService", type: .unary)
             public static let analyze = Connect.MethodSpec(name: "Analyze", service: "content.ContentService", type: .unary)
             public static let delete = Connect.MethodSpec(name: "Delete", service: "content.ContentService", type: .unary)
+            public static let getTags = Connect.MethodSpec(name: "GetTags", service: "content.ContentService", type: .unary)
         }
     }
 }
