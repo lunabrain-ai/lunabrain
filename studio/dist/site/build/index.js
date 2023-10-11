@@ -56796,7 +56796,7 @@ Tree must have either a \`aria-label\` or \`aria-labelledby\` property defined`)
   };
 
   // src/service.ts
-  var baseURL = "http://localhost:8080";
+  var baseURL = "https://demo.lunabrain.com";
   var queryClient = new QueryClient();
   var transport = createConnectTransport({
     baseUrl: `${baseURL}/api` || "error"
