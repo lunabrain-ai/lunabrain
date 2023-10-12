@@ -519,7 +519,7 @@
             }
             return element;
           };
-          function createElement58(type, config, children) {
+          function createElement59(type, config, children) {
             var propName;
             var props = {};
             var key = null;
@@ -980,7 +980,7 @@
             }
             return lazyType;
           }
-          function forwardRef44(render) {
+          function forwardRef45(render) {
             {
               if (render != null && render.$$typeof === REACT_MEMO_TYPE) {
                 error("forwardRef requires a render function but received a `memo` component. Instead of forwardRef(memo(...)), use memo(forwardRef(...)).");
@@ -1093,7 +1093,7 @@
             }
             return dispatcher.useContext(Context);
           }
-          function useState32(initialState2) {
+          function useState33(initialState2) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useState(initialState2);
           }
@@ -1101,11 +1101,11 @@
             var dispatcher = resolveDispatcher();
             return dispatcher.useReducer(reducer, initialArg, init);
           }
-          function useRef47(initialValue) {
+          function useRef49(initialValue) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useRef(initialValue);
           }
-          function useEffect45(create, deps) {
+          function useEffect47(create, deps) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useEffect(create, deps);
           }
@@ -1117,7 +1117,7 @@
             var dispatcher = resolveDispatcher();
             return dispatcher.useLayoutEffect(create, deps);
           }
-          function useCallback31(callback, deps) {
+          function useCallback32(callback, deps) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useCallback(callback, deps);
           }
@@ -1125,7 +1125,7 @@
             var dispatcher = resolveDispatcher();
             return dispatcher.useMemo(create, deps);
           }
-          function useImperativeHandle2(ref, create, deps) {
+          function useImperativeHandle3(ref, create, deps) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useImperativeHandle(ref, create, deps);
           }
@@ -1618,7 +1618,7 @@
                 error("React.createElement: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s", typeString, info);
               }
             }
-            var element = createElement58.apply(this, arguments);
+            var element = createElement59.apply(this, arguments);
             if (element == null) {
               return element;
             }
@@ -1877,25 +1877,25 @@
           exports.createElement = createElement$1;
           exports.createFactory = createFactory2;
           exports.createRef = createRef7;
-          exports.forwardRef = forwardRef44;
+          exports.forwardRef = forwardRef45;
           exports.isValidElement = isValidElement10;
           exports.lazy = lazy;
           exports.memo = memo7;
           exports.startTransition = startTransition;
           exports.unstable_act = act;
-          exports.useCallback = useCallback31;
+          exports.useCallback = useCallback32;
           exports.useContext = useContext37;
           exports.useDebugValue = useDebugValue;
           exports.useDeferredValue = useDeferredValue;
-          exports.useEffect = useEffect45;
+          exports.useEffect = useEffect47;
           exports.useId = useId4;
-          exports.useImperativeHandle = useImperativeHandle2;
+          exports.useImperativeHandle = useImperativeHandle3;
           exports.useInsertionEffect = useInsertionEffect7;
           exports.useLayoutEffect = useLayoutEffect6;
           exports.useMemo = useMemo22;
           exports.useReducer = useReducer2;
-          exports.useRef = useRef47;
-          exports.useState = useState32;
+          exports.useRef = useRef49;
+          exports.useState = useState33;
           exports.useSyncExternalStore = useSyncExternalStore;
           exports.useTransition = useTransition;
           exports.version = ReactVersion;
@@ -2391,9 +2391,9 @@
           if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
             __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
           }
-          var React215 = require_react();
+          var React217 = require_react();
           var Scheduler = require_scheduler();
-          var ReactSharedInternals = React215.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React217.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           var suppressWarning = false;
           function setSuppressWarning(newSuppressWarning) {
             {
@@ -3998,7 +3998,7 @@
             {
               if (props.value == null) {
                 if (typeof props.children === "object" && props.children !== null) {
-                  React215.Children.forEach(props.children, function(child) {
+                  React217.Children.forEach(props.children, function(child) {
                     if (child == null) {
                       return;
                     }
@@ -9397,7 +9397,7 @@
               }
             }
           }
-          function createElement58(type, props, rootContainerElement, parentNamespace) {
+          function createElement59(type, props, rootContainerElement, parentNamespace) {
             var isCustomComponentTag;
             var ownerDocument = getOwnerDocumentFromRootContainer(rootContainerElement);
             var domElement;
@@ -10258,7 +10258,7 @@
               }
               parentNamespace = hostContextDev.namespace;
             }
-            var domElement = createElement58(type, props, rootContainerInstance, parentNamespace);
+            var domElement = createElement59(type, props, rootContainerInstance, parentNamespace);
             precacheFiberNode(internalInstanceHandle, domElement);
             updateFiberProps(domElement, props);
             return domElement;
@@ -12445,7 +12445,7 @@
             }
           }
           var fakeInternalInstance = {};
-          var emptyRefsObject = new React215.Component().refs;
+          var emptyRefsObject = new React217.Component().refs;
           var didWarnAboutStateAssignmentForComponent;
           var didWarnAboutUninitializedState;
           var didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate;
@@ -23523,7 +23523,7 @@
       if (true) {
         (function() {
           "use strict";
-          var React215 = require_react();
+          var React217 = require_react();
           var REACT_ELEMENT_TYPE = Symbol.for("react.element");
           var REACT_PORTAL_TYPE = Symbol.for("react.portal");
           var REACT_FRAGMENT_TYPE = Symbol.for("react.fragment");
@@ -23549,7 +23549,7 @@
             }
             return null;
           }
-          var ReactSharedInternals = React215.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React217.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           function error(format2) {
             {
               {
@@ -30198,7 +30198,7 @@ Source string: ${className}`);
 
   // ../node_modules/@griffel/react/makeStyles.esm.js
   function makeStyles2(stylesBySlots) {
-    const getStyles14 = makeStyles(stylesBySlots, insertionFactory2);
+    const getStyles15 = makeStyles(stylesBySlots, insertionFactory2);
     if (true) {
       if (isInsideComponent()) {
         throw new Error(["makeStyles(): this function cannot be called in component's scope.", "All makeStyles() calls should be top level i.e. in a root scope of a file."].join(" "));
@@ -30207,7 +30207,7 @@ Source string: ${className}`);
     return function useClasses() {
       const dir = useTextDirection();
       const renderer = useRenderer();
-      return getStyles14({
+      return getStyles15({
         dir,
         renderer
       });
@@ -30216,11 +30216,11 @@ Source string: ${className}`);
 
   // ../node_modules/@griffel/react/__styles.esm.js
   function __styles2(classesMapBySlot, cssRules2) {
-    const getStyles14 = __styles(classesMapBySlot, cssRules2, insertionFactory2);
+    const getStyles15 = __styles(classesMapBySlot, cssRules2, insertionFactory2);
     return function useClasses() {
       const dir = useTextDirection();
       const renderer = useRenderer();
-      return getStyles14({
+      return getStyles15({
         dir,
         renderer
       });
@@ -30229,11 +30229,11 @@ Source string: ${className}`);
 
   // ../node_modules/@griffel/react/__resetStyles.esm.js
   function __resetStyles2(ltrClassName, rtlClassName, cssRules2) {
-    const getStyles14 = __resetStyles(ltrClassName, rtlClassName, cssRules2, insertionFactory2);
+    const getStyles15 = __resetStyles(ltrClassName, rtlClassName, cssRules2, insertionFactory2);
     return function useClasses() {
       const dir = useTextDirection();
       const renderer = useRenderer();
-      return getStyles14({
+      return getStyles15({
         dir,
         renderer
       });
@@ -56796,7 +56796,7 @@ Tree must have either a \`aria-label\` or \`aria-labelledby\` property defined`)
   };
 
   // src/service.ts
-  var baseURL = "https://demo.lunabrain.com";
+  var baseURL = "http://localhost:8080";
   var queryClient = new QueryClient();
   var transport = createConnectTransport({
     baseUrl: `${baseURL}/api` || "error"
@@ -61793,7 +61793,7 @@ to {
     var styleCalcCount = 0;
     var getClassNamesCount = 0;
     var currentMemoizedClassNames = _memoizedClassNames;
-    var getClassNames11 = function(styleFunctionOrObject, styleProps) {
+    var getClassNames12 = function(styleFunctionOrObject, styleProps) {
       var _a5;
       if (styleProps === void 0) {
         styleProps = {};
@@ -61839,7 +61839,7 @@ to {
       }
       return current[retVal];
     };
-    return getClassNames11;
+    return getClassNames12;
   }
   function _traverseEdge(current, value) {
     value = _normalizeValue(value);
@@ -66500,10 +66500,10 @@ to {
   setVersion("@fluentui/react", "8.111.1");
 
   // ../node_modules/@fluentui/react/lib/components/Callout/Callout.js
-  var React160 = __toESM(require_react());
+  var React161 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react/lib/components/Callout/CalloutContent.base.js
-  var React156 = __toESM(require_react());
+  var React157 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react/lib/common/DirectionalHint.js
   var DirectionalHint = {
@@ -67064,7 +67064,7 @@ to {
   }
 
   // ../node_modules/@fluentui/react/lib/components/Popup/Popup.js
-  var React155 = __toESM(require_react());
+  var React156 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-hooks/lib/version.js
   setVersion("@fluentui/react-hooks", "8.6.29");
@@ -67098,10 +67098,36 @@ to {
     return ref.current.value;
   }
 
-  // ../node_modules/@fluentui/react-hooks/lib/useId.js
+  // ../node_modules/@fluentui/react-hooks/lib/useControllableValue.js
   var React149 = __toESM(require_react());
+  function useControllableValue(controlledValue, defaultUncontrolledValue, onChange) {
+    var _a5 = React149.useState(defaultUncontrolledValue), value = _a5[0], setValue = _a5[1];
+    var isControlled2 = useConst(controlledValue !== void 0);
+    var currentValue = isControlled2 ? controlledValue : value;
+    var valueRef = React149.useRef(currentValue);
+    var onChangeRef = React149.useRef(onChange);
+    React149.useEffect(function() {
+      valueRef.current = currentValue;
+      onChangeRef.current = onChange;
+    });
+    var setValueOrCallOnChange = useConst(function() {
+      return function(update, ev) {
+        var newValue = typeof update === "function" ? update(valueRef.current) : update;
+        if (onChangeRef.current) {
+          onChangeRef.current(ev, newValue);
+        }
+        if (!isControlled2) {
+          setValue(newValue);
+        }
+      };
+    });
+    return [currentValue, setValueOrCallOnChange];
+  }
+
+  // ../node_modules/@fluentui/react-hooks/lib/useId.js
+  var React150 = __toESM(require_react());
   function useId3(prefix3, providedId) {
-    var ref = React149.useRef(providedId);
+    var ref = React150.useRef(providedId);
     if (!ref.current) {
       ref.current = getId(prefix3);
     }
@@ -67109,13 +67135,13 @@ to {
   }
 
   // ../node_modules/@fluentui/react-hooks/lib/useMergedRefs.js
-  var React150 = __toESM(require_react());
+  var React151 = __toESM(require_react());
   function useMergedRefs2() {
     var refs = [];
     for (var _i = 0; _i < arguments.length; _i++) {
       refs[_i] = arguments[_i];
     }
-    var mergedCallback = React150.useCallback(function(value) {
+    var mergedCallback = React151.useCallback(function(value) {
       mergedCallback.current = value;
       for (var _i2 = 0, refs_1 = refs; _i2 < refs_1.length; _i2++) {
         var ref = refs_1[_i2];
@@ -67130,11 +67156,11 @@ to {
   }
 
   // ../node_modules/@fluentui/react-hooks/lib/useOnEvent.js
-  var React151 = __toESM(require_react());
+  var React152 = __toESM(require_react());
   function useOnEvent(element, eventName, callback, useCapture) {
-    var callbackRef = React151.useRef(callback);
+    var callbackRef = React152.useRef(callback);
     callbackRef.current = callback;
-    React151.useEffect(function() {
+    React152.useEffect(function() {
       var actualElement = element && "current" in element ? element.current : element;
       if (!actualElement) {
         return;
@@ -67157,21 +67183,21 @@ to {
   }
 
   // ../node_modules/@fluentui/react-hooks/lib/useTarget.js
-  var React153 = __toESM(require_react());
+  var React154 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-window-provider/lib/WindowProvider.js
-  var React152 = __toESM(require_react());
-  var WindowContext = React152.createContext({
+  var React153 = __toESM(require_react());
+  var WindowContext = React153.createContext({
     window: typeof window === "object" ? window : void 0
   });
   var useWindow = function() {
-    return React152.useContext(WindowContext).window;
+    return React153.useContext(WindowContext).window;
   };
 
   // ../node_modules/@fluentui/react-hooks/lib/useTarget.js
   function useTarget(target, hostElement) {
-    var previousTargetProp = React153.useRef();
-    var targetRef = React153.useRef(null);
+    var previousTargetProp = React154.useRef();
+    var targetRef = React154.useRef(null);
     var targetWindow = useWindow();
     if (!target || target !== previousTargetProp.current || typeof target === "string") {
       var currentElement = hostElement === null || hostElement === void 0 ? void 0 : hostElement.current;
@@ -67195,12 +67221,12 @@ to {
   }
 
   // ../node_modules/@fluentui/react-hooks/lib/useWarnings.js
-  var React154 = __toESM(require_react());
+  var React155 = __toESM(require_react());
   var warningId = 0;
   function useWarnings(options) {
     if (true) {
       var name_1 = options.name, props = options.props, _a5 = options.other, other = _a5 === void 0 ? [] : _a5, conditionallyRequired = options.conditionallyRequired, deprecations = options.deprecations, mutuallyExclusive = options.mutuallyExclusive, controlledUsage = options.controlledUsage;
-      var hasWarnedRef = React154.useRef(false);
+      var hasWarnedRef = React155.useRef(false);
       var componentId = useConst(function() {
         return "useWarnings_".concat(warningId++);
       });
@@ -67227,8 +67253,8 @@ to {
   // ../node_modules/@fluentui/react/lib/components/Popup/Popup.js
   function useScrollbarAsync(props, root2) {
     var async = useAsync();
-    var _a5 = React155.useState(false), needsVerticalScrollBarState = _a5[0], setNeedsVerticalScrollBar = _a5[1];
-    React155.useEffect(function() {
+    var _a5 = React156.useState(false), needsVerticalScrollBarState = _a5[0], setNeedsVerticalScrollBar = _a5[1];
+    React156.useEffect(function() {
       async.requestAnimationFrame(function() {
         var _a6;
         if (props.style && props.style.overflowY) {
@@ -67263,9 +67289,9 @@ to {
   }
   function useRestoreFocus(props, root2) {
     var _a5 = props.onRestoreFocus, onRestoreFocus = _a5 === void 0 ? defaultFocusRestorer : _a5;
-    var originalFocusedElement = React155.useRef();
-    var containsFocus = React155.useRef(false);
-    React155.useEffect(function() {
+    var originalFocusedElement = React156.useRef();
+    var containsFocus = React156.useRef(false);
+    React156.useEffect(function() {
       originalFocusedElement.current = getDocument().activeElement;
       if (doesElementContainFocus(root2.current)) {
         containsFocus.current = true;
@@ -67280,10 +67306,10 @@ to {
         originalFocusedElement.current = void 0;
       };
     }, []);
-    useOnEvent(root2, "focus", React155.useCallback(function() {
+    useOnEvent(root2, "focus", React156.useCallback(function() {
       containsFocus.current = true;
     }, []), true);
-    useOnEvent(root2, "blur", React155.useCallback(function(ev) {
+    useOnEvent(root2, "blur", React156.useCallback(function(ev) {
       if (root2.current && ev.relatedTarget && !root2.current.contains(ev.relatedTarget)) {
         containsFocus.current = false;
       }
@@ -67291,7 +67317,7 @@ to {
   }
   function useHideSiblingNodes(props, root2) {
     var shouldHideSiblings = String(props["aria-modal"]).toLowerCase() === "true" && props.enableAriaHiddenSiblings;
-    React155.useEffect(function() {
+    React156.useEffect(function() {
       if (!(shouldHideSiblings && root2.current)) {
         return;
       }
@@ -67299,15 +67325,15 @@ to {
       return unmodalize2;
     }, [root2, shouldHideSiblings]);
   }
-  var Popup = React155.forwardRef(function(propsWithoutDefaults, forwardedRef) {
+  var Popup = React156.forwardRef(function(propsWithoutDefaults, forwardedRef) {
     var props = getPropsWithDefaults({ shouldRestoreFocus: true, enableAriaHiddenSiblings: true }, propsWithoutDefaults);
-    var root2 = React155.useRef();
+    var root2 = React156.useRef();
     var mergedRootRef = useMergedRefs2(root2, forwardedRef);
     useHideSiblingNodes(props, root2);
     useRestoreFocus(props, root2);
     var role = props.role, className = props.className, ariaLabel = props.ariaLabel, ariaLabelledBy = props.ariaLabelledBy, ariaDescribedBy = props.ariaDescribedBy, style = props.style, children = props.children, onDismiss = props.onDismiss;
     var needsVerticalScrollBar = useScrollbarAsync(props, root2);
-    var onKeyDown = React155.useCallback(function(ev) {
+    var onKeyDown = React156.useCallback(function(ev) {
       switch (ev.which) {
         case KeyCodes.escape:
           if (onDismiss) {
@@ -67320,7 +67346,7 @@ to {
     }, [onDismiss]);
     var win2 = useWindow();
     useOnEvent(win2, "keydown", onKeyDown);
-    return React155.createElement("div", __assign({ ref: mergedRootRef }, getNativeProps2(props, divProperties), { className, role, "aria-label": ariaLabel, "aria-labelledby": ariaLabelledBy, "aria-describedby": ariaDescribedBy, onKeyDown, style: __assign({ overflowY: needsVerticalScrollBar ? "scroll" : void 0, outline: "none" }, style) }), children);
+    return React156.createElement("div", __assign({ ref: mergedRootRef }, getNativeProps2(props, divProperties), { className, role, "aria-label": ariaLabel, "aria-labelledby": ariaLabelledBy, "aria-describedby": ariaDescribedBy, onKeyDown, style: __assign({ overflowY: needsVerticalScrollBar ? "scroll" : void 0, outline: "none" }, style) }), children);
   });
   Popup.displayName = "Popup";
 
@@ -67351,9 +67377,9 @@ to {
   });
   function useBounds(_a5, targetRef, targetWindow) {
     var bounds = _a5.bounds, _b = _a5.minPagePadding, minPagePadding = _b === void 0 ? DEFAULT_PROPS.minPagePadding : _b, target = _a5.target;
-    var _c = React156.useState(false), targetWindowResized = _c[0], setTargetWindowResized = _c[1];
-    var cachedBounds = React156.useRef();
-    var getBounds = React156.useCallback(function() {
+    var _c = React157.useState(false), targetWindowResized = _c[0], setTargetWindowResized = _c[1];
+    var cachedBounds = React157.useRef();
+    var getBounds = React157.useCallback(function() {
       if (!cachedBounds.current || targetWindowResized) {
         var currentBounds = typeof bounds === "function" ? targetWindow ? bounds(target, targetWindow) : void 0 : bounds;
         if (!currentBounds && targetWindow) {
@@ -67381,9 +67407,9 @@ to {
   function useMaxHeight(_a5, getBounds, positions) {
     var _b;
     var calloutMaxHeight = _a5.calloutMaxHeight, finalHeight = _a5.finalHeight, directionalHint = _a5.directionalHint, directionalHintFixed = _a5.directionalHintFixed, hidden = _a5.hidden;
-    var _c = React156.useState(), maxHeight = _c[0], setMaxHeight = _c[1];
+    var _c = React157.useState(), maxHeight = _c[0], setMaxHeight = _c[1];
     var _d = (_b = positions === null || positions === void 0 ? void 0 : positions.elementPosition) !== null && _b !== void 0 ? _b : {}, top = _d.top, bottom = _d.bottom;
-    React156.useEffect(function() {
+    React157.useEffect(function() {
       var _a6;
       var _b2 = (_a6 = getBounds()) !== null && _a6 !== void 0 ? _a6 : {}, topBounds = _b2.top, bottomBounds = _b2.bottom;
       var calculatedHeight;
@@ -67403,12 +67429,12 @@ to {
     return maxHeight;
   }
   function usePositions(props, hostElement, calloutElement, targetRef, getBounds) {
-    var _a5 = React156.useState(), positions = _a5[0], setPositions = _a5[1];
-    var positionAttempts = React156.useRef(0);
-    var previousTarget = React156.useRef();
+    var _a5 = React157.useState(), positions = _a5[0], setPositions = _a5[1];
+    var positionAttempts = React157.useRef(0);
+    var previousTarget = React157.useRef();
     var async = useAsync();
     var hidden = props.hidden, target = props.target, finalHeight = props.finalHeight, calloutMaxHeight = props.calloutMaxHeight, onPositioned = props.onPositioned, directionalHint = props.directionalHint;
-    React156.useEffect(function() {
+    React157.useEffect(function() {
       if (!hidden) {
         var timerId_1 = async.requestAnimationFrame(function() {
           var _a6, _b;
@@ -67460,7 +67486,7 @@ to {
     var hidden = _a5.hidden, setInitialFocus = _a5.setInitialFocus;
     var async = useAsync();
     var hasPositions = !!positions;
-    React156.useEffect(function() {
+    React157.useEffect(function() {
       if (!hidden && setInitialFocus && hasPositions && calloutElement) {
         var timerId_2 = async.requestAnimationFrame(function() {
           return focusFirstChild(calloutElement);
@@ -67473,7 +67499,7 @@ to {
   }
   function useDismissHandlers(_a5, positions, hostElement, targetRef, targetWindow) {
     var hidden = _a5.hidden, onDismiss = _a5.onDismiss, preventDismissOnScroll = _a5.preventDismissOnScroll, preventDismissOnResize = _a5.preventDismissOnResize, preventDismissOnLostFocus = _a5.preventDismissOnLostFocus, dismissOnTargetClick = _a5.dismissOnTargetClick, shouldDismissOnWindowFocus = _a5.shouldDismissOnWindowFocus, preventDismissOnEvent = _a5.preventDismissOnEvent;
-    var isMouseDownOnPopup = React156.useRef(false);
+    var isMouseDownOnPopup = React157.useRef(false);
     var async = useAsync();
     var mouseDownHandlers = useConst([
       function() {
@@ -67484,7 +67510,7 @@ to {
       }
     ]);
     var positionsExists = !!positions;
-    React156.useEffect(function() {
+    React157.useEffect(function() {
       var dismissOnScroll = function(ev) {
         if (positionsExists && !preventDismissOnScroll) {
           dismissOnClickOrScroll(ev);
@@ -67563,12 +67589,12 @@ to {
     ]);
     return mouseDownHandlers;
   }
-  var CalloutContentBase = React156.memo(React156.forwardRef(function(propsWithoutDefaults, forwardedRef) {
+  var CalloutContentBase = React157.memo(React157.forwardRef(function(propsWithoutDefaults, forwardedRef) {
     var props = getPropsWithDefaults(DEFAULT_PROPS, propsWithoutDefaults);
     var styles4 = props.styles, style = props.style, ariaLabel = props.ariaLabel, ariaDescribedBy = props.ariaDescribedBy, ariaLabelledBy = props.ariaLabelledBy, className = props.className, isBeakVisible = props.isBeakVisible, children = props.children, beakWidth = props.beakWidth, calloutWidth = props.calloutWidth, calloutMaxWidth = props.calloutMaxWidth, calloutMinWidth = props.calloutMinWidth, doNotLayer = props.doNotLayer, finalHeight = props.finalHeight, _a5 = props.hideOverflow, hideOverflow = _a5 === void 0 ? !!finalHeight : _a5, backgroundColor = props.backgroundColor, calloutMaxHeight = props.calloutMaxHeight, onScroll = props.onScroll, _b = props.shouldRestoreFocus, shouldRestoreFocus = _b === void 0 ? true : _b, target = props.target, hidden = props.hidden, onLayerMounted = props.onLayerMounted, popupProps = props.popupProps;
-    var hostElement = React156.useRef(null);
-    var _c = React156.useState(null), calloutElement = _c[0], setCalloutElement = _c[1];
-    var calloutCallback = React156.useCallback(function(calloutEl) {
+    var hostElement = React157.useRef(null);
+    var _c = React157.useState(null), calloutElement = _c[0], setCalloutElement = _c[1];
+    var calloutCallback = React157.useCallback(function(calloutEl) {
       setCalloutElement(calloutEl);
     }, []);
     var rootRef = useMergedRefs2(hostElement, forwardedRef);
@@ -67585,7 +67611,7 @@ to {
       cssPositions.bottom = void 0;
     }
     useAutoFocus(props, positions, calloutElement);
-    React156.useEffect(function() {
+    React157.useEffect(function() {
       if (!hidden) {
         onLayerMounted === null || onLayerMounted === void 0 ? void 0 : onLayerMounted();
       }
@@ -67609,10 +67635,10 @@ to {
     });
     var overflowStyle = __assign(__assign({ maxHeight: calloutMaxHeight ? calloutMaxHeight : "100%" }, style), overflowYHidden && { overflowY: "hidden" });
     var visibilityStyle = props.hidden ? { visibility: "hidden" } : void 0;
-    return React156.createElement(
+    return React157.createElement(
       "div",
       { ref: rootRef, className: classNames2.container, style: visibilityStyle },
-      React156.createElement(
+      React157.createElement(
         "div",
         __assign({}, getNativeProps2(props, divProperties, ARIA_ROLE_ATTRIBUTES), {
           className: css(classNames2.root, positions && positions.targetEdge && ANIMATIONS[positions.targetEdge]),
@@ -67622,9 +67648,9 @@ to {
           tabIndex: -1,
           ref: calloutCallback
         }),
-        beakVisible && React156.createElement("div", { className: classNames2.beak, style: getBeakPosition(positions) }),
-        beakVisible && React156.createElement("div", { className: classNames2.beakCurtain }),
-        React156.createElement(
+        beakVisible && React157.createElement("div", { className: classNames2.beak, style: getBeakPosition(positions) }),
+        beakVisible && React157.createElement("div", { className: classNames2.beakCurtain }),
+        React157.createElement(
           Popup,
           __assign({
             // don't use getNativeElementProps for role and roledescription because it will also
@@ -67784,21 +67810,21 @@ to {
   });
 
   // ../node_modules/@fluentui/react-portal-compat-context/lib/PortalCompatContext.js
-  var React157 = __toESM(require_react());
-  var PortalCompatContext = /* @__PURE__ */ React157.createContext(void 0);
+  var React158 = __toESM(require_react());
+  var PortalCompatContext = /* @__PURE__ */ React158.createContext(void 0);
   var portalCompatContextDefaultValue = () => () => void 0;
   var PortalCompatContextProvider = PortalCompatContext.Provider;
   function usePortalCompat() {
     var _React_useContext4;
-    return (_React_useContext4 = React157.useContext(PortalCompatContext)) !== null && _React_useContext4 !== void 0 ? _React_useContext4 : portalCompatContextDefaultValue;
+    return (_React_useContext4 = React158.useContext(PortalCompatContext)) !== null && _React_useContext4 !== void 0 ? _React_useContext4 : portalCompatContextDefaultValue;
   }
 
   // ../node_modules/@fluentui/react/lib/components/Layer/Layer.base.js
-  var React159 = __toESM(require_react());
+  var React160 = __toESM(require_react());
   var ReactDOM4 = __toESM(require_react_dom());
 
   // ../node_modules/@fluentui/react/lib/components/Fabric/Fabric.base.js
-  var React158 = __toESM(require_react());
+  var React159 = __toESM(require_react());
   var getClassNames2 = classNamesFunction();
   var getFabricTheme = memoizeFunction(function(theme, isRTL2) {
     return createTheme(__assign(__assign({}, theme), { rtl: isRTL2 }));
@@ -67818,16 +67844,16 @@ to {
       needsTheme: componentDir !== contextDir
     };
   };
-  var FabricBase = React158.forwardRef(function(props, ref) {
+  var FabricBase = React159.forwardRef(function(props, ref) {
     var className = props.className, theme = props.theme, applyTheme = props.applyTheme, applyThemeToBody = props.applyThemeToBody, styles4 = props.styles;
     var classNames2 = getClassNames2(styles4, {
       theme,
       applyTheme,
       className
     });
-    var rootElement = React158.useRef(null);
+    var rootElement = React159.useRef(null);
     useApplyThemeToBody(applyThemeToBody, classNames2, rootElement);
-    return React158.createElement(React158.Fragment, null, useRenderedContent(props, classNames2, rootElement, ref));
+    return React159.createElement(React159.Fragment, null, useRenderedContent(props, classNames2, rootElement, ref));
   });
   FabricBase.displayName = "FabricBase";
   function useRenderedContent(props, _a5, rootElement, ref) {
@@ -67835,20 +67861,20 @@ to {
     var _b = props.as, Root2 = _b === void 0 ? "div" : _b, dir = props.dir, theme = props.theme;
     var divProps = getNativeProps2(props, divProperties, ["dir"]);
     var _c = getDir(props), rootDir = _c.rootDir, needsTheme = _c.needsTheme;
-    var renderedContent = React158.createElement(
+    var renderedContent = React159.createElement(
       FocusRectsProvider,
       { providerRef: rootElement },
-      React158.createElement(Root2, __assign({ dir: rootDir }, divProps, { className: root2, ref: useMergedRefs2(rootElement, ref) }))
+      React159.createElement(Root2, __assign({ dir: rootDir }, divProps, { className: root2, ref: useMergedRefs2(rootElement, ref) }))
     );
     if (needsTheme) {
       renderedContent = // eslint-disable-next-line deprecation/deprecation
-      React158.createElement(Customizer, { settings: { theme: getFabricTheme(theme, dir === "rtl") } }, renderedContent);
+      React159.createElement(Customizer, { settings: { theme: getFabricTheme(theme, dir === "rtl") } }, renderedContent);
     }
     return renderedContent;
   }
   function useApplyThemeToBody(applyThemeToBody, _a5, rootElement) {
     var bodyThemed = _a5.bodyThemed;
-    React158.useEffect(function() {
+    React159.useEffect(function() {
       if (applyThemeToBody) {
         var currentDoc_1 = getDocument(rootElement.current);
         if (currentDoc_1) {
@@ -67963,15 +67989,15 @@ to {
     }
     return false;
   };
-  var LayerBase = React159.forwardRef(function(props, ref) {
+  var LayerBase = React160.forwardRef(function(props, ref) {
     var registerPortalEl = usePortalCompat();
-    var rootRef = React159.useRef(null);
+    var rootRef = React160.useRef(null);
     var mergedRef = useMergedRefs2(rootRef, ref);
-    var layerRef = React159.useRef();
-    var fabricElementRef = React159.useRef(null);
-    var focusContext = React159.useContext(FocusRectsContext);
-    var _a5 = React159.useState(false), needRaiseLayerMount = _a5[0], setNeedRaiseLayerMount = _a5[1];
-    var focusRectsRef = React159.useCallback(function(el) {
+    var layerRef = React160.useRef();
+    var fabricElementRef = React160.useRef(null);
+    var focusContext = React160.useContext(FocusRectsContext);
+    var _a5 = React160.useState(false), needRaiseLayerMount = _a5[0], setNeedRaiseLayerMount = _a5[1];
+    var focusRectsRef = React160.useCallback(function(el) {
       var isFocusVisible = getFocusVisibility(focusContext === null || focusContext === void 0 ? void 0 : focusContext.providerRef);
       if (el && isFocusVisible) {
         el.classList.add(IsFocusVisibleClassName);
@@ -68048,7 +68074,7 @@ to {
         }
       };
     }, [hostId]);
-    React159.useEffect(function() {
+    React160.useEffect(function() {
       if (layerRef.current && needRaiseLayerMount) {
         onLayerMounted === null || onLayerMounted === void 0 ? void 0 : onLayerMounted();
         onLayerDidMount === null || onLayerDidMount === void 0 ? void 0 : onLayerDidMount();
@@ -68056,10 +68082,10 @@ to {
       }
     }, [needRaiseLayerMount, onLayerMounted, onLayerDidMount]);
     useDebugWarnings(props);
-    return React159.createElement("span", { className: "ms-layer", ref: mergedRef }, layerRef.current && ReactDOM4.createPortal(React159.createElement(
+    return React160.createElement("span", { className: "ms-layer", ref: mergedRef }, layerRef.current && ReactDOM4.createPortal(React160.createElement(
       FocusRectsProvider,
       { layerRoot: true, providerRef: fabricRef },
-      React159.createElement(Fabric, __assign({}, !eventBubblingEnabled && getFilteredEvents(), fabricProps, { className: css(classNames2.content, fabricProps === null || fabricProps === void 0 ? void 0 : fabricProps.className), ref: fabricRef }), children)
+      React160.createElement(Fabric, __assign({}, !eventBubblingEnabled && getFilteredEvents(), fabricProps, { className: css(classNames2.content, fabricProps === null || fabricProps === void 0 ? void 0 : fabricProps.className), ref: fabricRef }), children)
     ), layerRef.current));
   });
   LayerBase.displayName = "LayerBase";
@@ -68163,15 +68189,15 @@ to {
   });
 
   // ../node_modules/@fluentui/react/lib/components/Callout/Callout.js
-  var Callout = React160.forwardRef(function(_a5, forwardedRef) {
+  var Callout = React161.forwardRef(function(_a5, forwardedRef) {
     var layerProps = _a5.layerProps, doNotLayer = _a5.doNotLayer, rest = __rest(_a5, ["layerProps", "doNotLayer"]);
-    var content = React160.createElement(CalloutContent, __assign({}, rest, { doNotLayer, ref: forwardedRef }));
-    return doNotLayer ? content : React160.createElement(Layer, __assign({}, layerProps), content);
+    var content = React161.createElement(CalloutContent, __assign({}, rest, { doNotLayer, ref: forwardedRef }));
+    return doNotLayer ? content : React161.createElement(Layer, __assign({}, layerProps), content);
   });
   Callout.displayName = "Callout";
 
   // ../node_modules/@fluentui/react/lib/components/Icon/Icon.base.js
-  var React163 = __toESM(require_react());
+  var React164 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react/lib/components/Icon/Icon.types.js
   var IconType;
@@ -68183,7 +68209,7 @@ to {
   })(IconType || (IconType = {}));
 
   // ../node_modules/@fluentui/react/lib/components/Image/Image.base.js
-  var React161 = __toESM(require_react());
+  var React162 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react/lib/components/Image/Image.types.js
   var ImageFit;
@@ -68214,11 +68240,11 @@ to {
   var KEY_PREFIX = "fabricImage";
   function useLoadState(props, imageElement) {
     var onLoadingStateChange = props.onLoadingStateChange, onLoad = props.onLoad, onError = props.onError, src = props.src;
-    var _a5 = React161.useState(ImageLoadState.notLoaded), loadState = _a5[0], setLoadState = _a5[1];
+    var _a5 = React162.useState(ImageLoadState.notLoaded), loadState = _a5[0], setLoadState = _a5[1];
     useIsomorphicLayoutEffect3(function() {
       setLoadState(ImageLoadState.notLoaded);
     }, [src]);
-    React161.useEffect(function() {
+    React162.useEffect(function() {
       if (loadState === ImageLoadState.notLoaded) {
         var isLoaded = imageElement.current ? src && imageElement.current.naturalWidth > 0 && imageElement.current.naturalHeight > 0 || imageElement.current.complete && SVG_REGEX.test(src) : false;
         if (isLoaded) {
@@ -68226,24 +68252,24 @@ to {
         }
       }
     });
-    React161.useEffect(function() {
+    React162.useEffect(function() {
       onLoadingStateChange === null || onLoadingStateChange === void 0 ? void 0 : onLoadingStateChange(loadState);
     }, [loadState]);
-    var onImageLoaded = React161.useCallback(function(ev) {
+    var onImageLoaded = React162.useCallback(function(ev) {
       onLoad === null || onLoad === void 0 ? void 0 : onLoad(ev);
       if (src) {
         setLoadState(ImageLoadState.loaded);
       }
     }, [src, onLoad]);
-    var onImageError = React161.useCallback(function(ev) {
+    var onImageError = React162.useCallback(function(ev) {
       onError === null || onError === void 0 ? void 0 : onError(ev);
       setLoadState(ImageLoadState.error);
     }, [onError]);
     return [loadState, onImageLoaded, onImageError];
   }
-  var ImageBase = React161.forwardRef(function(props, forwardedRef) {
-    var frameElement = React161.useRef();
-    var imageElement = React161.useRef();
+  var ImageBase = React162.forwardRef(function(props, forwardedRef) {
+    var frameElement = React162.useRef();
+    var imageElement = React162.useRef();
     var _a5 = useLoadState(props, imageElement), loadState = _a5[0], onImageLoaded = _a5[1], onImageError = _a5[2];
     var imageProps = getNativeProps2(props, imgProperties2, [
       "width",
@@ -68270,16 +68296,16 @@ to {
       isError: loadState === ImageLoadState.error,
       isNotImageFit: imageFit === void 0
     });
-    return React161.createElement(
+    return React162.createElement(
       "div",
       { className: classNames2.root, style: { width, height }, ref: frameElement },
-      React161.createElement("img", __assign({}, imageProps, { onLoad: onImageLoaded, onError: onImageError, key: KEY_PREFIX + props.src || "", className: classNames2.image, ref: useMergedRefs2(imageElement, forwardedRef), src, alt, role, loading }))
+      React162.createElement("img", __assign({}, imageProps, { onLoad: onImageLoaded, onError: onImageError, key: KEY_PREFIX + props.src || "", className: classNames2.image, ref: useMergedRefs2(imageElement, forwardedRef), src, alt, role, loading }))
     );
   });
   ImageBase.displayName = "ImageBase";
   function useCoverStyle(props, loadState, imageElement, frameElement) {
-    var previousLoadState = React161.useRef(loadState);
-    var coverStyle = React161.useRef();
+    var previousLoadState = React162.useRef(loadState);
+    var coverStyle = React162.useRef();
     if (coverStyle === void 0 || previousLoadState.current === ImageLoadState.notLoaded && loadState === ImageLoadState.loaded) {
       coverStyle.current = computeCoverStyle(props, loadState, imageElement, frameElement);
     }
@@ -68444,7 +68470,7 @@ to {
   Image2.displayName = "Image";
 
   // ../node_modules/@fluentui/react/lib/components/Icon/FontIcon.js
-  var React162 = __toESM(require_react());
+  var React163 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react/lib/components/Icon/Icon.styles.js
   var classNames = mergeStyleSets({
@@ -68516,10 +68542,10 @@ to {
     var finalChildren = children;
     if (mergeImageProps) {
       if (typeof children === "object" && typeof children.props === "object" && accessibleName) {
-        finalChildren = React162.cloneElement(children, { alt: accessibleName });
+        finalChildren = React163.cloneElement(children, { alt: accessibleName });
       }
     }
-    return React162.createElement("i", __assign({ "data-icon-name": iconName }, containerProps, nativeProps, mergeImageProps ? {
+    return React163.createElement("i", __assign({ "data-icon-name": iconName }, containerProps, nativeProps, mergeImageProps ? {
       title: void 0,
       "aria-label": void 0
     } : {}, {
@@ -68593,17 +68619,17 @@ to {
         };
         var finalIconContentChildren = iconContentChildren;
         if (mergeImageProps && iconContentChildren && typeof iconContentChildren === "object" && accessibleName) {
-          finalIconContentChildren = React163.cloneElement(iconContentChildren, {
+          finalIconContentChildren = React164.cloneElement(iconContentChildren, {
             alt: accessibleName
           });
         }
-        return React163.createElement(RootType, __assign({ "data-icon-name": iconName }, containerProps, nativeProps, mergeImageProps ? {
+        return React164.createElement(RootType, __assign({ "data-icon-name": iconName }, containerProps, nativeProps, mergeImageProps ? {
           title: void 0,
           "aria-label": void 0
-        } : {}, { className: classNames2.root }), isImage ? React163.createElement(ImageType, __assign({}, imageProps)) : children || finalIconContentChildren);
+        } : {}, { className: classNames2.root }), isImage ? React164.createElement(ImageType, __assign({}, imageProps)) : children || finalIconContentChildren);
       };
       return IconBase2;
-    }(React163.Component)
+    }(React164.Component)
   );
 
   // ../node_modules/@fluentui/react/lib/components/Icon/Icon.js
@@ -68613,7 +68639,7 @@ to {
   Icon.displayName = "Icon";
 
   // ../node_modules/@fluentui/react/lib/components/Icon/ImageIcon.js
-  var React164 = __toESM(require_react());
+  var React165 = __toESM(require_react());
   var ImageIcon = function(props) {
     var className = props.className, imageProps = props.imageProps;
     var nativeProps = getNativeProps2(props, htmlElementProperties2, [
@@ -68632,15 +68658,15 @@ to {
     var containerProps = hasName ? {} : {
       "aria-hidden": true
     };
-    return React164.createElement(
+    return React165.createElement(
       "div",
       __assign({}, containerProps, nativeProps, { className: css(MS_ICON, classNames.root, classNames.image, className) }),
-      React164.createElement(Image2, __assign({}, imageNameProps, imageProps, { alt: hasName ? altText : "" }))
+      React165.createElement(Image2, __assign({}, imageNameProps, imageProps, { alt: hasName ? altText : "" }))
     );
   };
 
   // ../node_modules/@fluentui/react-focus/lib/components/FocusZone/FocusZone.js
-  var React165 = __toESM(require_react());
+  var React166 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-focus/lib/components/FocusZone/FocusZone.types.js
   var FocusZoneTabbableElements = {
@@ -68734,7 +68760,7 @@ to {
         var _this = this;
         var _a5, _b, _c, _d;
         _this = _super.call(this, props) || this;
-        _this._root = React165.createRef();
+        _this._root = React166.createRef();
         _this._mergedRef = createMergedRef();
         _this._onFocus = function(ev) {
           if (_this._portalContainsElement(ev.target)) {
@@ -69064,7 +69090,7 @@ to {
         var Tag2 = tag || elementType || "div";
         this._evaluateFocusBeforeRender();
         var theme = getTheme();
-        return React165.createElement(Tag2, __assign({ "aria-labelledby": ariaLabelledBy, "aria-describedby": ariaDescribedBy }, divProps, rootProps, {
+        return React166.createElement(Tag2, __assign({ "aria-labelledby": ariaLabelledBy, "aria-describedby": ariaDescribedBy }, divProps, rootProps, {
           // Once the getClassName correctly memoizes inputs this should
           // be replaced so that className is passed to getRootClass and is included there so
           // the class names will always be in the same order.
@@ -69587,17 +69613,17 @@ to {
         shouldRaiseClicks: true
       };
       return FocusZone2;
-    }(React165.Component)
+    }(React166.Component)
   );
 
   // ../node_modules/@fluentui/react/lib/components/Button/BaseButton.js
-  var React178 = __toESM(require_react());
+  var React179 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenu.js
-  var React177 = __toESM(require_react());
+  var React178 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenu.base.js
-  var React176 = __toESM(require_react());
+  var React177 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenu.types.js
   var ContextualMenuItemType;
@@ -69634,11 +69660,11 @@ to {
   }
 
   // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenuItem.base.js
-  var React166 = __toESM(require_react());
+  var React167 = __toESM(require_react());
   var defaultIconRenderer = function(props) {
     var item = props.item, classNames2 = props.classNames;
     var iconProps = item.iconProps;
-    return React166.createElement(Icon, __assign({}, iconProps, { className: classNames2.icon }));
+    return React167.createElement(Icon, __assign({}, iconProps, { className: classNames2.icon }));
   };
   var renderItemIcon = function(props) {
     var item = props.item, hasIcons = props.hasIcons;
@@ -69657,7 +69683,7 @@ to {
       var onClick = function(e2) {
         return onCheckmarkClick(item, e2);
       };
-      return React166.createElement(Icon, {
+      return React167.createElement(Icon, {
         iconName: item.canCheck !== false && isItemChecked ? "CheckMark" : "",
         className: classNames2.checkmarkIcon,
         // eslint-disable-next-line react/jsx-no-bind
@@ -69669,21 +69695,21 @@ to {
   var renderItemName = function(_a5) {
     var item = _a5.item, classNames2 = _a5.classNames;
     if (item.text || item.name) {
-      return React166.createElement("span", { className: classNames2.label }, item.text || item.name);
+      return React167.createElement("span", { className: classNames2.label }, item.text || item.name);
     }
     return null;
   };
   var renderSecondaryText = function(_a5) {
     var item = _a5.item, classNames2 = _a5.classNames;
     if (item.secondaryText) {
-      return React166.createElement("span", { className: classNames2.secondaryText }, item.secondaryText);
+      return React167.createElement("span", { className: classNames2.secondaryText }, item.secondaryText);
     }
     return null;
   };
   var renderSubMenuIcon = function(_a5) {
     var item = _a5.item, classNames2 = _a5.classNames, theme = _a5.theme;
     if (hasSubmenu(item)) {
-      return React166.createElement(Icon, __assign({ iconName: getRTL2(theme) ? "ChevronLeft" : "ChevronRight" }, item.submenuIconProps, { className: classNames2.subMenuIcon }));
+      return React167.createElement(Icon, __assign({ iconName: getRTL2(theme) ? "ChevronLeft" : "ChevronRight" }, item.submenuIconProps, { className: classNames2.subMenuIcon }));
     }
     return null;
   };
@@ -69720,7 +69746,7 @@ to {
       ContextualMenuItemBase2.prototype.render = function() {
         var _a5 = this.props, item = _a5.item, classNames2 = _a5.classNames;
         var renderContent = item.onRenderContent || this._renderLayout;
-        return React166.createElement("div", { className: item.split ? classNames2.linkContentMenu : classNames2.linkContent }, renderContent(this.props, {
+        return React167.createElement("div", { className: item.split ? classNames2.linkContentMenu : classNames2.linkContent }, renderContent(this.props, {
           renderCheckMarkIcon,
           renderItemIcon,
           renderItemName,
@@ -69729,8 +69755,8 @@ to {
         }));
       };
       ContextualMenuItemBase2.prototype._renderLayout = function(props, defaultRenders) {
-        return React166.createElement(
-          React166.Fragment,
+        return React167.createElement(
+          React167.Fragment,
           null,
           defaultRenders.renderCheckMarkIcon(props),
           defaultRenders.renderItemIcon(props),
@@ -69740,7 +69766,7 @@ to {
         );
       };
       return ContextualMenuItemBase2;
-    }(React166.Component)
+    }(React167.Component)
   );
 
   // ../node_modules/@fluentui/react/lib/components/Divider/VerticalDivider.classNames.js
@@ -70100,10 +70126,10 @@ to {
   var ContextualMenuItem = styled(ContextualMenuItemBase, getItemStyles, void 0, { scope: "ContextualMenuItem" });
 
   // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenuItemWrapper/ContextualMenuAnchor.js
-  var React169 = __toESM(require_react());
+  var React170 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenuItemWrapper/ContextualMenuItemWrapper.js
-  var React167 = __toESM(require_react());
+  var React168 = __toESM(require_react());
   var ContextualMenuItemWrapper = (
     /** @class */
     function(_super) {
@@ -70150,7 +70176,7 @@ to {
         return !shallowCompare(newProps, this.props);
       };
       return ContextualMenuItemWrapper2;
-    }(React167.Component)
+    }(React168.Component)
   );
 
   // ../node_modules/@fluentui/react/lib/utilities/keytips/KeytipConstants.js
@@ -70302,9 +70328,9 @@ to {
   }
 
   // ../node_modules/@fluentui/react/lib/components/KeytipData/useKeytipData.js
-  var React168 = __toESM(require_react());
+  var React169 = __toESM(require_react());
   function useKeytipData(options) {
-    var uniqueId = React168.useRef();
+    var uniqueId = React169.useRef();
     var keytipProps = options.keytipProps ? __assign({ disabled: options.disabled }, options.keytipProps) : void 0;
     var keytipManager = useConst(KeytipManager.getInstance());
     var prevOptions = usePrevious2(options);
@@ -70359,7 +70385,7 @@ to {
       __extends(ContextualMenuAnchor2, _super);
       function ContextualMenuAnchor2() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this._anchor = React169.createRef();
+        _this._anchor = React170.createRef();
         _this._getMemoizedMenuButtonKeytipProps = memoizeFunction(function(keytipProps) {
           return __assign(__assign({}, keytipProps), { hasMenu: true });
         });
@@ -70373,7 +70399,7 @@ to {
           }
         };
         _this._renderAriaDescription = function(ariaDescription, className) {
-          return ariaDescription ? React169.createElement("span", { id: _this._ariaDescriptionId, className }, ariaDescription) : null;
+          return ariaDescription ? React170.createElement("span", { id: _this._ariaDescriptionId, className }, ariaDescription) : null;
         };
         return _this;
       }
@@ -70399,11 +70425,11 @@ to {
         var additionalItemProperties = {
           "aria-describedby": ariaDescribedByIds
         };
-        return React169.createElement(
+        return React170.createElement(
           "div",
           null,
-          React169.createElement(KeytipData, { keytipProps: item.keytipProps, ariaDescribedBy: ariaDescribedByIds, disabled }, function(keytipAttributes) {
-            return React169.createElement(
+          React170.createElement(KeytipData, { keytipProps: item.keytipProps, ariaDescribedBy: ariaDescribedByIds, disabled }, function(keytipAttributes) {
+            return React170.createElement(
               "a",
               __assign({}, additionalItemProperties, nativeProps, keytipAttributes, {
                 ref: _this._anchor,
@@ -70425,7 +70451,7 @@ to {
                 onMouseMove: _this._onItemMouseMove,
                 onKeyDown: itemHasSubmenu ? _this._onItemKeyDown : void 0
               }),
-              React169.createElement(ChildrenRenderer, __assign({ componentRef: item.componentRef, item, classNames: classNames2, index, onCheckmarkClick: hasCheckmarks && onItemClick ? onItemClick : void 0, hasIcons, openSubMenu, dismissSubMenu, dismissMenu, getSubmenuTarget: _this._getSubmenuTarget }, itemProps)),
+              React170.createElement(ChildrenRenderer, __assign({ componentRef: item.componentRef, item, classNames: classNames2, index, onCheckmarkClick: hasCheckmarks && onItemClick ? onItemClick : void 0, hasIcons, openSubMenu, dismissSubMenu, dismissMenu, getSubmenuTarget: _this._getSubmenuTarget }, itemProps)),
               _this._renderAriaDescription(ariaDescription, classNames2.screenReaderText)
             );
           })
@@ -70436,19 +70462,19 @@ to {
   );
 
   // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenuItemWrapper/ContextualMenuButton.js
-  var React170 = __toESM(require_react());
+  var React171 = __toESM(require_react());
   var ContextualMenuButton = (
     /** @class */
     function(_super) {
       __extends(ContextualMenuButton2, _super);
       function ContextualMenuButton2() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this._btn = React170.createRef();
+        _this._btn = React171.createRef();
         _this._getMemoizedMenuButtonKeytipProps = memoizeFunction(function(keytipProps) {
           return __assign(__assign({}, keytipProps), { hasMenu: true });
         });
         _this._renderAriaDescription = function(ariaDescription, className) {
-          return ariaDescription ? React170.createElement("span", { id: _this._ariaDescriptionId, className }, ariaDescription) : null;
+          return ariaDescription ? React171.createElement("span", { id: _this._ariaDescriptionId, className }, ariaDescription) : null;
         };
         _this._getSubmenuTarget = function() {
           return _this._btn.current ? _this._btn.current : void 0;
@@ -70499,11 +70525,11 @@ to {
         if (keytipProps && itemHasSubmenu) {
           keytipProps = this._getMemoizedMenuButtonKeytipProps(keytipProps);
         }
-        return React170.createElement(KeytipData, { keytipProps, ariaDescribedBy: ariaDescribedByIds, disabled: isItemDisabled(item) }, function(keytipAttributes) {
-          return React170.createElement(
+        return React171.createElement(KeytipData, { keytipProps, ariaDescribedBy: ariaDescribedByIds, disabled: isItemDisabled(item) }, function(keytipAttributes) {
+          return React171.createElement(
             "button",
             __assign({ ref: _this._btn }, buttonNativeProperties, itemButtonProperties, keytipAttributes),
-            React170.createElement(ChildrenRenderer, __assign({ componentRef: item.componentRef, item, classNames: classNames2, index, onCheckmarkClick: hasCheckmarks && onItemClick ? onItemClick : void 0, hasIcons, openSubMenu, dismissSubMenu, dismissMenu, getSubmenuTarget: _this._getSubmenuTarget }, itemProps)),
+            React171.createElement(ChildrenRenderer, __assign({ componentRef: item.componentRef, item, classNames: classNames2, index, onCheckmarkClick: hasCheckmarks && onItemClick ? onItemClick : void 0, hasIcons, openSubMenu, dismissSubMenu, dismissMenu, getSubmenuTarget: _this._getSubmenuTarget }, itemProps)),
             _this._renderAriaDescription(ariaDescription, classNames2.screenReaderText)
           );
         });
@@ -70513,16 +70539,16 @@ to {
   );
 
   // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenuItemWrapper/ContextualMenuSplitButton.js
-  var React172 = __toESM(require_react());
+  var React173 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react/lib/components/Divider/VerticalDivider.styles.js
   var getStyles6 = function(props) {
-    var theme = props.theme, getClassNames11 = props.getClassNames, className = props.className;
+    var theme = props.theme, getClassNames12 = props.getClassNames, className = props.className;
     if (!theme) {
       throw new Error("Theme is undefined or null.");
     }
-    if (getClassNames11) {
-      var names = getClassNames11(theme);
+    if (getClassNames12) {
+      var names = getClassNames12(theme);
       return {
         wrapper: [names.wrapper],
         divider: [names.divider]
@@ -70548,15 +70574,15 @@ to {
   };
 
   // ../node_modules/@fluentui/react/lib/components/Divider/VerticalDivider.base.js
-  var React171 = __toESM(require_react());
+  var React172 = __toESM(require_react());
   var getClassNames6 = classNamesFunction();
-  var VerticalDividerBase = React171.forwardRef(function(props, ref) {
+  var VerticalDividerBase = React172.forwardRef(function(props, ref) {
     var styles4 = props.styles, theme = props.theme, deprecatedGetClassNames = props.getClassNames, className = props.className;
     var classNames2 = getClassNames6(styles4, { theme, getClassNames: deprecatedGetClassNames, className });
-    return React171.createElement(
+    return React172.createElement(
       "span",
       { className: classNames2.wrapper, ref },
-      React171.createElement("span", { className: classNames2.divider })
+      React172.createElement("span", { className: classNames2.divider })
     );
   });
   VerticalDividerBase.displayName = "VerticalDividerBase";
@@ -70591,7 +70617,7 @@ to {
           return _this._splitButton;
         };
         _this._renderAriaDescription = function(ariaDescription, className) {
-          return ariaDescription ? React172.createElement("span", { id: _this._ariaDescriptionId, className }, ariaDescription) : null;
+          return ariaDescription ? React173.createElement("span", { id: _this._ariaDescriptionId, className }, ariaDescription) : null;
         };
         _this._onItemMouseEnterPrimary = function(ev) {
           var _a5 = _this.props, item = _a5.item, onItemMouseEnter = _a5.onItemMouseEnter;
@@ -70675,8 +70701,8 @@ to {
           this._ariaDescriptionId = getId();
         }
         var ariaChecked = (_a5 = getIsChecked(item)) !== null && _a5 !== void 0 ? _a5 : void 0;
-        return React172.createElement(KeytipData, { keytipProps, disabled: isItemDisabled(item) }, function(keytipAttributes) {
-          return React172.createElement(
+        return React173.createElement(KeytipData, { keytipProps, disabled: isItemDisabled(item) }, function(keytipAttributes) {
+          return React173.createElement(
             "div",
             { "data-ktp-target": keytipAttributes["data-ktp-target"], ref: function(splitButton) {
               return _this._splitButton = splitButton;
@@ -70709,15 +70735,15 @@ to {
           "data-is-focusable": false
         };
         var itemComponentProps = item.itemProps;
-        return React172.createElement(
+        return React173.createElement(
           "button",
           __assign({}, getNativeProps2(itemProps, buttonProperties2)),
-          React172.createElement(ChildrenRenderer, __assign({ "data-is-focusable": false, item: itemProps, classNames: classNames2, index, onCheckmarkClick: hasCheckmarks && onItemClick ? onItemClick : void 0, hasIcons }, itemComponentProps))
+          React173.createElement(ChildrenRenderer, __assign({ "data-is-focusable": false, item: itemProps, classNames: classNames2, index, onCheckmarkClick: hasCheckmarks && onItemClick ? onItemClick : void 0, hasIcons }, itemComponentProps))
         );
       };
       ContextualMenuSplitButton2.prototype._renderSplitDivider = function(item) {
         var getDividerClassNames2 = item.getSplitButtonVerticalDividerClassNames || getSplitButtonVerticalDividerClassNames;
-        return React172.createElement(VerticalDivider, { getClassNames: getDividerClassNames2 });
+        return React173.createElement(VerticalDivider, { getClassNames: getDividerClassNames2 });
       };
       ContextualMenuSplitButton2.prototype._renderSplitIconButton = function(item, classNames2, index, keytipAttributes) {
         var _a5 = this.props, _b = _a5.contextualMenuItemAs, ChildrenRenderer = _b === void 0 ? ContextualMenuItem : _b, onItemMouseLeave = _a5.onItemMouseLeave, onItemMouseDown2 = _a5.onItemMouseDown, openSubMenu = _a5.openSubMenu, dismissSubMenu = _a5.dismissSubMenu, dismissMenu = _a5.dismissMenu;
@@ -70743,10 +70769,10 @@ to {
           "aria-haspopup": true
         });
         var itemComponentProps = item.itemProps;
-        return React172.createElement(
+        return React173.createElement(
           "button",
           __assign({}, buttonProps),
-          React172.createElement(ChildrenRenderer, __assign({ componentRef: item.componentRef, item: itemProps, classNames: classNames2, index, hasIcons: false, openSubMenu, dismissSubMenu, dismissMenu, getSubmenuTarget: this._getSubmenuTarget }, itemComponentProps))
+          React173.createElement(ChildrenRenderer, __assign({ componentRef: item.componentRef, item: itemProps, classNames: classNames2, index, hasIcons: false, openSubMenu, dismissSubMenu, dismissMenu, getSubmenuTarget: this._getSubmenuTarget }, itemComponentProps))
         );
       };
       ContextualMenuSplitButton2.prototype._handleTouchAndPointerEvent = function(ev) {
@@ -70770,10 +70796,10 @@ to {
   );
 
   // ../node_modules/@fluentui/react/lib/utilities/hooks/useResponsiveMode.js
-  var React174 = __toESM(require_react());
+  var React175 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react/lib/utilities/decorators/withResponsiveMode.js
-  var React173 = __toESM(require_react());
+  var React174 = __toESM(require_react());
   var ResponsiveMode;
   (function(ResponsiveMode2) {
     ResponsiveMode2[ResponsiveMode2["small"] = 0] = "small";
@@ -70821,8 +70847,8 @@ to {
 
   // ../node_modules/@fluentui/react/lib/utilities/hooks/useResponsiveMode.js
   var useResponsiveMode = function(elementRef, overrideResponsiveMode) {
-    var _a5 = React174.useState(getInitialResponsiveMode()), lastResponsiveMode = _a5[0], setLastResponsiveMode = _a5[1];
-    var onResize = React174.useCallback(function() {
+    var _a5 = React175.useState(getInitialResponsiveMode()), lastResponsiveMode = _a5[0], setLastResponsiveMode = _a5[1];
+    var onResize = React175.useCallback(function() {
       var newResponsiveMode = getResponsiveMode(getWindow2(elementRef.current));
       if (lastResponsiveMode !== newResponsiveMode) {
         setLastResponsiveMode(newResponsiveMode);
@@ -70830,7 +70856,7 @@ to {
     }, [elementRef, lastResponsiveMode]);
     var win2 = useWindow();
     useOnEvent(win2, "resize", onResize);
-    React174.useEffect(function() {
+    React175.useEffect(function() {
       if (overrideResponsiveMode === void 0) {
         onResize();
       }
@@ -70839,8 +70865,8 @@ to {
   };
 
   // ../node_modules/@fluentui/react/lib/utilities/MenuContext/MenuContext.js
-  var React175 = __toESM(require_react());
-  var MenuContext2 = React175.createContext({});
+  var React176 = __toESM(require_react());
+  var MenuContext2 = React176.createContext({});
 
   // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenu.base.js
   var getClassNames7 = classNamesFunction();
@@ -70907,13 +70933,13 @@ to {
   function useVisibility(props, targetWindow) {
     var _a5 = props.hidden, hidden = _a5 === void 0 ? false : _a5, onMenuDismissed = props.onMenuDismissed, onMenuOpened = props.onMenuOpened;
     var previousHidden = usePrevious2(hidden);
-    var onMenuOpenedRef = React176.useRef(onMenuOpened);
-    var onMenuClosedRef = React176.useRef(onMenuDismissed);
-    var propsRef = React176.useRef(props);
+    var onMenuOpenedRef = React177.useRef(onMenuOpened);
+    var onMenuClosedRef = React177.useRef(onMenuDismissed);
+    var propsRef = React177.useRef(props);
     onMenuOpenedRef.current = onMenuOpened;
     onMenuClosedRef.current = onMenuDismissed;
     propsRef.current = props;
-    React176.useEffect(function() {
+    React177.useEffect(function() {
       var _a6, _b;
       if (hidden && previousHidden === false) {
         (_a6 = onMenuClosedRef.current) === null || _a6 === void 0 ? void 0 : _a6.call(onMenuClosedRef, propsRef.current);
@@ -70921,7 +70947,7 @@ to {
         (_b = onMenuOpenedRef.current) === null || _b === void 0 ? void 0 : _b.call(onMenuOpenedRef, propsRef.current);
       }
     }, [hidden, previousHidden]);
-    React176.useEffect(function() {
+    React177.useEffect(function() {
       return function() {
         var _a6;
         return (_a6 = onMenuClosedRef.current) === null || _a6 === void 0 ? void 0 : _a6.call(onMenuClosedRef, propsRef.current);
@@ -70930,16 +70956,16 @@ to {
   }
   function useSubMenuState(_a5, dismiss) {
     var hidden = _a5.hidden, items = _a5.items, theme = _a5.theme, className = _a5.className, id = _a5.id, menuTarget = _a5.target;
-    var _b = React176.useState(), expandedMenuItemKey = _b[0], setExpandedMenuItemKey = _b[1];
-    var _c = React176.useState(), submenuTarget = _c[0], setSubmenuTarget = _c[1];
-    var _d = React176.useState(), shouldFocusOnContainer = _d[0], setShouldFocusOnContainer = _d[1];
+    var _b = React177.useState(), expandedMenuItemKey = _b[0], setExpandedMenuItemKey = _b[1];
+    var _c = React177.useState(), submenuTarget = _c[0], setSubmenuTarget = _c[1];
+    var _d = React177.useState(), shouldFocusOnContainer = _d[0], setShouldFocusOnContainer = _d[1];
     var subMenuId = useId3(COMPONENT_NAME2, id);
-    var closeSubMenu = React176.useCallback(function() {
+    var closeSubMenu = React177.useCallback(function() {
       setShouldFocusOnContainer(void 0);
       setExpandedMenuItemKey(void 0);
       setSubmenuTarget(void 0);
     }, []);
-    var openSubMenu = React176.useCallback(function(_a6, target, focusContainer) {
+    var openSubMenu = React177.useCallback(function(_a6, target, focusContainer) {
       var submenuItemKey = _a6.key;
       if (expandedMenuItemKey === submenuItemKey) {
         return;
@@ -70949,7 +70975,7 @@ to {
       setExpandedMenuItemKey(submenuItemKey);
       setSubmenuTarget(target);
     }, [expandedMenuItemKey]);
-    React176.useEffect(function() {
+    React177.useEffect(function() {
       if (hidden) {
         closeSubMenu();
       }
@@ -70986,13 +71012,13 @@ to {
   }
   function useShouldUpdateFocusOnMouseMove(_a5) {
     var delayUpdateFocusOnHover = _a5.delayUpdateFocusOnHover, hidden = _a5.hidden;
-    var shouldUpdateFocusOnMouseEvent = React176.useRef(!delayUpdateFocusOnHover);
-    var gotMouseMove = React176.useRef(false);
-    React176.useEffect(function() {
+    var shouldUpdateFocusOnMouseEvent = React177.useRef(!delayUpdateFocusOnHover);
+    var gotMouseMove = React177.useRef(false);
+    React177.useEffect(function() {
       shouldUpdateFocusOnMouseEvent.current = !delayUpdateFocusOnHover;
       gotMouseMove.current = hidden ? false : !delayUpdateFocusOnHover && gotMouseMove.current;
     }, [delayUpdateFocusOnHover, hidden]);
-    var onMenuFocusCapture = React176.useCallback(function() {
+    var onMenuFocusCapture = React177.useCallback(function() {
       if (delayUpdateFocusOnHover) {
         shouldUpdateFocusOnMouseEvent.current = false;
       }
@@ -71001,8 +71027,8 @@ to {
   }
   function usePreviousActiveElement(_a5, targetWindow, hostElement) {
     var hidden = _a5.hidden, onRestoreFocus = _a5.onRestoreFocus;
-    var previousActiveElement = React176.useRef();
-    var tryFocusPreviousActiveElement = React176.useCallback(function(options) {
+    var previousActiveElement = React177.useRef();
+    var tryFocusPreviousActiveElement = React177.useCallback(function(options) {
       var _a6, _b;
       if (onRestoreFocus) {
         onRestoreFocus(options);
@@ -71030,7 +71056,7 @@ to {
   }
   function useKeyHandlers(_a5, dismiss, hostElement, openSubMenu) {
     var theme = _a5.theme, isSubMenu = _a5.isSubMenu, _b = _a5.focusZoneProps, _c = _b === void 0 ? {} : _b, checkForNoWrap = _c.checkForNoWrap, _d = _c.direction, focusZoneDirection = _d === void 0 ? FocusZoneDirection.vertical : _d;
-    var lastKeyDownWasAltOrMeta = React176.useRef();
+    var lastKeyDownWasAltOrMeta = React177.useRef();
     var keyHandler = function(ev, shouldHandleKey, dismissAllMenus) {
       var handled = false;
       if (shouldHandleKey(ev)) {
@@ -71101,8 +71127,8 @@ to {
     return [onKeyDown, onKeyUp, onMenuKeyDown, onItemKeyDown];
   }
   function useScrollHandler(asyncTracker) {
-    var isScrollIdle = React176.useRef(true);
-    var scrollIdleTimeoutId = React176.useRef();
+    var isScrollIdle = React177.useRef(true);
+    var scrollIdleTimeoutId = React177.useRef();
     var onScroll = function() {
       if (!isScrollIdle.current && scrollIdleTimeoutId.current !== void 0) {
         asyncTracker.clearTimeout(scrollIdleTimeoutId.current);
@@ -71117,8 +71143,8 @@ to {
     return [onScroll, isScrollIdle];
   }
   function useOnSubmenuDismiss(dismiss, closeSubMenu) {
-    var isMountedRef = React176.useRef(false);
-    React176.useEffect(function() {
+    var isMountedRef = React177.useRef(false);
+    React177.useEffect(function() {
       isMountedRef.current = true;
       return function() {
         isMountedRef.current = false;
@@ -71135,7 +71161,7 @@ to {
   }
   function useSubmenuEnterTimer(_a5, asyncTracker) {
     var _b = _a5.subMenuHoverDelay, subMenuHoverDelay = _b === void 0 ? NavigationIdleDelay : _b;
-    var enterTimerRef = React176.useRef(void 0);
+    var enterTimerRef = React177.useRef(void 0);
     var cancelSubMenuTimer = function() {
       if (enterTimerRef.current !== void 0) {
         asyncTracker.clearTimeout(enterTimerRef.current);
@@ -71264,10 +71290,10 @@ to {
       onItemClickBase
     ];
   }
-  var ContextualMenuBase = React176.memo(React176.forwardRef(function(propsWithoutDefaults, forwardedRef) {
+  var ContextualMenuBase = React177.memo(React177.forwardRef(function(propsWithoutDefaults, forwardedRef) {
     var _a5;
     var _b = getPropsWithDefaults(DEFAULT_PROPS2, propsWithoutDefaults), ref = _b.ref, props = __rest(_b, ["ref"]);
-    var hostElement = React176.useRef(null);
+    var hostElement = React177.useRef(null);
     var asyncTracker = useAsync();
     var menuId = useId3(COMPONENT_NAME2, props.id);
     useWarnings({
@@ -71294,7 +71320,7 @@ to {
     var onDefaultRenderMenuList = function(menuListProps, menuClassNames, defaultRender) {
       var indexCorrection = 0;
       var items2 = menuListProps.items, totalItemCount = menuListProps.totalItemCount, hasCheckmarks2 = menuListProps.hasCheckmarks, hasIcons2 = menuListProps.hasIcons;
-      return React176.createElement("ul", { className: menuClassNames.list, onKeyDown, onKeyUp, role: "presentation" }, items2.map(function(item, index) {
+      return React177.createElement("ul", { className: menuClassNames.list, onKeyDown, onKeyUp, role: "presentation" }, items2.map(function(item, index) {
         var menuItem = renderMenuItem(item, index, indexCorrection, totalItemCount, hasCheckmarks2, hasIcons2, menuClassNames);
         if (item.itemType !== ContextualMenuItemType.Divider && item.itemType !== ContextualMenuItemType.Header) {
           var indexIncrease = item.customOnRenderListLength ? item.customOnRenderListLength : 1;
@@ -71305,7 +71331,7 @@ to {
     };
     var renderFocusZone = function(children, adjustedFocusZoneProps2) {
       var _a6 = props.focusZoneAs, ChildrenRenderer = _a6 === void 0 ? FocusZone : _a6;
-      return React176.createElement(ChildrenRenderer, __assign({}, adjustedFocusZoneProps2), children);
+      return React177.createElement(ChildrenRenderer, __assign({}, adjustedFocusZoneProps2), children);
     };
     var renderMenuItem = function(item, index, focusableElementIndex, totalItemCount, hasCheckmarks2, hasIcons2, menuClassNames) {
       var _a6;
@@ -71357,7 +71383,7 @@ to {
           renderedItems.push(renderListItem(menuItem, item.key || index, itemClassNames, item.title));
           break;
       }
-      return React176.createElement(React176.Fragment, { key: item.key }, renderedItems);
+      return React177.createElement(React177.Fragment, { key: item.key }, renderedItems);
     };
     var defaultMenuItemRenderer = function(item, menuClassNames) {
       var index = item.index, focusableElementIndex = item.focusableElementIndex, totalItemCount = item.totalItemCount, hasCheckmarks2 = item.hasCheckmarks, hasIcons2 = item.hasIcons;
@@ -71397,13 +71423,13 @@ to {
       }
       if (sectionProps.items && sectionProps.items.length > 0) {
         var correctedIndex_1 = 0;
-        return React176.createElement(
+        return React177.createElement(
           "li",
           { role: "presentation", key: sectionProps.key || sectionItem.key || "section-".concat(index) },
-          React176.createElement(
+          React177.createElement(
             "div",
             __assign({}, groupProps),
-            React176.createElement(
+            React177.createElement(
               "ul",
               { className: menuClassNames.list, role: "presentation" },
               sectionProps.topDivider && renderSeparator(index, itemClassNames, true, true),
@@ -71423,11 +71449,11 @@ to {
       }
     };
     var renderListItem = function(content, key, classNames3, title2) {
-      return React176.createElement("li", { role: "presentation", title: title2, key, className: classNames3.item }, content);
+      return React177.createElement("li", { role: "presentation", title: title2, key, className: classNames3.item }, content);
     };
     var renderSeparator = function(index, classNames3, top, fromSection) {
       if (fromSection || index > 0) {
-        return React176.createElement("li", { role: "separator", key: "separator-" + index + (top === void 0 ? "" : top ? "-top" : "-bottom"), className: classNames3.divider, "aria-hidden": "true" });
+        return React177.createElement("li", { role: "separator", key: "separator-" + index + (top === void 0 ? "" : top ? "-top" : "-bottom"), className: classNames3.divider, "aria-hidden": "true" });
       }
       return null;
     };
@@ -71457,12 +71483,12 @@ to {
         dismissMenu: dismiss
       };
       if (item.href) {
-        return React176.createElement(ContextualMenuAnchor, __assign({}, commonProps, { onItemClick: onAnchorClick }));
+        return React177.createElement(ContextualMenuAnchor, __assign({}, commonProps, { onItemClick: onAnchorClick }));
       }
       if (item.split && hasSubmenu(item)) {
-        return React176.createElement(ContextualMenuSplitButton, __assign({}, commonProps, { onItemClick, onItemClickBase, onTap: cancelSubMenuTimer }));
+        return React177.createElement(ContextualMenuSplitButton, __assign({}, commonProps, { onItemClick, onItemClickBase, onTap: cancelSubMenuTimer }));
       }
-      return React176.createElement(ContextualMenuButton, __assign({}, commonProps, { onItemClick, onItemClickBase }));
+      return React177.createElement(ContextualMenuButton, __assign({}, commonProps, { onItemClick, onItemClickBase }));
     };
     var renderHeaderMenuItem = function(item, itemClassNames, menuClassNames, index, hasCheckmarks2, hasIcons2) {
       var _a6 = props.contextualMenuItemAs, ChildrenRenderer = _a6 === void 0 ? ContextualMenuItem : _a6;
@@ -71470,10 +71496,10 @@ to {
       var divHtmlProperties = itemProps && getNativeProps2(itemProps, divProperties);
       return (
         // eslint-disable-next-line deprecation/deprecation
-        React176.createElement(
+        React177.createElement(
           "div",
           __assign({ id: id2, className: menuClassNames.header }, divHtmlProperties, { style: item.style }),
-          React176.createElement(ChildrenRenderer, __assign({ item, classNames: itemClassNames, index, onCheckmarkClick: hasCheckmarks2 ? onItemClick : void 0, hasIcons: hasIcons2 }, itemProps))
+          React177.createElement(ChildrenRenderer, __assign({ item, classNames: itemClassNames, index, onCheckmarkClick: hasCheckmarks2 ? onItemClick : void 0, hasIcons: hasIcons2 }, itemProps))
         )
       );
     };
@@ -71520,14 +71546,14 @@ to {
     if (items && items.length > 0) {
       var totalItemCount_1 = getItemCount(items);
       var calloutStyles_1 = classNames2.subComponentStyles ? classNames2.subComponentStyles.callout : void 0;
-      return React176.createElement(MenuContext2.Consumer, null, function(menuContext) {
-        return React176.createElement(
+      return React177.createElement(MenuContext2.Consumer, null, function(menuContext) {
+        return React177.createElement(
           Callout,
           __assign({ styles: calloutStyles_1, onRestoreFocus: tryFocusPreviousActiveElement }, calloutProps, { target: target || menuContext.target, isBeakVisible, beakWidth, directionalHint, directionalHintForRTL, gapSpace, coverTarget: coverTarget2, doNotLayer, className: css("ms-ContextualMenu-Callout", calloutProps && calloutProps.className), setInitialFocus: shouldFocusOnMount, onDismiss: props.onDismiss || menuContext.onDismiss, onScroll, bounds, directionalHintFixed, alignTargetEdge, hidden: props.hidden || menuContext.hidden, ref: forwardedRef }),
-          React176.createElement(
+          React177.createElement(
             "div",
             { style: contextMenuStyle, ref: hostElement, id, className: classNames2.container, tabIndex: shouldFocusOnContainer ? 0 : -1, onKeyDown: onMenuKeyDown, onKeyUp, onFocusCapture: onMenuFocusCapture, "aria-label": ariaLabel, "aria-labelledby": labelElementId, role: "menu" },
-            title && React176.createElement(
+            title && React177.createElement(
               "div",
               { className: classNames2.title },
               " ",
@@ -71549,7 +71575,7 @@ to {
             }), adjustedFocusZoneProps) : null,
             submenuProps && onRenderSubMenu2(submenuProps, onDefaultRenderSubMenu)
           ),
-          React176.createElement(FocusRects, null)
+          React177.createElement(FocusRects, null)
         );
       });
     } else {
@@ -71684,7 +71710,7 @@ to {
 
   // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenu.js
   function onRenderSubMenu(subMenuProps) {
-    return React177.createElement(LocalContextualMenu, __assign({}, subMenuProps));
+    return React178.createElement(LocalContextualMenu, __assign({}, subMenuProps));
   }
   var LocalContextualMenu = styled(ContextualMenuBase, getStyles7, function(props) {
     return {
@@ -71815,8 +71841,8 @@ to {
       __extends(BaseButton2, _super);
       function BaseButton2(props) {
         var _this = _super.call(this, props) || this;
-        _this._buttonElement = React178.createRef();
-        _this._splitButtonContainer = React178.createRef();
+        _this._buttonElement = React179.createRef();
+        _this._splitButtonContainer = React179.createRef();
         _this._mergedRef = createMergedRef();
         _this._renderedVisibleMenu = false;
         _this._getMemoizedMenuButtonKeytipProps = memoizeFunction(function(keytipProps) {
@@ -71827,13 +71853,13 @@ to {
           if (iconProps && (iconProps.iconName !== void 0 || iconProps.imageProps)) {
             var className = iconProps.className, imageProps = iconProps.imageProps, rest = __rest(iconProps, ["className", "imageProps"]);
             if (iconProps.styles) {
-              return React178.createElement(Icon, __assign({ className: css(_this._classNames.icon, className), imageProps }, rest));
+              return React179.createElement(Icon, __assign({ className: css(_this._classNames.icon, className), imageProps }, rest));
             }
             if (iconProps.iconName) {
-              return React178.createElement(FontIcon, __assign({ className: css(_this._classNames.icon, className) }, rest));
+              return React179.createElement(FontIcon, __assign({ className: css(_this._classNames.icon, className) }, rest));
             }
             if (imageProps) {
-              return React178.createElement(ImageIcon, __assign({ className: css(_this._classNames.icon, className), imageProps }, rest));
+              return React179.createElement(ImageIcon, __assign({ className: css(_this._classNames.icon, className), imageProps }, rest));
             }
           }
           return null;
@@ -71841,7 +71867,7 @@ to {
         _this._onRenderTextContents = function() {
           var _a5 = _this.props, text = _a5.text, children = _a5.children, _b = _a5.secondaryText, secondaryText = _b === void 0 ? _this.props.description : _b, _c = _a5.onRenderText, onRenderText = _c === void 0 ? _this._onRenderText : _c, _d = _a5.onRenderDescription, onRenderDescription = _d === void 0 ? _this._onRenderDescription : _d;
           if (text || typeof children === "string" || secondaryText) {
-            return React178.createElement(
+            return React179.createElement(
               "span",
               { className: _this._classNames.textContainer },
               onRenderText(_this.props, _this._onRenderText),
@@ -71857,7 +71883,7 @@ to {
             text = children;
           }
           if (_this._hasText()) {
-            return React178.createElement("span", { key: _this._labelId, className: _this._classNames.label, id: _this._labelId }, text);
+            return React179.createElement("span", { key: _this._labelId, className: _this._classNames.label, id: _this._labelId }, text);
           }
           return null;
         };
@@ -71870,19 +71896,19 @@ to {
         };
         _this._onRenderDescription = function(props2) {
           var _a5 = props2.secondaryText, secondaryText = _a5 === void 0 ? _this.props.description : _a5;
-          return secondaryText ? React178.createElement("span", { key: _this._descriptionId, className: _this._classNames.description, id: _this._descriptionId }, secondaryText) : null;
+          return secondaryText ? React179.createElement("span", { key: _this._descriptionId, className: _this._classNames.description, id: _this._descriptionId }, secondaryText) : null;
         };
         _this._onRenderAriaDescription = function() {
           var ariaDescription = _this.props.ariaDescription;
-          return ariaDescription ? React178.createElement("span", { className: _this._classNames.screenReaderText, id: _this._ariaDescriptionId }, ariaDescription) : null;
+          return ariaDescription ? React179.createElement("span", { className: _this._classNames.screenReaderText, id: _this._ariaDescriptionId }, ariaDescription) : null;
         };
         _this._onRenderMenuIcon = function(props2) {
           var menuIconProps = _this.props.menuIconProps;
-          return React178.createElement(FontIcon, __assign({ iconName: "ChevronDown" }, menuIconProps, { className: _this._classNames.menuIcon }));
+          return React179.createElement(FontIcon, __assign({ iconName: "ChevronDown" }, menuIconProps, { className: _this._classNames.menuIcon }));
         };
         _this._onRenderMenu = function(menuProps) {
           var MenuType = _this.props.menuAs ? composeComponentAs(_this.props.menuAs, ContextualMenu) : ContextualMenu;
-          return React178.createElement(MenuType, __assign({}, menuProps));
+          return React179.createElement(MenuType, __assign({}, menuProps));
         };
         _this._onDismissMenu = function(ev) {
           var menuProps = _this.props.menuProps;
@@ -72063,10 +72089,10 @@ to {
       });
       BaseButton2.prototype.render = function() {
         var _a5;
-        var _b = this.props, ariaDescription = _b.ariaDescription, ariaLabel = _b.ariaLabel, ariaHidden = _b.ariaHidden, className = _b.className, disabled = _b.disabled, allowDisabledFocus = _b.allowDisabledFocus, primaryDisabled = _b.primaryDisabled, _c = _b.secondaryText, secondaryText = _c === void 0 ? this.props.description : _c, href = _b.href, iconProps = _b.iconProps, menuIconProps = _b.menuIconProps, styles4 = _b.styles, checked = _b.checked, variantClassName = _b.variantClassName, theme = _b.theme, toggle = _b.toggle, getClassNames11 = _b.getClassNames, role = _b.role;
+        var _b = this.props, ariaDescription = _b.ariaDescription, ariaLabel = _b.ariaLabel, ariaHidden = _b.ariaHidden, className = _b.className, disabled = _b.disabled, allowDisabledFocus = _b.allowDisabledFocus, primaryDisabled = _b.primaryDisabled, _c = _b.secondaryText, secondaryText = _c === void 0 ? this.props.description : _c, href = _b.href, iconProps = _b.iconProps, menuIconProps = _b.menuIconProps, styles4 = _b.styles, checked = _b.checked, variantClassName = _b.variantClassName, theme = _b.theme, toggle = _b.toggle, getClassNames12 = _b.getClassNames, role = _b.role;
         var menuHidden = this.state.menuHidden;
         var isPrimaryButtonDisabled = disabled || primaryDisabled;
-        this._classNames = getClassNames11 ? getClassNames11(theme, className, variantClassName, iconProps && iconProps.className, menuIconProps && menuIconProps.className, isPrimaryButtonDisabled, checked, !menuHidden, !!this.props.menuProps, this.props.split, !!allowDisabledFocus) : getBaseButtonClassNames(theme, styles4, className, variantClassName, iconProps && iconProps.className, menuIconProps && menuIconProps.className, isPrimaryButtonDisabled, !!this.props.menuProps, checked, !menuHidden, this.props.split);
+        this._classNames = getClassNames12 ? getClassNames12(theme, className, variantClassName, iconProps && iconProps.className, menuIconProps && menuIconProps.className, isPrimaryButtonDisabled, checked, !menuHidden, !!this.props.menuProps, this.props.split, !!allowDisabledFocus) : getBaseButtonClassNames(theme, styles4, className, variantClassName, iconProps && iconProps.className, menuIconProps && menuIconProps.className, isPrimaryButtonDisabled, !!this.props.menuProps, checked, !menuHidden, this.props.split);
         var _d = this, _ariaDescriptionId = _d._ariaDescriptionId, _labelId = _d._labelId, _descriptionId = _d._descriptionId;
         var renderAsAnchor = !isPrimaryButtonDisabled && !!href;
         var tag = renderAsAnchor ? "a" : "button";
@@ -72176,10 +72202,10 @@ to {
           keytipProps = this._getMemoizedMenuButtonKeytipProps(keytipProps);
         }
         var Button4 = function(keytipAttributes) {
-          return React178.createElement(
+          return React179.createElement(
             Tag2,
             __assign({}, buttonProps, keytipAttributes),
-            React178.createElement(
+            React179.createElement(
               "span",
               { className: _this._classNames.flexContainer, "data-automationid": "splitbuttonprimary" },
               onRenderIcon(props, _this._onRenderIcon),
@@ -72193,23 +72219,23 @@ to {
         };
         var Content3 = keytipProps ? (
           // If we're making a split button, we won't put the keytip here
-          React178.createElement(KeytipData, { keytipProps: !this._isSplitButton ? keytipProps : void 0, ariaDescribedBy: buttonProps["aria-describedby"], disabled }, function(keytipAttributes) {
+          React179.createElement(KeytipData, { keytipProps: !this._isSplitButton ? keytipProps : void 0, ariaDescribedBy: buttonProps["aria-describedby"], disabled }, function(keytipAttributes) {
             return Button4(keytipAttributes);
           })
         ) : Button4();
         if (menuProps && menuProps.doNotLayer) {
-          return React178.createElement(
-            React178.Fragment,
+          return React179.createElement(
+            React179.Fragment,
             null,
             Content3,
             this._shouldRenderMenu() && onRenderMenu(this._getMenuProps(menuProps), this._onRenderMenu)
           );
         }
-        return React178.createElement(
-          React178.Fragment,
+        return React179.createElement(
+          React179.Fragment,
           null,
           Content3,
-          React178.createElement(FocusRects, null)
+          React179.createElement(FocusRects, null)
         );
       };
       BaseButton2.prototype._shouldRenderMenu = function() {
@@ -72254,10 +72280,10 @@ to {
           assign2(buttonProps, primaryActionButtonProps);
         }
         var SplitButton2 = function(keytipAttributes) {
-          return React178.createElement(
+          return React179.createElement(
             "div",
             __assign({}, containerProps, { "data-ktp-target": keytipAttributes ? keytipAttributes["data-ktp-target"] : void 0, role: role ? role : "button", "aria-disabled": disabled, "aria-haspopup": true, "aria-expanded": !menuHidden, "aria-pressed": toggle ? !!checked : void 0, "aria-describedby": mergeAriaAttributeValues(buttonProps["aria-describedby"], keytipAttributes ? keytipAttributes["aria-describedby"] : void 0), className: classNames2 && classNames2.splitButtonContainer, onKeyDown: _this._onSplitButtonContainerKeyDown, onTouchStart: _this._onTouchStart, ref: _this._splitButtonContainer, "data-is-focusable": true, onClick: !disabled && !primaryDisabled ? _this._onSplitButtonPrimaryClick : void 0, tabIndex: !disabled && !primaryDisabled || allowDisabledFocus ? 0 : void 0, "aria-roledescription": buttonProps["aria-roledescription"], onFocusCapture: _this._onSplitContainerFocusCapture }),
-            React178.createElement(
+            React179.createElement(
               "span",
               { style: { display: "flex", width: "100%" } },
               _this._onRenderContent(tag, buttonProps),
@@ -72266,7 +72292,7 @@ to {
             )
           );
         };
-        return keytipProps ? React178.createElement(KeytipData, { keytipProps, disabled }, function(keytipAttributes) {
+        return keytipProps ? React179.createElement(KeytipData, { keytipProps, disabled }, function(keytipAttributes) {
           return SplitButton2(keytipAttributes);
         }) : SplitButton2();
       };
@@ -72275,7 +72301,7 @@ to {
           var onClick = function(ev) {
             ev.stopPropagation();
           };
-          return React178.createElement("span", { className: classNames2.divider, "aria-hidden": true, onClick });
+          return React179.createElement("span", { className: classNames2.divider, "aria-hidden": true, onClick });
         }
         return null;
       };
@@ -72289,7 +72315,7 @@ to {
           };
         }
         var splitButtonProps = __assign(__assign({}, splitButtonMenuProps), { styles: classNames2, checked, disabled, allowDisabledFocus, onClick: this._onMenuClick, menuProps: void 0, iconProps: __assign(__assign({}, menuIconProps), { className: this._classNames.menuIcon }), ariaLabel: splitButtonAriaLabel, "aria-haspopup": true, "aria-expanded": !menuHidden, "data-is-focusable": false });
-        return React178.createElement(BaseButton2, __assign({}, splitButtonProps, { "data-ktp-execute-target": keytipAttributes ? keytipAttributes["data-ktp-execute-target"] : keytipAttributes, onMouseDown: this._onMouseDown, tabIndex: primaryDisabled && !allowDisabledFocus ? 0 : -1 }));
+        return React179.createElement(BaseButton2, __assign({}, splitButtonProps, { "data-ktp-execute-target": keytipAttributes ? keytipAttributes["data-ktp-execute-target"] : keytipAttributes, onMouseDown: this._onMouseDown, tabIndex: primaryDisabled && !allowDisabledFocus ? 0 : -1 }));
       };
       BaseButton2.prototype._onPointerDown = function(ev) {
         var onPointerDown = this.props.onPointerDown;
@@ -72332,11 +72358,11 @@ to {
       };
       BaseButton2.contextType = FocusRectsContext;
       return BaseButton2;
-    }(React178.Component)
+    }(React179.Component)
   );
 
   // ../node_modules/@fluentui/react/lib/components/Button/DefaultButton/DefaultButton.js
-  var React179 = __toESM(require_react());
+  var React180 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react/lib/components/Button/BaseButton.styles.js
   var noOutline = {
@@ -72854,17 +72880,17 @@ to {
       }
       DefaultButton2.prototype.render = function() {
         var _a5 = this.props, _b = _a5.primary, primary = _b === void 0 ? false : _b, styles4 = _a5.styles, theme = _a5.theme;
-        return React179.createElement(BaseButton, __assign({}, this.props, { variantClassName: primary ? "ms-Button--primary" : "ms-Button--default", styles: getStyles10(theme, styles4, primary), onRenderDescription: nullRender }));
+        return React180.createElement(BaseButton, __assign({}, this.props, { variantClassName: primary ? "ms-Button--primary" : "ms-Button--default", styles: getStyles10(theme, styles4, primary), onRenderDescription: nullRender }));
       };
       DefaultButton2 = __decorate([
         customizable("DefaultButton", ["theme", "styles"], true)
       ], DefaultButton2);
       return DefaultButton2;
-    }(React179.Component)
+    }(React180.Component)
   );
 
   // ../node_modules/@fluentui/react/lib/components/Button/PrimaryButton/PrimaryButton.js
-  var React180 = __toESM(require_react());
+  var React181 = __toESM(require_react());
   var PrimaryButton = (
     /** @class */
     function(_super) {
@@ -72873,18 +72899,342 @@ to {
         return _super !== null && _super.apply(this, arguments) || this;
       }
       PrimaryButton3.prototype.render = function() {
-        return React180.createElement(DefaultButton, __assign({}, this.props, { primary: true, onRenderDescription: nullRender }));
+        return React181.createElement(DefaultButton, __assign({}, this.props, { primary: true, onRenderDescription: nullRender }));
       };
       PrimaryButton3 = __decorate([
         customizable("PrimaryButton", ["theme", "styles"], true)
       ], PrimaryButton3);
       return PrimaryButton3;
-    }(React180.Component)
+    }(React181.Component)
   );
 
+  // ../node_modules/@fluentui/react/lib/components/Checkbox/Checkbox.base.js
+  var React182 = __toESM(require_react());
+  var getClassNames8 = classNamesFunction();
+  var CheckboxBase = React182.forwardRef(function(props, forwardedRef) {
+    var disabled = props.disabled, required = props.required, inputProps = props.inputProps, name = props.name, ariaLabel = props.ariaLabel, ariaLabelledBy = props.ariaLabelledBy, ariaDescribedBy = props.ariaDescribedBy, ariaPositionInSet = props.ariaPositionInSet, ariaSetSize = props.ariaSetSize, title = props.title, checkmarkIconProps = props.checkmarkIconProps, styles4 = props.styles, theme = props.theme, className = props.className, _a5 = props.boxSide, boxSide = _a5 === void 0 ? "start" : _a5;
+    var id = useId3("checkbox-", props.id);
+    var rootRef = React182.useRef(null);
+    var mergedRootRefs = useMergedRefs2(rootRef, forwardedRef);
+    var inputRef = React182.useRef(null);
+    var _b = useControllableValue(props.checked, props.defaultChecked, props.onChange), isChecked = _b[0], setIsChecked = _b[1];
+    var _c = useControllableValue(props.indeterminate, props.defaultIndeterminate), isIndeterminate = _c[0], setIsIndeterminate = _c[1];
+    useFocusRects(rootRef);
+    useDebugWarning(props);
+    var classNames2 = getClassNames8(styles4, {
+      theme,
+      className,
+      disabled,
+      indeterminate: isIndeterminate,
+      checked: isChecked,
+      reversed: boxSide !== "start",
+      isUsingCustomLabelRender: !!props.onRenderLabel
+    });
+    var onChange = React182.useCallback(function(event) {
+      if (isIndeterminate) {
+        setIsChecked(!!isChecked, event);
+        setIsIndeterminate(false);
+      } else {
+        setIsChecked(!isChecked, event);
+      }
+    }, [setIsChecked, setIsIndeterminate, isIndeterminate, isChecked]);
+    var defaultLabelRenderer = React182.useCallback(function(checkboxProps) {
+      if (!checkboxProps) {
+        return null;
+      }
+      return checkboxProps.label ? React182.createElement("span", { className: classNames2.text, title: checkboxProps.title }, checkboxProps.label) : null;
+    }, [classNames2.text]);
+    var setNativeIndeterminate = React182.useCallback(function(indeterminate) {
+      if (!inputRef.current) {
+        return;
+      }
+      var value = !!indeterminate;
+      inputRef.current.indeterminate = value;
+      setIsIndeterminate(value);
+    }, [setIsIndeterminate]);
+    useComponentRef(props, isChecked, isIndeterminate, setNativeIndeterminate, inputRef);
+    React182.useEffect(function() {
+      return setNativeIndeterminate(isIndeterminate);
+    }, [setNativeIndeterminate, isIndeterminate]);
+    var onRenderLabel = props.onRenderLabel || defaultLabelRenderer;
+    var ariaChecked = isIndeterminate ? "mixed" : void 0;
+    var mergedInputProps = __assign(__assign({ className: classNames2.input, type: "checkbox" }, inputProps), { checked: !!isChecked, disabled, required, name, id, title, onChange, "aria-disabled": disabled, "aria-label": ariaLabel, "aria-labelledby": ariaLabelledBy, "aria-describedby": ariaDescribedBy, "aria-posinset": ariaPositionInSet, "aria-setsize": ariaSetSize, "aria-checked": ariaChecked });
+    return React182.createElement(
+      "div",
+      { className: classNames2.root, title, ref: mergedRootRefs },
+      React182.createElement("input", __assign({}, mergedInputProps, { ref: inputRef, title, "data-ktp-execute-target": true })),
+      React182.createElement(
+        "label",
+        { className: classNames2.label, htmlFor: id },
+        React182.createElement(
+          "div",
+          { className: classNames2.checkbox, "data-ktp-target": true },
+          React182.createElement(Icon, __assign({ iconName: "CheckMark" }, checkmarkIconProps, { className: classNames2.checkmark }))
+        ),
+        onRenderLabel(props, defaultLabelRenderer)
+      )
+    );
+  });
+  CheckboxBase.displayName = "CheckboxBase";
+  function useDebugWarning(props) {
+    if (true) {
+      useWarnings({
+        name: "Checkbox",
+        props,
+        mutuallyExclusive: {
+          checked: "defaultChecked",
+          indeterminate: "defaultIndeterminate"
+        }
+      });
+    }
+  }
+  function useComponentRef(props, isChecked, isIndeterminate, setIndeterminate, checkBoxRef) {
+    React182.useImperativeHandle(props.componentRef, function() {
+      return {
+        get checked() {
+          return !!isChecked;
+        },
+        get indeterminate() {
+          return !!isIndeterminate;
+        },
+        set indeterminate(indeterminate) {
+          setIndeterminate(indeterminate);
+        },
+        focus: function() {
+          if (checkBoxRef.current) {
+            checkBoxRef.current.focus();
+          }
+        }
+      };
+    }, [checkBoxRef, isChecked, isIndeterminate, setIndeterminate]);
+  }
+
+  // ../node_modules/@fluentui/react/lib/components/Checkbox/Checkbox.styles.js
+  var GlobalClassNames7 = {
+    root: "ms-Checkbox",
+    label: "ms-Checkbox-label",
+    checkbox: "ms-Checkbox-checkbox",
+    checkmark: "ms-Checkbox-checkmark",
+    text: "ms-Checkbox-text"
+  };
+  var MS_CHECKBOX_LABEL_SIZE = "20px";
+  var MS_CHECKBOX_TRANSITION_DURATION = "200ms";
+  var MS_CHECKBOX_TRANSITION_TIMING = "cubic-bezier(.4, 0, .23, 1)";
+  var getStyles11 = function(props) {
+    var _a5, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t2;
+    var className = props.className, theme = props.theme, reversed = props.reversed, checked = props.checked, disabled = props.disabled, isUsingCustomLabelRender = props.isUsingCustomLabelRender, indeterminate = props.indeterminate;
+    var semanticColors = theme.semanticColors, effects = theme.effects, palette = theme.palette, fonts = theme.fonts;
+    var classNames2 = getGlobalClassNames(GlobalClassNames7, theme);
+    var checkmarkFontColor = semanticColors.inputForegroundChecked;
+    var checkmarkFontColorHovered = palette.neutralSecondary;
+    var checkboxBorderColor = palette.neutralPrimary;
+    var checkboxBorderIndeterminateColor = semanticColors.inputBackgroundChecked;
+    var checkboxBorderColorChecked = semanticColors.inputBackgroundChecked;
+    var checkboxBorderColorDisabled = semanticColors.disabledBodySubtext;
+    var checkboxBorderHoveredColor = semanticColors.inputBorderHovered;
+    var checkboxBorderIndeterminateHoveredColor = semanticColors.inputBackgroundCheckedHovered;
+    var checkboxBackgroundChecked = semanticColors.inputBackgroundChecked;
+    var checkboxBackgroundCheckedHovered = semanticColors.inputBackgroundCheckedHovered;
+    var checkboxBorderColorCheckedHovered = semanticColors.inputBackgroundCheckedHovered;
+    var checkboxHoveredTextColor = semanticColors.inputTextHovered;
+    var checkboxBackgroundDisabledChecked = semanticColors.disabledBodySubtext;
+    var checkboxTextColor = semanticColors.bodyText;
+    var checkboxTextColorDisabled = semanticColors.disabledText;
+    var indeterminateDotStyles = [
+      (_a5 = {
+        content: '""',
+        borderRadius: effects.roundedCorner2,
+        position: "absolute",
+        width: 10,
+        height: 10,
+        top: 4,
+        left: 4,
+        boxSizing: "border-box",
+        borderWidth: 5,
+        borderStyle: "solid",
+        borderColor: disabled ? checkboxBorderColorDisabled : checkboxBorderIndeterminateColor,
+        transitionProperty: "border-width, border, border-color",
+        transitionDuration: MS_CHECKBOX_TRANSITION_DURATION,
+        transitionTimingFunction: MS_CHECKBOX_TRANSITION_TIMING
+      }, _a5[HighContrastSelector] = {
+        borderColor: "WindowText"
+      }, _a5)
+    ];
+    return {
+      root: [
+        classNames2.root,
+        {
+          position: "relative",
+          display: "flex"
+        },
+        reversed && "reversed",
+        checked && "is-checked",
+        !disabled && "is-enabled",
+        disabled && "is-disabled",
+        !disabled && [
+          !checked && (_b = {}, _b[":hover .".concat(classNames2.checkbox)] = (_c = {
+            borderColor: checkboxBorderHoveredColor
+          }, _c[HighContrastSelector] = {
+            borderColor: "Highlight"
+          }, _c), _b[":focus .".concat(classNames2.checkbox)] = { borderColor: checkboxBorderHoveredColor }, _b[":hover .".concat(classNames2.checkmark)] = (_d = {
+            color: checkmarkFontColorHovered,
+            opacity: "1"
+          }, _d[HighContrastSelector] = {
+            color: "Highlight"
+          }, _d), _b),
+          checked && !indeterminate && (_e = {}, _e[":hover .".concat(classNames2.checkbox)] = {
+            background: checkboxBackgroundCheckedHovered,
+            borderColor: checkboxBorderColorCheckedHovered
+          }, _e[":focus .".concat(classNames2.checkbox)] = {
+            background: checkboxBackgroundCheckedHovered,
+            borderColor: checkboxBorderColorCheckedHovered
+          }, _e[HighContrastSelector] = (_f = {}, _f[":hover .".concat(classNames2.checkbox)] = {
+            background: "Highlight",
+            borderColor: "Highlight"
+          }, _f[":focus .".concat(classNames2.checkbox)] = {
+            background: "Highlight"
+          }, _f[":focus:hover .".concat(classNames2.checkbox)] = {
+            background: "Highlight"
+          }, _f[":focus:hover .".concat(classNames2.checkmark)] = {
+            color: "Window"
+          }, _f[":hover .".concat(classNames2.checkmark)] = {
+            color: "Window"
+          }, _f), _e),
+          indeterminate && (_g = {}, _g[":hover .".concat(classNames2.checkbox, ", :hover .").concat(classNames2.checkbox, ":after")] = (_h = {
+            borderColor: checkboxBorderIndeterminateHoveredColor
+          }, _h[HighContrastSelector] = {
+            borderColor: "WindowText"
+          }, _h), _g[":focus .".concat(classNames2.checkbox)] = {
+            borderColor: checkboxBorderIndeterminateHoveredColor
+          }, _g[":hover .".concat(classNames2.checkmark)] = {
+            opacity: "0"
+          }, _g),
+          (_j = {}, _j[":hover .".concat(classNames2.text, ", :focus .").concat(classNames2.text)] = (_k = {
+            color: checkboxHoveredTextColor
+          }, _k[HighContrastSelector] = {
+            color: disabled ? "GrayText" : "WindowText"
+          }, _k), _j)
+        ],
+        className
+      ],
+      input: (_l = {
+        position: "absolute",
+        background: "none",
+        opacity: 0
+      }, _l[".".concat(IsFocusVisibleClassName, " &:focus + label::before")] = (_m = {
+        outline: "1px solid " + theme.palette.neutralSecondary,
+        outlineOffset: "2px"
+      }, _m[HighContrastSelector] = {
+        outline: "1px solid WindowText"
+      }, _m), _l),
+      label: [
+        classNames2.label,
+        theme.fonts.medium,
+        {
+          display: "flex",
+          alignItems: isUsingCustomLabelRender ? "center" : "flex-start",
+          cursor: disabled ? "default" : "pointer",
+          position: "relative",
+          userSelect: "none"
+        },
+        reversed && {
+          flexDirection: "row-reverse",
+          justifyContent: "flex-end"
+        },
+        {
+          "&::before": {
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            content: '""',
+            pointerEvents: "none"
+          }
+        }
+      ],
+      checkbox: [
+        classNames2.checkbox,
+        (_o = {
+          position: "relative",
+          display: "flex",
+          flexShrink: 0,
+          alignItems: "center",
+          justifyContent: "center",
+          height: MS_CHECKBOX_LABEL_SIZE,
+          width: MS_CHECKBOX_LABEL_SIZE,
+          border: "1px solid ".concat(checkboxBorderColor),
+          borderRadius: effects.roundedCorner2,
+          boxSizing: "border-box",
+          transitionProperty: "background, border, border-color",
+          transitionDuration: MS_CHECKBOX_TRANSITION_DURATION,
+          transitionTimingFunction: MS_CHECKBOX_TRANSITION_TIMING,
+          /* in case the icon is bigger than the box */
+          overflow: "hidden",
+          ":after": indeterminate ? indeterminateDotStyles : null
+        }, _o[HighContrastSelector] = __assign({ borderColor: "WindowText" }, getHighContrastNoAdjustStyle()), _o),
+        indeterminate && {
+          borderColor: checkboxBorderIndeterminateColor
+        },
+        !reversed ? (
+          // This margin on the checkbox is for backwards compat. Notably it has the effect where a customRender
+          // is used, there will be only a 4px margin from checkbox to label. The label by default would have
+          // another 4px margin for a total of 8px margin between checkbox and label. We don't combine the two
+          // (and move it into the text) to not incur a breaking change for everyone using custom render atm.
+          {
+            marginRight: 4
+          }
+        ) : {
+          marginLeft: 4
+        },
+        !disabled && !indeterminate && checked && (_p = {
+          background: checkboxBackgroundChecked,
+          borderColor: checkboxBorderColorChecked
+        }, _p[HighContrastSelector] = {
+          background: "Highlight",
+          borderColor: "Highlight"
+        }, _p),
+        disabled && (_q = {
+          borderColor: checkboxBorderColorDisabled
+        }, _q[HighContrastSelector] = {
+          borderColor: "GrayText"
+        }, _q),
+        checked && disabled && (_r = {
+          background: checkboxBackgroundDisabledChecked,
+          borderColor: checkboxBorderColorDisabled
+        }, _r[HighContrastSelector] = {
+          background: "Window"
+        }, _r)
+      ],
+      checkmark: [
+        classNames2.checkmark,
+        (_s = {
+          opacity: checked && !indeterminate ? "1" : "0",
+          color: checkmarkFontColor
+        }, _s[HighContrastSelector] = __assign({ color: disabled ? "GrayText" : "Window" }, getHighContrastNoAdjustStyle()), _s)
+      ],
+      text: [
+        classNames2.text,
+        (_t2 = {
+          color: disabled ? checkboxTextColorDisabled : checkboxTextColor,
+          fontSize: fonts.medium.fontSize,
+          lineHeight: "20px"
+        }, _t2[HighContrastSelector] = __assign({ color: disabled ? "GrayText" : "WindowText" }, getHighContrastNoAdjustStyle()), _t2),
+        !reversed ? {
+          marginLeft: 4
+        } : {
+          marginRight: 4
+        }
+      ]
+    };
+  };
+
+  // ../node_modules/@fluentui/react/lib/components/Checkbox/Checkbox.js
+  var Checkbox2 = styled(CheckboxBase, getStyles11, void 0, { scope: "Checkbox" });
+
   // ../node_modules/@fluentui/react/lib/components/Label/Label.base.js
-  var React181 = __toESM(require_react());
-  var getClassNames8 = classNamesFunction({
+  var React183 = __toESM(require_react());
+  var getClassNames9 = classNamesFunction({
     // Label is used a lot by other components.
     // It's likely to see expected cases which pass different className to the Label.
     // Therefore setting a larger cache size.
@@ -72899,20 +73249,20 @@ to {
       }
       LabelBase2.prototype.render = function() {
         var _a5 = this.props, _b = _a5.as, RootType = _b === void 0 ? "label" : _b, children = _a5.children, className = _a5.className, disabled = _a5.disabled, styles4 = _a5.styles, required = _a5.required, theme = _a5.theme;
-        var classNames2 = getClassNames8(styles4, {
+        var classNames2 = getClassNames9(styles4, {
           className,
           disabled,
           required,
           theme
         });
-        return React181.createElement(RootType, __assign({}, getNativeProps2(this.props, divProperties), { className: classNames2.root }), children);
+        return React183.createElement(RootType, __assign({}, getNativeProps2(this.props, divProperties), { className: classNames2.root }), children);
       };
       return LabelBase2;
-    }(React181.Component)
+    }(React183.Component)
   );
 
   // ../node_modules/@fluentui/react/lib/components/Label/Label.styles.js
-  var getStyles11 = function(props) {
+  var getStyles12 = function(props) {
     var _a5;
     var theme = props.theme, className = props.className, disabled = props.disabled, required = props.required;
     var semanticColors = theme.semanticColors;
@@ -72954,13 +73304,13 @@ to {
   };
 
   // ../node_modules/@fluentui/react/lib/components/Label/Label.js
-  var Label2 = styled(LabelBase, getStyles11, void 0, {
+  var Label2 = styled(LabelBase, getStyles12, void 0, {
     scope: "Label"
   });
 
   // ../node_modules/@fluentui/react/lib/components/TextField/TextField.base.js
-  var React182 = __toESM(require_react());
-  var getClassNames9 = classNamesFunction();
+  var React184 = __toESM(require_react());
+  var getClassNames10 = classNamesFunction();
   var DEFAULT_STATE_VALUE = "";
   var COMPONENT_NAME4 = "TextField";
   var REVEAL_ICON_NAME = "RedEye";
@@ -72971,7 +73321,7 @@ to {
       __extends(TextFieldBase2, _super);
       function TextFieldBase2(props) {
         var _this = _super.call(this, props) || this;
-        _this._textElement = React182.createRef();
+        _this._textElement = React184.createRef();
         _this._onFocus = function(ev) {
           if (_this.props.onFocus) {
             _this.props.onFocus(ev);
@@ -72996,13 +73346,13 @@ to {
           var label = props2.label, required = props2.required;
           var labelStyles = _this._classNames.subComponentStyles ? _this._classNames.subComponentStyles.label : void 0;
           if (label) {
-            return React182.createElement(Label2, { required, htmlFor: _this._id, styles: labelStyles, disabled: props2.disabled, id: _this._labelId }, props2.label);
+            return React184.createElement(Label2, { required, htmlFor: _this._id, styles: labelStyles, disabled: props2.disabled, id: _this._labelId }, props2.label);
           }
           return null;
         };
         _this._onRenderDescription = function(props2) {
           if (props2.description) {
-            return React182.createElement("span", { className: _this._classNames.description }, props2.description);
+            return React184.createElement("span", { className: _this._classNames.description }, props2.description);
           }
           return null;
         };
@@ -73108,7 +73458,7 @@ to {
         var errorMessage = this._errorMessage;
         var isInvalid = typeof invalid === "boolean" ? invalid : !!errorMessage;
         var hasRevealButton = !!canRevealPassword && type === "password" && _browserNeedsRevealButton();
-        var classNames2 = this._classNames = getClassNames9(styles4, {
+        var classNames2 = this._classNames = getClassNames10(styles4, {
           theme,
           className,
           disabled,
@@ -73127,40 +73477,40 @@ to {
         });
         return (
           // eslint-disable-next-line deprecation/deprecation
-          React182.createElement(
+          React184.createElement(
             "div",
             { ref: this.props.elementRef, className: classNames2.root },
-            React182.createElement(
+            React184.createElement(
               "div",
               { className: classNames2.wrapper },
               onRenderLabel(this.props, this._onRenderLabel),
-              React182.createElement(
+              React184.createElement(
                 "div",
                 { className: classNames2.fieldGroup },
-                (prefix3 !== void 0 || this.props.onRenderPrefix) && React182.createElement("div", { className: classNames2.prefix, id: this._prefixId }, onRenderPrefix(this.props, this._onRenderPrefix)),
+                (prefix3 !== void 0 || this.props.onRenderPrefix) && React184.createElement("div", { className: classNames2.prefix, id: this._prefixId }, onRenderPrefix(this.props, this._onRenderPrefix)),
                 multiline ? this._renderTextArea() : this._renderInput(),
-                iconProps && React182.createElement(Icon, __assign({ className: classNames2.icon }, iconProps)),
+                iconProps && React184.createElement(Icon, __assign({ className: classNames2.icon }, iconProps)),
                 hasRevealButton && // Explicitly set type="button" since the default button type within a form is "submit"
-                React182.createElement(
+                React184.createElement(
                   "button",
                   { "aria-label": revealPasswordAriaLabel, className: classNames2.revealButton, onClick: this._onRevealButtonClick, "aria-pressed": !!isRevealingPassword, type: "button" },
-                  React182.createElement(
+                  React184.createElement(
                     "span",
                     { className: classNames2.revealSpan },
-                    React182.createElement(Icon, { className: classNames2.revealIcon, iconName: isRevealingPassword ? HIDE_ICON_NAME : REVEAL_ICON_NAME })
+                    React184.createElement(Icon, { className: classNames2.revealIcon, iconName: isRevealingPassword ? HIDE_ICON_NAME : REVEAL_ICON_NAME })
                   )
                 ),
-                (suffix !== void 0 || this.props.onRenderSuffix) && React182.createElement("div", { className: classNames2.suffix, id: this._suffixId }, onRenderSuffix(this.props, this._onRenderSuffix))
+                (suffix !== void 0 || this.props.onRenderSuffix) && React184.createElement("div", { className: classNames2.suffix, id: this._suffixId }, onRenderSuffix(this.props, this._onRenderSuffix))
               )
             ),
-            this._isDescriptionAvailable && React182.createElement(
+            this._isDescriptionAvailable && React184.createElement(
               "span",
               { id: this._descriptionId },
               onRenderDescription(this.props, this._onRenderDescription),
-              errorMessage && React182.createElement(
+              errorMessage && React184.createElement(
                 "div",
                 { role: "alert" },
-                React182.createElement(DelayedRender, null, this._renderErrorMessage())
+                React184.createElement(DelayedRender, null, this._renderErrorMessage())
               )
             )
           )
@@ -73249,11 +73599,11 @@ to {
       });
       TextFieldBase2.prototype._onRenderPrefix = function(props) {
         var prefix3 = props.prefix;
-        return React182.createElement("span", { style: { paddingBottom: "1px" } }, prefix3);
+        return React184.createElement("span", { style: { paddingBottom: "1px" } }, prefix3);
       };
       TextFieldBase2.prototype._onRenderSuffix = function(props) {
         var suffix = props.suffix;
-        return React182.createElement("span", { style: { paddingBottom: "1px" } }, suffix);
+        return React184.createElement("span", { style: { paddingBottom: "1px" } }, suffix);
       };
       Object.defineProperty(TextFieldBase2.prototype, "_errorMessage", {
         /**
@@ -73271,11 +73621,11 @@ to {
       });
       TextFieldBase2.prototype._renderErrorMessage = function() {
         var errorMessage = this._errorMessage;
-        return errorMessage ? typeof errorMessage === "string" ? React182.createElement(
+        return errorMessage ? typeof errorMessage === "string" ? React184.createElement(
           "p",
           { className: this._classNames.errorMessage },
-          React182.createElement("span", { "data-automation-id": "error-message" }, errorMessage)
-        ) : React182.createElement("div", { className: this._classNames.errorMessage, "data-automation-id": "error-message" }, errorMessage) : null;
+          React184.createElement("span", { "data-automation-id": "error-message" }, errorMessage)
+        ) : React184.createElement("div", { className: this._classNames.errorMessage, "data-automation-id": "error-message" }, errorMessage) : null;
       };
       Object.defineProperty(TextFieldBase2.prototype, "_isDescriptionAvailable", {
         /**
@@ -73293,7 +73643,7 @@ to {
         var _a5 = this.props.invalid, invalid = _a5 === void 0 ? !!this._errorMessage : _a5;
         var textAreaProps = getNativeProps2(this.props, textAreaProperties2, ["defaultValue"]);
         var ariaLabelledBy = this.props["aria-labelledby"] || (this.props.label ? this._labelId : void 0);
-        return React182.createElement("textarea", __assign({ id: this._id }, textAreaProps, { ref: this._textElement, value: this.value || "", onInput: this._onInputChange, onChange: this._onInputChange, className: this._classNames.field, "aria-labelledby": ariaLabelledBy, "aria-describedby": this._isDescriptionAvailable ? this._descriptionId : this.props["aria-describedby"], "aria-invalid": invalid, "aria-label": this.props.ariaLabel, readOnly: this.props.readOnly, onFocus: this._onFocus, onBlur: this._onBlur }));
+        return React184.createElement("textarea", __assign({ id: this._id }, textAreaProps, { ref: this._textElement, value: this.value || "", onInput: this._onInputChange, onChange: this._onInputChange, className: this._classNames.field, "aria-labelledby": ariaLabelledBy, "aria-describedby": this._isDescriptionAvailable ? this._descriptionId : this.props["aria-describedby"], "aria-invalid": invalid, "aria-label": this.props.ariaLabel, readOnly: this.props.readOnly, onFocus: this._onFocus, onBlur: this._onBlur }));
       };
       TextFieldBase2.prototype._renderInput = function() {
         var _a5 = this.props, ariaLabel = _a5.ariaLabel, _b = _a5.invalid, invalid = _b === void 0 ? !!this._errorMessage : _b, onRenderPrefix = _a5.onRenderPrefix, onRenderSuffix = _a5.onRenderSuffix, prefix3 = _a5.prefix, suffix = _a5.suffix, _c = _a5.type, type = _c === void 0 ? "text" : _c, label = _a5.label;
@@ -73303,7 +73653,7 @@ to {
         (suffix !== void 0 || onRenderSuffix) && labelIds.push(this._suffixId);
         var inputProps = __assign(__assign({ type: this.state.isRevealingPassword ? "text" : type, id: this._id }, getNativeProps2(this.props, inputProperties2, ["defaultValue", "type"])), { "aria-labelledby": this.props["aria-labelledby"] || (labelIds.length > 0 ? labelIds.join(" ") : void 0), ref: this._textElement, value: this.value || "", onInput: this._onInputChange, onChange: this._onInputChange, className: this._classNames.field, "aria-label": ariaLabel, "aria-describedby": this._isDescriptionAvailable ? this._descriptionId : this.props["aria-describedby"], "aria-invalid": invalid, onFocus: this._onFocus, onBlur: this._onBlur });
         var defaultRender = function(updatedInputProps) {
-          return React182.createElement("input", __assign({}, updatedInputProps));
+          return React184.createElement("input", __assign({}, updatedInputProps));
         };
         var onRenderInput = this.props.onRenderInput || defaultRender;
         return onRenderInput(inputProps, defaultRender);
@@ -73351,7 +73701,7 @@ to {
         validateOnLoad: true
       };
       return TextFieldBase2;
-    }(React182.Component)
+    }(React184.Component)
   );
   function _getValue(props, state) {
     var _a5 = props.value, value = _a5 === void 0 ? state.uncontrolledValue : _a5;
@@ -73424,7 +73774,7 @@ to {
       };
     };
   }
-  function getStyles12(props) {
+  function getStyles13(props) {
     var _a5, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
     var theme = props.theme, className = props.className, disabled = props.disabled, focused = props.focused, required = props.required, multiline = props.multiline, hasLabel = props.hasLabel, borderless = props.borderless, underlined = props.underlined, hasIcon = props.hasIcon, resizable = props.resizable, hasErrorMessage = props.hasErrorMessage, inputClassName = props.inputClassName, autoAdjustHeight = props.autoAdjustHeight, hasRevealButton = props.hasRevealButton;
     var semanticColors = theme.semanticColors, effects = theme.effects, fonts = theme.fonts;
@@ -73747,12 +74097,12 @@ to {
   }
 
   // ../node_modules/@fluentui/react/lib/components/TextField/TextField.js
-  var TextField = styled(TextFieldBase, getStyles12, void 0, {
+  var TextField = styled(TextFieldBase, getStyles13, void 0, {
     scope: "TextField"
   });
 
   // ../node_modules/@fluentui/react/lib/components/Spinner/Spinner.base.js
-  var React183 = __toESM(require_react());
+  var React185 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react/lib/components/Spinner/Spinner.types.js
   var SpinnerSize;
@@ -73769,7 +74119,7 @@ to {
   })(SpinnerType || (SpinnerType = {}));
 
   // ../node_modules/@fluentui/react/lib/components/Spinner/Spinner.base.js
-  var getClassNames10 = classNamesFunction();
+  var getClassNames11 = classNamesFunction();
   var SpinnerBase = (
     /** @class */
     function(_super) {
@@ -73785,24 +74135,24 @@ to {
         if (styleSize === void 0 && type !== void 0) {
           styleSize = type === SpinnerType.large ? SpinnerSize.large : SpinnerSize.medium;
         }
-        var classNames2 = getClassNames10(styles4, {
+        var classNames2 = getClassNames11(styles4, {
           theme,
           size: styleSize,
           className,
           labelPosition
         });
-        return React183.createElement(
+        return React185.createElement(
           "div",
           __assign({}, nativeProps, { className: classNames2.root }),
-          React183.createElement("div", { className: classNames2.circle }),
-          label && React183.createElement("div", { className: classNames2.label }, label),
-          statusMessage && React183.createElement(
+          React185.createElement("div", { className: classNames2.circle }),
+          label && React185.createElement("div", { className: classNames2.label }, label),
+          statusMessage && React185.createElement(
             "div",
             { role: "status", "aria-live": ariaLive },
-            React183.createElement(
+            React185.createElement(
               DelayedRender,
               null,
-              React183.createElement("div", { className: classNames2.screenReaderText }, statusMessage)
+              React185.createElement("div", { className: classNames2.screenReaderText }, statusMessage)
             )
           )
         );
@@ -73813,11 +74163,11 @@ to {
         labelPosition: "bottom"
       };
       return SpinnerBase2;
-    }(React183.Component)
+    }(React185.Component)
   );
 
   // ../node_modules/@fluentui/react/lib/components/Spinner/Spinner.styles.js
-  var GlobalClassNames7 = {
+  var GlobalClassNames8 = {
     root: "ms-Spinner",
     circle: "ms-Spinner-circle",
     label: "ms-Spinner-label"
@@ -73832,11 +74182,11 @@ to {
       }
     });
   });
-  var getStyles13 = function(props) {
+  var getStyles14 = function(props) {
     var _a5;
     var theme = props.theme, size2 = props.size, className = props.className, labelPosition = props.labelPosition;
     var palette = theme.palette;
-    var classNames2 = getGlobalClassNames(GlobalClassNames7, theme);
+    var classNames2 = getGlobalClassNames(GlobalClassNames8, theme);
     return {
       root: [
         classNames2.root,
@@ -73922,13 +74272,13 @@ to {
   };
 
   // ../node_modules/@fluentui/react/lib/components/Spinner/Spinner.js
-  var Spinner = styled(SpinnerBase, getStyles13, void 0, { scope: "Spinner" });
+  var Spinner = styled(SpinnerBase, getStyles14, void 0, { scope: "Spinner" });
 
   // ../node_modules/@fluentui/foundation-legacy/lib/createComponent.js
-  var React185 = __toESM(require_react());
+  var React187 = __toESM(require_react());
 
   // ../node_modules/@fluentui/foundation-legacy/lib/slots.js
-  var React184 = __toESM(require_react());
+  var React186 = __toESM(require_react());
 
   // ../node_modules/@fluentui/foundation-legacy/lib/utilities.js
   var assign3 = __assign;
@@ -73941,13 +74291,13 @@ to {
     }
     var slotType = type;
     if (slotType.isSlot) {
-      children = React184.Children.toArray(children);
+      children = React186.Children.toArray(children);
       if (children.length === 0) {
         return slotType(props);
       }
       return slotType(__assign(__assign({}, props), { children }));
     } else {
-      return React184.createElement.apply(React184, __spreadArray([type, props], children, false));
+      return React186.createElement.apply(React186, __spreadArray([type, props], children, false));
     }
   }
   function createFactory(DefaultComponent, options) {
@@ -73956,7 +74306,7 @@ to {
     }
     var _a5 = options.defaultProp, defaultProp = _a5 === void 0 ? "children" : _a5;
     var result = function(componentProps, userProps, userSlotOptions, defaultStyles, theme) {
-      if (React184.isValidElement(userProps)) {
+      if (React186.isValidElement(userProps)) {
         return userProps;
       }
       var flattenedUserProps = _translateShorthand(defaultProp, userProps);
@@ -73964,13 +74314,13 @@ to {
       if (userSlotOptions) {
         if (userSlotOptions.component) {
           var UserComponent = userSlotOptions.component;
-          return React184.createElement(UserComponent, __assign({}, finalProps));
+          return React186.createElement(UserComponent, __assign({}, finalProps));
         }
         if (userSlotOptions.render) {
           return userSlotOptions.render(finalProps, DefaultComponent);
         }
       }
-      return React184.createElement(DefaultComponent, __assign({}, finalProps));
+      return React186.createElement(DefaultComponent, __assign({}, finalProps));
     };
     return result;
   }
@@ -74052,7 +74402,7 @@ to {
     var _a5 = options.factoryOptions, factoryOptions = _a5 === void 0 ? {} : _a5;
     var defaultProp = factoryOptions.defaultProp;
     var ResultComponent = function(componentProps) {
-      var settings = _getCustomizations(options.displayName, React185.useContext(CustomizerContext), options.fields);
+      var settings = _getCustomizations(options.displayName, React187.useContext(CustomizerContext), options.fields);
       var stateReducer = options.state;
       if (stateReducer) {
         componentProps = __assign(__assign({}, componentProps), stateReducer(componentProps));
@@ -74103,7 +74453,7 @@ to {
   }
 
   // ../node_modules/@fluentui/react/lib/components/Stack/StackItem/StackItem.styles.js
-  var GlobalClassNames8 = {
+  var GlobalClassNames9 = {
     root: "ms-StackItem"
   };
   var alignMap = {
@@ -74112,7 +74462,7 @@ to {
   };
   var StackItemStyles = function(props, theme, tokens2) {
     var grow = props.grow, shrink = props.shrink, disableShrink = props.disableShrink, align = props.align, verticalFill = props.verticalFill, order = props.order, className = props.className, _a5 = props.basis, basis = _a5 === void 0 ? "auto" : _a5;
-    var classNames2 = getGlobalClassNames(GlobalClassNames8, theme);
+    var classNames2 = getGlobalClassNames(GlobalClassNames9, theme);
     return {
       root: [
         theme.fonts.medium,
@@ -74164,7 +74514,7 @@ to {
   });
 
   // ../node_modules/@fluentui/react/lib/components/Stack/Stack.js
-  var React186 = __toESM(require_react());
+  var React188 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react/lib/components/Stack/StackUtils.js
   var _getThemedSpacing = function(space, theme) {
@@ -74251,7 +74601,7 @@ to {
     start: "flex-start",
     end: "flex-end"
   };
-  var GlobalClassNames9 = {
+  var GlobalClassNames10 = {
     root: "ms-Stack",
     inner: "ms-Stack-inner",
     child: "ms-Stack-child"
@@ -74259,7 +74609,7 @@ to {
   var styles = function(props, theme, tokens2) {
     var _a5, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
     var className = props.className, disableShrink = props.disableShrink, enableScopedSelectors = props.enableScopedSelectors, grow = props.grow, horizontal = props.horizontal, horizontalAlign = props.horizontalAlign, reversed = props.reversed, verticalAlign = props.verticalAlign, verticalFill = props.verticalFill, wrap = props.wrap;
-    var classNames2 = getGlobalClassNames(GlobalClassNames9, theme);
+    var classNames2 = getGlobalClassNames(GlobalClassNames10, theme);
     var childrenGap = tokens2 && tokens2.childrenGap ? tokens2.childrenGap : props.gap;
     var maxHeight = tokens2 && tokens2.maxHeight ? tokens2.maxHeight : props.maxHeight;
     var maxWidth = tokens2 && tokens2.maxWidth ? tokens2.maxWidth : props.maxWidth;
@@ -74270,9 +74620,9 @@ to {
     var childStyles = {
       textOverflow: "ellipsis"
     };
-    var childSelector = "> " + (enableScopedSelectors ? "." + GlobalClassNames9.child : "*");
+    var childSelector = "> " + (enableScopedSelectors ? "." + GlobalClassNames10.child : "*");
     var disableShrinkStyles = (_a5 = {}, // flexShrink styles are applied by the StackItem
-    _a5["".concat(childSelector, ":not(.").concat(GlobalClassNames8.root, ")")] = {
+    _a5["".concat(childSelector, ":not(.").concat(GlobalClassNames9.root, ")")] = {
       flexShrink: 0
     }, _a5);
     if (wrap) {
@@ -74401,12 +74751,12 @@ to {
   };
   function _processStackChildren(children, _a5) {
     var disableShrink = _a5.disableShrink, enableScopedSelectors = _a5.enableScopedSelectors, doNotRenderFalsyValues = _a5.doNotRenderFalsyValues;
-    var childrenArray = React186.Children.toArray(children);
-    childrenArray = React186.Children.map(childrenArray, function(child) {
-      if (!child || !React186.isValidElement(child)) {
+    var childrenArray = React188.Children.toArray(children);
+    childrenArray = React188.Children.map(childrenArray, function(child) {
+      if (!child || !React188.isValidElement(child)) {
         return doNotRenderFalsyValues ? null : child;
       }
-      if (child.type === React186.Fragment) {
+      if (child.type === React188.Fragment) {
         return child.props.children ? _processStackChildren(child.props.children, { disableShrink, enableScopedSelectors, doNotRenderFalsyValues }) : null;
       }
       var childAsReactElement = child;
@@ -74415,7 +74765,7 @@ to {
         defaultItemProps = { shrink: !disableShrink };
       }
       var childClassName = childAsReactElement.props.className;
-      return React186.cloneElement(childAsReactElement, __assign(__assign(__assign(__assign({}, defaultItemProps), childAsReactElement.props), childClassName && { className: childClassName }), enableScopedSelectors && { className: css(GlobalClassNames9.child, childClassName) }));
+      return React188.cloneElement(childAsReactElement, __assign(__assign(__assign(__assign({}, defaultItemProps), childAsReactElement.props), childClassName && { className: childClassName }), enableScopedSelectors && { className: css(GlobalClassNames10.child, childClassName) }));
     });
     return childrenArray;
   }
@@ -76044,7 +76394,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
       ...shorthands.margin(0)
     },
     stackItem: {
-      width: "100vw"
+      width: "100%"
     }
   });
   var ArticleCard = ({ tags, article }) => {
@@ -76121,23 +76471,30 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
       padding: 10
     };
     return /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Stack, { tokens: verticalGapStackTokens, children: content.map((item, i2) => {
-      return /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Stack.Item, { align: "center", className: styles4.stackItem, children: /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(Card, { className: styles4.card, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
-          CardHeader,
-          {
-            header: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("b", { children: item.title }),
-            description: item.description,
-            image: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("img", { className: styles4.headerImage, src: item.image }),
-            onClick: () => window.location.href = item.url,
-            style: { cursor: "pointer" }
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(CardFooter, { children: /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(Stack, { horizontal: true, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Vote, {}),
-          item.content?.tags.map((t2, i3) => /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Badge, { children: t2 }, i3)),
-          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(GroupButton, { contentId: item.id })
-        ] }) })
-      ] }) }, i2);
+      return /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Stack.Item, { align: "center", className: styles4.stackItem, children: /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(
+        Card,
+        {
+          className: styles4.card,
+          floatingAction: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Checkbox2, {}),
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(
+              CardHeader,
+              {
+                header: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("b", { children: item.title }),
+                description: item.description,
+                image: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("img", { className: styles4.headerImage, src: item.image }),
+                onClick: () => window.location.href = item.url,
+                style: { cursor: "pointer" }
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(CardFooter, { children: /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(Stack, { horizontal: true, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Vote, {}),
+              item.content?.tags.map((t2, i3) => /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Badge, { children: t2 }, i3)),
+              /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(GroupButton, { contentId: item.id })
+            ] }) })
+          ]
+        }
+      ) }, i2);
     }) });
   };
 
@@ -76188,7 +76545,6 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
       }
     };
     return /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(Stack, { styles: { root: { height: "100vh" } }, verticalFill: true, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Stack.Item, { grow: true, styles: { root: { overflowY: "auto" } }, children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(ContentList, { content }) }),
       /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Stack.Item, { grow: true, disableShrink: true, children: /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(
         Stack,
         {
@@ -76215,7 +76571,8 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
             /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(PrimaryButton, { text: "Send", onClick: handleSend })
           ]
         }
-      ) })
+      ) }),
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Stack.Item, { grow: true, styles: { root: { overflowY: "auto" } }, children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Stack, { horizontal: true, children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Stack.Item, { children: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(ContentList, { content }) }) }) })
     ] });
   };
 
@@ -76249,46 +76606,46 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   var import_react64 = __toESM(require_react(), 1);
 
   // ../node_modules/@fluentui/react-jsx-runtime/lib/createElement.js
-  var React195 = __toESM(require_react());
+  var React197 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-jsx-runtime/lib/jsx/createElementFromSlotComponent.js
-  var React194 = __toESM(require_react());
+  var React196 = __toESM(require_react());
   function createElementFromSlotComponent(type, overrideChildren) {
     const { elementType, renderFunction, props } = getMetadataFromSlotComponent(type);
     if (renderFunction) {
       if (overrideChildren.length > 0) {
-        props.children = React194.createElement(React194.Fragment, {}, ...overrideChildren);
+        props.children = React196.createElement(React196.Fragment, {}, ...overrideChildren);
       }
-      return React194.createElement(React194.Fragment, {}, renderFunction(elementType, props));
+      return React196.createElement(React196.Fragment, {}, renderFunction(elementType, props));
     }
-    return React194.createElement(elementType, props, ...overrideChildren);
+    return React196.createElement(elementType, props, ...overrideChildren);
   }
 
   // ../node_modules/@fluentui/react-jsx-runtime/lib/createElement.js
-  function createElement57(type, props, ...children) {
+  function createElement58(type, props, ...children) {
     if (isSlot(props)) {
       return createElementFromSlotComponent(createCompatSlotComponent(type, props), children);
     }
     if (isSlot(type)) {
       return createElementFromSlotComponent(type, children);
     }
-    return React195.createElement(type, props, ...children);
+    return React197.createElement(type, props, ...children);
   }
 
   // ../node_modules/@fluentui/react-jsx-runtime/lib/index.js
   var import_react56 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-drawer/lib/components/Drawer/Drawer.js
-  var React203 = __toESM(require_react());
+  var React205 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-drawer/lib/components/Drawer/useDrawer.js
-  var React202 = __toESM(require_react());
+  var React204 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerOverlay/DrawerOverlay.js
-  var React198 = __toESM(require_react());
+  var React200 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerOverlay/useDrawerOverlay.js
-  var React196 = __toESM(require_react());
+  var React198 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-drawer/lib/util/getDefaultDrawerProps.js
   function getDefaultDrawerProps(props) {
@@ -76331,7 +76688,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerOverlay/renderDrawerOverlay.js
   var renderDrawerOverlay_unstable = (state) => {
     assertSlots(state);
-    return /* @__PURE__ */ createElement57(Dialog, state.dialog, /* @__PURE__ */ createElement57(state.root, null));
+    return /* @__PURE__ */ createElement58(Dialog, state.dialog, /* @__PURE__ */ createElement58(state.root, null));
   };
 
   // ../node_modules/@fluentui/react-drawer/lib/util/useDrawerBaseStyles.styles.js
@@ -76386,7 +76743,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   });
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerOverlay/useDrawerOverlayStyles.styles.js
-  var React197 = __toESM(require_react());
+  var React199 = __toESM(require_react());
   var drawerOverlayClassNames = {
     root: "fui-DrawerOverlay",
     backdrop: "fui-DrawerOverlay__backdrop"
@@ -76412,7 +76769,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   };
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerOverlay/DrawerOverlay.js
-  var DrawerOverlay = /* @__PURE__ */ React198.forwardRef((props, ref) => {
+  var DrawerOverlay = /* @__PURE__ */ React200.forwardRef((props, ref) => {
     const state = useDrawerOverlay_unstable(props, ref);
     useDrawerOverlayStyles_unstable(state);
     return renderDrawerOverlay_unstable(state);
@@ -76420,10 +76777,10 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   DrawerOverlay.displayName = "DrawerOverlay";
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerInline/DrawerInline.js
-  var React201 = __toESM(require_react());
+  var React203 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerInline/useDrawerInline.js
-  var React199 = __toESM(require_react());
+  var React201 = __toESM(require_react());
   var useDrawerInline_unstable = (props, ref) => {
     const { open: initialOpen, defaultOpen, size: size2, position: position3 } = getDefaultDrawerProps(props);
     const { separator = false } = props;
@@ -76455,11 +76812,11 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
     if (!state.open) {
       return null;
     }
-    return /* @__PURE__ */ createElement57(state.root, null);
+    return /* @__PURE__ */ createElement58(state.root, null);
   };
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerInline/useDrawerInlineStyles.styles.js
-  var React200 = __toESM(require_react());
+  var React202 = __toESM(require_react());
   var drawerInlineClassNames = {
     root: "fui-DrawerInline"
   };
@@ -76483,7 +76840,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   var useDrawerInlineStyles_unstable = (state) => {
     const baseStyles = useDrawerBaseStyles();
     const styles4 = useStyles20();
-    const separatorClass = React200.useMemo(() => {
+    const separatorClass = React202.useMemo(() => {
       if (!state.separator) {
         return void 0;
       }
@@ -76494,7 +76851,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   };
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerInline/DrawerInline.js
-  var DrawerInline = /* @__PURE__ */ React201.forwardRef((props, ref) => {
+  var DrawerInline = /* @__PURE__ */ React203.forwardRef((props, ref) => {
     const state = useDrawerInline_unstable(props, ref);
     useDrawerInlineStyles_unstable(state);
     return renderDrawerInline_unstable(state);
@@ -76520,7 +76877,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   // ../node_modules/@fluentui/react-drawer/lib/components/Drawer/renderDrawer.js
   var renderDrawer_unstable = (state) => {
     assertSlots(state);
-    return /* @__PURE__ */ createElement57(state.root, null);
+    return /* @__PURE__ */ createElement58(state.root, null);
   };
 
   // ../node_modules/@fluentui/react-drawer/lib/components/Drawer/useDrawerStyles.styles.js
@@ -76533,7 +76890,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   };
 
   // ../node_modules/@fluentui/react-drawer/lib/components/Drawer/Drawer.js
-  var Drawer = /* @__PURE__ */ React203.forwardRef((props, ref) => {
+  var Drawer = /* @__PURE__ */ React205.forwardRef((props, ref) => {
     const state = useDrawer_unstable(props, ref);
     useDrawerStyles_unstable(state);
     useCustomStyleHook("useDrawerStyles_unstable")(state);
@@ -76542,10 +76899,10 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   Drawer.displayName = "Drawer";
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerBody/DrawerBody.js
-  var React205 = __toESM(require_react());
+  var React207 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerBody/useDrawerBody.js
-  var React204 = __toESM(require_react());
+  var React206 = __toESM(require_react());
   var useDrawerBody_unstable = (props, ref) => {
     return {
       components: {
@@ -76563,7 +76920,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerBody/renderDrawerBody.js
   var renderDrawerBody_unstable = (state) => {
     assertSlots(state);
-    return /* @__PURE__ */ createElement57(state.root, null);
+    return /* @__PURE__ */ createElement58(state.root, null);
   };
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerBody/useDrawerBodyStyles.styles.js
@@ -76605,7 +76962,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   };
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerBody/DrawerBody.js
-  var DrawerBody = /* @__PURE__ */ React205.forwardRef((props, ref) => {
+  var DrawerBody = /* @__PURE__ */ React207.forwardRef((props, ref) => {
     const state = useDrawerBody_unstable(props, ref);
     useDrawerBodyStyles_unstable(state);
     useCustomStyleHook("useDrawerBodyStyles_unstable")(state);
@@ -76614,10 +76971,10 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   DrawerBody.displayName = "DrawerBody";
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerHeader/DrawerHeader.js
-  var React207 = __toESM(require_react());
+  var React209 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerHeader/useDrawerHeader.js
-  var React206 = __toESM(require_react());
+  var React208 = __toESM(require_react());
   var useDrawerHeader_unstable = (props, ref) => {
     return {
       components: {
@@ -76635,7 +76992,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerHeader/renderDrawerHeader.js
   var renderDrawerHeader_unstable = (state) => {
     assertSlots(state);
-    return /* @__PURE__ */ createElement57(state.root, null);
+    return /* @__PURE__ */ createElement58(state.root, null);
   };
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerHeader/useDrawerHeaderStyles.styles.js
@@ -76664,7 +77021,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   };
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerHeader/DrawerHeader.js
-  var DrawerHeader = /* @__PURE__ */ React207.forwardRef((props, ref) => {
+  var DrawerHeader = /* @__PURE__ */ React209.forwardRef((props, ref) => {
     const state = useDrawerHeader_unstable(props, ref);
     useDrawerHeaderStyles_unstable(state);
     useCustomStyleHook("useDrawerHeaderStyles_unstable")(state);
@@ -76673,10 +77030,10 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   DrawerHeader.displayName = "DrawerHeader";
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerHeaderTitle/DrawerHeaderTitle.js
-  var React209 = __toESM(require_react());
+  var React212 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerHeaderTitle/useDrawerHeaderTitle.js
-  var React208 = __toESM(require_react());
+  var React211 = __toESM(require_react());
   var useDrawerHeaderTitle_unstable = (props, ref) => {
     const { root: heading, action, components: titleComponents } = useDialogTitle_unstable(props, ref);
     return {
@@ -76709,7 +77066,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerHeaderTitle/renderDrawerHeaderTitle.js
   var renderDrawerHeaderTitle_unstable = (state) => {
     assertSlots(state);
-    return /* @__PURE__ */ createElement57(state.root, null, state.heading && /* @__PURE__ */ createElement57(state.heading, null), state.action && /* @__PURE__ */ createElement57(state.action, null));
+    return /* @__PURE__ */ createElement58(state.root, null, state.heading && /* @__PURE__ */ createElement58(state.heading, null), state.action && /* @__PURE__ */ createElement58(state.action, null));
   };
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerHeaderTitle/useDrawerHeaderTitleStyles.styles.js
@@ -76757,7 +77114,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   };
 
   // ../node_modules/@fluentui/react-drawer/lib/components/DrawerHeaderTitle/DrawerHeaderTitle.js
-  var DrawerHeaderTitle = /* @__PURE__ */ React209.forwardRef((props, ref) => {
+  var DrawerHeaderTitle = /* @__PURE__ */ React212.forwardRef((props, ref) => {
     const state = useDrawerHeaderTitle_unstable(props, ref);
     useDrawerHeaderTitleStyles_unstable(state);
     useCustomStyleHook("useDrawerHeaderTitleStyles_unstable")(state);

@@ -58,9 +58,6 @@ export const MessageWindow: React.FC = ({  }) => {
     };
     return (
         <Stack styles={{ root: { height: '100vh' } }} verticalFill>
-            <Stack.Item grow styles={{ root: { overflowY: 'auto' } }}>
-                <ContentList content={content} />
-            </Stack.Item>
             <Stack.Item grow disableShrink>
                 <Stack horizontal verticalAlign="end" horizontalAlign="center"
                        styles={{root: {width: '100%', gap: 15, marginBottom: 20, relative: true}}}>
@@ -77,6 +74,13 @@ export const MessageWindow: React.FC = ({  }) => {
                         styles={{root: {width: '100%'}}}
                     />
                     <PrimaryButton text="Send" onClick={handleSend}/>
+                </Stack>
+            </Stack.Item>
+            <Stack.Item grow styles={{ root: { overflowY: 'auto' } }}>
+                <Stack horizontal>
+                    <Stack.Item>
+                        <ContentList content={content} />
+                    </Stack.Item>
                 </Stack>
             </Stack.Item>
         </Stack>

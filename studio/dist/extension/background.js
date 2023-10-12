@@ -8183,90 +8183,103 @@
     });
   }
 
+  // src/extension/shared.tsx
+  var contentGet = "content/get";
+
   // src/extension/background.tsx
-  (async () => {
-    const resp = await userService.login({}, {});
-    console.log(resp);
-  })();
-  chrome.runtime.onInstalled.addListener(function() {
-    console.log("Extension Installed");
-  });
-  chrome.runtime.onStartup.addListener(function() {
-    console.log("Extension Started");
-  });
-  chrome.webNavigation.onCompleted.addListener((details) => {
-    if (details.url && details.frameType === "outermost_frame") {
-    }
-  });
-  function getTabDetails(tabId) {
-    return new Promise((resolve, reject) => {
-      chrome.tabs.get(tabId, (tab) => {
-        if (chrome.runtime.lastError) {
-          resolve(void 0);
-        } else {
-          resolve(tab);
-        }
-      });
+  var tabContent = void 0;
+  var chromeExt = () => {
+    (async () => {
+      const resp = await userService.login({}, {});
+      console.log(resp);
+    })();
+    chrome.runtime.onInstalled.addListener(function() {
+      console.log("Extension Installed");
     });
-  }
-  chrome.tabs.onCreated.addListener(async (tab) => {
-    if (!tab.id) {
-      return;
-    }
-    const tabDetails = await getTabDetails(tab.id);
-    if (tabDetails) {
-    }
-  });
-  chrome.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
-    const tabDetails = await getTabDetails(tabId);
-    if (tabDetails) {
-    }
-  });
-  chrome.webRequest.onBeforeRequest.addListener(
-    (details) => {
-      if (!details.initiator || details.type !== "main_frame") {
-        return;
+    chrome.runtime.onStartup.addListener(function() {
+      console.log("Extension Started");
+    });
+    chrome.webNavigation.onCompleted.addListener((details) => {
+      if (details.url && details.frameType === "outermost_frame") {
       }
-      const u = new URL(details.initiator);
-      const v = new URL(details.url);
-      if (u.host === v.host) {
-        return;
-      }
-      if (u.host === "news.ycombinator.com") {
-        console.log("saving", details.initiator, details.url);
-        (async () => {
-          try {
-            const resp = await contentService.save({
-              content: urlContent(details.url, ["browser/history", u.host]),
-              related: []
-            });
-            console.log(resp);
-          } catch (e) {
-            console.error("failed to save", e);
+    });
+    function getTabDetails(tabId) {
+      return new Promise((resolve, reject) => {
+        chrome.tabs.get(tabId, (tab) => {
+          if (chrome.runtime.lastError) {
+            resolve(void 0);
+          } else {
+            resolve(tab);
           }
-        })();
+        });
+      });
+    }
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      if (message.action === contentGet) {
+        sendResponse({ data: tabContent });
+        tabContent = void 0;
       }
-    },
-    { urls: ["<all_urls>"] },
-    []
-  );
-  chrome.webRequest.onBeforeSendHeaders.addListener(
-    (details) => {
-      let refererValue = "";
-      if (!details.requestHeaders) {
+    });
+    chrome.tabs.onCreated.addListener(async (tab) => {
+      if (!tab.id) {
         return;
       }
-      for (let header of details.requestHeaders) {
-        if (header.name.toLowerCase() === "referer" && header.value) {
-          refererValue = header.value;
-          break;
-        }
+      const tabDetails = await getTabDetails(tab.id);
+      if (tabDetails) {
       }
-    },
-    { urls: ["<all_urls>"] },
-    // Monitor all URLs
-    ["requestHeaders"]
-    // Necessary to get the request headers
-  );
+    });
+    chrome.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
+      const tabDetails = await getTabDetails(tabId);
+      if (tabDetails) {
+      }
+    });
+    chrome.webRequest.onBeforeRequest.addListener(
+      (details) => {
+        if (!details.initiator || details.type !== "main_frame") {
+          return;
+        }
+        const u = new URL(details.initiator);
+        const v = new URL(details.url);
+        if (u.host === v.host) {
+          return;
+        }
+        if (u.host === "news.ycombinator.com") {
+          tabContent = details.url;
+          (async () => {
+            try {
+              const resp = await contentService.save({
+                content: urlContent(details.url, ["browser/history", u.host]),
+                related: []
+              });
+              console.log(resp);
+            } catch (e) {
+              console.error("failed to save", e);
+            }
+          })();
+        }
+      },
+      { urls: ["<all_urls>"] },
+      []
+    );
+    chrome.webRequest.onBeforeSendHeaders.addListener(
+      (details) => {
+        let refererValue = "";
+        if (!details.requestHeaders) {
+          return;
+        }
+        for (let header of details.requestHeaders) {
+          if (header.name.toLowerCase() === "referer" && header.value) {
+            refererValue = header.value;
+            break;
+          }
+        }
+      },
+      { urls: ["<all_urls>"] },
+      // Monitor all URLs
+      ["requestHeaders"]
+      // Necessary to get the request headers
+    );
+  };
+  chromeExt();
 })();
 //# sourceMappingURL=background.js.map

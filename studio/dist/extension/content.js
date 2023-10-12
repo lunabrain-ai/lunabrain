@@ -1093,7 +1093,7 @@
             }
             return dispatcher.useContext(Context);
           }
-          function useState12(initialState) {
+          function useState13(initialState) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useState(initialState);
           }
@@ -1105,7 +1105,7 @@
             var dispatcher = resolveDispatcher();
             return dispatcher.useRef(initialValue);
           }
-          function useEffect23(create, deps) {
+          function useEffect24(create, deps) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useEffect(create, deps);
           }
@@ -1887,7 +1887,7 @@
           exports.useContext = useContext17;
           exports.useDebugValue = useDebugValue;
           exports.useDeferredValue = useDeferredValue;
-          exports.useEffect = useEffect23;
+          exports.useEffect = useEffect24;
           exports.useId = useId3;
           exports.useImperativeHandle = useImperativeHandle;
           exports.useInsertionEffect = useInsertionEffect3;
@@ -1895,7 +1895,7 @@
           exports.useMemo = useMemo5;
           exports.useReducer = useReducer2;
           exports.useRef = useRef23;
-          exports.useState = useState12;
+          exports.useState = useState13;
           exports.useSyncExternalStore = useSyncExternalStore;
           exports.useTransition = useTransition;
           exports.version = ReactVersion;
@@ -2391,9 +2391,9 @@
           if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
             __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
           }
-          var React92 = require_react();
+          var React93 = require_react();
           var Scheduler = require_scheduler();
-          var ReactSharedInternals = React92.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React93.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           var suppressWarning = false;
           function setSuppressWarning(newSuppressWarning) {
             {
@@ -2442,7 +2442,7 @@
           var HostPortal = 4;
           var HostComponent = 5;
           var HostText = 6;
-          var Fragment10 = 7;
+          var Fragment11 = 7;
           var Mode = 8;
           var ContextConsumer = 9;
           var ContextProvider = 10;
@@ -3598,7 +3598,7 @@
                 return "DehydratedFragment";
               case ForwardRef:
                 return getWrappedName$1(type, type.render, "ForwardRef");
-              case Fragment10:
+              case Fragment11:
                 return "Fragment";
               case HostComponent:
                 return type;
@@ -3998,7 +3998,7 @@
             {
               if (props.value == null) {
                 if (typeof props.children === "object" && props.children !== null) {
-                  React92.Children.forEach(props.children, function(child) {
+                  React93.Children.forEach(props.children, function(child) {
                     if (child == null) {
                       return;
                     }
@@ -12445,7 +12445,7 @@
             }
           }
           var fakeInternalInstance = {};
-          var emptyRefsObject = new React92.Component().refs;
+          var emptyRefsObject = new React93.Component().refs;
           var didWarnAboutStateAssignmentForComponent;
           var didWarnAboutUninitializedState;
           var didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate;
@@ -13269,7 +13269,7 @@
               }
             }
             function updateFragment2(returnFiber, current2, fragment, lanes, key) {
-              if (current2 === null || current2.tag !== Fragment10) {
+              if (current2 === null || current2.tag !== Fragment11) {
                 var created = createFiberFromFragment(fragment, returnFiber.mode, lanes, key);
                 created.return = returnFiber;
                 return created;
@@ -13672,7 +13672,7 @@
                 if (child.key === key) {
                   var elementType = element.type;
                   if (elementType === REACT_FRAGMENT_TYPE) {
-                    if (child.tag === Fragment10) {
+                    if (child.tag === Fragment11) {
                       deleteRemainingChildren(returnFiber, child.sibling);
                       var existing = useFiber(child, element.props.children);
                       existing.return = returnFiber;
@@ -17847,7 +17847,7 @@
                 var _resolvedProps2 = workInProgress2.elementType === type ? _unresolvedProps2 : resolveDefaultProps(type, _unresolvedProps2);
                 return updateForwardRef(current2, workInProgress2, type, _resolvedProps2, renderLanes2);
               }
-              case Fragment10:
+              case Fragment11:
                 return updateFragment(current2, workInProgress2, renderLanes2);
               case Mode:
                 return updateMode(current2, workInProgress2, renderLanes2);
@@ -18120,7 +18120,7 @@
               case SimpleMemoComponent:
               case FunctionComponent:
               case ForwardRef:
-              case Fragment10:
+              case Fragment11:
               case Mode:
               case Profiler:
               case ContextConsumer:
@@ -22379,7 +22379,7 @@
             return fiber;
           }
           function createFiberFromFragment(elements, mode, lanes, key) {
-            var fiber = createFiber(Fragment10, elements, key, mode);
+            var fiber = createFiber(Fragment11, elements, key, mode);
             fiber.lanes = lanes;
             return fiber;
           }
@@ -26010,7 +26010,7 @@
       if (true) {
         (function() {
           "use strict";
-          var React92 = require_react();
+          var React93 = require_react();
           var REACT_ELEMENT_TYPE = Symbol.for("react.element");
           var REACT_PORTAL_TYPE = Symbol.for("react.portal");
           var REACT_FRAGMENT_TYPE = Symbol.for("react.fragment");
@@ -26036,7 +26036,7 @@
             }
             return null;
           }
-          var ReactSharedInternals = React92.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React93.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           function error(format2) {
             {
               {
@@ -26871,11 +26871,11 @@
               return jsxWithValidation(type, props, key, false);
             }
           }
-          var jsx4 = jsxWithValidationDynamic;
-          var jsxs3 = jsxWithValidationStatic;
+          var jsx5 = jsxWithValidationDynamic;
+          var jsxs4 = jsxWithValidationStatic;
           exports.Fragment = REACT_FRAGMENT_TYPE;
-          exports.jsx = jsx4;
-          exports.jsxs = jsxs3;
+          exports.jsx = jsx5;
+          exports.jsxs = jsxs4;
         })();
       }
     }
@@ -27560,14 +27560,14 @@
   });
 
   // src/extension/content.tsx
-  var import_react13 = __toESM(require_react(), 1);
+  var import_react15 = __toESM(require_react(), 1);
   var import_client = __toESM(require_client(), 1);
 
   // ../node_modules/source-map-support/register.js
   require_source_map_support().install();
 
   // src/extension/FloatingPanel.tsx
-  var import_react11 = __toESM(require_react(), 1);
+  var import_react13 = __toESM(require_react(), 1);
 
   // ../node_modules/@fluentui/set-version/lib/setVersion.js
   var packagesCache = {};
@@ -38832,17 +38832,17 @@
   var PrimaryButton = (
     /** @class */
     function(_super) {
-      __extends(PrimaryButton2, _super);
-      function PrimaryButton2() {
+      __extends(PrimaryButton3, _super);
+      function PrimaryButton3() {
         return _super !== null && _super.apply(this, arguments) || this;
       }
-      PrimaryButton2.prototype.render = function() {
+      PrimaryButton3.prototype.render = function() {
         return React45.createElement(DefaultButton, __assign({}, this.props, { primary: true, onRenderDescription: nullRender }));
       };
-      PrimaryButton2 = __decorate([
+      PrimaryButton3 = __decorate([
         customizable("PrimaryButton", ["theme", "styles"], true)
-      ], PrimaryButton2);
-      return PrimaryButton2;
+      ], PrimaryButton3);
+      return PrimaryButton3;
     }(React45.Component)
   );
 
@@ -47614,6 +47614,12 @@ ${error.stack}`);
   });
   TableCellActions.displayName = "TableCellActions";
 
+  // src/extension/shared.tsx
+  var contentGet = "content/get";
+
+  // src/extension/SaveWizard.tsx
+  var import_react11 = __toESM(require_react(), 1);
+
   // ../node_modules/@bufbuild/protobuf/dist/esm/private/assert.js
   function assert(condition, msg) {
     if (!condition) {
@@ -55797,7 +55803,7 @@ ${error.stack}`);
     });
   }
 
-  // src/extension/FloatingPanel.tsx
+  // src/extension/SaveWizard.tsx
   var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
   var floatingPanelStyle = {
     padding: "10px",
@@ -55812,7 +55818,7 @@ ${error.stack}`);
     bottom: "10px",
     position: "fixed"
   };
-  var FloatingPanel = () => {
+  var SaveWizard = () => {
     const [error, setError] = (0, import_react11.useState)(void 0);
     const [title, setTitle] = (0, import_react11.useState)(document.title);
     const [tag, setTag] = (0, import_react11.useState)(void 0);
@@ -55821,20 +55827,7 @@ ${error.stack}`);
     const [annotation, setAnnotation] = (0, import_react11.useState)("");
     const [annotations, setAnnotations] = (0, import_react11.useState)([]);
     const [selectedValue, setSelectedValue] = (0, import_react11.useState)("tags");
-    const [visible, setVisible] = (0, import_react11.useState)(false);
     const [analysis, setAnalysis] = (0, import_react11.useState)(void 0);
-    (0, import_react11.useEffect)(() => {
-      const listener = (event) => {
-        if (event.ctrlKey && event.key === "l") {
-          event.preventDefault();
-          setVisible(!visible);
-        }
-      };
-      document.addEventListener("keydown", listener);
-      return () => {
-        document.removeEventListener("keydown", listener);
-      };
-    }, [visible]);
     const onTabSelect = (event, data) => {
       setSelectedValue(data.value);
     };
@@ -55894,9 +55887,6 @@ ${error.stack}`);
     const handleRemoveTag = (id) => {
       setAnnotations(tags.filter((annotation2, idx) => idx !== id));
     };
-    if (!visible) {
-      return null;
-    }
     return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(Stack, { id: "floating-panel", tokens: { childrenGap: 10 }, style: floatingPanelStyle, children: [
       /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
         TextField,
@@ -55952,8 +55942,63 @@ ${error.stack}`);
     ] });
   };
 
-  // src/extension/content.tsx
+  // src/extension/FloatingPanel.tsx
   var import_jsx_runtime9 = __toESM(require_jsx_runtime(), 1);
+  var floatingPanelStyle2 = {
+    padding: "10px",
+    backgroundColor: "white",
+    border: "1px solid #ccc",
+    color: "black",
+    width: "40vh",
+    maxHeight: "300px",
+    overflowY: "auto",
+    zIndex: 9999,
+    right: "10px",
+    bottom: "10px",
+    position: "fixed"
+  };
+  var FloatingPanel = () => {
+    const [visible, setVisible] = (0, import_react13.useState)(false);
+    const [content, setContent] = (0, import_react13.useState)(void 0);
+    (0, import_react13.useEffect)(() => {
+      const listener = (event) => {
+        if (event.ctrlKey && event.key === "l") {
+          event.preventDefault();
+          setVisible(!visible);
+        }
+      };
+      document.addEventListener("keydown", listener);
+      return () => {
+        document.removeEventListener("keydown", listener);
+      };
+    }, [visible]);
+    (0, import_react13.useEffect)(() => {
+      chrome.runtime.sendMessage(
+        { action: contentGet, payload: "TODO make url?" },
+        (response) => {
+          if (response.data) {
+            setContent(response.data);
+            setVisible(true);
+          }
+        }
+      );
+    }, []);
+    if (!visible) {
+      return null;
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Stack, { id: "floating-panel", tokens: { childrenGap: 10 }, style: floatingPanelStyle2, children: content ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("h5", { children: [
+        "Save ",
+        document.title,
+        "?"
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Button2, { children: "Yes" }),
+      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Button2, { children: "No" })
+    ] }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SaveWizard, {}) });
+  };
+
+  // src/extension/content.tsx
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
   var rootElem = document.createElement("div");
   rootElem.setAttribute("id", "lunabrain-root");
   document.body.appendChild(rootElem);
@@ -55963,7 +56008,7 @@ ${error.stack}`);
   rootElem.style.margin = "0";
   var root = import_client.default.createRoot(rootElem);
   root.render(
-    /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(import_react13.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(FloatingPanel, {}) })
+    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(import_react15.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(FloatingPanel, {}) })
   );
 })();
 /*! Bundled license information:

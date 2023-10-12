@@ -15,7 +15,7 @@ import {
 } from "@fluentui/react-components";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {Article, Content, StoredContent } from "@/rpc/content/content_pb";
-import {IconButton, IStackTokens, Stack} from "@fluentui/react";
+import {Checkbox, IconButton, IStackTokens, Stack} from "@fluentui/react";
 import {Vote} from "@/components/Vote";
 import {userService} from "@/service";
 import toast from "react-hot-toast";
@@ -66,7 +66,7 @@ const useStyles = makeStyles({
     },
 
     stackItem: {
-        width: '100vw',
+        width: '100%',
     }
 });
 
@@ -171,7 +171,11 @@ export const ContentList: React.FC<ContentListProps> = ({ style, content }) => {
             {content.map((item, i) => {
                 return (
                     <Stack.Item align="center" key={i} className={styles.stackItem}>
-                        <Card className={styles.card}>
+                        <Card className={styles.card}
+                              floatingAction={
+                                  <Checkbox />
+                              }
+                        >
                             <CardHeader
                                 header={<b>{item.title}</b>}
                                 description={item.description}
