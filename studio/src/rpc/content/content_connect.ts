@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Content, ContentIDs, Contents, Query, Results, Tags, VoteRequest } from "./content_pb.js";
+import { Content, ContentIDs, Contents, Query, Results, TagRequest, Tags, VoteRequest } from "./content_pb.js";
 import { Empty, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -53,7 +53,7 @@ export const ContentService = {
      */
     getTags: {
       name: "GetTags",
-      I: Empty,
+      I: TagRequest,
       O: Tags,
       kind: MethodKind.Unary,
     },

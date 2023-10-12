@@ -1,13 +1,12 @@
 import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {contentService, projectService, userService} from "@/service";
-import {Message} from "@/site/Chat/MessageList";
+import {Message} from "@/site/Content/MessageList";
 import {Code, ConnectError} from "@bufbuild/connect";
 import toast from "react-hot-toast";
 import {TabValue} from "@fluentui/react-components";
 import {ChatResponse, Segment, Session} from "@/rpc/protoflow_pb";
 import { Content, StoredContent, Tag } from "@/rpc/content/content_pb";
 import {Group, User } from "@/rpc/user/user_pb";
-import {useQuery} from "@tanstack/react-query";
 
 const ProjectContext = createContext<ProjectContextType>({} as any);
 export const useProjectContext = () => useContext(ProjectContext);
@@ -44,8 +43,6 @@ type ProjectContextType = {
     media?: Media;
     setMedia: (media?: Media) => void;
 
-    sidebarIsOpen: boolean;
-    setSidebarIsOpen: (sidebarIsOpen: boolean) => void;
     groups: Group[];
     currentGroup: string;
     setCurrentGroup: (groupID: string) => void;
@@ -54,6 +51,10 @@ type ProjectContextType = {
     filteredTags: string[];
     addFilteredTag: (tag: string) => void;
     removeFilteredTag: (tag: string) => void;
+
+    showTagTree: boolean;
+    setShowTagTree: (showTagTree: boolean) => void;
+    loadGroups: () => void;
 };
 
 export function groupURL(groupID: string) {
@@ -70,11 +71,11 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     const [user, setUser] = useState<User|undefined>(undefined);
     const [loading, setLoading] = useState(false);
     const [media, setMedia] = useState<Media|undefined>(undefined);
-    const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
     const [groups, setGroups] = useState<Group[]>([]);
     const [currentGroup, setCurrentGroup] = useState<string>('home');
     const [tags, setTags] = useState<Tag[]>([]);
     const [filteredTags, setFilteredTags] = useState<string[]>([]);
+    const [showTagTree, setShowTagTree] = useState<boolean>(false);
 
     const addFilteredTag = (tag: string) => {
         setFilteredTags((prev) => [...prev, tag]);
@@ -98,12 +99,15 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     }
 
     const loadTags = async () => {
-        const res = await contentService.getTags({});
+        const res = await contentService.getTags({
+            groupId: currentGroup === 'home' ? undefined : currentGroup,
+        });
         setTags(res.tags);
     }
 
     useEffect(() => {
         void loadContent();
+        void loadTags();
         if (user) {
             window.history.pushState({}, '', groupURL(currentGroup));
         }
@@ -125,7 +129,6 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
             })();
         }
         void loadGroups();
-        void loadTags();
     }, [user]);
 
     const deleteContent = async (ids: string[]) => {
@@ -233,16 +236,18 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
                 setLoading,
                 media,
                 setMedia,
-                sidebarIsOpen,
-                setSidebarIsOpen,
                 groups,
                 setCurrentGroup,
                 currentGroup,
                 tags,
+                loadGroups,
 
                 filteredTags,
                 addFilteredTag,
                 removeFilteredTag,
+
+                showTagTree,
+                setShowTagTree,
             }}
         >
             {children}

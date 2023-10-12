@@ -21,9 +21,11 @@ const baseOptions = {
     sourcemap: "linked",
     define: {
         "global": "window",
-        "process.env.BASE_URL": prodBuild ? '"https://demo.lunabrain.com"' : '"http://localhost:8080"'
+        "process.env.BASE_URL": prodBuild ? '"https://demo.lunabrain.com"' : '"http://localhost:8080"',
+        "process.env.PRODUCTION": prodBuild ? '"true"' : '"false"'
     },
-    logLevel: 'info'
+    entryNames: "[name]",
+    logLevel: 'info',
 }
 
 async function doBuild(options, serve) {

@@ -1,5 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Card, CardHeader, Persona} from "@fluentui/react-components";
+import {
+    Button,
+    Card,
+    CardHeader,
+    Menu,
+    MenuButton, MenuItem, MenuList,
+    MenuPopover,
+    MenuTrigger,
+    Persona
+} from "@fluentui/react-components";
+import {ArrowCircleRightRegular} from "@fluentui/react-icons";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {userService} from "@/service";
 import toast from "react-hot-toast";
@@ -32,14 +42,22 @@ export const AccountCard: React.FC<AccountCardProps> = () => {
 
     return (
         <div>
-            <span>{user.email}</span>
-            <Button onClick={logout}>logout</Button>
-            <Persona
-                name={user.email}
-                secondaryText="Available"
-                tertiaryText="Software Engineer"
-                quaternaryText="Microsoft"
-            />
+            <Menu>
+                <MenuTrigger disableButtonEnhancement>
+                    <MenuButton>
+                        <Persona
+                            name={user.email}
+                            textAlignment={'center'}
+                        />
+                    </MenuButton>
+                </MenuTrigger>
+
+                <MenuPopover>
+                    <MenuList>
+                        <MenuItem onClick={logout}>Logout</MenuItem>
+                    </MenuList>
+                </MenuPopover>
+            </Menu>
         </div>
     );
 };

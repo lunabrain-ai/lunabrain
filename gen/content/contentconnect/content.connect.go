@@ -54,7 +54,7 @@ type ContentServiceClient interface {
 	Search(context.Context, *connect_go.Request[content.Query]) (*connect_go.Response[content.Results], error)
 	Analyze(context.Context, *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error)
 	Delete(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
-	GetTags(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Tags], error)
+	GetTags(context.Context, *connect_go.Request[content.TagRequest]) (*connect_go.Response[content.Tags], error)
 	Vote(context.Context, *connect_go.Request[content.VoteRequest]) (*connect_go.Response[emptypb.Empty], error)
 }
 
@@ -88,7 +88,7 @@ func NewContentServiceClient(httpClient connect_go.HTTPClient, baseURL string, o
 			baseURL+ContentServiceDeleteProcedure,
 			opts...,
 		),
-		getTags: connect_go.NewClient[emptypb.Empty, content.Tags](
+		getTags: connect_go.NewClient[content.TagRequest, content.Tags](
 			httpClient,
 			baseURL+ContentServiceGetTagsProcedure,
 			opts...,
@@ -107,7 +107,7 @@ type contentServiceClient struct {
 	search  *connect_go.Client[content.Query, content.Results]
 	analyze *connect_go.Client[content.Content, content.Contents]
 	delete  *connect_go.Client[content.ContentIDs, content.ContentIDs]
-	getTags *connect_go.Client[emptypb.Empty, content.Tags]
+	getTags *connect_go.Client[content.TagRequest, content.Tags]
 	vote    *connect_go.Client[content.VoteRequest, emptypb.Empty]
 }
 
@@ -132,7 +132,7 @@ func (c *contentServiceClient) Delete(ctx context.Context, req *connect_go.Reque
 }
 
 // GetTags calls content.ContentService.GetTags.
-func (c *contentServiceClient) GetTags(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Tags], error) {
+func (c *contentServiceClient) GetTags(ctx context.Context, req *connect_go.Request[content.TagRequest]) (*connect_go.Response[content.Tags], error) {
 	return c.getTags.CallUnary(ctx, req)
 }
 
@@ -147,7 +147,7 @@ type ContentServiceHandler interface {
 	Search(context.Context, *connect_go.Request[content.Query]) (*connect_go.Response[content.Results], error)
 	Analyze(context.Context, *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error)
 	Delete(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
-	GetTags(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Tags], error)
+	GetTags(context.Context, *connect_go.Request[content.TagRequest]) (*connect_go.Response[content.Tags], error)
 	Vote(context.Context, *connect_go.Request[content.VoteRequest]) (*connect_go.Response[emptypb.Empty], error)
 }
 
@@ -226,7 +226,7 @@ func (UnimplementedContentServiceHandler) Delete(context.Context, *connect_go.Re
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.Delete is not implemented"))
 }
 
-func (UnimplementedContentServiceHandler) GetTags(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Tags], error) {
+func (UnimplementedContentServiceHandler) GetTags(context.Context, *connect_go.Request[content.TagRequest]) (*connect_go.Response[content.Tags], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.GetTags is not implemented"))
 }
 

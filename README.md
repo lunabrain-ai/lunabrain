@@ -4,13 +4,6 @@ Record audio, transcribe it, and ask AI to reason about it. All in one place.
 
 [![LunaBrain Demo](site/assets/images/demo.png)](http://www.youtube.com/watch?v=znCMrtOcjb0 "LunaBrain Demo")
 
-## Features
-
-- Record audio from your microphone
-- Transcribe audio to text
-- Ask AI to reason about your audio
-- Search through your audio recordings
-
 ### Library 
 - To use LunaBrain as a Go library, refer to the [documentation](https://pkg.go.dev/github.com/lunabrain-ai/lunabrain) (Note: This code is still like pre-alpha, so the API is subject to change)
 
@@ -28,41 +21,22 @@ To get started with LunaBrain, follow these steps:
 git clone --recursive https://github.com/lunabrain-ai/lunabrain.git
 ```
 
-### Installing System Dependencies
-
-Mac
-```shell
-brew install bufbuild/buf/buf libsndfile sdl2
-```
-
-Ubuntu & WSL
-```shell
-# TODO breadchris fill this out
-sudo apt-get install libsndfile sdl2
-```
-
-All: Build Whisper
-```shell
-make whisper && make models
-```
-
-TODO breadchris make go bindings for stream so that the binary isn't required
-will need to adopt the bindings https://github.com/ggerganov/whisper.cpp/tree/master/bindings/go
-Make the binary `stream` available on PATH https://github.com/ggerganov/whisper.cpp/tree/master/examples/stream
-
 ### Running
 
-TODO breadchris this can be one command
 Frontend
 ```shell
 npm install
-npm run dev
+npm run dev:site
 ```
 
 Backend
 ```shell
 go run main.go start --dev
 ```
+Extension
+```shell
+npm run dev:extension
+````
 
 ## Hacking
 

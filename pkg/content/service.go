@@ -110,8 +110,21 @@ func (s *Service) Delete(ctx context.Context, c *connect_go.Request[content.Cont
 	return connect_go.NewResponse(&content.ContentIDs{ContentIds: c.Msg.GetContentIds()}), nil
 }
 
-func (s *Service) GetTags(ctx context.Context, c *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Tags], error) {
-	ts, err := s.db.GetTags()
+func (s *Service) GetTags(ctx context.Context, c *connect_go.Request[content.TagRequest]) (*connect_go.Response[content.Tags], error) {
+	var (
+		err error
+		ts  []string
+	)
+	if c.Msg.GroupId != "" {
+		var gID uuid.UUID
+		gID, err = uuid.Parse(c.Msg.GroupId)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to parse group id")
+		}
+		ts, err = s.db.GetTagsForGroup(gID)
+	} else {
+		ts, err = s.db.GetTags()
+	}
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to get tags")
 	}

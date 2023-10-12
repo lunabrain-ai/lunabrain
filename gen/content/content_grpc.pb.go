@@ -27,7 +27,7 @@ type ContentServiceClient interface {
 	Search(ctx context.Context, in *Query, opts ...grpc.CallOption) (*Results, error)
 	Analyze(ctx context.Context, in *Content, opts ...grpc.CallOption) (*Contents, error)
 	Delete(ctx context.Context, in *ContentIDs, opts ...grpc.CallOption) (*ContentIDs, error)
-	GetTags(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Tags, error)
+	GetTags(ctx context.Context, in *TagRequest, opts ...grpc.CallOption) (*Tags, error)
 	Vote(ctx context.Context, in *VoteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
@@ -75,7 +75,7 @@ func (c *contentServiceClient) Delete(ctx context.Context, in *ContentIDs, opts 
 	return out, nil
 }
 
-func (c *contentServiceClient) GetTags(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Tags, error) {
+func (c *contentServiceClient) GetTags(ctx context.Context, in *TagRequest, opts ...grpc.CallOption) (*Tags, error) {
 	out := new(Tags)
 	err := c.cc.Invoke(ctx, "/content.ContentService/GetTags", in, out, opts...)
 	if err != nil {
@@ -101,7 +101,7 @@ type ContentServiceServer interface {
 	Search(context.Context, *Query) (*Results, error)
 	Analyze(context.Context, *Content) (*Contents, error)
 	Delete(context.Context, *ContentIDs) (*ContentIDs, error)
-	GetTags(context.Context, *emptypb.Empty) (*Tags, error)
+	GetTags(context.Context, *TagRequest) (*Tags, error)
 	Vote(context.Context, *VoteRequest) (*emptypb.Empty, error)
 }
 
@@ -121,7 +121,7 @@ func (UnimplementedContentServiceServer) Analyze(context.Context, *Content) (*Co
 func (UnimplementedContentServiceServer) Delete(context.Context, *ContentIDs) (*ContentIDs, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedContentServiceServer) GetTags(context.Context, *emptypb.Empty) (*Tags, error) {
+func (UnimplementedContentServiceServer) GetTags(context.Context, *TagRequest) (*Tags, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTags not implemented")
 }
 func (UnimplementedContentServiceServer) Vote(context.Context, *VoteRequest) (*emptypb.Empty, error) {
@@ -212,7 +212,7 @@ func _ContentService_Delete_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _ContentService_GetTags_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(TagRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -224,7 +224,7 @@ func _ContentService_GetTags_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/content.ContentService/GetTags",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ContentServiceServer).GetTags(ctx, req.(*emptypb.Empty))
+		return srv.(ContentServiceServer).GetTags(ctx, req.(*TagRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

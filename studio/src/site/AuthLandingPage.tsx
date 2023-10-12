@@ -26,7 +26,7 @@ export const AuthLandingPage: React.FC = () => {
                 }}
             >
                 <h3>If you don't know, you don't know</h3>
-                <AuthForm />
+                <AuthForm allowRegister={true} />
             </Stack>
         </div>
     );

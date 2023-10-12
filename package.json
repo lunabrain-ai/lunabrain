@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "cd studio && node esbuild.mjs",
+    "dev": "npm run dev:site || npm run dev:extension",
+    "dev:site": "cd studio && node esbuild.mjs",
     "dev:extension": "cd studio && TARGET=extension node esbuild.mjs",
     "build": "cd studio && BUILD=true node esbuild.mjs"
   },

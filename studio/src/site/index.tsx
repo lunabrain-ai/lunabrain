@@ -1,4 +1,4 @@
-import {ChatPage} from "@/site/Chat/Chat";
+import {ContentPage} from "@/site/Content/ContentPage";
 import {useParams} from "react-router";
 import {useEffect} from "react";
 import {useProjectContext} from "@/providers/ProjectProvider";
@@ -9,5 +9,5 @@ export function Home() {
     if (!user) {
         return <AuthLandingPage />
     }
-    return <ChatPage />
+    return <ContentPage />
 }

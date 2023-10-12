@@ -62,6 +62,25 @@ func (s *Store) GetTags() ([]string, error) {
 	return tagNames, nil
 }
 
+func (s *Store) GetTagsForGroup(groupID uuid.UUID) ([]string, error) {
+	group := &model.Group{
+		Base: model.Base{
+			ID: groupID,
+		},
+	}
+	res := s.db.Preload("Content.Tags").Find(group)
+	if res.Error != nil {
+		return nil, errors.Wrapf(res.Error, "could not get tags")
+	}
+	var tagNames []string
+	for _, c := range group.Content {
+		for _, tag := range c.Tags {
+			tagNames = append(tagNames, tag.Name)
+		}
+	}
+	return tagNames, nil
+}
+
 func (s *Store) GetGroupContent(groupID string) ([]model.Content, error) {
 	g := &model.Group{
 		Base: model.Base{

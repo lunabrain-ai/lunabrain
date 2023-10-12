@@ -11,8 +11,12 @@ service ContentService {
   rpc Search(Query) returns (Results);
   rpc Analyze(Content) returns (Contents);
   rpc Delete(ContentIDs) returns (ContentIDs);
-  rpc GetTags(google.protobuf.Empty) returns (Tags);
+  rpc GetTags(TagRequest) returns (Tags);
   rpc Vote(VoteRequest) returns (google.protobuf.Empty);
+}
+
+message TagRequest {
+  string group_id = 1;
 }
 
 message VoteRequest {

@@ -34,10 +34,10 @@ public protocol Content_ContentServiceClientInterface: Sendable {
     func `delete`(request: Content_ContentIDs, headers: Connect.Headers) async -> ResponseMessage<Content_ContentIDs>
 
     @discardableResult
-    func `getTags`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Content_Tags>) -> Void) -> Connect.Cancelable
+    func `getTags`(request: Content_TagRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Content_Tags>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
-    func `getTags`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers) async -> ResponseMessage<Content_Tags>
+    func `getTags`(request: Content_TagRequest, headers: Connect.Headers) async -> ResponseMessage<Content_Tags>
 
     @discardableResult
     func `vote`(request: Content_VoteRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable
@@ -95,12 +95,12 @@ public final class Content_ContentServiceClient: Content_ContentServiceClientInt
     }
 
     @discardableResult
-    public func `getTags`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Content_Tags>) -> Void) -> Connect.Cancelable {
+    public func `getTags`(request: Content_TagRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Content_Tags>) -> Void) -> Connect.Cancelable {
         return self.client.unary(path: "/content.ContentService/GetTags", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
-    public func `getTags`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers = [:]) async -> ResponseMessage<Content_Tags> {
+    public func `getTags`(request: Content_TagRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<Content_Tags> {
         return await self.client.unary(path: "/content.ContentService/GetTags", request: request, headers: headers)
     }
 
