@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import { Image, Text } from '@fluentui/react';
-import {AuthForm} from './Auth/AuthForm';
-import {Button, Card, CardHeader} from "@fluentui/react-components";
+import {Button, Card, CardHeader, Persona} from "@fluentui/react-components";
 import {useProjectContext} from "@/providers/ProjectProvider";
-import {projectService, userService} from "@/service";
+import {userService} from "@/service";
 import toast from "react-hot-toast";
 
 interface User {
@@ -34,12 +32,14 @@ export const AccountCard: React.FC<AccountCardProps> = () => {
 
     return (
         <div>
-            <Card>
-                <CardHeader
-                    header={user.email}
-                    action={<Button onClick={logout}>logout</Button>}
-                    />
-            </Card>
+            <span>{user.email}</span>
+            <Button onClick={logout}>logout</Button>
+            <Persona
+                name={user.email}
+                secondaryText="Available"
+                tertiaryText="Software Engineer"
+                quaternaryText="Microsoft"
+            />
         </div>
     );
 };

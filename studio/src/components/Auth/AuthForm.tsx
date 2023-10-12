@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {Input, SelectTabData, SelectTabEvent, Tab, TabList, TabValue} from "@fluentui/react-components";
 import {Login} from "@/components/Auth/Login";
+import {Register} from "@/components/Auth/Register";
 
 export interface AuthFormProps {
     email: string;
@@ -34,7 +35,7 @@ export const AuthForm: React.FC<{ allowRegister?: boolean }> = ({ allowRegister 
             </TabList>
             <div>
                 {selectedValue === 'login' && <Login {...authFormProps} />}
-                {allowRegister && selectedValue === 'register' && <Login {...authFormProps} />}
+                {allowRegister && selectedValue === 'register' && <Register {...authFormProps} />}
             </div>
         </>
     );

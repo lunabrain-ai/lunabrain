@@ -8,6 +8,7 @@ import {AudioPlayer} from "@/components/AudioPlayer";
 import {ContentList} from "@/site/Chat/ContentList";
 import {contentService} from "@/service";
 import {urlContent} from "@/extension/util";
+import {Select} from "@fluentui/react-components";
 
 const MediaViewer: React.FC = ({  }) => {
     const { media } = useProjectContext();
@@ -61,6 +62,10 @@ export const MessageWindow: React.FC = ({  }) => {
             <Stack.Item grow disableShrink>
                 <Stack horizontal verticalAlign="end" horizontalAlign="center"
                        styles={{root: {width: '100%', gap: 15, marginBottom: 20, relative: true}}}>
+                    <Select>
+                        <option>Prompt</option>
+                        <option>URL</option>
+                    </Select>
                     <TextField
                         placeholder="Enter a URL..."
                         value={inputValue}
