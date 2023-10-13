@@ -31262,6 +31262,9 @@ ${error.stack}`);
   // ../node_modules/@fluentui/react-icons/lib/icons/chunk-2.js
   var PersonRegular = /* @__PURE__ */ createFluentIcon("PersonRegular", "1em", ["M10 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM7 6a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm-2 5a2 2 0 0 0-2 2c0 1.7.83 2.97 2.13 3.8A9.14 9.14 0 0 0 10 18c1.85 0 3.58-.39 4.87-1.2A4.35 4.35 0 0 0 17 13a2 2 0 0 0-2-2H5Zm-1 2a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1c0 1.3-.62 2.28-1.67 2.95A8.16 8.16 0 0 1 10 17a8.16 8.16 0 0 1-4.33-1.05A3.36 3.36 0 0 1 4 13Z"]);
 
+  // ../node_modules/@fluentui/react-icons/lib/sizedIcons/chunk-0.js
+  var AddCircle16Regular = /* @__PURE__ */ createFluentIcon("AddCircle16Regular", "16", ["M8 5c.28 0 .5.22.5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2c0-.28.22-.5.5-.5ZM2 8a6 6 0 1 1 12 0A6 6 0 0 1 2 8Zm6-5a5 5 0 1 0 0 10A5 5 0 0 0 8 3Z"]);
+
   // ../node_modules/@fluentui/react-icons/lib/sizedIcons/chunk-2.js
   var Checkmark12Filled = /* @__PURE__ */ createFluentIcon("Checkmark12Filled", "12", ["M9.76 3.2c.3.29.32.76.04 1.06l-4.25 4.5a.75.75 0 0 1-1.08.02L2.22 6.53a.75.75 0 0 1 1.06-1.06l1.7 1.7L8.7 3.24a.75.75 0 0 1 1.06-.04Z"]);
 
@@ -31271,6 +31274,7 @@ ${error.stack}`);
   var ChevronUp20Filled = /* @__PURE__ */ createFluentIcon("ChevronUp20Filled", "20", ["M4.2 12.27a.75.75 0 0 1 .03-1.06l5.25-5a.75.75 0 0 1 1.04 0l5.25 5a.75.75 0 0 1-1.04 1.08L10 7.8l-4.73 4.5a.75.75 0 0 1-1.06-.02Z"]);
 
   // ../node_modules/@fluentui/react-icons/lib/sizedIcons/chunk-4.js
+  var Delete24Regular = /* @__PURE__ */ createFluentIcon("Delete24Regular", "24", ["M10 5h4a2 2 0 1 0-4 0ZM8.5 5a3.5 3.5 0 1 1 7 0h5.75a.75.75 0 0 1 0 1.5h-1.32l-1.17 12.11A3.75 3.75 0 0 1 15.03 22H8.97a3.75 3.75 0 0 1-3.73-3.39L4.07 6.5H2.75a.75.75 0 0 1 0-1.5H8.5Zm2 4.75a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0v-7.5ZM14.25 9c.41 0 .75.34.75.75v7.5a.75.75 0 0 1-1.5 0v-7.5c0-.41.34-.75.75-.75Zm-7.52 9.47a2.25 2.25 0 0 0 2.24 2.03h6.06c1.15 0 2.12-.88 2.24-2.03L18.42 6.5H5.58l1.15 11.97Z"]);
   var Dismiss20Regular = /* @__PURE__ */ createFluentIcon("Dismiss20Regular", "20", ["m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07-.06.07Z"]);
 
   // ../node_modules/@fluentui/react-icons/lib/sizedIcons/chunk-8.js
@@ -54544,6 +54548,39 @@ Tree must have either a \`aria-label\` or \`aria-labelledby\` property defined`)
       return proto3.util.equals(_VoteRequest, a2, b3);
     }
   };
+  var VoteResponse = class _VoteResponse extends Message {
+    /**
+     * @generated from field: uint32 votes = 1;
+     */
+    votes = 0;
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.VoteResponse";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "votes",
+        kind: "scalar",
+        T: 13
+        /* ScalarType.UINT32 */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _VoteResponse().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _VoteResponse().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _VoteResponse().fromJsonString(jsonString, options);
+    }
+    static equals(a2, b3) {
+      return proto3.util.equals(_VoteResponse, a2, b3);
+    }
+  };
   var Tags = class _Tags extends Message {
     /**
      * @generated from field: repeated content.Tag tags = 1;
@@ -54790,6 +54827,10 @@ Tree must have either a \`aria-label\` or \`aria-labelledby\` property defined`)
      * @generated from field: string url = 7;
      */
     url = "";
+    /**
+     * @generated from field: int32 votes = 8;
+     */
+    votes = 0;
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
@@ -54833,6 +54874,13 @@ Tree must have either a \`aria-label\` or \`aria-labelledby\` property defined`)
         kind: "scalar",
         T: 9
         /* ScalarType.STRING */
+      },
+      {
+        no: 8,
+        name: "votes",
+        kind: "scalar",
+        T: 5
+        /* ScalarType.INT32 */
       }
     ]);
     static fromBinary(bytes, options) {
@@ -54961,7 +55009,7 @@ Tree must have either a \`aria-label\` or \`aria-labelledby\` property defined`)
         T: 9
         /* ScalarType.STRING */
       },
-      { no: 4, name: "youtube_channel", kind: "message", T: YouTubeChannel, oneof: "type" }
+      { no: 2, name: "folder", kind: "message", T: Folder, oneof: "type" }
     ]);
     static fromBinary(bytes, options) {
       return new _Source().fromBinary(bytes, options);
@@ -54976,37 +55024,37 @@ Tree must have either a \`aria-label\` or \`aria-labelledby\` property defined`)
       return proto3.util.equals(_Source, a2, b3);
     }
   };
-  var YouTubeChannel = class _YouTubeChannel extends Message {
+  var Folder = class _Folder extends Message {
     /**
-     * @generated from field: string channel_id = 1;
+     * @generated from field: string path = 1;
      */
-    channelId = "";
+    path = "";
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
     }
     static runtime = proto3;
-    static typeName = "content.YouTubeChannel";
+    static typeName = "content.Folder";
     static fields = proto3.util.newFieldList(() => [
       {
         no: 1,
-        name: "channel_id",
+        name: "path",
         kind: "scalar",
         T: 9
         /* ScalarType.STRING */
       }
     ]);
     static fromBinary(bytes, options) {
-      return new _YouTubeChannel().fromBinary(bytes, options);
+      return new _Folder().fromBinary(bytes, options);
     }
     static fromJson(jsonValue, options) {
-      return new _YouTubeChannel().fromJson(jsonValue, options);
+      return new _Folder().fromJson(jsonValue, options);
     }
     static fromJsonString(jsonString, options) {
-      return new _YouTubeChannel().fromJsonString(jsonString, options);
+      return new _Folder().fromJsonString(jsonString, options);
     }
     static equals(a2, b3) {
-      return proto3.util.equals(_YouTubeChannel, a2, b3);
+      return proto3.util.equals(_Folder, a2, b3);
     }
   };
   var Data = class _Data extends Message {
@@ -57104,7 +57152,7 @@ Tree must have either a \`aria-label\` or \`aria-labelledby\` property defined`)
       vote: {
         name: "Vote",
         I: VoteRequest,
-        O: Empty,
+        O: VoteResponse,
         kind: MethodKind.Unary
       }
     }
@@ -59990,6 +60038,7 @@ to {
           currentGroup,
           tags,
           loadGroups,
+          loadContent,
           filteredTags,
           addFilteredTag,
           removeFilteredTag,
@@ -78910,17 +78959,17 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   // src/components/Vote.tsx
   var import_react58 = __toESM(require_react(), 1);
   var import_jsx_runtime38 = __toESM(require_jsx_runtime(), 1);
-  var Vote = ({}) => {
-    const [votes, setVotes] = (0, import_react58.useState)(0);
-    const handleUpvote = () => {
-      setVotes(votes + 1);
-    };
-    const handleDownvote = () => {
-      setVotes(votes - 1);
+  var Vote = ({ contentID, votes }) => {
+    const [currentVotes, setCurrentVotes] = (0, import_react58.useState)(votes);
+    const handleUpvote = async () => {
+      const res = await contentService.vote({
+        contentId: contentID
+      });
+      setCurrentVotes(res.votes);
     };
     return /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between" }, children: /* @__PURE__ */ (0, import_jsx_runtime38.jsxs)("div", { children: [
       /* @__PURE__ */ (0, import_jsx_runtime38.jsx)(ChevronUp20Filled, { onClick: handleUpvote, style: { cursor: "pointer" } }),
-      /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("span", { children: votes })
+      /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("span", { children: currentVotes })
     ] }) });
   };
 
@@ -78975,7 +79024,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
       /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(CardFooter, { children: tags.map((t2) => /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(Badge, { children: t2 }, t2)) })
     ] });
   };
-  var GroupButton = ({ contentId }) => {
+  var GroupButton = ({ contentId, style }) => {
     const { groups } = useProjectContext();
     const shareContent = async (groupId) => {
       try {
@@ -78988,14 +79037,26 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
         _t.error(e2.message);
       }
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)(Menu, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(MenuTrigger, { disableButtonEnhancement: true, children: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(MenuButton, { children: "Share" }) }),
+    return /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("div", { style, children: /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)(Menu, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(MenuTrigger, { disableButtonEnhancement: true, children: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
+        MenuButton,
+        {
+          appearance: "transparent",
+          icon: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(MoreHorizontal20Regular, {}),
+          "aria-label": "More options"
+        }
+      ) }),
       /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(MenuPopover, { children: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(MenuList, { children: groups.map((g2) => {
         return /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(MenuItem, { onClick: () => shareContent(g2.id), children: g2.name }, g2.id);
       }) }) })
-    ] });
+    ] }) });
   };
-  var ContentList = ({ style, content }) => {
+  var ContentList = ({
+    style,
+    content,
+    selectedContent,
+    setSelectedContent
+  }) => {
     const styles4 = useStyles21();
     const tc = (item, tags) => {
       const c2 = item.content;
@@ -79035,31 +79096,41 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
       childrenGap: 10,
       padding: 10
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(Stack, { tokens: verticalGapStackTokens, children: content.map((item, i2) => {
+    const addTag = () => {
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(Stack, { tokens: verticalGapStackTokens, children: content.map((item) => {
+      const openURL = () => window.location.href = item.url;
       return /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(Stack.Item, { align: "center", className: styles4.stackItem, children: /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)(
         Card,
         {
           className: styles4.card,
-          floatingAction: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(Checkbox2, {}),
+          floatingAction: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(Checkbox2, { onChange: (ev, checked) => {
+            if (checked) {
+              setSelectedContent([...selectedContent, item.id]);
+            } else {
+              setSelectedContent(selectedContent.filter((c2) => c2 !== item.id));
+            }
+          } }),
           children: [
             /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
               CardHeader,
               {
-                header: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("b", { children: item.title }),
-                description: item.description,
-                image: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("img", { className: styles4.headerImage, src: item.image }),
-                onClick: () => window.location.href = item.url,
-                style: { cursor: "pointer" }
+                header: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("b", { style: { cursor: "pointer" }, onClick: openURL, children: item.title }),
+                description: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("div", { style: { cursor: "pointer" }, onClick: openURL, children: item.description }),
+                image: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)("img", { style: { cursor: "pointer" }, onClick: openURL, className: styles4.headerImage, src: item.image }),
+                action: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(GroupButton, { contentId: item.id })
               }
             ),
-            /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(CardFooter, { children: /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)(Stack, { horizontal: true, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(Vote, {}),
-              item.content?.tags.map((t2, i3) => /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(Badge, { children: t2 }, i3)),
-              /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(GroupButton, { contentId: item.id })
+            /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(CardFooter, { children: /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)(Stack, { style: { width: "100%" }, horizontal: true, tokens: { childrenGap: 10 }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(Stack.Item, { children: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(Vote, { contentID: item.id, votes: item.votes }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(Stack.Item, { children: /* @__PURE__ */ (0, import_jsx_runtime39.jsxs)(Stack, { horizontal: true, tokens: { childrenGap: 3 }, children: [
+                item.content?.tags.map((t2, i2) => /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(Badge, { children: t2 }, i2)),
+                /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(Badge, { size: "medium", onClick: addTag, style: { cursor: "pointer" }, icon: /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(AddCircle16Regular, {}) })
+              ] }) })
             ] }) })
           ]
         }
-      ) }, i2);
+      ) }, item.id);
     }) });
   };
 
@@ -79081,7 +79152,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
     });
   }
 
-  // src/components/TagTree.tsx
+  // src/components/TagManager.tsx
   var import_react60 = __toESM(require_react(), 1);
   var import_jsx_runtime40 = __toESM(require_jsx_runtime(), 1);
   var TagManager = () => {
@@ -79094,12 +79165,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
           /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(Input, { value: selectedTag, onChange: (e2) => setSelectedTag(e2.target.value) }),
           /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(Button, { onClick: () => selectedTag && addFilteredTag(selectedTag), children: "Add Tag" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("ul", { children: filteredTags.map((g2) => {
-          return /* @__PURE__ */ (0, import_jsx_runtime40.jsxs)("li", { children: [
-            g2,
-            /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(Button, { onClick: () => removeFilteredTag(g2), children: "Delete" })
-          ] }, g2);
-        }) })
+        /* @__PURE__ */ (0, import_jsx_runtime40.jsx)("ul", { children: filteredTags.map((g2) => /* @__PURE__ */ (0, import_jsx_runtime40.jsx)(Badge, { onClick: () => removeFilteredTag(g2), children: g2 })) })
       ] })
     ] });
   };
@@ -79220,12 +79286,30 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   };
   var ContentWindow = ({}) => {
     const [inputValue, setInputValue] = (0, import_react63.useState)("");
-    const { content, showTagTree, setShowTagTree } = useProjectContext();
+    const { content, showTagTree, setShowTagTree, loadContent } = useProjectContext();
+    const [selectedContent, setSelectedContent] = (0, import_react63.useState)([]);
+    const [inputType, setInputType] = (0, import_react63.useState)("prompt");
     const handleSend = () => {
       if (inputValue && inputValue.trim() !== "") {
         void saveURL(inputValue);
         setInputValue("");
       }
+    };
+    const deleteContent = async () => {
+      try {
+        const res = await contentService.delete({
+          contentIds: selectedContent
+        });
+        _t.success("Deleted content");
+        setSelectedContent([]);
+        loadContent();
+      } catch (e2) {
+        console.error(e2);
+        _t.error("Failed to delete content");
+      }
+    };
+    const onInputTypeChange = (event, data) => {
+      setInputType(data.value);
     };
     return /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)(Stack, { styles: { root: { height: "100vh" } }, verticalFill: true, children: [
       /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Stack.Item, { disableShrink: true, children: /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)(
@@ -79236,14 +79320,16 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
           horizontalAlign: "center",
           styles: { root: { width: "100%", gap: 15, marginBottom: 20, relative: true } },
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)(Select2, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("option", { children: "Prompt" }),
-              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("option", { children: "URL" })
+            /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(ToggleButton, { checked: showTagTree, onClick: () => setShowTagTree(!showTagTree), icon: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Tag24Regular, {}) }),
+            /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)(Select2, { onChange: onInputTypeChange, value: inputType, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("option", { children: "prompt" }),
+              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("option", { children: "url" }),
+              /* @__PURE__ */ (0, import_jsx_runtime42.jsx)("option", { children: "folder" })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(
               TextField,
               {
-                placeholder: "Enter a URL...",
+                placeholder: `Enter a ${inputType}...`,
                 value: inputValue,
                 onChange: (e2, newValue) => setInputValue(newValue),
                 onKeyPress: (e2) => {
@@ -79256,14 +79342,14 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
               }
             ),
             /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(PrimaryButton, { text: "Send", onClick: handleSend }),
-            /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(ToggleButton, { checked: showTagTree, onClick: () => setShowTagTree(!showTagTree), icon: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Tag24Regular, {}) }),
-            /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(GroupDialog, {})
+            /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(GroupDialog, {}),
+            /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Button, { disabled: selectedContent.length === 0, onClick: deleteContent, icon: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Delete24Regular, {}) })
           ]
         }
       ) }),
       /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Stack.Item, { grow: true, styles: { root: { overflowY: "auto" } }, children: /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(Stack, { horizontal: true, children: /* @__PURE__ */ (0, import_jsx_runtime42.jsxs)(Stack.Item, { children: [
         showTagTree && /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(TagManager, {}),
-        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(ContentList, { content })
+        /* @__PURE__ */ (0, import_jsx_runtime42.jsx)(ContentList, { content, selectedContent, setSelectedContent })
       ] }) }) })
     ] });
   };
@@ -79622,7 +79708,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   initializeIcons20();
   var AppRoutes = () => {
     const commonRoutes = [{
-      path: "",
+      path: "/app",
       element: /* @__PURE__ */ (0, import_jsx_runtime52.jsx)(Home2, {})
     }, {
       path: "/app/group/:groupID",

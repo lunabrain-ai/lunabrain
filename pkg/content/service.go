@@ -11,13 +11,13 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/pkg/errors"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
 	"time"
 )
 
 type Service struct {
 	db     *db.Store
+	sess   *db.Session
 	openai *openai.Agent
 }
 
@@ -71,6 +71,7 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 		sc := &content.StoredContent{
 			Id:      cn.ID.String(),
 			Content: cn.Data,
+			Votes:   int32(len(cn.Votes)),
 		}
 
 		switch t := cn.ContentData.Data.Type.(type) {
@@ -136,9 +137,27 @@ func (s *Service) GetTags(ctx context.Context, c *connect_go.Request[content.Tag
 	return connect_go.NewResponse(&content.Tags{Tags: root.SubTags}), nil
 }
 
-func (s *Service) Vote(ctx context.Context, c *connect_go.Request[content.VoteRequest]) (*connect_go.Response[emptypb.Empty], error) {
-	//TODO implement me
-	panic("implement me")
+func (s *Service) Vote(ctx context.Context, c *connect_go.Request[content.VoteRequest]) (*connect_go.Response[content.VoteResponse], error) {
+	id, err := s.sess.GetUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	cuid, err := uuid.Parse(c.Msg.ContentId)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to parse content id")
+	}
+	err = s.db.VoteOnContent(id, cuid)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to vote on content")
+	}
+	votes, err := s.db.GetContentVotes(cuid)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to get content votes")
+	}
+	return connect_go.NewResponse(&content.VoteResponse{
+		Votes: uint32(len(votes)),
+	}), nil
 }
 
 func (s *Service) Analyze(ctx context.Context, c *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error) {
@@ -193,10 +212,12 @@ Here is the content: \n\n`
 
 func NewService(
 	db *db.Store,
+	sess *db.Session,
 	openai *openai.Agent,
 ) *Service {
 	return &Service{
 		db:     db,
+		sess:   sess,
 		openai: openai,
 	}
 }

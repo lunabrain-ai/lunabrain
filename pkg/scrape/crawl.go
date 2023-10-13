@@ -6,7 +6,6 @@ import (
 	"github.com/geziyor/geziyor"
 	"github.com/geziyor/geziyor/client"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/normalize"
 	"github.com/pkg/errors"
 	"gocloud.dev/blob"
 	"log/slog"
@@ -86,7 +85,7 @@ func (c *crawler) linksParse(purl *url.URL) func(g *geziyor.Geziyor, r *client.R
 			return
 		}
 
-		article, err := normalize.FormatHTMLAsArticle(string(r.Body), r.Request.URL.String())
+		article, err := FormatHTMLAsArticle(string(r.Body), r.Request.URL.String())
 		if err == nil {
 			// TODO breadchris use bucket to store this file
 			err = c.saveURLToFolder(normalDir, r.Request.URL, []byte(article))

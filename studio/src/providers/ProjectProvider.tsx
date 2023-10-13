@@ -55,6 +55,7 @@ type ProjectContextType = {
     showTagTree: boolean;
     setShowTagTree: (showTagTree: boolean) => void;
     loadGroups: () => void;
+    loadContent: () => void;
 };
 
 export function groupURL(groupID: string) {
@@ -241,6 +242,7 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
                 currentGroup,
                 tags,
                 loadGroups,
+                loadContent,
 
                 filteredTags,
                 addFilteredTag,

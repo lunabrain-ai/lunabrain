@@ -1,11 +1,24 @@
 /// <reference types="chrome"/>
 import {contentService, projectService, userService} from "@/service";
 import {urlContent} from "@/extension/util";
-import {contentGet} from "@/extension/shared";
+import {contentGet, contentSave} from "@/extension/shared";
 
 let tabContent: string|undefined = undefined;
 
 const chromeExt = () => {
+    async function saveContent(url: string) {
+        const u = new URL(url);
+        try {
+            const resp = await contentService.save({
+                content: urlContent(url, ['browser/history', u.host]),
+                related: []
+            });
+            console.log(resp);
+        } catch (e) {
+            console.error('failed to save', e)
+        }
+    }
+
     (
         async () => {
             const resp = await userService.login({}, {});
@@ -47,6 +60,9 @@ const chromeExt = () => {
             sendResponse({ data: tabContent });
             tabContent = undefined;
         }
+        if (message.action === contentSave) {
+            void saveContent(message.data);
+        }
     });
 
     chrome.tabs.onCreated.addListener(async (tab) => {
@@ -81,19 +97,6 @@ const chromeExt = () => {
             if (u.host === 'news.ycombinator.com') {
                 tabContent = details.url;
                 // TODO breadchris auto collecting config
-                (
-                    async () => {
-                        try {
-                            const resp = await contentService.save({
-                                content: urlContent(details.url, ['browser/history', u.host]),
-                                related: []
-                            });
-                            console.log(resp);
-                        } catch (e) {
-                            console.error('failed to save', e)
-                        }
-                    }
-                )()
             }
         }, { urls: ["<all_urls>"] }, [])
 

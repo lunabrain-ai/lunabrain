@@ -123,7 +123,7 @@ func (s *UserService) JoinGroup(ctx context.Context, c *connectgo.Request[user.G
 	if err != nil {
 		return nil, errors.New("invalid group invite")
 	}
-	err = s.db.JoinGroup(uuid.MustParse(id), gID)
+	err = s.db.JoinGroup(id, gID)
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +152,7 @@ func (s *UserService) CreateGroup(ctx context.Context, c *connectgo.Request[user
 	if err != nil {
 		return nil, err
 	}
-	gID, err := s.db.CreateGroup(uuid.MustParse(id), c.Msg)
+	gID, err := s.db.CreateGroup(id, c.Msg)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +166,7 @@ func (s *UserService) GetGroups(ctx context.Context, c *connectgo.Request[emptyp
 	if err != nil {
 		return nil, err
 	}
-	groups, err := s.db.GetGroupsForUser(uuid.MustParse(id))
+	groups, err := s.db.GetGroupsForUser(id)
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +190,7 @@ func (s *UserService) userGroupRole(ctx context.Context, groupID string) (string
 	if err != nil {
 		return "", err
 	}
-	groups, err := s.db.GetGroupsForUser(uuid.MustParse(id))
+	groups, err := s.db.GetGroupsForUser(id)
 	if err != nil {
 		return "", err
 	}

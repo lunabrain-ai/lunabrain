@@ -81,6 +81,43 @@ export class VoteRequest extends Message<VoteRequest> {
 }
 
 /**
+ * @generated from message content.VoteResponse
+ */
+export class VoteResponse extends Message<VoteResponse> {
+  /**
+   * @generated from field: uint32 votes = 1;
+   */
+  votes = 0;
+
+  constructor(data?: PartialMessage<VoteResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.VoteResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "votes", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): VoteResponse {
+    return new VoteResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): VoteResponse {
+    return new VoteResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): VoteResponse {
+    return new VoteResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: VoteResponse | PlainMessage<VoteResponse> | undefined, b: VoteResponse | PlainMessage<VoteResponse> | undefined): boolean {
+    return proto3.util.equals(VoteResponse, a, b);
+  }
+}
+
+/**
  * @generated from message content.Tags
  */
 export class Tags extends Message<Tags> {
@@ -371,6 +408,11 @@ export class StoredContent extends Message<StoredContent> {
    */
   url = "";
 
+  /**
+   * @generated from field: int32 votes = 8;
+   */
+  votes = 0;
+
   constructor(data?: PartialMessage<StoredContent>) {
     super();
     proto3.util.initPartial(data, this);
@@ -386,6 +428,7 @@ export class StoredContent extends Message<StoredContent> {
     { no: 5, name: "description", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 6, name: "image", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 7, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: "votes", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StoredContent {
@@ -540,10 +583,10 @@ export class Source extends Message<Source> {
    */
   type: {
     /**
-     * @generated from field: content.YouTubeChannel youtube_channel = 4;
+     * @generated from field: content.Folder folder = 2;
      */
-    value: YouTubeChannel;
-    case: "youtubeChannel";
+    value: Folder;
+    case: "folder";
   } | { case: undefined; value?: undefined } = { case: undefined };
 
   constructor(data?: PartialMessage<Source>) {
@@ -555,7 +598,7 @@ export class Source extends Message<Source> {
   static readonly typeName = "content.Source";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "youtube_channel", kind: "message", T: YouTubeChannel, oneof: "type" },
+    { no: 2, name: "folder", kind: "message", T: Folder, oneof: "type" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Source {
@@ -576,39 +619,39 @@ export class Source extends Message<Source> {
 }
 
 /**
- * @generated from message content.YouTubeChannel
+ * @generated from message content.Folder
  */
-export class YouTubeChannel extends Message<YouTubeChannel> {
+export class Folder extends Message<Folder> {
   /**
-   * @generated from field: string channel_id = 1;
+   * @generated from field: string path = 1;
    */
-  channelId = "";
+  path = "";
 
-  constructor(data?: PartialMessage<YouTubeChannel>) {
+  constructor(data?: PartialMessage<Folder>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "content.YouTubeChannel";
+  static readonly typeName = "content.Folder";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "channel_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "path", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): YouTubeChannel {
-    return new YouTubeChannel().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Folder {
+    return new Folder().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): YouTubeChannel {
-    return new YouTubeChannel().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Folder {
+    return new Folder().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): YouTubeChannel {
-    return new YouTubeChannel().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Folder {
+    return new Folder().fromJsonString(jsonString, options);
   }
 
-  static equals(a: YouTubeChannel | PlainMessage<YouTubeChannel> | undefined, b: YouTubeChannel | PlainMessage<YouTubeChannel> | undefined): boolean {
-    return proto3.util.equals(YouTubeChannel, a, b);
+  static equals(a: Folder | PlainMessage<Folder> | undefined, b: Folder | PlainMessage<Folder> | undefined): boolean {
+    return proto3.util.equals(Folder, a, b);
   }
 }
 

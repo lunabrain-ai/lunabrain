@@ -3,8 +3,8 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Content, ContentIDs, Contents, Query, Results, TagRequest, Tags, VoteRequest } from "./content_pb.js";
-import { Empty, MethodKind } from "@bufbuild/protobuf";
+import { Content, ContentIDs, Contents, Query, Results, TagRequest, Tags, VoteRequest, VoteResponse } from "./content_pb.js";
+import { MethodKind } from "@bufbuild/protobuf";
 
 /**
  * @generated from service content.ContentService
@@ -63,7 +63,7 @@ export const ContentService = {
     vote: {
       name: "Vote",
       I: VoteRequest,
-      O: Empty,
+      O: VoteResponse,
       kind: MethodKind.Unary,
     },
   }

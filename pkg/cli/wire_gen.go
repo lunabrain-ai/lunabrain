@@ -11,11 +11,11 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
 	"github.com/lunabrain-ai/lunabrain/pkg/config"
 	"github.com/lunabrain-ai/lunabrain/pkg/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/content/source"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/lunabrain-ai/lunabrain/pkg/log"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/protoflow"
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/lunabrain-ai/lunabrain/pkg/user"
@@ -59,6 +59,14 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
+	sessionManager, err := http.NewSession(gormDB)
+	if err != nil {
+		return nil, err
+	}
+	session, err := db.NewSession(gormDB, sessionManager)
+	if err != nil {
+		return nil, err
+	}
 	openaiConfig, err := openai.NewConfig(provider)
 	if err != nil {
 		return nil, err
@@ -67,28 +75,20 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	service := content.NewService(store, agent)
+	service := content.NewService(store, session, agent)
 	discordConfig, err := discord.NewConfig(provider)
 	if err != nil {
 		return nil, err
 	}
-	session, err := discord.NewDiscordSession(discordConfig)
+	discordgoSession, err := discord.NewDiscordSession(discordConfig)
 	if err != nil {
 		return nil, err
 	}
-	discordSession, err := discord.NewSession(discordConfig, session)
+	discordSession, err := discord.NewSession(discordConfig, discordgoSession)
 	if err != nil {
 		return nil, err
 	}
 	discordService := discord.New(discordSession)
-	sessionManager, err := http.NewSession(gormDB)
-	if err != nil {
-		return nil, err
-	}
-	dbSession, err := db.NewSession(gormDB, sessionManager)
-	if err != nil {
-		return nil, err
-	}
 	protoflowConfig, err := protoflow.NewConfig(provider)
 	if err != nil {
 		return nil, err
@@ -98,11 +98,11 @@ func Wire() (*cli.App, error) {
 		return nil, err
 	}
 	client := whisper.NewClient(whisperConfig, openaiConfig, bucketBucket)
-	protoflowProtoflow := protoflow.New(agent, dbSession, bucketBucket, protoflowConfig, client)
-	userService := user.NewService(store, dbSession)
+	protoflowProtoflow := protoflow.New(agent, session, bucketBucket, protoflowConfig, client)
+	userService := user.NewService(store, session)
 	apihttpServer := server.New(contentConfig, service, store, bucketBucket, discordService, protoflowProtoflow, sessionManager, userService)
-	discordCollector := collect.NewDiscordCollector(session, store)
-	hnCollect := collect.NewHNCollector(store)
+	discordCollector := source.NewDiscordCollector(discordgoSession, store)
+	hnCollect := source.NewHNCollector(store)
 	app := NewApp(logLog, apihttpServer, discordCollector, hnCollect)
 	return app, nil
 }

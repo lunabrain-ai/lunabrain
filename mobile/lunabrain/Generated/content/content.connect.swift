@@ -40,10 +40,10 @@ public protocol Content_ContentServiceClientInterface: Sendable {
     func `getTags`(request: Content_TagRequest, headers: Connect.Headers) async -> ResponseMessage<Content_Tags>
 
     @discardableResult
-    func `vote`(request: Content_VoteRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable
+    func `vote`(request: Content_VoteRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Content_VoteResponse>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
-    func `vote`(request: Content_VoteRequest, headers: Connect.Headers) async -> ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>
+    func `vote`(request: Content_VoteRequest, headers: Connect.Headers) async -> ResponseMessage<Content_VoteResponse>
 }
 
 /// Concrete implementation of `Content_ContentServiceClientInterface`.
@@ -105,12 +105,12 @@ public final class Content_ContentServiceClient: Content_ContentServiceClientInt
     }
 
     @discardableResult
-    public func `vote`(request: Content_VoteRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable {
+    public func `vote`(request: Content_VoteRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Content_VoteResponse>) -> Void) -> Connect.Cancelable {
         return self.client.unary(path: "/content.ContentService/Vote", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
-    public func `vote`(request: Content_VoteRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty> {
+    public func `vote`(request: Content_VoteRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<Content_VoteResponse> {
         return await self.client.unary(path: "/content.ContentService/Vote", request: request, headers: headers)
     }
 

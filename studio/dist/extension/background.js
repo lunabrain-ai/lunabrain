@@ -3347,6 +3347,39 @@
   }
 
   // src/rpc/content/content_pb.ts
+  var TagRequest = class _TagRequest extends Message {
+    /**
+     * @generated from field: string group_id = 1;
+     */
+    groupId = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.TagRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "group_id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _TagRequest().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _TagRequest().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _TagRequest().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_TagRequest, a, b);
+    }
+  };
   var VoteRequest = class _VoteRequest extends Message {
     /**
      * @generated from field: string content_id = 1;
@@ -3378,6 +3411,39 @@
     }
     static equals(a, b) {
       return proto3.util.equals(_VoteRequest, a, b);
+    }
+  };
+  var VoteResponse = class _VoteResponse extends Message {
+    /**
+     * @generated from field: uint32 votes = 1;
+     */
+    votes = 0;
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.VoteResponse";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "votes",
+        kind: "scalar",
+        T: 13
+        /* ScalarType.UINT32 */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _VoteResponse().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _VoteResponse().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _VoteResponse().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_VoteResponse, a, b);
     }
   };
   var Tags = class _Tags extends Message {
@@ -3626,6 +3692,10 @@
      * @generated from field: string url = 7;
      */
     url = "";
+    /**
+     * @generated from field: int32 votes = 8;
+     */
+    votes = 0;
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
@@ -3669,6 +3739,13 @@
         kind: "scalar",
         T: 9
         /* ScalarType.STRING */
+      },
+      {
+        no: 8,
+        name: "votes",
+        kind: "scalar",
+        T: 5
+        /* ScalarType.INT32 */
       }
     ]);
     static fromBinary(bytes, options) {
@@ -3797,7 +3874,7 @@
         T: 9
         /* ScalarType.STRING */
       },
-      { no: 4, name: "youtube_channel", kind: "message", T: YouTubeChannel, oneof: "type" }
+      { no: 2, name: "folder", kind: "message", T: Folder, oneof: "type" }
     ]);
     static fromBinary(bytes, options) {
       return new _Source().fromBinary(bytes, options);
@@ -3812,37 +3889,37 @@
       return proto3.util.equals(_Source, a, b);
     }
   };
-  var YouTubeChannel = class _YouTubeChannel extends Message {
+  var Folder = class _Folder extends Message {
     /**
-     * @generated from field: string channel_id = 1;
+     * @generated from field: string path = 1;
      */
-    channelId = "";
+    path = "";
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
     }
     static runtime = proto3;
-    static typeName = "content.YouTubeChannel";
+    static typeName = "content.Folder";
     static fields = proto3.util.newFieldList(() => [
       {
         no: 1,
-        name: "channel_id",
+        name: "path",
         kind: "scalar",
         T: 9
         /* ScalarType.STRING */
       }
     ]);
     static fromBinary(bytes, options) {
-      return new _YouTubeChannel().fromBinary(bytes, options);
+      return new _Folder().fromBinary(bytes, options);
     }
     static fromJson(jsonValue, options) {
-      return new _YouTubeChannel().fromJson(jsonValue, options);
+      return new _Folder().fromJson(jsonValue, options);
     }
     static fromJsonString(jsonString, options) {
-      return new _YouTubeChannel().fromJsonString(jsonString, options);
+      return new _Folder().fromJsonString(jsonString, options);
     }
     static equals(a, b) {
-      return proto3.util.equals(_YouTubeChannel, a, b);
+      return proto3.util.equals(_Folder, a, b);
     }
   };
   var Data = class _Data extends Message {
@@ -5930,7 +6007,7 @@
        */
       getTags: {
         name: "GetTags",
-        I: Empty,
+        I: TagRequest,
         O: Tags,
         kind: MethodKind.Unary
       },
@@ -5940,7 +6017,7 @@
       vote: {
         name: "Vote",
         I: VoteRequest,
-        O: Empty,
+        O: VoteResponse,
         kind: MethodKind.Unary
       }
     }
@@ -8185,10 +8262,23 @@
 
   // src/extension/shared.tsx
   var contentGet = "content/get";
+  var contentSave = "content/save";
 
   // src/extension/background.tsx
   var tabContent = void 0;
   var chromeExt = () => {
+    async function saveContent(url) {
+      const u = new URL(url);
+      try {
+        const resp = await contentService.save({
+          content: urlContent(url, ["browser/history", u.host]),
+          related: []
+        });
+        console.log(resp);
+      } catch (e) {
+        console.error("failed to save", e);
+      }
+    }
     (async () => {
       const resp = await userService.login({}, {});
       console.log(resp);
@@ -8219,6 +8309,9 @@
         sendResponse({ data: tabContent });
         tabContent = void 0;
       }
+      if (message.action === contentSave) {
+        void saveContent(message.data);
+      }
     });
     chrome.tabs.onCreated.addListener(async (tab) => {
       if (!tab.id) {
@@ -8245,17 +8338,6 @@
         }
         if (u.host === "news.ycombinator.com") {
           tabContent = details.url;
-          (async () => {
-            try {
-              const resp = await contentService.save({
-                content: urlContent(details.url, ["browser/history", u.host]),
-                related: []
-              });
-              console.log(resp);
-            } catch (e) {
-              console.error("failed to save", e);
-            }
-          })();
         }
       },
       { urls: ["<all_urls>"] },

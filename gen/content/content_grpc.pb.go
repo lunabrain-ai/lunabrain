@@ -11,7 +11,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -28,7 +27,7 @@ type ContentServiceClient interface {
 	Analyze(ctx context.Context, in *Content, opts ...grpc.CallOption) (*Contents, error)
 	Delete(ctx context.Context, in *ContentIDs, opts ...grpc.CallOption) (*ContentIDs, error)
 	GetTags(ctx context.Context, in *TagRequest, opts ...grpc.CallOption) (*Tags, error)
-	Vote(ctx context.Context, in *VoteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Vote(ctx context.Context, in *VoteRequest, opts ...grpc.CallOption) (*VoteResponse, error)
 }
 
 type contentServiceClient struct {
@@ -84,8 +83,8 @@ func (c *contentServiceClient) GetTags(ctx context.Context, in *TagRequest, opts
 	return out, nil
 }
 
-func (c *contentServiceClient) Vote(ctx context.Context, in *VoteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *contentServiceClient) Vote(ctx context.Context, in *VoteRequest, opts ...grpc.CallOption) (*VoteResponse, error) {
+	out := new(VoteResponse)
 	err := c.cc.Invoke(ctx, "/content.ContentService/Vote", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -102,7 +101,7 @@ type ContentServiceServer interface {
 	Analyze(context.Context, *Content) (*Contents, error)
 	Delete(context.Context, *ContentIDs) (*ContentIDs, error)
 	GetTags(context.Context, *TagRequest) (*Tags, error)
-	Vote(context.Context, *VoteRequest) (*emptypb.Empty, error)
+	Vote(context.Context, *VoteRequest) (*VoteResponse, error)
 }
 
 // UnimplementedContentServiceServer should be embedded to have forward compatible implementations.
@@ -124,7 +123,7 @@ func (UnimplementedContentServiceServer) Delete(context.Context, *ContentIDs) (*
 func (UnimplementedContentServiceServer) GetTags(context.Context, *TagRequest) (*Tags, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTags not implemented")
 }
-func (UnimplementedContentServiceServer) Vote(context.Context, *VoteRequest) (*emptypb.Empty, error) {
+func (UnimplementedContentServiceServer) Vote(context.Context, *VoteRequest) (*VoteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Vote not implemented")
 }
 

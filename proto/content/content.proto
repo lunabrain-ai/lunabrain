@@ -12,7 +12,7 @@ service ContentService {
   rpc Analyze(Content) returns (Contents);
   rpc Delete(ContentIDs) returns (ContentIDs);
   rpc GetTags(TagRequest) returns (Tags);
-  rpc Vote(VoteRequest) returns (google.protobuf.Empty);
+  rpc Vote(VoteRequest) returns (VoteResponse);
 }
 
 message TagRequest {
@@ -21,6 +21,10 @@ message TagRequest {
 
 message VoteRequest {
   string content_id = 1;
+}
+
+message VoteResponse {
+  uint32 votes = 1;
 }
 
 message Tags {
@@ -60,6 +64,7 @@ message StoredContent {
   string description = 5;
   string image = 6;
   string url = 7;
+  int32 votes = 8;
 }
 
 message Edge {
@@ -82,12 +87,12 @@ message Content {
 message Source {
   string name = 1;
   oneof type {
-    YouTubeChannel youtube_channel = 4;
+    Folder folder = 2;
   }
 }
 
-message YouTubeChannel {
-  string channel_id = 1;
+message Folder {
+  string path = 1;
 }
 
 message Data {

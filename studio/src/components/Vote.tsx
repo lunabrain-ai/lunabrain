@@ -1,25 +1,22 @@
 import React, { useState } from 'react';
-import { ChevronUp20Filled, ChevronDown20Filled } from '@fluentui/react-icons';
+import { ChevronUp20Filled, ArrowUp24Regular } from '@fluentui/react-icons';
+import {contentService} from "@/service";
 
-interface IRedditRowProps {
-}
+export const Vote: React.FC<{ contentID: string, votes: number }> = ({ contentID, votes }) => {
+    const [currentVotes, setCurrentVotes] = useState(votes);
 
-export const Vote: React.FC<IRedditRowProps> = ({ }) => {
-    const [votes, setVotes] = useState(0);
-
-    const handleUpvote = () => {
-        setVotes(votes + 1);
-    };
-
-    const handleDownvote = () => {
-        setVotes(votes - 1);
+    const handleUpvote = async () => {
+        const res = await contentService.vote({
+            contentId: contentID,
+        });
+        setCurrentVotes(res.votes);
     };
 
     return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
                 <ChevronUp20Filled onClick={handleUpvote} style={{ cursor: 'pointer' }} />
-                <span>{votes}</span>
+                <span>{currentVotes}</span>
             </div>
         </div>
     );

@@ -1,8 +1,8 @@
 # LunaBrain
 
-Record audio, transcribe it, and ask AI to reason about it. All in one place.
+Build shared context with you and your homies.
 
-[![LunaBrain Demo](site/assets/images/demo.png)](http://www.youtube.com/watch?v=znCMrtOcjb0 "LunaBrain Demo")
+[![LunaBrain Demo](site/assets/images/demo.png)](https://www.youtube.com/live/UoRi3Fqh6Jg?si=CQVxzNWAqL6KOMa1&t=268 "LunaBrain Demo")
 
 ### Library 
 - To use LunaBrain as a Go library, refer to the [documentation](https://pkg.go.dev/github.com/lunabrain-ai/lunabrain) (Note: This code is still like pre-alpha, so the API is subject to change)

@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
+	collect2 "github.com/lunabrain-ai/lunabrain/pkg/content/source"
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/protoflow-labs/protoflow/pkg/util/reload"
 	"github.com/urfave/cli/v2"
@@ -48,8 +48,8 @@ func liveReload() error {
 }
 
 func NewCollectCommand(
-	discordCollect *collect.DiscordCollector,
-	hnCollect *collect.HNCollect,
+	discordCollect *collect2.DiscordCollector,
+	hnCollect *collect2.HNCollect,
 ) *cli.Command {
 	return &cli.Command{
 		Name:  "collect",

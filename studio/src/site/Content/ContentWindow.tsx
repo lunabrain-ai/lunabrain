@@ -1,6 +1,6 @@
 import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
 import {List, PrimaryButton, Spinner, SpinnerSize, Stack, TextField} from "@fluentui/react";
-import {Tag24Regular} from "@fluentui/react-icons";
+import {Tag24Regular, Delete24Regular} from "@fluentui/react-icons";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {MarkdownEditor} from "@/components/Editor/MarkdownEditor";
 import YouTube from "react-youtube";
@@ -8,9 +8,10 @@ import {AudioPlayer} from "@/components/AudioPlayer";
 import {ContentList} from "@/site/Content/ContentList";
 import {contentService} from "@/service";
 import {urlContent} from "@/extension/util";
-import {Select, Switch, ToggleButton} from "@fluentui/react-components";
-import {TagManager} from "@/components/TagTree";
+import {Button, Select, SelectProps, Switch, ToggleButton} from "@fluentui/react-components";
+import {TagManager} from "@/components/TagManager";
 import {GroupDialog} from "@/components/GroupManager";
+import toast from "react-hot-toast";
 
 const MediaViewer: React.FC = ({  }) => {
     const { media } = useProjectContext();
@@ -51,7 +52,9 @@ const saveURL = async (url: string) => {
 
 export const ContentWindow: React.FC = ({  }) => {
     const [inputValue, setInputValue] = useState<string | undefined>('');
-    const { content, showTagTree, setShowTagTree } = useProjectContext();
+    const { content, showTagTree, setShowTagTree, loadContent } = useProjectContext();
+    const [selectedContent, setSelectedContent] = useState<string[]>([]);
+    const [inputType, setInputType] = useState<string>('prompt');
 
     const handleSend = () => {
         if (inputValue && inputValue.trim() !== '') {
@@ -59,17 +62,38 @@ export const ContentWindow: React.FC = ({  }) => {
             setInputValue('');
         }
     };
+
+    const deleteContent = async () => {
+        try {
+            const res = await contentService.delete({
+                contentIds: selectedContent
+            })
+            toast.success('Deleted content');
+            setSelectedContent([]);
+            loadContent();
+        } catch (e: any) {
+            console.error(e);
+            toast.error('Failed to delete content');
+        }
+    }
+
+    const onInputTypeChange: SelectProps["onChange"] = (event, data) => {
+        setInputType(data.value);
+    };
+
     return (
         <Stack styles={{ root: { height: '100vh' } }} verticalFill>
             <Stack.Item disableShrink>
                 <Stack horizontal verticalAlign="end" horizontalAlign="center"
                        styles={{root: {width: '100%', gap: 15, marginBottom: 20, relative: true}}}>
-                    <Select>
-                        <option>Prompt</option>
-                        <option>URL</option>
+                    <ToggleButton checked={showTagTree} onClick={() => setShowTagTree(!showTagTree)} icon={<Tag24Regular />} />
+                    <Select onChange={onInputTypeChange} value={inputType}>
+                        <option>prompt</option>
+                        <option>url</option>
+                        <option>folder</option>
                     </Select>
                     <TextField
-                        placeholder="Enter a URL..."
+                        placeholder={`Enter a ${inputType}...`}
                         value={inputValue}
                         onChange={(e, newValue) => setInputValue(newValue)}
                         onKeyPress={(e) => {
@@ -81,8 +105,8 @@ export const ContentWindow: React.FC = ({  }) => {
                         styles={{root: {width: '100%'}}}
                     />
                     <PrimaryButton text="Send" onClick={handleSend}/>
-                    <ToggleButton checked={showTagTree} onClick={() => setShowTagTree(!showTagTree)} icon={<Tag24Regular />} />
                     <GroupDialog />
+                    <Button disabled={selectedContent.length === 0} onClick={deleteContent} icon={<Delete24Regular />} />
                 </Stack>
             </Stack.Item>
             <Stack.Item grow styles={{ root: { overflowY: 'auto' } }}>
@@ -91,7 +115,7 @@ export const ContentWindow: React.FC = ({  }) => {
                         {showTagTree && (
                             <TagManager />
                         )}
-                        <ContentList content={content} />
+                        <ContentList content={content} selectedContent={selectedContent} setSelectedContent={setSelectedContent} />
                     </Stack.Item>
                 </Stack>
             </Stack.Item>

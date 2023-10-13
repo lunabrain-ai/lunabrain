@@ -21,7 +21,7 @@ initializeIcons();
 
 const AppRoutes = () => {
     const commonRoutes = [{
-        path: '',
+        path: '/app',
         element: <Home />
     }, {
         path: '/app/group/:groupID',

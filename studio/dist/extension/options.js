@@ -47428,6 +47428,39 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
   }
 
   // src/rpc/content/content_pb.ts
+  var TagRequest = class _TagRequest extends Message {
+    /**
+     * @generated from field: string group_id = 1;
+     */
+    groupId = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.TagRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "group_id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _TagRequest().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _TagRequest().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _TagRequest().fromJsonString(jsonString, options);
+    }
+    static equals(a2, b3) {
+      return proto3.util.equals(_TagRequest, a2, b3);
+    }
+  };
   var VoteRequest = class _VoteRequest extends Message {
     /**
      * @generated from field: string content_id = 1;
@@ -47459,6 +47492,39 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     }
     static equals(a2, b3) {
       return proto3.util.equals(_VoteRequest, a2, b3);
+    }
+  };
+  var VoteResponse = class _VoteResponse extends Message {
+    /**
+     * @generated from field: uint32 votes = 1;
+     */
+    votes = 0;
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.VoteResponse";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "votes",
+        kind: "scalar",
+        T: 13
+        /* ScalarType.UINT32 */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _VoteResponse().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _VoteResponse().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _VoteResponse().fromJsonString(jsonString, options);
+    }
+    static equals(a2, b3) {
+      return proto3.util.equals(_VoteResponse, a2, b3);
     }
   };
   var Tags = class _Tags extends Message {
@@ -47707,6 +47773,10 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
      * @generated from field: string url = 7;
      */
     url = "";
+    /**
+     * @generated from field: int32 votes = 8;
+     */
+    votes = 0;
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
@@ -47750,6 +47820,13 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
         kind: "scalar",
         T: 9
         /* ScalarType.STRING */
+      },
+      {
+        no: 8,
+        name: "votes",
+        kind: "scalar",
+        T: 5
+        /* ScalarType.INT32 */
       }
     ]);
     static fromBinary(bytes, options) {
@@ -47878,7 +47955,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
         T: 9
         /* ScalarType.STRING */
       },
-      { no: 4, name: "youtube_channel", kind: "message", T: YouTubeChannel, oneof: "type" }
+      { no: 2, name: "folder", kind: "message", T: Folder, oneof: "type" }
     ]);
     static fromBinary(bytes, options) {
       return new _Source().fromBinary(bytes, options);
@@ -47893,37 +47970,37 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       return proto3.util.equals(_Source, a2, b3);
     }
   };
-  var YouTubeChannel = class _YouTubeChannel extends Message {
+  var Folder = class _Folder extends Message {
     /**
-     * @generated from field: string channel_id = 1;
+     * @generated from field: string path = 1;
      */
-    channelId = "";
+    path = "";
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
     }
     static runtime = proto3;
-    static typeName = "content.YouTubeChannel";
+    static typeName = "content.Folder";
     static fields = proto3.util.newFieldList(() => [
       {
         no: 1,
-        name: "channel_id",
+        name: "path",
         kind: "scalar",
         T: 9
         /* ScalarType.STRING */
       }
     ]);
     static fromBinary(bytes, options) {
-      return new _YouTubeChannel().fromBinary(bytes, options);
+      return new _Folder().fromBinary(bytes, options);
     }
     static fromJson(jsonValue, options) {
-      return new _YouTubeChannel().fromJson(jsonValue, options);
+      return new _Folder().fromJson(jsonValue, options);
     }
     static fromJsonString(jsonString, options) {
-      return new _YouTubeChannel().fromJsonString(jsonString, options);
+      return new _Folder().fromJsonString(jsonString, options);
     }
     static equals(a2, b3) {
-      return proto3.util.equals(_YouTubeChannel, a2, b3);
+      return proto3.util.equals(_Folder, a2, b3);
     }
   };
   var Data = class _Data extends Message {
@@ -50011,7 +50088,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
        */
       getTags: {
         name: "GetTags",
-        I: Empty,
+        I: TagRequest,
         O: Tags,
         kind: MethodKind.Unary
       },
@@ -50021,7 +50098,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
       vote: {
         name: "Vote",
         I: VoteRequest,
-        O: Empty,
+        O: VoteResponse,
         kind: MethodKind.Unary
       }
     }

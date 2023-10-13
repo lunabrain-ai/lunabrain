@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/google/uuid"
 	genapi "github.com/lunabrain-ai/lunabrain/gen"
-	"github.com/lunabrain-ai/lunabrain/gen/user"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/pkg/errors"
@@ -44,12 +43,12 @@ func NewSession(db *gorm.DB, sessMan *http.SessionManager) (*Session, error) {
 	}, nil
 }
 
-func (s *Session) GetUserID(ctx context.Context) (string, error) {
-	id := s.sessMan.GetString(ctx, UserIDCtxKey)
-	if id == "" {
-		return "", UserLoginError
+func (s *Session) GetUserID(ctx context.Context) (uuid.UUID, error) {
+	userID := s.sessMan.GetString(ctx, UserIDCtxKey)
+	if userID == "" {
+		return uuid.UUID{}, UserLoginError
 	}
-	return id, nil
+	return uuid.Parse(userID)
 }
 
 func (s *Session) SetUserID(ctx context.Context, id string) {
@@ -60,7 +59,7 @@ func (s *Session) ClearUserID(ctx context.Context) {
 	s.sessMan.Remove(ctx, UserIDCtxKey)
 }
 
-func (s *Session) NewSession(userID string, ps *genapi.Session) (*model.Session, error) {
+func (s *Session) NewSession(userID uuid.UUID, ps *genapi.Session) (*model.Session, error) {
 	var id uuid.UUID
 	if ps.Id != "" {
 		id = uuid.MustParse(ps.Id)
@@ -71,7 +70,7 @@ func (s *Session) NewSession(userID string, ps *genapi.Session) (*model.Session,
 		Base: model.Base{
 			ID: id,
 		},
-		UserID: uuid.MustParse(userID),
+		UserID: userID,
 		Data: datatypes.JSONType[*genapi.Session]{
 			Data: ps,
 		},
@@ -116,7 +115,7 @@ func (s *Session) Get(id string) (*model.Session, error) {
 	return v, nil
 }
 
-func (s *Session) All(userID string, page, limit int) ([]model.Session, *Pagination, error) {
+func (s *Session) All(userID uuid.UUID, page, limit int) ([]model.Session, *Pagination, error) {
 	var content []model.Session
 	pagination := Pagination{
 		Limit: limit,
@@ -170,69 +169,4 @@ func (s *Session) NewPrompt(ps *genapi.Prompt) (*model.Prompt, error) {
 		return nil, errors.Wrapf(res.Error, "could not save p")
 	}
 	return p, nil
-}
-
-func (s *Session) GetUserByID(id string) (*model.User, error) {
-	p := &model.User{
-		Base: model.Base{
-			ID: uuid.MustParse(id),
-		},
-	}
-	res := s.db.First(&p)
-	if res.Error != nil {
-		return nil, errors.Wrapf(res.Error, "could not get user: %s", id)
-	}
-	return p, nil
-}
-
-func (s *Session) GetUser(ps *user.User) (*model.User, error) {
-	p := &model.User{}
-	res := s.db.First(&p, datatypes.JSONQuery("data").Equals(ps.Email, "email"))
-	if res.Error != nil {
-		return nil, errors.Wrapf(res.Error, "could not get user: %s", ps.Email)
-	}
-	ok := CheckPasswordHash(ps.Password, p.PasswordHash)
-	if !ok {
-		return nil, errors.Errorf("could not get user: %s", ps.Email)
-	}
-	return p, nil
-}
-
-func (s *Session) NewUser(ps *user.User) (*model.User, error) {
-	id := uuid.New()
-	// TODO breadchris hash password
-	hash, err := HashPassword(ps.Password)
-	if err != nil {
-		return nil, errors.Wrapf(err, "could not hash password")
-	}
-	ps.Password = ""
-	p := &model.User{
-		Base: model.Base{
-			ID: id,
-		},
-		PasswordHash: hash,
-		Data: datatypes.JSONType[*user.User]{
-			Data: ps,
-		},
-	}
-	res := s.db.Save(p)
-	if res.Error != nil {
-		return nil, errors.Wrapf(res.Error, "could not save p")
-	}
-	return p, nil
-}
-
-func (s *Session) UpdateUser(id string, ps *user.User) error {
-	// TODO breadchris update other user fields
-	u := &model.User{
-		Base: model.Base{
-			ID: uuid.MustParse(id),
-		},
-	}
-	if res := s.db.Model(u).Update("data", datatypes.JSONType[*user.User]{
-		Data: ps,
-	}); res.Error != nil {
-		return errors.Wrapf(res.Error, "could not update user")
-	}
-	return nil
 }

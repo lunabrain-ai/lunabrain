@@ -55,7 +55,7 @@ func (a *Client) Transcribe(ctx context.Context, id, filePath string, captureDev
 	}
 }
 
-func (a *Client) apiTranscription(ctx context.Context, id, filePath string) rxgo.Observable {
+func (a *Client) apiTranscription(ctx context.Context, id string, filePath string) rxgo.Observable {
 	c := gopenai.NewClient(a.openaiConfig.APIKey)
 
 	// TODO breadchris figure out what code should be in the producer

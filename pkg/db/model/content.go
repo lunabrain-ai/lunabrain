@@ -23,7 +23,6 @@ type Vote struct {
 	Content   *Content  `json:"content"`
 	UserID    uuid.UUID `json:"user_id"`
 	User      *User     `json:"user"`
-	Upvote    bool      `json:"upvote"`
 }
 
 type Tag struct {

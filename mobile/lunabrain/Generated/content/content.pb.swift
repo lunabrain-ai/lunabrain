@@ -44,6 +44,18 @@ public struct Content_VoteRequest {
   public init() {}
 }
 
+public struct Content_VoteResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var votes: UInt32 = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 public struct Content_Tags {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -141,31 +153,54 @@ public struct Content_StoredContent {
   // methods supported on all messages.
 
   public var content: Content_Content {
-    get {return _content ?? Content_Content()}
-    set {_content = newValue}
+    get {return _storage._content ?? Content_Content()}
+    set {_uniqueStorage()._content = newValue}
   }
   /// Returns true if `content` has been explicitly set.
-  public var hasContent: Bool {return self._content != nil}
+  public var hasContent: Bool {return _storage._content != nil}
   /// Clears the value of `content`. Subsequent reads from it will return its default value.
-  public mutating func clearContent() {self._content = nil}
+  public mutating func clearContent() {_uniqueStorage()._content = nil}
 
-  public var id: String = String()
+  public var id: String {
+    get {return _storage._id}
+    set {_uniqueStorage()._id = newValue}
+  }
 
-  public var related: [Content_Content] = []
+  public var related: [Content_Content] {
+    get {return _storage._related}
+    set {_uniqueStorage()._related = newValue}
+  }
 
-  public var title: String = String()
+  public var title: String {
+    get {return _storage._title}
+    set {_uniqueStorage()._title = newValue}
+  }
 
-  public var description_p: String = String()
+  public var description_p: String {
+    get {return _storage._description_p}
+    set {_uniqueStorage()._description_p = newValue}
+  }
 
-  public var image: String = String()
+  public var image: String {
+    get {return _storage._image}
+    set {_uniqueStorage()._image = newValue}
+  }
 
-  public var url: String = String()
+  public var url: String {
+    get {return _storage._url}
+    set {_uniqueStorage()._url = newValue}
+  }
+
+  public var votes: Int32 {
+    get {return _storage._votes}
+    set {_uniqueStorage()._votes = newValue}
+  }
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
-  fileprivate var _content: Content_Content? = nil
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 public struct Content_Edge {
@@ -274,18 +309,18 @@ public struct Content_Source {
 
   public var type: Content_Source.OneOf_Type? = nil
 
-  public var youtubeChannel: Content_YouTubeChannel {
+  public var folder: Content_Folder {
     get {
-      if case .youtubeChannel(let v)? = type {return v}
-      return Content_YouTubeChannel()
+      if case .folder(let v)? = type {return v}
+      return Content_Folder()
     }
-    set {type = .youtubeChannel(newValue)}
+    set {type = .folder(newValue)}
   }
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_Type: Equatable {
-    case youtubeChannel(Content_YouTubeChannel)
+    case folder(Content_Folder)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Content_Source.OneOf_Type, rhs: Content_Source.OneOf_Type) -> Bool {
@@ -293,8 +328,8 @@ public struct Content_Source {
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch (lhs, rhs) {
-      case (.youtubeChannel, .youtubeChannel): return {
-        guard case .youtubeChannel(let l) = lhs, case .youtubeChannel(let r) = rhs else { preconditionFailure() }
+      case (.folder, .folder): return {
+        guard case .folder(let l) = lhs, case .folder(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
       }
@@ -305,12 +340,12 @@ public struct Content_Source {
   public init() {}
 }
 
-public struct Content_YouTubeChannel {
+public struct Content_Folder {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var channelID: String = String()
+  public var path: String = String()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -687,6 +722,7 @@ public struct Content_Transcript {
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Content_TagRequest: @unchecked Sendable {}
 extension Content_VoteRequest: @unchecked Sendable {}
+extension Content_VoteResponse: @unchecked Sendable {}
 extension Content_Tags: @unchecked Sendable {}
 extension Content_Tag: @unchecked Sendable {}
 extension Content_ContentIDs: @unchecked Sendable {}
@@ -699,7 +735,7 @@ extension Content_Content: @unchecked Sendable {}
 extension Content_Content.OneOf_Type: @unchecked Sendable {}
 extension Content_Source: @unchecked Sendable {}
 extension Content_Source.OneOf_Type: @unchecked Sendable {}
-extension Content_YouTubeChannel: @unchecked Sendable {}
+extension Content_Folder: @unchecked Sendable {}
 extension Content_Data: @unchecked Sendable {}
 extension Content_Data.OneOf_Type: @unchecked Sendable {}
 extension Content_Normalized: @unchecked Sendable {}
@@ -782,6 +818,38 @@ extension Content_VoteRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
 
   public static func ==(lhs: Content_VoteRequest, rhs: Content_VoteRequest) -> Bool {
     if lhs.contentID != rhs.contentID {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Content_VoteResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".VoteResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "votes"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularUInt32Field(value: &self.votes) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.votes != 0 {
+      try visitor.visitSingularUInt32Field(value: self.votes, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Content_VoteResponse, rhs: Content_VoteResponse) -> Bool {
+    if lhs.votes != rhs.votes {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1023,63 +1091,115 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     5: .same(proto: "description"),
     6: .same(proto: "image"),
     7: .same(proto: "url"),
+    8: .same(proto: "votes"),
   ]
 
+  fileprivate class _StorageClass {
+    var _content: Content_Content? = nil
+    var _id: String = String()
+    var _related: [Content_Content] = []
+    var _title: String = String()
+    var _description_p: String = String()
+    var _image: String = String()
+    var _url: String = String()
+    var _votes: Int32 = 0
+
+    static let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _content = source._content
+      _id = source._id
+      _related = source._related
+      _title = source._title
+      _description_p = source._description_p
+      _image = source._image
+      _url = source._url
+      _votes = source._votes
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularMessageField(value: &self._content) }()
-      case 2: try { try decoder.decodeSingularStringField(value: &self.id) }()
-      case 3: try { try decoder.decodeRepeatedMessageField(value: &self.related) }()
-      case 4: try { try decoder.decodeSingularStringField(value: &self.title) }()
-      case 5: try { try decoder.decodeSingularStringField(value: &self.description_p) }()
-      case 6: try { try decoder.decodeSingularStringField(value: &self.image) }()
-      case 7: try { try decoder.decodeSingularStringField(value: &self.url) }()
-      default: break
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 1: try { try decoder.decodeSingularMessageField(value: &_storage._content) }()
+        case 2: try { try decoder.decodeSingularStringField(value: &_storage._id) }()
+        case 3: try { try decoder.decodeRepeatedMessageField(value: &_storage._related) }()
+        case 4: try { try decoder.decodeSingularStringField(value: &_storage._title) }()
+        case 5: try { try decoder.decodeSingularStringField(value: &_storage._description_p) }()
+        case 6: try { try decoder.decodeSingularStringField(value: &_storage._image) }()
+        case 7: try { try decoder.decodeSingularStringField(value: &_storage._url) }()
+        case 8: try { try decoder.decodeSingularInt32Field(value: &_storage._votes) }()
+        default: break
+        }
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._content {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    } }()
-    if !self.id.isEmpty {
-      try visitor.visitSingularStringField(value: self.id, fieldNumber: 2)
-    }
-    if !self.related.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.related, fieldNumber: 3)
-    }
-    if !self.title.isEmpty {
-      try visitor.visitSingularStringField(value: self.title, fieldNumber: 4)
-    }
-    if !self.description_p.isEmpty {
-      try visitor.visitSingularStringField(value: self.description_p, fieldNumber: 5)
-    }
-    if !self.image.isEmpty {
-      try visitor.visitSingularStringField(value: self.image, fieldNumber: 6)
-    }
-    if !self.url.isEmpty {
-      try visitor.visitSingularStringField(value: self.url, fieldNumber: 7)
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      try { if let v = _storage._content {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+      } }()
+      if !_storage._id.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._id, fieldNumber: 2)
+      }
+      if !_storage._related.isEmpty {
+        try visitor.visitRepeatedMessageField(value: _storage._related, fieldNumber: 3)
+      }
+      if !_storage._title.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._title, fieldNumber: 4)
+      }
+      if !_storage._description_p.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._description_p, fieldNumber: 5)
+      }
+      if !_storage._image.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._image, fieldNumber: 6)
+      }
+      if !_storage._url.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._url, fieldNumber: 7)
+      }
+      if _storage._votes != 0 {
+        try visitor.visitSingularInt32Field(value: _storage._votes, fieldNumber: 8)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Content_StoredContent, rhs: Content_StoredContent) -> Bool {
-    if lhs._content != rhs._content {return false}
-    if lhs.id != rhs.id {return false}
-    if lhs.related != rhs.related {return false}
-    if lhs.title != rhs.title {return false}
-    if lhs.description_p != rhs.description_p {return false}
-    if lhs.image != rhs.image {return false}
-    if lhs.url != rhs.url {return false}
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._content != rhs_storage._content {return false}
+        if _storage._id != rhs_storage._id {return false}
+        if _storage._related != rhs_storage._related {return false}
+        if _storage._title != rhs_storage._title {return false}
+        if _storage._description_p != rhs_storage._description_p {return false}
+        if _storage._image != rhs_storage._image {return false}
+        if _storage._url != rhs_storage._url {return false}
+        if _storage._votes != rhs_storage._votes {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1245,7 +1365,7 @@ extension Content_Source: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
   public static let protoMessageName: String = _protobuf_package + ".Source"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "name"),
-    4: .standard(proto: "youtube_channel"),
+    2: .same(proto: "folder"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1255,17 +1375,17 @@ extension Content_Source: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.name) }()
-      case 4: try {
-        var v: Content_YouTubeChannel?
+      case 2: try {
+        var v: Content_Folder?
         var hadOneofValue = false
         if let current = self.type {
           hadOneofValue = true
-          if case .youtubeChannel(let m) = current {v = m}
+          if case .folder(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {
           if hadOneofValue {try decoder.handleConflictingOneOf()}
-          self.type = .youtubeChannel(v)
+          self.type = .folder(v)
         }
       }()
       default: break
@@ -1281,8 +1401,8 @@ extension Content_Source: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     if !self.name.isEmpty {
       try visitor.visitSingularStringField(value: self.name, fieldNumber: 1)
     }
-    try { if case .youtubeChannel(let v)? = self.type {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+    try { if case .folder(let v)? = self.type {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
     } }()
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -1295,10 +1415,10 @@ extension Content_Source: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
   }
 }
 
-extension Content_YouTubeChannel: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".YouTubeChannel"
+extension Content_Folder: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".Folder"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "channel_id"),
+    1: .same(proto: "path"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1307,21 +1427,21 @@ extension Content_YouTubeChannel: SwiftProtobuf.Message, SwiftProtobuf._MessageI
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.channelID) }()
+      case 1: try { try decoder.decodeSingularStringField(value: &self.path) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.channelID.isEmpty {
-      try visitor.visitSingularStringField(value: self.channelID, fieldNumber: 1)
+    if !self.path.isEmpty {
+      try visitor.visitSingularStringField(value: self.path, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Content_YouTubeChannel, rhs: Content_YouTubeChannel) -> Bool {
-    if lhs.channelID != rhs.channelID {return false}
+  public static func ==(lhs: Content_Folder, rhs: Content_Folder) -> Bool {
+    if lhs.path != rhs.path {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

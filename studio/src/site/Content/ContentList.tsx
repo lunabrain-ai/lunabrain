@@ -16,7 +16,7 @@ import {
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {Article, Content, StoredContent } from "@/rpc/content/content_pb";
 import {Checkbox, IconButton, IStackTokens, Stack} from "@fluentui/react";
-import { MoreHorizontal20Regular } from "@fluentui/react-icons";
+import {MoreHorizontal20Regular, AddCircle16Regular} from "@fluentui/react-icons";
 import {Vote} from "@/components/Vote";
 import {userService} from "@/service";
 import toast from "react-hot-toast";
@@ -24,6 +24,8 @@ import toast from "react-hot-toast";
 interface ContentListProps {
     style?: React.CSSProperties;
     content: StoredContent[];
+    selectedContent: string[];
+    setSelectedContent: (content: string[]) => void;
 }
 
 const useStyles = makeStyles({
@@ -91,7 +93,7 @@ const ArticleCard: React.FC<{ article: Article, tags: string[] }> = ({ tags, art
     )
 }
 
-const GroupButton: React.FC<{ contentId: string}> = ({ contentId }) => {
+const GroupButton: React.FC<{ contentId: string, style?: React.CSSProperties}> = ({ contentId, style }) => {
     const { groups } = useProjectContext();
     const shareContent = async (groupId: string) => {
         try {
@@ -105,23 +107,34 @@ const GroupButton: React.FC<{ contentId: string}> = ({ contentId }) => {
         }
     }
     return (
-        <Menu>
-            <MenuTrigger disableButtonEnhancement>
-                <MenuButton>Share</MenuButton>
-            </MenuTrigger>
+        <div style={style}>
+            <Menu>
+                <MenuTrigger disableButtonEnhancement>
+                    <MenuButton
+                        appearance="transparent"
+                        icon={<MoreHorizontal20Regular />}
+                        aria-label="More options"
+                    />
+                </MenuTrigger>
 
-            <MenuPopover>
-                <MenuList>
-                    {groups.map((g) => {
-                        return <MenuItem key={g.id} onClick={() => shareContent(g.id)}>{g.name}</MenuItem>
-                    })}
-                </MenuList>
-            </MenuPopover>
-        </Menu>
+                <MenuPopover>
+                    <MenuList>
+                        {groups.map((g) => {
+                            return <MenuItem key={g.id} onClick={() => shareContent(g.id)}>{g.name}</MenuItem>
+                        })}
+                    </MenuList>
+                </MenuPopover>
+            </Menu>
+        </div>
     )
 }
 
-export const ContentList: React.FC<ContentListProps> = ({ style, content }) => {
+export const ContentList: React.FC<ContentListProps> = ({
+    style,
+    content,
+    selectedContent,
+    setSelectedContent
+}) => {
     const styles = useStyles();
 
     const tc = (item: StoredContent, tags?: string[]): JSX.Element | null => {
@@ -168,35 +181,43 @@ export const ContentList: React.FC<ContentListProps> = ({ style, content }) => {
         padding: 10,
     };
 
+    const addTag = () => {
+    }
+
     return (
         <Stack tokens={verticalGapStackTokens}>
-            {content.map((item, i) => {
+            {content.map((item) => {
+                const openURL = () => window.location.href = item.url
                 return (
-                    <Stack.Item align="center" key={i} className={styles.stackItem}>
+                    <Stack.Item align="center" key={item.id} className={styles.stackItem}>
                         <Card className={styles.card}
                               floatingAction={
-                                  <Checkbox />
+                                  <Checkbox onChange={(ev, checked) => {
+                                        if (checked) {
+                                            setSelectedContent([...selectedContent, item.id]);
+                                        } else {
+                                            setSelectedContent(selectedContent.filter((c) => c !== item.id));
+                                        }
+                                  }} />
                               }
                         >
                             <CardHeader
-                                header={<b>{item.title}</b>}
-                                description={item.description}
-                                image={<img className={styles.headerImage} src={item.image} /> }
-                                onClick={() => window.location.href = item.url}
-                                style={{cursor: 'pointer'}}
-                                // action={
-                                //     <Button
-                                //         appearance="transparent"
-                                //         icon={<MoreHorizontal20Regular />}
-                                //         aria-label="More options"
-                                //     />
-                                // }
+                                header={<b style={{cursor: 'pointer'}} onClick={openURL}>{item.title}</b>}
+                                description={<div style={{cursor: 'pointer'}} onClick={openURL}>{item.description}</div>}
+                                image={<img style={{cursor: 'pointer'}} onClick={openURL} className={styles.headerImage} src={item.image} /> }
+                                action={<GroupButton contentId={item.id} />}
                             />
                             <CardFooter>
-                                <Stack horizontal>
-                                    <Vote />
-                                    {item.content?.tags.map((t, i) => <Badge key={i}>{t}</Badge>)}
-                                    <GroupButton contentId={item.id} />
+                                <Stack style={{width: '100%'}} horizontal tokens={{childrenGap: 10}}>
+                                    <Stack.Item>
+                                        <Vote contentID={item.id} votes={item.votes} />
+                                    </Stack.Item>
+                                    <Stack.Item>
+                                        <Stack horizontal tokens={{childrenGap: 3}}>
+                                            {item.content?.tags.map((t, i) => <Badge key={i}>{t}</Badge>)}
+                                            <Badge size="medium" onClick={addTag} style={{cursor: 'pointer'}} icon={<AddCircle16Regular />} />
+                                        </Stack>
+                                    </Stack.Item>
                                 </Stack>
                             </CardFooter>
                         </Card>

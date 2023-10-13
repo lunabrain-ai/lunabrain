@@ -14,7 +14,7 @@ import {
 import {contentService} from "@/service";
 import {urlContent} from "@/extension/util";
 import { Content, StoredContent } from '@/rpc/content/content_pb';
-import {contentGet} from "@/extension/shared";
+import {contentGet, contentSave} from "@/extension/shared";
 import {SaveWizard} from "@/extension/SaveWizard";
 
 interface FloatingPanelProps {}
@@ -26,7 +26,6 @@ const floatingPanelStyle: React.CSSProperties = {
     backgroundColor: 'white',
     border: '1px solid #ccc',
     color: 'black',
-    width: '40vh',
     maxHeight: '300px',
     overflowY: 'auto',
     zIndex: 9999,
@@ -54,7 +53,7 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
 
     useEffect(() => {
         chrome.runtime.sendMessage(
-            { action: contentGet, payload: "TODO make url?" },
+            { action: contentGet, data: "TODO make url?" },
             (response) => {
                 if (response.data) {
                     setContent(response.data);
@@ -64,6 +63,15 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
         );
     }, []);
 
+    const saveContent = () => {
+        chrome.runtime.sendMessage(
+            { action: contentSave, data: content },
+            (response) => {
+                setVisible(false)
+            }
+        );
+    }
+
     if (!visible) {
         return null;
     }
@@ -72,9 +80,11 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
         <Stack id="floating-panel" tokens={{ childrenGap: 10 }} style={floatingPanelStyle}>
             {content ? (
                 <>
-                    <h5>Save {document.title}?</h5>
-                    <Button>Yes</Button>
-                    <Button>No</Button>
+                    <h5>Save this page?</h5>
+                    <Stack horizontal>
+                        <Button onClick={saveContent}>Yes</Button>
+                        <Button onClick={() => setVisible(false)}>No</Button>
+                    </Stack>
                 </>
             ) : (
                 <SaveWizard />

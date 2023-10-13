@@ -1,8 +1,8 @@
 package cli
 
 import (
+	collect2 "github.com/lunabrain-ai/lunabrain/pkg/content/source"
 	"github.com/lunabrain-ai/lunabrain/pkg/log"
-	"github.com/lunabrain-ai/lunabrain/pkg/pipeline/collect"
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/urfave/cli/v2"
 )
@@ -16,8 +16,8 @@ func NewApp(
 	// TODO breadchris needed so wire will pick it up as a dep
 	log *log.Log,
 	httpServer server.HTTPServer,
-	discordCollect *collect.DiscordCollector,
-	hnCollect *collect.HNCollect,
+	discordCollect *collect2.DiscordCollector,
+	hnCollect *collect2.HNCollect,
 ) *cli.App {
 	return &cli.App{
 		Name:  "lunabrain",
