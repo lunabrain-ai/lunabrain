@@ -44,10 +44,15 @@ export const AudioRecorder: React.FC = () => {
                 const res = projectService.uploadContent({
                     content: {
                         type: {
-                            case: 'file',
+                            case: 'data',
                             value: {
-                                file: new Date().toISOString() + '.wav',
-                                data: fileBytes,
+                                type: {
+                                    case: 'file',
+                                    value: {
+                                        file: new Date().toISOString() + '.wav',
+                                        data: fileBytes,
+                                    }
+                                }
                             }
                         },
                     },

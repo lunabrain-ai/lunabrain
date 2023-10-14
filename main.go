@@ -2,7 +2,6 @@ package main
 
 //go:generate protoc --jsonschema_out=gen/jsonschema --proto_path=proto proto/ai.proto
 //go:generate npx buf generate proto
-//go:generate npm run build
 
 import (
 	"fmt"
