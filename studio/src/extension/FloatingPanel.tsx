@@ -1,20 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, PrimaryButton, Stack } from '@fluentui/react';
+import { Stack } from '@fluentui/react';
 import {
     Button,
-    SelectTabData,
-    SelectTabEvent,
-    Tab,
-    Table,
-    TableCell,
-    TableCellActions,
-    TableRow,
-    TabList, TabValue
 } from "@fluentui/react-components";
-import {contentService} from "@/service";
-import {urlContent} from "@/extension/util";
-import { Content, StoredContent } from '@/rpc/content/content_pb';
-import {contentGet, contentSave} from "@/extension/shared";
+import {contentGet, contentSave, TabContent} from "@/extension/shared";
 import {SaveWizard} from "@/extension/SaveWizard";
 
 interface FloatingPanelProps {}
@@ -36,7 +25,7 @@ const floatingPanelStyle: React.CSSProperties = {
 
 export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
     const [visible, setVisible] = useState<boolean>(false);
-    const [content, setContent] = useState<string|undefined>(undefined);
+    const [content, setContent] = useState<TabContent|undefined>(undefined);
 
     useEffect(() => {
         const listener = (event: KeyboardEvent) => {

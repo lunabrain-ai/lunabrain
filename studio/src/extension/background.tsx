@@ -1,16 +1,16 @@
 /// <reference types="chrome"/>
 import {contentService, projectService, userService} from "@/service";
 import {urlContent} from "@/extension/util";
-import {contentGet, contentSave} from "@/extension/shared";
+import {contentGet, contentSave, TabContent} from "@/extension/shared";
 
-let tabContent: string|undefined = undefined;
+let tabContent: TabContent|undefined = undefined;
 
 const chromeExt = () => {
-    async function saveContent(url: string) {
-        const u = new URL(url);
+    async function saveContent(tabContent: TabContent) {
+        const u = new URL(tabContent.from);
         try {
             const resp = await contentService.save({
-                content: urlContent(url, ['browser/history', u.host]),
+                content: urlContent(tabContent.to, ['browser/history', u.host]),
                 related: []
             });
             console.log(resp);
@@ -95,7 +95,10 @@ const chromeExt = () => {
             }
             // TODO breadchris integrate whitelist
             if (u.host === 'news.ycombinator.com') {
-                tabContent = details.url;
+                tabContent = {
+                    from: details.initiator,
+                    to: details.url
+                }
                 // TODO breadchris auto collecting config
             }
         }, { urls: ["<all_urls>"] }, [])

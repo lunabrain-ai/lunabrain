@@ -5,6 +5,7 @@ import {ContentWindow} from "@/site/Content/ContentWindow";
 import {AccountCard} from "@/components/AccountCard";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {Button, SelectTabData, SelectTabEvent, Tab, TabList} from "@fluentui/react-components";
+import {GroupDialog} from "@/components/GroupManager";
 
 export const ContentPage = () => {
     const {groups, currentGroup, setCurrentGroup} = useProjectContext();
@@ -21,7 +22,10 @@ export const ContentPage = () => {
                             return <Tab key={g.id} value={g.id}>{g.name}</Tab>;
                         })}
                     </TabList>
-                    <AccountCard />
+                    <Stack horizontal tokens={{ childrenGap: 5}}>
+                        <GroupDialog />
+                        <AccountCard />
+                    </Stack>
                 </Stack>
             </Stack.Item>
             <Stack.Item>

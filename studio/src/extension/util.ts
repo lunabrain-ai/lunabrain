@@ -1,4 +1,4 @@
-import { Content, Data } from "@/rpc/content/content_pb";
+import { Content, Data, Source } from "@/rpc/content/content_pb";
 
 const ITEMS_PER_PAGE = 100; // Adjust as required
 

@@ -21,6 +21,7 @@ var (
 	ProviderSet = wire.NewSet(
 		NewConfig,
 		New,
+		NewBuilder,
 		// TODO breadchris bind Bucket to interface so pointers are not passed around
 	)
 )

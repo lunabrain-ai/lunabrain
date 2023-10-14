@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/gen/content/contentconnect"
+	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
@@ -19,18 +20,23 @@ type Service struct {
 	db     *db.Store
 	sess   *db.Session
 	openai *openai.Agent
+	bucket *bucket.Builder
 }
 
 var _ contentconnect.ContentServiceHandler = (*Service)(nil)
 
 func (s *Service) Save(ctx context.Context, c *connect_go.Request[content.Contents]) (*connect_go.Response[content.ContentIDs], error) {
-	norm, err := Normalize(c.Msg.Content)
+	uid, err := s.sess.GetUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	norm, err := s.Normalize(c.Msg.Content)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to normalize content")
 	}
 	norm = append(norm, c.Msg.Related...)
 
-	cnt, err := s.db.SaveContent(c.Msg.Content, norm)
+	cnt, err := s.db.SaveContent(uid, c.Msg.Content, norm)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to save content")
 	}
@@ -38,10 +44,12 @@ func (s *Service) Save(ctx context.Context, c *connect_go.Request[content.Conten
 }
 
 func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Query]) (*connect_go.Response[content.Results], error) {
-	var (
-		err error
-		ct  []model.Content
-	)
+	userID, err := s.sess.GetUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var ct []model.Content
 	if c.Msg.ContentID != "" {
 		parsedID, err := uuid.Parse(c.Msg.ContentID)
 		if err != nil {
@@ -53,16 +61,9 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 		}
 		ct = append(ct, *singleContent)
 	} else {
-		if c.Msg.GroupID != "" {
-			ct, err = s.db.GetGroupContent(c.Msg.GroupID)
-			if err != nil {
-				return nil, errors.Wrapf(err, "unable to get stored content")
-			}
-		} else {
-			ct, _, err = s.db.GetAllContent(0, 100)
-			if err != nil {
-				return nil, errors.Wrapf(err, "unable to get stored content")
-			}
+		ct, _, err = s.db.SearchContent(userID, 0, 100, c.Msg.GroupID, c.Msg.Tags)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to get stored content")
 		}
 	}
 
@@ -88,6 +89,9 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 			switch t := r.ContentData.Data.Type.(type) {
 			case *content.Content_Normalized:
 				switch u := t.Normalized.Type.(type) {
+				case *content.Normalized_Readme:
+					sc.Title = sc.Url
+					sc.Description = u.Readme.Data
 				case *content.Normalized_Article:
 					sc.Title = u.Article.Title
 					sc.Description = u.Article.Excerpt
@@ -103,7 +107,11 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 
 func (s *Service) Delete(ctx context.Context, c *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error) {
 	for _, ct := range c.Msg.ContentIds {
-		err := s.db.DeleteContent(ct)
+		id, err := uuid.Parse(ct)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to parse content id")
+		}
+		err = s.db.DeleteContent(id)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to save content")
 		}
@@ -214,10 +222,12 @@ func NewService(
 	db *db.Store,
 	sess *db.Session,
 	openai *openai.Agent,
+	bucket *bucket.Builder,
 ) *Service {
 	return &Service{
 		db:     db,
 		sess:   sess,
 		openai: openai,
+		bucket: bucket,
 	}
 }

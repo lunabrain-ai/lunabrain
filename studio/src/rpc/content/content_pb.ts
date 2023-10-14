@@ -301,6 +301,11 @@ export class Query extends Message<Query> {
    */
   groupID = "";
 
+  /**
+   * @generated from field: repeated string tags = 5;
+   */
+  tags: string[] = [];
+
   constructor(data?: PartialMessage<Query>) {
     super();
     proto3.util.initPartial(data, this);
@@ -313,6 +318,7 @@ export class Query extends Message<Query> {
     { no: 2, name: "page", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
     { no: 3, name: "contentID", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "groupID", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "tags", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Query {
@@ -508,6 +514,11 @@ export class Content extends Message<Content> {
   createdAt = "";
 
   /**
+   * @generated from field: string uri = 3;
+   */
+  uri = "";
+
+  /**
    * @generated from oneof content.Content.type
    */
   type: {
@@ -528,12 +539,6 @@ export class Content extends Message<Content> {
      */
     value: Transformed;
     case: "transformed";
-  } | {
-    /**
-     * @generated from field: content.Source source = 9;
-     */
-    value: Source;
-    case: "source";
   } | { case: undefined; value?: undefined } = { case: undefined };
 
   constructor(data?: PartialMessage<Content>) {
@@ -546,10 +551,10 @@ export class Content extends Message<Content> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "tags", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
     { no: 2, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "uri", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 6, name: "data", kind: "message", T: Data, oneof: "type" },
     { no: 7, name: "normalized", kind: "message", T: Normalized, oneof: "type" },
     { no: 8, name: "transformed", kind: "message", T: Transformed, oneof: "type" },
-    { no: 9, name: "source", kind: "message", T: Source, oneof: "type" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Content {
@@ -570,88 +575,39 @@ export class Content extends Message<Content> {
 }
 
 /**
- * @generated from message content.Source
+ * @generated from message content.GitRepo
  */
-export class Source extends Message<Source> {
+export class GitRepo extends Message<GitRepo> {
   /**
-   * @generated from field: string name = 1;
+   * @generated from field: string url = 1;
    */
-  name = "";
+  url = "";
 
-  /**
-   * @generated from oneof content.Source.type
-   */
-  type: {
-    /**
-     * @generated from field: content.Folder folder = 2;
-     */
-    value: Folder;
-    case: "folder";
-  } | { case: undefined; value?: undefined } = { case: undefined };
-
-  constructor(data?: PartialMessage<Source>) {
+  constructor(data?: PartialMessage<GitRepo>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "content.Source";
+  static readonly typeName = "content.GitRepo";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "folder", kind: "message", T: Folder, oneof: "type" },
+    { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Source {
-    return new Source().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GitRepo {
+    return new GitRepo().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Source {
-    return new Source().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GitRepo {
+    return new GitRepo().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Source {
-    return new Source().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GitRepo {
+    return new GitRepo().fromJsonString(jsonString, options);
   }
 
-  static equals(a: Source | PlainMessage<Source> | undefined, b: Source | PlainMessage<Source> | undefined): boolean {
-    return proto3.util.equals(Source, a, b);
-  }
-}
-
-/**
- * @generated from message content.Folder
- */
-export class Folder extends Message<Folder> {
-  /**
-   * @generated from field: string path = 1;
-   */
-  path = "";
-
-  constructor(data?: PartialMessage<Folder>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "content.Folder";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "path", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Folder {
-    return new Folder().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Folder {
-    return new Folder().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Folder {
-    return new Folder().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: Folder | PlainMessage<Folder> | undefined, b: Folder | PlainMessage<Folder> | undefined): boolean {
-    return proto3.util.equals(Folder, a, b);
+  static equals(a: GitRepo | PlainMessage<GitRepo> | undefined, b: GitRepo | PlainMessage<GitRepo> | undefined): boolean {
+    return proto3.util.equals(GitRepo, a, b);
   }
 }
 
@@ -739,10 +695,10 @@ export class Normalized extends Message<Normalized> {
     case: "transcript";
   } | {
     /**
-     * @generated from field: content.GitHubReadme github_readme = 7;
+     * @generated from field: content.ReadMe readme = 7;
      */
-    value: GitHubReadme;
-    case: "githubReadme";
+    value: ReadMe;
+    case: "readme";
   } | { case: undefined; value?: undefined } = { case: undefined };
 
   constructor(data?: PartialMessage<Normalized>) {
@@ -756,7 +712,7 @@ export class Normalized extends Message<Normalized> {
     { no: 3, name: "article", kind: "message", T: Article, oneof: "type" },
     { no: 4, name: "html", kind: "message", T: HTML, oneof: "type" },
     { no: 6, name: "transcript", kind: "message", T: Transcript, oneof: "type" },
-    { no: 7, name: "github_readme", kind: "message", T: GitHubReadme, oneof: "type" },
+    { no: 7, name: "readme", kind: "message", T: ReadMe, oneof: "type" },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Normalized {
@@ -943,39 +899,39 @@ export class HTML extends Message<HTML> {
 }
 
 /**
- * @generated from message content.GitHubReadme
+ * @generated from message content.ReadMe
  */
-export class GitHubReadme extends Message<GitHubReadme> {
+export class ReadMe extends Message<ReadMe> {
   /**
    * @generated from field: string data = 1;
    */
   data = "";
 
-  constructor(data?: PartialMessage<GitHubReadme>) {
+  constructor(data?: PartialMessage<ReadMe>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "content.GitHubReadme";
+  static readonly typeName = "content.ReadMe";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "data", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GitHubReadme {
-    return new GitHubReadme().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ReadMe {
+    return new ReadMe().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GitHubReadme {
-    return new GitHubReadme().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ReadMe {
+    return new ReadMe().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GitHubReadme {
-    return new GitHubReadme().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ReadMe {
+    return new ReadMe().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GitHubReadme | PlainMessage<GitHubReadme> | undefined, b: GitHubReadme | PlainMessage<GitHubReadme> | undefined): boolean {
-    return proto3.util.equals(GitHubReadme, a, b);
+  static equals(a: ReadMe | PlainMessage<ReadMe> | undefined, b: ReadMe | PlainMessage<ReadMe> | undefined): boolean {
+    return proto3.util.equals(ReadMe, a, b);
   }
 }
 

@@ -11,6 +11,11 @@ import {Group, User } from "@/rpc/user/user_pb";
 const ProjectContext = createContext<ProjectContextType>({} as any);
 export const useProjectContext = () => useContext(ProjectContext);
 
+export type UserSettings = {
+    showPreviews: boolean;
+    showQRCodes: boolean;
+}
+
 type ProjectProviderProps = {
     children: React.ReactNode;
 };
@@ -56,6 +61,9 @@ type ProjectContextType = {
     setShowTagTree: (showTagTree: boolean) => void;
     loadGroups: () => void;
     loadContent: () => void;
+
+    userSettings: UserSettings;
+    setUserSettings: (userSettings: UserSettings) => void;
 };
 
 export function groupURL(groupID: string) {
@@ -77,6 +85,10 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     const [tags, setTags] = useState<Tag[]>([]);
     const [filteredTags, setFilteredTags] = useState<string[]>([]);
     const [showTagTree, setShowTagTree] = useState<boolean>(false);
+    const [userSettings, setUserSettings] = useState<UserSettings>({
+        showPreviews: false,
+        showQRCodes: false,
+    });
 
     const addFilteredTag = (tag: string) => {
         setFilteredTags((prev) => [...prev, tag]);
@@ -88,11 +100,18 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
 
     const loadContent = async () => {
         const res = await contentService.search({
+            tags: filteredTags,
             // TODO breadchris home is just the user's content
             groupID: currentGroup === 'home' ? undefined : currentGroup,
         });
         setContent(res.storedContent);
     }
+
+    useEffect(() => {
+        if (filteredTags.length > 0) {
+            void loadContent();
+        }
+    }, [filteredTags]);
 
     const loadGroups = async () => {
         const res = await userService.getGroups({});
@@ -250,6 +269,9 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
 
                 showTagTree,
                 setShowTagTree,
+
+                userSettings,
+                setUserSettings,
             }}
         >
             {children}

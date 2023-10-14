@@ -132,6 +132,7 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	fs := http.FS(site.Assets)
 	httpFileServer := http.FileServer(fs)
 
+	// TODO breachris this should come from bucket
 	f := http.FS(os.DirFS("data"))
 	mediaFileServer := http.FileServer(f)
 

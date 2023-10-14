@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Badge, Button, Input, Tree, TreeItem, TreeItemLayout} from "@fluentui/react-components";
 import { Tag } from "@/rpc/content/content_pb";
 import {useProjectContext} from "@/providers/ProjectProvider";
@@ -17,7 +17,7 @@ export const TagManager = () => {
                     </>
                 )}
                 <ul>
-                    {filteredTags.map((g) => <Badge onClick={() => removeFilteredTag(g)}>{g}</Badge>)}
+                    {filteredTags.map((g, idx) => <Badge key={`${g}-${idx}`} onClick={() => removeFilteredTag(g)}>{g}</Badge>)}
                 </ul>
             </div>
         </>

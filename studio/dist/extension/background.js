@@ -3587,6 +3587,10 @@
      * @generated from field: string groupID = 4;
      */
     groupID = "";
+    /**
+     * @generated from field: repeated string tags = 5;
+     */
+    tags = [];
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
@@ -3621,7 +3625,8 @@
         kind: "scalar",
         T: 9
         /* ScalarType.STRING */
-      }
+      },
+      { no: 5, name: "tags", kind: "scalar", T: 9, repeated: true }
     ]);
     static fromBinary(bytes, options) {
       return new _Query().fromBinary(bytes, options);
@@ -3815,6 +3820,10 @@
      */
     createdAt = "";
     /**
+     * @generated from field: string uri = 3;
+     */
+    uri = "";
+    /**
      * @generated from oneof content.Content.type
      */
     type = { case: void 0 };
@@ -3833,10 +3842,16 @@
         T: 9
         /* ScalarType.STRING */
       },
+      {
+        no: 3,
+        name: "uri",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
       { no: 6, name: "data", kind: "message", T: Data, oneof: "type" },
       { no: 7, name: "normalized", kind: "message", T: Normalized, oneof: "type" },
-      { no: 8, name: "transformed", kind: "message", T: Transformed, oneof: "type" },
-      { no: 9, name: "source", kind: "message", T: Source, oneof: "type" }
+      { no: 8, name: "transformed", kind: "message", T: Transformed, oneof: "type" }
     ]);
     static fromBinary(bytes, options) {
       return new _Content().fromBinary(bytes, options);
@@ -3851,75 +3866,37 @@
       return proto3.util.equals(_Content, a, b);
     }
   };
-  var Source = class _Source extends Message {
+  var GitRepo = class _GitRepo extends Message {
     /**
-     * @generated from field: string name = 1;
+     * @generated from field: string url = 1;
      */
-    name = "";
-    /**
-     * @generated from oneof content.Source.type
-     */
-    type = { case: void 0 };
+    url = "";
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
     }
     static runtime = proto3;
-    static typeName = "content.Source";
+    static typeName = "content.GitRepo";
     static fields = proto3.util.newFieldList(() => [
       {
         no: 1,
-        name: "name",
-        kind: "scalar",
-        T: 9
-        /* ScalarType.STRING */
-      },
-      { no: 2, name: "folder", kind: "message", T: Folder, oneof: "type" }
-    ]);
-    static fromBinary(bytes, options) {
-      return new _Source().fromBinary(bytes, options);
-    }
-    static fromJson(jsonValue, options) {
-      return new _Source().fromJson(jsonValue, options);
-    }
-    static fromJsonString(jsonString, options) {
-      return new _Source().fromJsonString(jsonString, options);
-    }
-    static equals(a, b) {
-      return proto3.util.equals(_Source, a, b);
-    }
-  };
-  var Folder = class _Folder extends Message {
-    /**
-     * @generated from field: string path = 1;
-     */
-    path = "";
-    constructor(data) {
-      super();
-      proto3.util.initPartial(data, this);
-    }
-    static runtime = proto3;
-    static typeName = "content.Folder";
-    static fields = proto3.util.newFieldList(() => [
-      {
-        no: 1,
-        name: "path",
+        name: "url",
         kind: "scalar",
         T: 9
         /* ScalarType.STRING */
       }
     ]);
     static fromBinary(bytes, options) {
-      return new _Folder().fromBinary(bytes, options);
+      return new _GitRepo().fromBinary(bytes, options);
     }
     static fromJson(jsonValue, options) {
-      return new _Folder().fromJson(jsonValue, options);
+      return new _GitRepo().fromJson(jsonValue, options);
     }
     static fromJsonString(jsonString, options) {
-      return new _Folder().fromJsonString(jsonString, options);
+      return new _GitRepo().fromJsonString(jsonString, options);
     }
     static equals(a, b) {
-      return proto3.util.equals(_Folder, a, b);
+      return proto3.util.equals(_GitRepo, a, b);
     }
   };
   var Data = class _Data extends Message {
@@ -3966,7 +3943,7 @@
       { no: 3, name: "article", kind: "message", T: Article, oneof: "type" },
       { no: 4, name: "html", kind: "message", T: HTML, oneof: "type" },
       { no: 6, name: "transcript", kind: "message", T: Transcript, oneof: "type" },
-      { no: 7, name: "github_readme", kind: "message", T: GitHubReadme, oneof: "type" }
+      { no: 7, name: "readme", kind: "message", T: ReadMe, oneof: "type" }
     ]);
     static fromBinary(bytes, options) {
       return new _Normalized().fromBinary(bytes, options);
@@ -4152,7 +4129,7 @@
       return proto3.util.equals(_HTML, a, b);
     }
   };
-  var GitHubReadme = class _GitHubReadme extends Message {
+  var ReadMe = class _ReadMe extends Message {
     /**
      * @generated from field: string data = 1;
      */
@@ -4162,7 +4139,7 @@
       proto3.util.initPartial(data, this);
     }
     static runtime = proto3;
-    static typeName = "content.GitHubReadme";
+    static typeName = "content.ReadMe";
     static fields = proto3.util.newFieldList(() => [
       {
         no: 1,
@@ -4173,16 +4150,16 @@
       }
     ]);
     static fromBinary(bytes, options) {
-      return new _GitHubReadme().fromBinary(bytes, options);
+      return new _ReadMe().fromBinary(bytes, options);
     }
     static fromJson(jsonValue, options) {
-      return new _GitHubReadme().fromJson(jsonValue, options);
+      return new _ReadMe().fromJson(jsonValue, options);
     }
     static fromJsonString(jsonString, options) {
-      return new _GitHubReadme().fromJsonString(jsonString, options);
+      return new _ReadMe().fromJsonString(jsonString, options);
     }
     static equals(a, b) {
-      return proto3.util.equals(_GitHubReadme, a, b);
+      return proto3.util.equals(_ReadMe, a, b);
     }
   };
   var Summary = class _Summary extends Message {
@@ -8267,11 +8244,11 @@
   // src/extension/background.tsx
   var tabContent = void 0;
   var chromeExt = () => {
-    async function saveContent(url) {
-      const u = new URL(url);
+    async function saveContent(tabContent2) {
+      const u = new URL(tabContent2.from);
       try {
         const resp = await contentService.save({
-          content: urlContent(url, ["browser/history", u.host]),
+          content: urlContent(tabContent2.to, ["browser/history", u.host]),
           related: []
         });
         console.log(resp);
@@ -8337,7 +8314,10 @@
           return;
         }
         if (u.host === "news.ycombinator.com") {
-          tabContent = details.url;
+          tabContent = {
+            from: details.initiator,
+            to: details.url
+          };
         }
       },
       { urls: ["<all_urls>"] },

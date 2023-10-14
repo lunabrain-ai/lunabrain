@@ -50,6 +50,7 @@ message Query {
   uint32 page = 2;
   string contentID = 3;
   string groupID = 4;
+  repeated string tags = 5;
 }
 
 message Results {
@@ -76,23 +77,16 @@ message Edge {
 message Content {
   repeated string tags = 1;
   string created_at = 2;
+  string uri = 3;
   oneof type {
     Data data = 6;
     Normalized normalized = 7;
     Transformed transformed = 8;
-    Source source = 9;
   };
 }
 
-message Source {
-  string name = 1;
-  oneof type {
-    Folder folder = 2;
-  }
-}
-
-message Folder {
-  string path = 1;
+message GitRepo {
+  string url = 1;
 }
 
 message Data {
@@ -108,7 +102,7 @@ message Normalized {
     Article article = 3;
     HTML html = 4;
     Transcript transcript = 6;
-    GitHubReadme github_readme = 7;
+    ReadMe readme = 7;
   }
 }
 
@@ -134,7 +128,7 @@ message HTML {
   string html = 1;
 }
 
-message GitHubReadme {
+message ReadMe {
   string data = 1;
 }
 

@@ -4,11 +4,11 @@ import (
 	"bufio"
 	"context"
 	"github.com/reactivex/rxgo/v2"
-	"log/slog"
 	"mvdan.cc/xurls/v2"
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 type LogSeq struct {
@@ -41,8 +41,16 @@ type TaggedLink struct {
 
 var (
 	lineRe = regexp.MustCompile(`^(\s*)- .+`)
-	tagRe  = regexp.MustCompile(`#\S+`)
+	tagRe  = regexp.MustCompile(`(?:\s|^)(#\w+(?:/\w+)?)(?:\s|$)`)
 )
+
+func cleanTag(s string) string {
+	s = strings.TrimSpace(s)
+	if strings.HasPrefix(s, "#") {
+		s = s[1:]
+	}
+	return s
+}
 
 // parseMarkdown reads and parses the markdown content of a given file path, then extracts URLs and tags.
 func parseMarkdown(filePath string) ([]TaggedLink, error) {
@@ -65,8 +73,12 @@ func parseMarkdown(filePath string) ([]TaggedLink, error) {
 
 		if len(matches) > 0 {
 			tags := tagRe.FindAllString(line, -1)
+			var cleanedTags []string
+			for _, tag := range tags {
+				cleanedTags = append(cleanedTags, cleanTag(tag))
+			}
 			for _, url := range matches {
-				results = append(results, TaggedLink{URL: url, Tags: tags, File: filePath})
+				results = append(results, TaggedLink{URL: url, Tags: cleanedTags, File: filePath})
 			}
 		}
 	}
@@ -77,11 +89,11 @@ func parseMarkdown(filePath string) ([]TaggedLink, error) {
 	return results, nil
 }
 
-func (s *LogSeq) Load(dir string) {
+func (s *LogSeq) Load(dir string) rxgo.Observable {
 	observable := walkDirectory(dir)
 
 	// Parse markdown and extract URLs and tags
-	extractedObservable := observable.
+	return observable.
 		FlatMap(func(item rxgo.Item) rxgo.Observable {
 			filePath := item.V.(string)
 			extracted, err := parseMarkdown(filePath)
@@ -90,18 +102,4 @@ func (s *LogSeq) Load(dir string) {
 			}
 			return rxgo.Just(extracted)()
 		}, rxgo.WithPool(5))
-
-	// Subscribe and print URLs and tags
-	<-extractedObservable.ForEach(func(i any) {
-		tl, ok := i.(TaggedLink)
-		if !ok {
-			slog.Error("error casting to TaggedLink", "error", ok)
-			return
-		}
-		slog.Info("result", "result", tl)
-	}, func(err error) {
-		slog.Error("error while extracting", "error", err)
-	}, func() {
-		slog.Debug("extraction complete")
-	})
 }

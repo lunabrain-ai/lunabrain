@@ -83,7 +83,7 @@ func (s *Session) NewSession(userID uuid.UUID, ps *genapi.Session) (*model.Sessi
 }
 
 func (s *Session) DeleteSession(id string) error {
-	res := s.db.Delete(&model.Session{
+	res := s.db.Unscoped().Delete(&model.Session{
 		Base: model.Base{
 			ID: uuid.MustParse(id),
 		},

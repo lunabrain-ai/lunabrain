@@ -32,33 +32,38 @@ const MediaViewer: React.FC = ({  }) => {
     return null;
 }
 
-const saveURL = async (url: string) => {
-    try {
-        const u = new URL(url);
-    } catch (e) {
-        console.error('invalid url', e);
-        return;
-    }
-    try {
-        const resp = await contentService.save({
-            content: urlContent(url, ['app/input']),
-            related: []
-        });
-        console.log(resp);
-    } catch (e) {
-        console.error('failed to save', e)
-    }
-}
-
 export const ContentWindow: React.FC = ({  }) => {
     const [inputValue, setInputValue] = useState<string | undefined>('');
     const { content, showTagTree, setShowTagTree, loadContent } = useProjectContext();
     const [selectedContent, setSelectedContent] = useState<string[]>([]);
-    const [inputType, setInputType] = useState<string>('prompt');
+    const [inputType, setInputType] = useState<string>('url');
 
-    const handleSend = () => {
+    const saveURL = async (url: string) => {
+        try {
+            const u = new URL(url);
+        } catch (e) {
+            console.error('invalid url', e);
+            return;
+        }
+        try {
+            const resp = await contentService.save({
+                content: urlContent(url, ['app/input']),
+                related: []
+            });
+            console.log(resp);
+            toast.success('Saved content');
+        } catch (e) {
+            toast.error('Failed to save content');
+            console.error('failed to save', e)
+        }
+    }
+
+    const handleSend = async () => {
         if (inputValue && inputValue.trim() !== '') {
-            void saveURL(inputValue);
+            if (inputType === 'url') {
+                await saveURL(inputValue);
+                void loadContent();
+            }
             setInputValue('');
         }
     };
@@ -88,9 +93,8 @@ export const ContentWindow: React.FC = ({  }) => {
                        styles={{root: {width: '100%', gap: 15, marginBottom: 20, relative: true}}}>
                     <ToggleButton checked={showTagTree} onClick={() => setShowTagTree(!showTagTree)} icon={<Tag24Regular />} />
                     <Select onChange={onInputTypeChange} value={inputType}>
-                        <option>prompt</option>
                         <option>url</option>
-                        <option>folder</option>
+                        <option>prompt</option>
                     </Select>
                     <TextField
                         placeholder={`Enter a ${inputType}...`}
@@ -105,13 +109,12 @@ export const ContentWindow: React.FC = ({  }) => {
                         styles={{root: {width: '100%'}}}
                     />
                     <PrimaryButton text="Send" onClick={handleSend}/>
-                    <GroupDialog />
                     <Button disabled={selectedContent.length === 0} onClick={deleteContent} icon={<Delete24Regular />} />
                 </Stack>
             </Stack.Item>
             <Stack.Item grow styles={{ root: { overflowY: 'auto' } }}>
                 <Stack horizontal>
-                    <Stack.Item>
+                    <Stack.Item style={{width: '100%'}}>
                         {showTagTree && (
                             <TagManager />
                         )}

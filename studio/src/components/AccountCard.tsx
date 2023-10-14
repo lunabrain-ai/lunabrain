@@ -13,6 +13,7 @@ import {ArrowCircleRightRegular} from "@fluentui/react-icons";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {userService} from "@/service";
 import toast from "react-hot-toast";
+import {UserSettingsDialog} from "@/components/UserSettings";
 
 interface User {
     username: string;
@@ -23,6 +24,7 @@ interface AccountCardProps {
 }
 
 export const AccountCard: React.FC<AccountCardProps> = () => {
+    const [settingsOpen, setSettingsOpen] = useState(false);
     const { user, setUser } = useProjectContext();
 
     const logout = async () => {
@@ -42,6 +44,7 @@ export const AccountCard: React.FC<AccountCardProps> = () => {
 
     return (
         <div>
+            <UserSettingsDialog open={settingsOpen} setOpen={setSettingsOpen} />
             <Menu>
                 <MenuTrigger disableButtonEnhancement>
                     <MenuButton>
@@ -55,6 +58,7 @@ export const AccountCard: React.FC<AccountCardProps> = () => {
                 <MenuPopover>
                     <MenuList>
                         <MenuItem onClick={logout}>Logout</MenuItem>
+                        <MenuItem onClick={() => setSettingsOpen(true)}>Settings</MenuItem>
                     </MenuList>
                 </MenuPopover>
             </Menu>

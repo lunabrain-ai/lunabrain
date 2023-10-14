@@ -5,14 +5,16 @@ import (
 )
 
 type Config struct {
-	DSN  string `yaml:"dsn"`
-	Type string `yaml:"type"`
+	DSN   string `yaml:"dsn"`
+	Type  string `yaml:"type"`
+	Debug bool   `yaml:"debug"`
 }
 
 func NewDefaultConfig() Config {
 	return Config{
-		DSN:  "lunabrain.db",
-		Type: "sqlite3",
+		DSN:   "lunabrain.db",
+		Type:  "sqlite3",
+		Debug: false,
 	}
 }
 

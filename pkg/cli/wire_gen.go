@@ -75,7 +75,11 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	service := content.NewService(store, session, agent)
+	builder, err := bucket.NewBuilder(bucketConfig)
+	if err != nil {
+		return nil, err
+	}
+	service := content.NewService(store, session, agent, builder)
 	discordConfig, err := discord.NewConfig(provider)
 	if err != nil {
 		return nil, err

@@ -70,7 +70,7 @@ func (s *Store) DeleteGroup(groupID uuid.UUID) error {
 			ID: groupID,
 		},
 	}
-	res := s.db.Delete(g)
+	res := s.db.Unscoped().Delete(g)
 	if res.Error != nil {
 		return errors.Wrapf(res.Error, "could not delete group")
 	}
@@ -118,17 +118,4 @@ func (s *Store) GetTagsForGroup(groupID uuid.UUID) ([]string, error) {
 		}
 	}
 	return tagNames, nil
-}
-
-func (s *Store) GetGroupContent(groupID string) ([]model.Content, error) {
-	g := &model.Group{
-		Base: model.Base{
-			ID: uuid.MustParse(groupID),
-		},
-	}
-	res := s.db.Preload("Content").Preload("Content.RelatedContent").Preload("Content.Votes").First(g)
-	if res.Error != nil {
-		return nil, errors.Wrapf(res.Error, "could not get content")
-	}
-	return g.Content, nil
 }

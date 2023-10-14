@@ -21,7 +21,9 @@ func NewGormDB(config Config, bucket *bucket.Bucket) (*gorm.DB, error) {
 	}
 
 	db, err := gorm.Open(openedDb, &gorm.Config{
-		Logger: Logger{},
+		Logger: Logger{
+			Debug: config.Debug,
+		},
 	})
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to open db")
