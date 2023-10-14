@@ -18,7 +18,7 @@ func main() {
 		return
 	}
 
-	err = app.Rn(os.Args)
+	err = app.Run(os.Args)
 	if err != nil {
 		slog.Error("failed to run app", "error", fmt.Sprintf("%+v", err))
 		return
