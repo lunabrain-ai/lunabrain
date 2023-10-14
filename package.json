@@ -1,13 +1,13 @@
 {
-  "name": "studio",
+  "name": "@lunabrain/js",
   "version": "0.0.1",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "npm run dev:site || npm run dev:extension",
-    "dev:site": "cd studio && node esbuild.mjs",
-    "dev:extension": "cd studio && TARGET=extension node esbuild.mjs",
-    "build": "cd studio && BUILD=true node esbuild.mjs"
+    "dev:site": "cd js && TARGET=site node esbuild.mjs",
+    "dev:extension": "cd js && TARGET=extension node esbuild.mjs",
+    "build": "cd js && BUILD=true node esbuild.mjs"
   },
   "dependencies": {
     "@bufbuild/connect": "^0.13.0",

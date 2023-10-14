@@ -10,6 +10,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/gen/content/contentconnect"
 	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
 	"github.com/lunabrain-ai/lunabrain/gen/user/userconnect"
+	"github.com/lunabrain-ai/lunabrain/js/dist/site"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
 	"github.com/lunabrain-ai/lunabrain/pkg/content"
@@ -17,7 +18,6 @@ import (
 	shttp "github.com/lunabrain-ai/lunabrain/pkg/http"
 	code "github.com/lunabrain-ai/lunabrain/pkg/protoflow"
 	"github.com/lunabrain-ai/lunabrain/pkg/user"
-	"github.com/lunabrain-ai/lunabrain/studio/dist/site"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 	"log/slog"
@@ -136,9 +136,9 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	f := http.FS(os.DirFS("data"))
 	mediaFileServer := http.FileServer(f)
 
-	u, err := url.Parse(a.config.StudioProxy)
+	u, err := url.Parse(a.config.Proxy)
 	if err != nil {
-		slog.Error("failed to parse studio proxy", "error", err)
+		slog.Error("failed to parse proxy", "error", err)
 		return nil
 	}
 	proxy := httputil.NewSingleHostReverseProxy(u)
@@ -148,7 +148,6 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	// TODO breadchris fix this code, preferably with chi
 	muxRoot.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
-			// redirect to /studio
 			http.Redirect(w, r, "/app", http.StatusFound)
 			return
 		}
@@ -159,7 +158,7 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 		}
 		if r.URL.Path == "/app" || strings.HasPrefix(r.URL.Path, "/app/") || r.URL.Path == "/esbuild" {
 			r.URL.Path = strings.Replace(r.URL.Path, "/app", "", 1)
-			if a.config.StudioProxy != "" {
+			if a.config.Proxy != "" {
 				slog.Debug("proxying request", "path", r.URL.Path)
 				proxy.ServeHTTP(w, r)
 			} else {

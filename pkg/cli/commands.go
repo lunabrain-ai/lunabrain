@@ -41,7 +41,7 @@ func liveReload() error {
 		// TODO breadchris the patterns and ignores are not quite working
 		// ideally we use tilt here
 		Patterns: []string{"pkg/**/*.go", "templates/**"},
-		Ignores:  []string{"studio/**", "node_modules/**", ".git/**", "examples/**", "third_party/**", "env/**", "site/**", "data/**", "mobile/**"},
+		Ignores:  []string{"js/**", "node_modules/**", ".git/**", "examples/**", "third_party/**", "env/**", "site/**", "data/**", "mobile/**"},
 	}
 	// TODO breadchris this code needs to be refactored to use observability
 	return reload.Reload(c)
