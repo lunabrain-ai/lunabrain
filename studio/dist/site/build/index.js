@@ -59579,7 +59579,7 @@ Tree must have either a \`aria-label\` or \`aria-labelledby\` property defined`)
   };
 
   // src/service.ts
-  var baseURL = "http://localhost:8080";
+  var baseURL = "https://demo.lunabrain.com";
   var queryClient = new QueryClient();
   var transport = createConnectTransport({
     baseUrl: `${baseURL}/api` || "error"
@@ -80836,7 +80836,7 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_liter
   // src/index.tsx
   var import_jsx_runtime57 = __toESM(require_jsx_runtime(), 1);
   window.React = import_react77.default;
-  if (true) {
+  if (false) {
     new EventSource("/esbuild").addEventListener("change", () => location.reload());
   }
   var root = import_client.default.createRoot(document.getElementById("root"));

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if ! go generate ./...; then
+  echo "Generation of files failed. Aborting commit."
+  exit 1
+fi
+
+git add -u
+
+exit 0
