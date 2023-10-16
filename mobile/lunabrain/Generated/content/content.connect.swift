@@ -40,6 +40,12 @@ public protocol Content_ContentServiceClientInterface: Sendable {
     func `getTags`(request: Content_TagRequest, headers: Connect.Headers) async -> ResponseMessage<Content_Tags>
 
     @discardableResult
+    func `setTags`(request: Content_SetTagsRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable
+
+    @available(iOS 13, *)
+    func `setTags`(request: Content_SetTagsRequest, headers: Connect.Headers) async -> ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>
+
+    @discardableResult
     func `vote`(request: Content_VoteRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Content_VoteResponse>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
@@ -105,6 +111,16 @@ public final class Content_ContentServiceClient: Content_ContentServiceClientInt
     }
 
     @discardableResult
+    public func `setTags`(request: Content_SetTagsRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/content.ContentService/SetTags", request: request, headers: headers, completion: completion)
+    }
+
+    @available(iOS 13, *)
+    public func `setTags`(request: Content_SetTagsRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty> {
+        return await self.client.unary(path: "/content.ContentService/SetTags", request: request, headers: headers)
+    }
+
+    @discardableResult
     public func `vote`(request: Content_VoteRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Content_VoteResponse>) -> Void) -> Connect.Cancelable {
         return self.client.unary(path: "/content.ContentService/Vote", request: request, headers: headers, completion: completion)
     }
@@ -121,6 +137,7 @@ public final class Content_ContentServiceClient: Content_ContentServiceClientInt
             public static let analyze = Connect.MethodSpec(name: "Analyze", service: "content.ContentService", type: .unary)
             public static let delete = Connect.MethodSpec(name: "Delete", service: "content.ContentService", type: .unary)
             public static let getTags = Connect.MethodSpec(name: "GetTags", service: "content.ContentService", type: .unary)
+            public static let setTags = Connect.MethodSpec(name: "SetTags", service: "content.ContentService", type: .unary)
             public static let vote = Connect.MethodSpec(name: "Vote", service: "content.ContentService", type: .unary)
         }
     }

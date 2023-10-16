@@ -1,4 +1,4 @@
-import {ContentPage} from "@/site/Content/ContentPage";
+import {ContentPage} from "@/site/ContentPage";
 import {useParams} from "react-router";
 import {useEffect} from "react";
 import {useProjectContext} from "@/providers/ProjectProvider";

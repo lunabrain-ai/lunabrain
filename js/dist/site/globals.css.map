@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/styles/globals.css"],
+  "sourcesContent": ["html {\n  background: black;\n}\n\nbody {\n  margin: 0 !important;\n  padding: 0;\n}\n\nmain {\n  min-height: 100vh;\n}\n\nspan.rsjv-expander {\n  color: #888;\n}\n\nspan.rsjv-expander:hover {\n  cursor: pointer;\n}\n\nspan.rsjv-value {\n  color: #3d94bf;\n  overflow-wrap: anywhere;\n}\n\n.json-viewer {\n  max-height: 50em;\n  overflow-y: auto;\n}\n\n.json-viewer ul {\n  padding-left: 1em;\n}\n"],
+  "mappings": ";AAAA;AACE,cAAY;AACd;AAEA;AACE,UAAQ;AACR,WAAS;AACX;AAEA;AACE,cAAY;AACd;AAEA,IAAI,CAAC;AACH,SAAO;AACT;AAEA,IAAI,CAJC,aAIa;AAChB,UAAQ;AACV;AAEA,IAAI,CAAC;AACH,SAAO;AACP,iBAAe;AACjB;AAEA,CAAC;AACC,cAAY;AACZ,cAAY;AACd;AAEA,CALC,YAKY;AACX,gBAAc;AAChB;",
+  "names": []
+}

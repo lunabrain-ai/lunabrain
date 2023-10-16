@@ -172,16 +172,44 @@ func (s *Store) SearchContent(userID uuid.UUID, page, limit int, groupID string,
 }
 
 func (s *Store) GetContentByID(contentID uuid.UUID) (*model.Content, error) {
-	var content model.Content
-	res := s.db.Where("id = ?", contentID).Preload(clause.Associations).First(&content)
+	var cnt model.Content
+	res := s.db.Where("id = ?", contentID).Preload(clause.Associations).First(&cnt)
 	if res.Error != nil {
-		return nil, errors.Wrapf(res.Error, "could not get content")
+		return nil, errors.Wrapf(res.Error, "could not get cnt")
 	}
-	return &content, nil
+	return &cnt, nil
+}
+
+func (s *Store) SetTags(contentID uuid.UUID, tags []string) error {
+	// TODO breadchris validate tags
+	var tagModels []*model.Tag
+	for _, tagName := range tags {
+		var tag model.Tag
+		if err := s.db.FirstOrCreate(&tag, model.Tag{Name: tagName}).Error; err != nil {
+			return err
+		}
+		tagModels = append(tagModels, &tag)
+	}
+	cnt := &model.Content{
+		Base: model.Base{
+			ID: contentID,
+		},
+	}
+	res := s.db.Preload("Tags").First(cnt)
+	if res.Error != nil {
+		return errors.Wrapf(res.Error, "could not set tags")
+	}
+	err := s.db.Model(cnt).Association("Tags").Replace(tagModels)
+	if err != nil {
+		return errors.Wrapf(err, "could not set tags")
+	}
+	return nil
 }
 
 func (s *Store) GetTags() ([]string, error) {
 	var tags []model.Tag
+
+	// TODO breadchris restrict tags to a group?
 	res := s.db.Find(&tags)
 	if res.Error != nil {
 		return nil, errors.Wrapf(res.Error, "could not get tags")

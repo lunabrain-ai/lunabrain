@@ -59,6 +59,12 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
                 setVisible(false)
             }
         );
+        setContent(undefined);
+    }
+
+    const dontSave = () => {
+        setVisible(false);
+        setContent(undefined);
     }
 
     if (!visible) {
@@ -72,7 +78,7 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
                     <h5>Save this page?</h5>
                     <Stack horizontal>
                         <Button onClick={saveContent}>Yes</Button>
-                        <Button onClick={() => setVisible(false)}>No</Button>
+                        <Button onClick={dontSave}>No</Button>
                     </Stack>
                 </>
             ) : (

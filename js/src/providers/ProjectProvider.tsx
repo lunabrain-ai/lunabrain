@@ -1,6 +1,6 @@
 import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {contentService, projectService, userService} from "@/service";
-import {Message} from "@/site/Content/MessageList";
+import {Message} from "@/components/Content/MessageList";
 import {Code, ConnectError} from "@bufbuild/connect";
 import toast from "react-hot-toast";
 import {TabValue} from "@fluentui/react-components";
@@ -14,6 +14,7 @@ export const useProjectContext = () => useContext(ProjectContext);
 export type UserSettings = {
     showPreviews: boolean;
     showQRCodes: boolean;
+    showRelatedContent: boolean;
 }
 
 type ProjectProviderProps = {
@@ -88,6 +89,7 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     const [userSettings, setUserSettings] = useState<UserSettings>({
         showPreviews: false,
         showQRCodes: false,
+        showRelatedContent: false,
     });
 
     const addFilteredTag = (tag: string) => {
@@ -108,9 +110,7 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     }
 
     useEffect(() => {
-        if (filteredTags.length > 0) {
-            void loadContent();
-        }
+        void loadContent();
     }, [filteredTags]);
 
     const loadGroups = async () => {
@@ -126,7 +126,6 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     }
 
     useEffect(() => {
-        void loadContent();
         void loadTags();
         if (user) {
             window.history.pushState({}, '', groupURL(currentGroup));

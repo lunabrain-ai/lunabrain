@@ -36,7 +36,7 @@ const floatingPanelStyle: React.CSSProperties = {
 
 export const SaveWizard: React.FC<SaveWizardProps> = () => {
     const [error, setError] = useState<string|undefined>(undefined);
-    const [title, setTitle] = useState(document.title);
+    const [title, setTitle] = useState(document.title || window.location.href);
     const [tag, setTag] = useState<string|undefined>(undefined);
     const [tags, setTags] = useState<string[]>(['browser/save']);
     const [url, setUrl] = useState(window.location.href);

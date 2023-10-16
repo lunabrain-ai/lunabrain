@@ -5,6 +5,50 @@
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
 import { Message, proto3, protoInt64 } from "@bufbuild/protobuf";
+import { User } from "../user/user_pb.js";
+
+/**
+ * @generated from message content.SetTagsRequest
+ */
+export class SetTagsRequest extends Message<SetTagsRequest> {
+  /**
+   * @generated from field: string content_id = 1;
+   */
+  contentId = "";
+
+  /**
+   * @generated from field: repeated string tags = 2;
+   */
+  tags: string[] = [];
+
+  constructor(data?: PartialMessage<SetTagsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.SetTagsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "content_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "tags", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SetTagsRequest {
+    return new SetTagsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): SetTagsRequest {
+    return new SetTagsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): SetTagsRequest {
+    return new SetTagsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: SetTagsRequest | PlainMessage<SetTagsRequest> | undefined, b: SetTagsRequest | PlainMessage<SetTagsRequest> | undefined): boolean {
+    return proto3.util.equals(SetTagsRequest, a, b);
+  }
+}
 
 /**
  * @generated from message content.TagRequest
@@ -419,6 +463,11 @@ export class StoredContent extends Message<StoredContent> {
    */
   votes = 0;
 
+  /**
+   * @generated from field: user.User user = 9;
+   */
+  user?: User;
+
   constructor(data?: PartialMessage<StoredContent>) {
     super();
     proto3.util.initPartial(data, this);
@@ -435,6 +484,7 @@ export class StoredContent extends Message<StoredContent> {
     { no: 6, name: "image", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 7, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 8, name: "votes", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 9, name: "user", kind: "message", T: User },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StoredContent {
@@ -519,6 +569,11 @@ export class Content extends Message<Content> {
   uri = "";
 
   /**
+   * @generated from field: string id = 4;
+   */
+  id = "";
+
+  /**
    * @generated from oneof content.Content.type
    */
   type: {
@@ -552,6 +607,7 @@ export class Content extends Message<Content> {
     { no: 1, name: "tags", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
     { no: 2, name: "created_at", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "uri", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 6, name: "data", kind: "message", T: Data, oneof: "type" },
     { no: 7, name: "normalized", kind: "message", T: Normalized, oneof: "type" },
     { no: 8, name: "transformed", kind: "message", T: Transformed, oneof: "type" },

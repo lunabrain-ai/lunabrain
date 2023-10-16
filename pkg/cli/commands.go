@@ -38,10 +38,9 @@ func liveReload() error {
 	// TODO breadchris makes this a config that can be set
 	c := reload.Config{
 		Cmd: []string{"go", "run", "main.go", "start"},
-		// TODO breadchris the patterns and ignores are not quite working
 		// ideally we use tilt here
-		Patterns: []string{"pkg/**/*.go", "templates/**"},
-		Ignores:  []string{"js/**", "node_modules/**", ".git/**", "examples/**", "third_party/**", "env/**", "site/**", "data/**", "mobile/**"},
+		Targets:  []string{"pkg", "gen"},
+		Patterns: []string{"**/*.go"},
 	}
 	// TODO breadchris this code needs to be refactored to use observability
 	return reload.Reload(c)

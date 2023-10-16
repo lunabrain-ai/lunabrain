@@ -3,8 +3,8 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Content, ContentIDs, Contents, Query, Results, TagRequest, Tags, VoteRequest, VoteResponse } from "./content_pb.js";
-import { MethodKind } from "@bufbuild/protobuf";
+import { Content, ContentIDs, Contents, Query, Results, SetTagsRequest, TagRequest, Tags, VoteRequest, VoteResponse } from "./content_pb.js";
+import { Empty, MethodKind } from "@bufbuild/protobuf";
 
 /**
  * @generated from service content.ContentService
@@ -55,6 +55,15 @@ export const ContentService = {
       name: "GetTags",
       I: TagRequest,
       O: Tags,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc content.ContentService.SetTags
+     */
+    setTags: {
+      name: "SetTags",
+      I: SetTagsRequest,
+      O: Empty,
       kind: MethodKind.Unary,
     },
     /**

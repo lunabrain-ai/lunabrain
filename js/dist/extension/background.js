@@ -3346,7 +3346,396 @@
     };
   }
 
+  // src/rpc/user/user_pb.ts
+  var GroupInfoRequest = class _GroupInfoRequest extends Message {
+    /**
+     * @generated from field: string secret = 1;
+     */
+    secret = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "user.GroupInfoRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "secret",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _GroupInfoRequest().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _GroupInfoRequest().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _GroupInfoRequest().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_GroupInfoRequest, a, b);
+    }
+  };
+  var GroupID = class _GroupID extends Message {
+    /**
+     * @generated from field: string group_id = 1;
+     */
+    groupId = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "user.GroupID";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "group_id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _GroupID().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _GroupID().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _GroupID().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_GroupID, a, b);
+    }
+  };
+  var ShareRequest = class _ShareRequest extends Message {
+    /**
+     * @generated from field: string content_id = 1;
+     */
+    contentId = "";
+    /**
+     * @generated from field: string group_id = 2;
+     */
+    groupId = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "user.ShareRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "content_id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "group_id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _ShareRequest().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _ShareRequest().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _ShareRequest().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_ShareRequest, a, b);
+    }
+  };
+  var GroupInvite = class _GroupInvite extends Message {
+    /**
+     * @generated from field: string secret = 1;
+     */
+    secret = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "user.GroupInvite";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "secret",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _GroupInvite().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _GroupInvite().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _GroupInvite().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_GroupInvite, a, b);
+    }
+  };
+  var Groups = class _Groups extends Message {
+    /**
+     * @generated from field: repeated user.Group groups = 1;
+     */
+    groups = [];
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "user.Groups";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "groups", kind: "message", T: Group, repeated: true }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _Groups().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _Groups().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _Groups().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_Groups, a, b);
+    }
+  };
+  var AnalyzeConversationRequest = class _AnalyzeConversationRequest extends Message {
+    /**
+     * @generated from field: string text = 1;
+     */
+    text = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "user.AnalyzeConversationRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "text",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _AnalyzeConversationRequest().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _AnalyzeConversationRequest().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _AnalyzeConversationRequest().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_AnalyzeConversationRequest, a, b);
+    }
+  };
+  var User = class _User extends Message {
+    /**
+     * @generated from field: string email = 1;
+     */
+    email = "";
+    /**
+     * @generated from field: string password = 2;
+     */
+    password = "";
+    /**
+     * @generated from field: user.Config config = 3;
+     */
+    config;
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "user.User";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "email",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "password",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 3, name: "config", kind: "message", T: Config }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _User().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _User().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _User().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_User, a, b);
+    }
+  };
+  var Group = class _Group extends Message {
+    /**
+     * @generated from field: string id = 1;
+     */
+    id = "";
+    /**
+     * @generated from field: string name = 2;
+     */
+    name = "";
+    /**
+     * @generated from field: repeated string users = 3;
+     */
+    users = [];
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "user.Group";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "name",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 3, name: "users", kind: "scalar", T: 9, repeated: true }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _Group().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _Group().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _Group().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_Group, a, b);
+    }
+  };
+  var Config = class _Config extends Message {
+    /**
+     * @generated from field: repeated string domain_whitelist = 1;
+     */
+    domainWhitelist = [];
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "user.Config";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "domain_whitelist", kind: "scalar", T: 9, repeated: true }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _Config().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _Config().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _Config().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_Config, a, b);
+    }
+  };
+  var LoginResponse = class _LoginResponse extends Message {
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "user.LoginResponse";
+    static fields = proto3.util.newFieldList(() => []);
+    static fromBinary(bytes, options) {
+      return new _LoginResponse().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _LoginResponse().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _LoginResponse().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_LoginResponse, a, b);
+    }
+  };
+
   // src/rpc/content/content_pb.ts
+  var SetTagsRequest = class _SetTagsRequest extends Message {
+    /**
+     * @generated from field: string content_id = 1;
+     */
+    contentId = "";
+    /**
+     * @generated from field: repeated string tags = 2;
+     */
+    tags = [];
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.SetTagsRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "content_id",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 2, name: "tags", kind: "scalar", T: 9, repeated: true }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _SetTagsRequest().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _SetTagsRequest().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _SetTagsRequest().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_SetTagsRequest, a, b);
+    }
+  };
   var TagRequest = class _TagRequest extends Message {
     /**
      * @generated from field: string group_id = 1;
@@ -3701,6 +4090,10 @@
      * @generated from field: int32 votes = 8;
      */
     votes = 0;
+    /**
+     * @generated from field: user.User user = 9;
+     */
+    user;
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
@@ -3751,7 +4144,8 @@
         kind: "scalar",
         T: 5
         /* ScalarType.INT32 */
-      }
+      },
+      { no: 9, name: "user", kind: "message", T: User }
     ]);
     static fromBinary(bytes, options) {
       return new _StoredContent().fromBinary(bytes, options);
@@ -3824,6 +4218,10 @@
      */
     uri = "";
     /**
+     * @generated from field: string id = 4;
+     */
+    id = "";
+    /**
      * @generated from oneof content.Content.type
      */
     type = { case: void 0 };
@@ -3845,6 +4243,13 @@
       {
         no: 3,
         name: "uri",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 4,
+        name: "id",
         kind: "scalar",
         T: 9
         /* ScalarType.STRING */
@@ -4553,7 +4958,7 @@
   };
 
   // src/rpc/protoflow_pb.ts
-  var AnalyzeConversationRequest = class _AnalyzeConversationRequest extends Message {
+  var AnalyzeConversationRequest2 = class _AnalyzeConversationRequest extends Message {
     /**
      * @generated from field: string text = 1;
      */
@@ -5932,7 +6337,7 @@
        */
       analyzeConversation: {
         name: "AnalyzeConversation",
-        I: AnalyzeConversationRequest,
+        I: AnalyzeConversationRequest2,
         O: AnalyzeConversationResponse,
         kind: MethodKind.Unary
       }
@@ -5989,6 +6394,15 @@
         kind: MethodKind.Unary
       },
       /**
+       * @generated from rpc content.ContentService.SetTags
+       */
+      setTags: {
+        name: "SetTags",
+        I: SetTagsRequest,
+        O: Empty,
+        kind: MethodKind.Unary
+      },
+      /**
        * @generated from rpc content.ContentService.Vote
        */
       vote: {
@@ -5997,357 +6411,6 @@
         O: VoteResponse,
         kind: MethodKind.Unary
       }
-    }
-  };
-
-  // src/rpc/user/user_pb.ts
-  var GroupInfoRequest = class _GroupInfoRequest extends Message {
-    /**
-     * @generated from field: string secret = 1;
-     */
-    secret = "";
-    constructor(data) {
-      super();
-      proto3.util.initPartial(data, this);
-    }
-    static runtime = proto3;
-    static typeName = "user.GroupInfoRequest";
-    static fields = proto3.util.newFieldList(() => [
-      {
-        no: 1,
-        name: "secret",
-        kind: "scalar",
-        T: 9
-        /* ScalarType.STRING */
-      }
-    ]);
-    static fromBinary(bytes, options) {
-      return new _GroupInfoRequest().fromBinary(bytes, options);
-    }
-    static fromJson(jsonValue, options) {
-      return new _GroupInfoRequest().fromJson(jsonValue, options);
-    }
-    static fromJsonString(jsonString, options) {
-      return new _GroupInfoRequest().fromJsonString(jsonString, options);
-    }
-    static equals(a, b) {
-      return proto3.util.equals(_GroupInfoRequest, a, b);
-    }
-  };
-  var GroupID = class _GroupID extends Message {
-    /**
-     * @generated from field: string group_id = 1;
-     */
-    groupId = "";
-    constructor(data) {
-      super();
-      proto3.util.initPartial(data, this);
-    }
-    static runtime = proto3;
-    static typeName = "user.GroupID";
-    static fields = proto3.util.newFieldList(() => [
-      {
-        no: 1,
-        name: "group_id",
-        kind: "scalar",
-        T: 9
-        /* ScalarType.STRING */
-      }
-    ]);
-    static fromBinary(bytes, options) {
-      return new _GroupID().fromBinary(bytes, options);
-    }
-    static fromJson(jsonValue, options) {
-      return new _GroupID().fromJson(jsonValue, options);
-    }
-    static fromJsonString(jsonString, options) {
-      return new _GroupID().fromJsonString(jsonString, options);
-    }
-    static equals(a, b) {
-      return proto3.util.equals(_GroupID, a, b);
-    }
-  };
-  var ShareRequest = class _ShareRequest extends Message {
-    /**
-     * @generated from field: string content_id = 1;
-     */
-    contentId = "";
-    /**
-     * @generated from field: string group_id = 2;
-     */
-    groupId = "";
-    constructor(data) {
-      super();
-      proto3.util.initPartial(data, this);
-    }
-    static runtime = proto3;
-    static typeName = "user.ShareRequest";
-    static fields = proto3.util.newFieldList(() => [
-      {
-        no: 1,
-        name: "content_id",
-        kind: "scalar",
-        T: 9
-        /* ScalarType.STRING */
-      },
-      {
-        no: 2,
-        name: "group_id",
-        kind: "scalar",
-        T: 9
-        /* ScalarType.STRING */
-      }
-    ]);
-    static fromBinary(bytes, options) {
-      return new _ShareRequest().fromBinary(bytes, options);
-    }
-    static fromJson(jsonValue, options) {
-      return new _ShareRequest().fromJson(jsonValue, options);
-    }
-    static fromJsonString(jsonString, options) {
-      return new _ShareRequest().fromJsonString(jsonString, options);
-    }
-    static equals(a, b) {
-      return proto3.util.equals(_ShareRequest, a, b);
-    }
-  };
-  var GroupInvite = class _GroupInvite extends Message {
-    /**
-     * @generated from field: string secret = 1;
-     */
-    secret = "";
-    constructor(data) {
-      super();
-      proto3.util.initPartial(data, this);
-    }
-    static runtime = proto3;
-    static typeName = "user.GroupInvite";
-    static fields = proto3.util.newFieldList(() => [
-      {
-        no: 1,
-        name: "secret",
-        kind: "scalar",
-        T: 9
-        /* ScalarType.STRING */
-      }
-    ]);
-    static fromBinary(bytes, options) {
-      return new _GroupInvite().fromBinary(bytes, options);
-    }
-    static fromJson(jsonValue, options) {
-      return new _GroupInvite().fromJson(jsonValue, options);
-    }
-    static fromJsonString(jsonString, options) {
-      return new _GroupInvite().fromJsonString(jsonString, options);
-    }
-    static equals(a, b) {
-      return proto3.util.equals(_GroupInvite, a, b);
-    }
-  };
-  var Groups = class _Groups extends Message {
-    /**
-     * @generated from field: repeated user.Group groups = 1;
-     */
-    groups = [];
-    constructor(data) {
-      super();
-      proto3.util.initPartial(data, this);
-    }
-    static runtime = proto3;
-    static typeName = "user.Groups";
-    static fields = proto3.util.newFieldList(() => [
-      { no: 1, name: "groups", kind: "message", T: Group, repeated: true }
-    ]);
-    static fromBinary(bytes, options) {
-      return new _Groups().fromBinary(bytes, options);
-    }
-    static fromJson(jsonValue, options) {
-      return new _Groups().fromJson(jsonValue, options);
-    }
-    static fromJsonString(jsonString, options) {
-      return new _Groups().fromJsonString(jsonString, options);
-    }
-    static equals(a, b) {
-      return proto3.util.equals(_Groups, a, b);
-    }
-  };
-  var AnalyzeConversationRequest2 = class _AnalyzeConversationRequest extends Message {
-    /**
-     * @generated from field: string text = 1;
-     */
-    text = "";
-    constructor(data) {
-      super();
-      proto3.util.initPartial(data, this);
-    }
-    static runtime = proto3;
-    static typeName = "user.AnalyzeConversationRequest";
-    static fields = proto3.util.newFieldList(() => [
-      {
-        no: 1,
-        name: "text",
-        kind: "scalar",
-        T: 9
-        /* ScalarType.STRING */
-      }
-    ]);
-    static fromBinary(bytes, options) {
-      return new _AnalyzeConversationRequest().fromBinary(bytes, options);
-    }
-    static fromJson(jsonValue, options) {
-      return new _AnalyzeConversationRequest().fromJson(jsonValue, options);
-    }
-    static fromJsonString(jsonString, options) {
-      return new _AnalyzeConversationRequest().fromJsonString(jsonString, options);
-    }
-    static equals(a, b) {
-      return proto3.util.equals(_AnalyzeConversationRequest, a, b);
-    }
-  };
-  var User = class _User extends Message {
-    /**
-     * @generated from field: string email = 1;
-     */
-    email = "";
-    /**
-     * @generated from field: string password = 2;
-     */
-    password = "";
-    /**
-     * @generated from field: user.Config config = 3;
-     */
-    config;
-    constructor(data) {
-      super();
-      proto3.util.initPartial(data, this);
-    }
-    static runtime = proto3;
-    static typeName = "user.User";
-    static fields = proto3.util.newFieldList(() => [
-      {
-        no: 1,
-        name: "email",
-        kind: "scalar",
-        T: 9
-        /* ScalarType.STRING */
-      },
-      {
-        no: 2,
-        name: "password",
-        kind: "scalar",
-        T: 9
-        /* ScalarType.STRING */
-      },
-      { no: 3, name: "config", kind: "message", T: Config }
-    ]);
-    static fromBinary(bytes, options) {
-      return new _User().fromBinary(bytes, options);
-    }
-    static fromJson(jsonValue, options) {
-      return new _User().fromJson(jsonValue, options);
-    }
-    static fromJsonString(jsonString, options) {
-      return new _User().fromJsonString(jsonString, options);
-    }
-    static equals(a, b) {
-      return proto3.util.equals(_User, a, b);
-    }
-  };
-  var Group = class _Group extends Message {
-    /**
-     * @generated from field: string id = 1;
-     */
-    id = "";
-    /**
-     * @generated from field: string name = 2;
-     */
-    name = "";
-    /**
-     * @generated from field: repeated string users = 3;
-     */
-    users = [];
-    constructor(data) {
-      super();
-      proto3.util.initPartial(data, this);
-    }
-    static runtime = proto3;
-    static typeName = "user.Group";
-    static fields = proto3.util.newFieldList(() => [
-      {
-        no: 1,
-        name: "id",
-        kind: "scalar",
-        T: 9
-        /* ScalarType.STRING */
-      },
-      {
-        no: 2,
-        name: "name",
-        kind: "scalar",
-        T: 9
-        /* ScalarType.STRING */
-      },
-      { no: 3, name: "users", kind: "scalar", T: 9, repeated: true }
-    ]);
-    static fromBinary(bytes, options) {
-      return new _Group().fromBinary(bytes, options);
-    }
-    static fromJson(jsonValue, options) {
-      return new _Group().fromJson(jsonValue, options);
-    }
-    static fromJsonString(jsonString, options) {
-      return new _Group().fromJsonString(jsonString, options);
-    }
-    static equals(a, b) {
-      return proto3.util.equals(_Group, a, b);
-    }
-  };
-  var Config = class _Config extends Message {
-    /**
-     * @generated from field: repeated string domain_whitelist = 1;
-     */
-    domainWhitelist = [];
-    constructor(data) {
-      super();
-      proto3.util.initPartial(data, this);
-    }
-    static runtime = proto3;
-    static typeName = "user.Config";
-    static fields = proto3.util.newFieldList(() => [
-      { no: 1, name: "domain_whitelist", kind: "scalar", T: 9, repeated: true }
-    ]);
-    static fromBinary(bytes, options) {
-      return new _Config().fromBinary(bytes, options);
-    }
-    static fromJson(jsonValue, options) {
-      return new _Config().fromJson(jsonValue, options);
-    }
-    static fromJsonString(jsonString, options) {
-      return new _Config().fromJsonString(jsonString, options);
-    }
-    static equals(a, b) {
-      return proto3.util.equals(_Config, a, b);
-    }
-  };
-  var LoginResponse = class _LoginResponse extends Message {
-    constructor(data) {
-      super();
-      proto3.util.initPartial(data, this);
-    }
-    static runtime = proto3;
-    static typeName = "user.LoginResponse";
-    static fields = proto3.util.newFieldList(() => []);
-    static fromBinary(bytes, options) {
-      return new _LoginResponse().fromBinary(bytes, options);
-    }
-    static fromJson(jsonValue, options) {
-      return new _LoginResponse().fromJson(jsonValue, options);
-    }
-    static fromJsonString(jsonString, options) {
-      return new _LoginResponse().fromJsonString(jsonString, options);
-    }
-    static equals(a, b) {
-      return proto3.util.equals(_LoginResponse, a, b);
     }
   };
 

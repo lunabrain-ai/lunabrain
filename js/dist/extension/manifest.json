@@ -1,0 +1,36 @@
+{
+  "name": "LunaBrain",
+  "version": "1.0",
+  "manifest_version": 3,
+  "description": "Save yo shit.",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "tab.html"
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "all_frames": false
+    }
+  ],
+  "permissions": [
+    "activeTab",
+    "webNavigation",
+    "webRequest",
+    "history",
+    "tabs"
+  ],
+  "chrome_url_overrides": {
+    "newtab": "tab.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' http://localhost:8080; object-src 'self'"
+  },
+  "host_permissions": [
+    "<all_urls>"
+  ]
+}

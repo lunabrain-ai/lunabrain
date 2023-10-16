@@ -5,7 +5,6 @@ import (
 	"github.com/go-shiori/go-readability"
 	"github.com/google/uuid"
 	"github.com/lunabrain-ai/lunabrain/gen/content"
-	"github.com/lunabrain-ai/lunabrain/pkg/content/source"
 	"log/slog"
 	"net/url"
 	"os"
@@ -100,35 +99,36 @@ func (s *Service) gitURL(ul string) ([]*content.Content, error) {
 		})
 	}
 
-	l := source.NewLogSeq()
-	obs := l.Load(gitDir)
-
-	// Subscribe and print URLs and tags
-	<-obs.ForEach(func(i any) {
-		tl, ok := i.(source.TaggedLink)
-		if !ok {
-			slog.Error("error casting to TaggedLink", "error", ok)
-			return
-		}
-		slog.Info("result", "result", tl)
-		nCnt = append(nCnt, &content.Content{
-			Tags: tl.Tags,
-			Uri:  tl.File,
-			Type: &content.Content_Data{
-				Data: &content.Data{
-					Type: &content.Data_Url{
-						Url: &content.URL{
-							Url: tl.URL,
-						},
-					},
-				},
-			},
-		})
-	}, func(err error) {
-		slog.Error("error while extracting", "error", err)
-	}, func() {
-		slog.Debug("extraction complete")
-	})
+	// TODO breadchris this is a little noisy, add this back when it is more purposeful
+	//l := source.NewLogSeq()
+	//obs := l.Load(gitDir)
+	//
+	//// Subscribe and print URLs and tags
+	//<-obs.ForEach(func(i any) {
+	//	tl, ok := i.(source.TaggedLink)
+	//	if !ok {
+	//		slog.Error("error casting to TaggedLink", "error", ok)
+	//		return
+	//	}
+	//	slog.Info("result", "result", tl)
+	//	nCnt = append(nCnt, &content.Content{
+	//		Tags: tl.Tags,
+	//		Uri:  tl.File,
+	//		Type: &content.Content_Data{
+	//			Data: &content.Data{
+	//				Type: &content.Data_Url{
+	//					Url: &content.URL{
+	//						Url: tl.URL,
+	//					},
+	//				},
+	//			},
+	//		},
+	//	})
+	//}, func(err error) {
+	//	slog.Error("error while extracting", "error", err)
+	//}, func() {
+	//	slog.Debug("extraction complete")
+	//})
 	return nCnt, nil
 }
 
@@ -139,14 +139,15 @@ func (s *Service) Normalize(c *content.Content) ([]*content.Content, error) {
 		switch u := t.Data.Type.(type) {
 		case *content.Data_Url:
 			ul := u.Url.Url
-			parsed, err := url.Parse(ul)
+			_, err := url.Parse(ul)
 			if err != nil {
 				return nil, err
 			}
 
-			if strings.HasSuffix(parsed.Path, ".git") {
-				return s.gitURL(ul)
-			}
+			// TODO breadchris some domain specific logic is a nice to have
+			//if strings.HasSuffix(parsed.Path, ".git") {
+			//	return s.gitURL(ul)
+			//}
 			return s.articleURL(ul)
 		}
 	}

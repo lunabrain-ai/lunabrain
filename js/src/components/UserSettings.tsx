@@ -54,6 +54,12 @@ const SettingsManager = () => {
                         showQRCodes: data.checked,
                     })
                 }} checked={userSettings.showQRCodes} label="Show QR Codes" />
+                <Switch onChange={(event, data) => {
+                    setUserSettings({
+                        ...userSettings,
+                        showRelatedContent: data.checked,
+                    })
+                }} checked={userSettings.showRelatedContent} label="Show related content" />
             </Stack.Item>
         </Stack>
     );

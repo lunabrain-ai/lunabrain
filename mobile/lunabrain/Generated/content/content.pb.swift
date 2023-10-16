@@ -20,6 +20,20 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
+public struct Content_SetTagsRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var contentID: String = String()
+
+  public var tags: [String] = []
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 public struct Content_TagRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -198,6 +212,15 @@ public struct Content_StoredContent {
     set {_uniqueStorage()._votes = newValue}
   }
 
+  public var user: User_User {
+    get {return _storage._user ?? User_User()}
+    set {_uniqueStorage()._user = newValue}
+  }
+  /// Returns true if `user` has been explicitly set.
+  public var hasUser: Bool {return _storage._user != nil}
+  /// Clears the value of `user`. Subsequent reads from it will return its default value.
+  public mutating func clearUser() {_uniqueStorage()._user = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -230,6 +253,8 @@ public struct Content_Content {
   public var createdAt: String = String()
 
   public var uri: String = String()
+
+  public var id: String = String()
 
   public var type: Content_Content.OneOf_Type? = nil
 
@@ -671,6 +696,7 @@ public struct Content_Transcript {
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
+extension Content_SetTagsRequest: @unchecked Sendable {}
 extension Content_TagRequest: @unchecked Sendable {}
 extension Content_VoteRequest: @unchecked Sendable {}
 extension Content_VoteResponse: @unchecked Sendable {}
@@ -707,6 +733,44 @@ extension Content_Transcript: @unchecked Sendable {}
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "content"
+
+extension Content_SetTagsRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".SetTagsRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "content_id"),
+    2: .same(proto: "tags"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.contentID) }()
+      case 2: try { try decoder.decodeRepeatedStringField(value: &self.tags) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.contentID.isEmpty {
+      try visitor.visitSingularStringField(value: self.contentID, fieldNumber: 1)
+    }
+    if !self.tags.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.tags, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Content_SetTagsRequest, rhs: Content_SetTagsRequest) -> Bool {
+    if lhs.contentID != rhs.contentID {return false}
+    if lhs.tags != rhs.tags {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
 
 extension Content_TagRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".TagRequest"
@@ -1047,6 +1111,7 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     6: .same(proto: "image"),
     7: .same(proto: "url"),
     8: .same(proto: "votes"),
+    9: .same(proto: "user"),
   ]
 
   fileprivate class _StorageClass {
@@ -1058,6 +1123,7 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     var _image: String = String()
     var _url: String = String()
     var _votes: Int32 = 0
+    var _user: User_User? = nil
 
     static let defaultInstance = _StorageClass()
 
@@ -1072,6 +1138,7 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       _image = source._image
       _url = source._url
       _votes = source._votes
+      _user = source._user
     }
   }
 
@@ -1098,6 +1165,7 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         case 6: try { try decoder.decodeSingularStringField(value: &_storage._image) }()
         case 7: try { try decoder.decodeSingularStringField(value: &_storage._url) }()
         case 8: try { try decoder.decodeSingularInt32Field(value: &_storage._votes) }()
+        case 9: try { try decoder.decodeSingularMessageField(value: &_storage._user) }()
         default: break
         }
       }
@@ -1134,6 +1202,9 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       if _storage._votes != 0 {
         try visitor.visitSingularInt32Field(value: _storage._votes, fieldNumber: 8)
       }
+      try { if let v = _storage._user {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
+      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -1151,6 +1222,7 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         if _storage._image != rhs_storage._image {return false}
         if _storage._url != rhs_storage._url {return false}
         if _storage._votes != rhs_storage._votes {return false}
+        if _storage._user != rhs_storage._user {return false}
         return true
       }
       if !storagesAreEqual {return false}
@@ -1204,6 +1276,7 @@ extension Content_Content: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     1: .same(proto: "tags"),
     2: .standard(proto: "created_at"),
     3: .same(proto: "uri"),
+    4: .same(proto: "id"),
     6: .same(proto: "data"),
     7: .same(proto: "normalized"),
     8: .same(proto: "transformed"),
@@ -1218,6 +1291,7 @@ extension Content_Content: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
       case 1: try { try decoder.decodeRepeatedStringField(value: &self.tags) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.createdAt) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.uri) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self.id) }()
       case 6: try {
         var v: Content_Data?
         var hadOneofValue = false
@@ -1276,6 +1350,9 @@ extension Content_Content: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     if !self.uri.isEmpty {
       try visitor.visitSingularStringField(value: self.uri, fieldNumber: 3)
     }
+    if !self.id.isEmpty {
+      try visitor.visitSingularStringField(value: self.id, fieldNumber: 4)
+    }
     switch self.type {
     case .data?: try {
       guard case .data(let v)? = self.type else { preconditionFailure() }
@@ -1298,6 +1375,7 @@ extension Content_Content: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     if lhs.tags != rhs.tags {return false}
     if lhs.createdAt != rhs.createdAt {return false}
     if lhs.uri != rhs.uri {return false}
+    if lhs.id != rhs.id {return false}
     if lhs.type != rhs.type {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true

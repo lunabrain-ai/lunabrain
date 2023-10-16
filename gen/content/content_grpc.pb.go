@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -27,6 +28,7 @@ type ContentServiceClient interface {
 	Analyze(ctx context.Context, in *Content, opts ...grpc.CallOption) (*Contents, error)
 	Delete(ctx context.Context, in *ContentIDs, opts ...grpc.CallOption) (*ContentIDs, error)
 	GetTags(ctx context.Context, in *TagRequest, opts ...grpc.CallOption) (*Tags, error)
+	SetTags(ctx context.Context, in *SetTagsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Vote(ctx context.Context, in *VoteRequest, opts ...grpc.CallOption) (*VoteResponse, error)
 }
 
@@ -83,6 +85,15 @@ func (c *contentServiceClient) GetTags(ctx context.Context, in *TagRequest, opts
 	return out, nil
 }
 
+func (c *contentServiceClient) SetTags(ctx context.Context, in *SetTagsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/content.ContentService/SetTags", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *contentServiceClient) Vote(ctx context.Context, in *VoteRequest, opts ...grpc.CallOption) (*VoteResponse, error) {
 	out := new(VoteResponse)
 	err := c.cc.Invoke(ctx, "/content.ContentService/Vote", in, out, opts...)
@@ -101,6 +112,7 @@ type ContentServiceServer interface {
 	Analyze(context.Context, *Content) (*Contents, error)
 	Delete(context.Context, *ContentIDs) (*ContentIDs, error)
 	GetTags(context.Context, *TagRequest) (*Tags, error)
+	SetTags(context.Context, *SetTagsRequest) (*emptypb.Empty, error)
 	Vote(context.Context, *VoteRequest) (*VoteResponse, error)
 }
 
@@ -122,6 +134,9 @@ func (UnimplementedContentServiceServer) Delete(context.Context, *ContentIDs) (*
 }
 func (UnimplementedContentServiceServer) GetTags(context.Context, *TagRequest) (*Tags, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTags not implemented")
+}
+func (UnimplementedContentServiceServer) SetTags(context.Context, *SetTagsRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetTags not implemented")
 }
 func (UnimplementedContentServiceServer) Vote(context.Context, *VoteRequest) (*VoteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Vote not implemented")
@@ -228,6 +243,24 @@ func _ContentService_GetTags_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ContentService_SetTags_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetTagsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContentServiceServer).SetTags(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/content.ContentService/SetTags",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContentServiceServer).SetTags(ctx, req.(*SetTagsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ContentService_Vote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VoteRequest)
 	if err := dec(in); err != nil {
@@ -272,6 +305,10 @@ var ContentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTags",
 			Handler:    _ContentService_GetTags_Handler,
+		},
+		{
+			MethodName: "SetTags",
+			Handler:    _ContentService_SetTags_Handler,
 		},
 		{
 			MethodName: "Vote",

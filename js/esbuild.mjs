@@ -15,6 +15,9 @@ const baseOptions = {
         ".tsx": "tsx",
         ".woff2": "file",
         ".woff": "file",
+        ".html": "copy",
+        ".json": "copy",
+        ".ico": "copy",
     },
     plugins: [
         // TODO breadchris use swc over tsc
@@ -42,6 +45,7 @@ async function doBuild(options, serve) {
 
             await context.rebuild()
             if (serve) {
+                console.log('serving', `${buildDir}/site`)
                 context.serve({
                     servedir: `${buildDir}/site`,
                     fallback: `${buildDir}/site/index.html`,
@@ -63,8 +67,10 @@ if (buildSite) {
         entryPoints: [
             "./src/index.tsx",
             "./src/styles/globals.css",
+            "./src/favicon.ico",
+            "./src/index.html",
         ],
-        outdir: `${buildDir}/site/build/`,
+        outdir: `${buildDir}/site/`,
     }, true);
 }
 
@@ -76,6 +82,9 @@ if (buildExtension) {
             "./src/extension/tab.tsx",
             "./src/extension/options.tsx",
             "./src/extension/background.tsx",
+            "./src/extension/options.html",
+            "./src/extension/tab.html",
+            "./src/extension/manifest.json",
         ],
         outdir: `${buildDir}/extension/`,
     }, false);

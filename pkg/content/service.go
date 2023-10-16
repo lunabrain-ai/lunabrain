@@ -12,6 +12,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/pkg/errors"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
 	"time"
 )
@@ -73,6 +74,7 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 			Id:      cn.ID.String(),
 			Content: cn.Data,
 			Votes:   int32(len(cn.Votes)),
+			User:    cn.User.Data.Data,
 		}
 
 		switch t := cn.ContentData.Data.Type.(type) {
@@ -83,9 +85,18 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 			}
 		}
 
+		maxRelated := 20
 		var related []*content.Content
 		for _, r := range cn.RelatedContent {
-			related = append(related, r.ContentData.Data)
+			// TODO breadchris remove this limitation
+			if len(related) >= maxRelated {
+				break
+			}
+
+			rc := r.ContentData.Data
+			rc.Id = r.ID.String()
+
+			related = append(related, rc)
 			switch t := r.ContentData.Data.Type.(type) {
 			case *content.Content_Normalized:
 				switch u := t.Normalized.Type.(type) {
@@ -117,6 +128,23 @@ func (s *Service) Delete(ctx context.Context, c *connect_go.Request[content.Cont
 		}
 	}
 	return connect_go.NewResponse(&content.ContentIDs{ContentIds: c.Msg.GetContentIds()}), nil
+}
+
+func (s *Service) SetTags(ctx context.Context, c *connect_go.Request[content.SetTagsRequest]) (*connect_go.Response[emptypb.Empty], error) {
+	_, err := s.sess.GetUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := uuid.Parse(c.Msg.ContentId)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to parse content id")
+	}
+	err = s.db.SetTags(id, c.Msg.Tags)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to set tags")
+	}
+	return connect_go.NewResponse(&emptypb.Empty{}), nil
 }
 
 func (s *Service) GetTags(ctx context.Context, c *connect_go.Request[content.TagRequest]) (*connect_go.Response[content.Tags], error) {

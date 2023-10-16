@@ -9,6 +9,7 @@ import (
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
 	content "github.com/lunabrain-ai/lunabrain/gen/content"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	http "net/http"
 	strings "strings"
 )
@@ -43,6 +44,8 @@ const (
 	ContentServiceDeleteProcedure = "/content.ContentService/Delete"
 	// ContentServiceGetTagsProcedure is the fully-qualified name of the ContentService's GetTags RPC.
 	ContentServiceGetTagsProcedure = "/content.ContentService/GetTags"
+	// ContentServiceSetTagsProcedure is the fully-qualified name of the ContentService's SetTags RPC.
+	ContentServiceSetTagsProcedure = "/content.ContentService/SetTags"
 	// ContentServiceVoteProcedure is the fully-qualified name of the ContentService's Vote RPC.
 	ContentServiceVoteProcedure = "/content.ContentService/Vote"
 )
@@ -54,6 +57,7 @@ type ContentServiceClient interface {
 	Analyze(context.Context, *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error)
 	Delete(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
 	GetTags(context.Context, *connect_go.Request[content.TagRequest]) (*connect_go.Response[content.Tags], error)
+	SetTags(context.Context, *connect_go.Request[content.SetTagsRequest]) (*connect_go.Response[emptypb.Empty], error)
 	Vote(context.Context, *connect_go.Request[content.VoteRequest]) (*connect_go.Response[content.VoteResponse], error)
 }
 
@@ -92,6 +96,11 @@ func NewContentServiceClient(httpClient connect_go.HTTPClient, baseURL string, o
 			baseURL+ContentServiceGetTagsProcedure,
 			opts...,
 		),
+		setTags: connect_go.NewClient[content.SetTagsRequest, emptypb.Empty](
+			httpClient,
+			baseURL+ContentServiceSetTagsProcedure,
+			opts...,
+		),
 		vote: connect_go.NewClient[content.VoteRequest, content.VoteResponse](
 			httpClient,
 			baseURL+ContentServiceVoteProcedure,
@@ -107,6 +116,7 @@ type contentServiceClient struct {
 	analyze *connect_go.Client[content.Content, content.Contents]
 	delete  *connect_go.Client[content.ContentIDs, content.ContentIDs]
 	getTags *connect_go.Client[content.TagRequest, content.Tags]
+	setTags *connect_go.Client[content.SetTagsRequest, emptypb.Empty]
 	vote    *connect_go.Client[content.VoteRequest, content.VoteResponse]
 }
 
@@ -135,6 +145,11 @@ func (c *contentServiceClient) GetTags(ctx context.Context, req *connect_go.Requ
 	return c.getTags.CallUnary(ctx, req)
 }
 
+// SetTags calls content.ContentService.SetTags.
+func (c *contentServiceClient) SetTags(ctx context.Context, req *connect_go.Request[content.SetTagsRequest]) (*connect_go.Response[emptypb.Empty], error) {
+	return c.setTags.CallUnary(ctx, req)
+}
+
 // Vote calls content.ContentService.Vote.
 func (c *contentServiceClient) Vote(ctx context.Context, req *connect_go.Request[content.VoteRequest]) (*connect_go.Response[content.VoteResponse], error) {
 	return c.vote.CallUnary(ctx, req)
@@ -147,6 +162,7 @@ type ContentServiceHandler interface {
 	Analyze(context.Context, *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error)
 	Delete(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
 	GetTags(context.Context, *connect_go.Request[content.TagRequest]) (*connect_go.Response[content.Tags], error)
+	SetTags(context.Context, *connect_go.Request[content.SetTagsRequest]) (*connect_go.Response[emptypb.Empty], error)
 	Vote(context.Context, *connect_go.Request[content.VoteRequest]) (*connect_go.Response[content.VoteResponse], error)
 }
 
@@ -181,6 +197,11 @@ func NewContentServiceHandler(svc ContentServiceHandler, opts ...connect_go.Hand
 		svc.GetTags,
 		opts...,
 	)
+	contentServiceSetTagsHandler := connect_go.NewUnaryHandler(
+		ContentServiceSetTagsProcedure,
+		svc.SetTags,
+		opts...,
+	)
 	contentServiceVoteHandler := connect_go.NewUnaryHandler(
 		ContentServiceVoteProcedure,
 		svc.Vote,
@@ -198,6 +219,8 @@ func NewContentServiceHandler(svc ContentServiceHandler, opts ...connect_go.Hand
 			contentServiceDeleteHandler.ServeHTTP(w, r)
 		case ContentServiceGetTagsProcedure:
 			contentServiceGetTagsHandler.ServeHTTP(w, r)
+		case ContentServiceSetTagsProcedure:
+			contentServiceSetTagsHandler.ServeHTTP(w, r)
 		case ContentServiceVoteProcedure:
 			contentServiceVoteHandler.ServeHTTP(w, r)
 		default:
@@ -227,6 +250,10 @@ func (UnimplementedContentServiceHandler) Delete(context.Context, *connect_go.Re
 
 func (UnimplementedContentServiceHandler) GetTags(context.Context, *connect_go.Request[content.TagRequest]) (*connect_go.Response[content.Tags], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.GetTags is not implemented"))
+}
+
+func (UnimplementedContentServiceHandler) SetTags(context.Context, *connect_go.Request[content.SetTagsRequest]) (*connect_go.Response[emptypb.Empty], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.SetTags is not implemented"))
 }
 
 func (UnimplementedContentServiceHandler) Vote(context.Context, *connect_go.Request[content.VoteRequest]) (*connect_go.Response[content.VoteResponse], error) {
