@@ -92,7 +92,8 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	handler, err := discord.NewHandler(discordConfig, discordgoSession, agent)
+	bot := discord.NewBot(agent)
+	handler, err := discord.NewHandler(discordConfig, discordgoSession, bot)
 	if err != nil {
 		return nil, err
 	}

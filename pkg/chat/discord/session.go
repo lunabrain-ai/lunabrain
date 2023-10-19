@@ -10,6 +10,7 @@ import (
 var ProviderSet = wire.NewSet(
 	NewConfig,
 	NewDiscordSession,
+	NewBot,
 	NewHandler,
 	NewSession,
 	New,

@@ -3,7 +3,6 @@ package discord
 import (
 	"context"
 	"fmt"
-	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"log/slog"
 	"strings"
 	"time"
@@ -36,10 +35,9 @@ type Handler struct {
 	cmdStr  string
 	cmdMap  map[string]CommandHandlerFunc
 	session *discordgo.Session
-	openai  *openai.Agent
 }
 
-func NewHandler(config Config, session *discordgo.Session, openai *openai.Agent) (*Handler, error) {
+func NewHandler(config Config, session *discordgo.Session, b *Bot) (*Handler, error) {
 	cmdStr := fmt.Sprintf("<@%s>", config.ApplicationID)
 
 	handlers := []*MessageHandler{
@@ -51,18 +49,12 @@ func NewHandler(config Config, session *discordgo.Session, openai *openai.Agent)
 			},
 		},
 	}
-
-	questionOption := "question"
-	descriptionOption := "description"
-
-	persona := "You are the most interesting man in the world. Answer this question: "
-
 	commands := []*CommandHandler{
 		{
 			Command: discordgo.ApplicationCommand{
 				Name:        "persona",
 				Type:        discordgo.ChatApplicationCommand,
-				Description: "set the persona for the bot",
+				Description: "set the channel persona for the bot",
 				Options: []*discordgo.ApplicationCommandOption{
 					{
 						Type:        discordgo.ApplicationCommandOptionString,
@@ -72,20 +64,7 @@ func NewHandler(config Config, session *discordgo.Session, openai *openai.Agent)
 					},
 				},
 			},
-			Handler: func(ctx context.Context, s *discordgo.Session, i *discordgo.InteractionCreate) {
-				slog.Debug("persona command", "options", i.ApplicationCommandData().Options)
-				options := i.ApplicationCommandData().Options
-				optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))
-				for _, opt := range options {
-					optionMap[opt.Name] = opt
-				}
-
-				desc := ""
-				if option, ok := optionMap[desc]; ok {
-					desc = option.StringValue()
-				}
-				persona = desc
-			},
+			Handler: b.PersonaCmd,
 		},
 		{
 			Command: discordgo.ApplicationCommand{
@@ -101,47 +80,7 @@ func NewHandler(config Config, session *discordgo.Session, openai *openai.Agent)
 					},
 				},
 			},
-			Handler: func(ctx context.Context, s *discordgo.Session, i *discordgo.InteractionCreate) {
-				slog.Debug("ask command", "options", i.ApplicationCommandData().Options)
-				options := i.ApplicationCommandData().Options
-				optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))
-				for _, opt := range options {
-					optionMap[opt.Name] = opt
-				}
-
-				question := ""
-				if option, ok := optionMap[questionOption]; ok {
-					question = option.StringValue()
-				}
-				err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-					Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
-				})
-				if err != nil {
-					slog.Error("failed to acknowledge ask command", "error", err)
-					return
-				}
-				answer := "hold up..."
-				_, err = s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
-					Content: &answer,
-				})
-				basePrompt := persona
-				answer, err = openai.Prompt(ctx, basePrompt+question)
-				if err != nil {
-					slog.Error("failed to respond to ask command", "error", err)
-					answer = "whups, something went wrong"
-					_, err = s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
-						Content: &answer,
-					})
-					return
-				}
-				_, err = s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
-					Content: &answer,
-				})
-				if err != nil {
-					slog.Error("failed to respond to ask command", "error", err)
-					return
-				}
-			},
+			Handler: b.AskCmd,
 		},
 	}
 
