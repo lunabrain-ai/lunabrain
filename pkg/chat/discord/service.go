@@ -11,14 +11,16 @@ import (
 
 type DiscordService struct {
 	session *Session
+	handler *Handler
 }
 
 var _ chatconnect.DiscordServiceHandler = (*DiscordService)(nil)
 
-func New(s *Session) *DiscordService {
+func New(s *Session, h *Handler) *DiscordService {
 	// TODO breadchris how do we configure discord to be enabled/disabled? Need some way to guard calls
 	return &DiscordService{
 		session: s,
+		handler: h,
 	}
 }
 

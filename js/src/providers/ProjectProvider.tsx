@@ -111,7 +111,7 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
 
     useEffect(() => {
         void loadContent();
-    }, [filteredTags]);
+    }, [filteredTags, currentGroup]);
 
     const loadGroups = async () => {
         const res = await userService.getGroups({});

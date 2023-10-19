@@ -70,16 +70,13 @@ func (s *Session) LogSessionEvents() {
 		slog.Info("message create", "content", m.Content)
 		s.Messages.Publish(MessageTopic, m)
 	})
-	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
-		slog.Info("connected", "username", s.State.User.Username, "discriminator", s.State.User.Discriminator)
-	})
-	s.AddHandler(func(s *discordgo.Session, m *discordgo.MessageEdit) {
-		slog.Info("message edit", "event", m)
-	})
-	s.AddHandler(func(s *discordgo.Session, m *discordgo.MessageDelete) {
-		slog.Info("message delete", "event", m)
-	})
-	s.AddHandler(func(s *discordgo.Session, m *discordgo.PresenceUpdate) {
-		slog.Info("presence update", "event", m)
-	})
+	//s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
+	//	slog.Info("connected", "username", s.State.User.Username, "discriminator", s.State.User.Discriminator)
+	//})
+	//s.AddHandler(func(s *discordgo.Session, m *discordgo.MessageEdit) {
+	//	slog.Info("message edit", "event", m)
+	//})
+	//s.AddHandler(func(s *discordgo.Session, m *discordgo.MessageDelete) {
+	//	slog.Info("message delete", "event", m)
+	//})
 }

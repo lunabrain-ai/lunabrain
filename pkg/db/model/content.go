@@ -29,5 +29,7 @@ type Tag struct {
 	Base
 
 	Name    string     `json:"name" gorm:"unique"`
+	GroupID uuid.UUID  `json:"group_id"`
+	Group   *Group     `json:"group"`
 	Content []*Content `gorm:"many2many:content_tags;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }

@@ -1,6 +1,6 @@
-import React, {MutableRefObject, useEffect, useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {List, PrimaryButton, Spinner, SpinnerSize, Stack, TextField} from "@fluentui/react";
-import {Tag24Regular, Delete24Regular} from "@fluentui/react-icons";
+import {Tag24Regular, Delete24Regular, DocumentAdd24Regular} from "@fluentui/react-icons";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {MarkdownEditor} from "@/components/Editor/MarkdownEditor";
 import YouTube from "react-youtube";
@@ -10,8 +10,9 @@ import {contentService} from "@/service";
 import {urlContent} from "@/extension/util";
 import {Button, Select, SelectProps, Switch, ToggleButton} from "@fluentui/react-components";
 import {TagManager} from "@/components/TagManager";
-import {GroupDialog} from "@/components/GroupManager";
 import toast from "react-hot-toast";
+import {MarkdownPreview} from "@/components/Editor/MarkdownPreview";
+import {PinterestGridView} from "@/components/PinterestGridView";
 
 const MediaViewer: React.FC = ({  }) => {
     const { media } = useProjectContext();
@@ -37,6 +38,7 @@ export const ContentWindow: React.FC = ({  }) => {
     const { content, showTagTree, setShowTagTree, loadContent } = useProjectContext();
     const [selectedContent, setSelectedContent] = useState<string[]>([]);
     const [inputType, setInputType] = useState<string>('url');
+    const [showCreate, setShowCreate] = useState<boolean>(false);
 
     const saveURL = async (url: string) => {
         try {
@@ -92,6 +94,7 @@ export const ContentWindow: React.FC = ({  }) => {
                 <Stack horizontal verticalAlign="end" horizontalAlign="center"
                        styles={{root: {width: '100%', gap: 15, paddingLeft: 10, paddingRight: 10, marginBottom: 20, relative: true}}}>
                     <ToggleButton checked={showTagTree} onClick={() => setShowTagTree(!showTagTree)} icon={<Tag24Regular />} />
+                    <Button icon={<DocumentAdd24Regular />} onClick={() => setShowCreate(!showCreate)} />
                     <Select onChange={onInputTypeChange} value={inputType}>
                         <option>url</option>
                         <option>prompt</option>
@@ -120,6 +123,14 @@ export const ContentWindow: React.FC = ({  }) => {
                         )}
                     </Stack.Item>
                     <Stack.Item style={{width: '100%'}}>
+                        {
+                            showCreate && (
+                                <>
+                                    <MarkdownEditor />
+                                    <Button>Save</Button>
+                                </>
+                            )
+                        }
                         <ContentList content={content} selectedContent={selectedContent} setSelectedContent={setSelectedContent} />
                     </Stack.Item>
                 </Stack>
@@ -128,7 +139,7 @@ export const ContentWindow: React.FC = ({  }) => {
     )
 }
 
-const EditorWindow: React.FC = ({  }) => {
+export const EditorWindow: React.FC = ({  }) => {
     return (
         <>
             <Stack verticalFill verticalAlign="space-between"

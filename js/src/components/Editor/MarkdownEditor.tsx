@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo} from 'react'
+import React, { useCallback, useMemo } from 'react'
 import {
     createEditor,
     Descendant,
@@ -11,11 +11,10 @@ import {
 } from 'slate'
 import { withHistory } from 'slate-history'
 import { Editable, ReactEditor, Slate, withReact } from 'slate-react'
-import { BulletedListElement, CustomEditor} from './custom-types'
-import {HoveringToolbar} from "@/components/Editor/HoveringToolbar";
-import {useProjectContext} from "@/providers/ProjectProvider";
+import { BulletedListElement } from './custom-types'
+import isHotkey from 'is-hotkey'
 
-const SHORTCUTS: Record<string, string> = {
+const SHORTCUTS = {
     '*': 'list-item',
     '-': 'list-item',
     '+': 'list-item',
@@ -28,13 +27,24 @@ const SHORTCUTS: Record<string, string> = {
     '######': 'heading-six',
 }
 
+const useOnKeydown = (editor: Editor) => {
+    const onKeyDown: React.KeyboardEventHandler = useCallback(
+        e => {
+            if (isHotkey('tab', e)) {
+                // handle tab key, insert spaces
+                e.preventDefault()
+
+                Editor.insertText(editor, '  ')
+            }
+        },
+        [editor]
+    )
+
+    return onKeyDown
+}
+
 export const MarkdownEditor = () => {
-    const { messages } = useProjectContext();
-    const renderElement = useCallback((props: JSX.IntrinsicAttributes & {
-        attributes: any;
-        children: any;
-        element: any
-    }) => <Element {...props} />, [])
+    const renderElement = useCallback(props => <Element {...props} />, [])
     const editor = useMemo(
         () => withShortcuts(withReact(withHistory(createEditor()))),
         []
@@ -45,12 +55,12 @@ export const MarkdownEditor = () => {
             queueMicrotask(() => {
                 const pendingDiffs = ReactEditor.androidPendingDiffs(editor)
 
-                const scheduleFlush = pendingDiffs?.some(({diff, path}) => {
+                const scheduleFlush = pendingDiffs?.some(({ diff, path }) => {
                     if (!diff.text.endsWith(' ')) {
                         return false
                     }
 
-                    const {text} = SlateNode.leaf(editor, path)
+                    const { text } = SlateNode.leaf(editor, path)
                     const beforeText = text.slice(0, diff.start) + diff.text.slice(0, -1)
                     if (!(beforeText in SHORTCUTS)) {
                         return
@@ -76,24 +86,8 @@ export const MarkdownEditor = () => {
         [editor]
     )
 
-    const newNodes: Descendant[] = messages.map((m) => {
-        return {
-            type: 'paragraph',
-            children: [
-                {
-                    text: m.text,
-                },
-            ],
-        }
-    })
-    useEffect(() => {
-        //@ts-ignore
-        resetNodes(editor, { nodes: newNodes });
-    }, [newNodes]);
-
     return (
-        <Slate editor={editor} initialValue={[]}>
-            <HoveringToolbar />
+        <Slate editor={editor} initialValue={initialValue}>
             <Editable
                 onDOMBeforeInput={handleDOMBeforeInput}
                 renderElement={renderElement}
@@ -105,37 +99,7 @@ export const MarkdownEditor = () => {
     )
 }
 
-export const resetNodes = (
-    editor: Editor,
-    options: {
-        nodes?: Node | Node[];
-        at?: Location;
-    } = {},
-): void => {
-    const cachedSelection = editor.selection;
-    const children = [...editor.children];
-    for (let i = 0; i < children.length; i++) {
-        const node = children[i];
-        editor.apply({ type: 'remove_node', path: [0], node });
-    }
-
-    if (options.nodes) {
-        const nodes = SlateNode.isNode(options.nodes) ? [options.nodes] : options.nodes;
-        //@ts-ignore
-        for (let i = 0; i < nodes.length; i++) {
-            //@ts-ignore
-            editor.apply({ type: 'insert_node', path: [i], node: nodes[i] });
-        }
-    }
-
-    if (cachedSelection && Point.isBefore(cachedSelection.anchor, Editor.end(editor, []))) {
-        Transforms.select(editor, cachedSelection);
-        return;
-    }
-    //Transforms.select(editor, Editor.end(editor, []));
-};
-
-const withShortcuts = (editor: CustomEditor) => {
+const withShortcuts = editor => {
     const { deleteBackward, insertText } = editor
 
     editor.insertText = text => {
@@ -160,7 +124,6 @@ const withShortcuts = (editor: CustomEditor) => {
                 }
 
                 const newProperties: Partial<SlateElement> = {
-                    // @ts-ignore
                     type,
                 }
                 Transforms.setNodes<SlateElement>(editor, newProperties, {
@@ -231,7 +194,7 @@ const withShortcuts = (editor: CustomEditor) => {
     return editor
 }
 
-const Element: React.FC<{attributes: any, children: any, element: any}> = ({ attributes, children, element }) => {
+const Element = ({ attributes, children, element }) => {
     switch (element.type) {
         case 'block-quote':
             return <blockquote {...attributes}>{children}</blockquote>
@@ -255,3 +218,14 @@ const Element: React.FC<{attributes: any, children: any, element: any}> = ({ att
             return <p {...attributes}>{children}</p>
     }
 }
+
+const initialValue: Descendant[] = [
+    {
+        type: 'list-item',
+        children: [
+            {
+                text: ''
+            },
+        ],
+    },
+]

@@ -126,20 +126,20 @@ func (s *Store) SaveContent(userID uuid.UUID, data *content.Content, related []*
 }
 
 func (s *Store) SearchContent(userID uuid.UUID, page, limit int, groupID string, tags []string) ([]model.Content, *Pagination, error) {
-	if groupID != "" {
-		g := &model.Group{
-			Base: model.Base{
-				ID: uuid.MustParse(groupID),
-			},
-		}
-		res := s.db.Preload("Content").
-			Preload("Content.RelatedContent").
-			Preload("Content.Votes").First(g)
-		if res.Error != nil {
-			return nil, nil, errors.Wrapf(res.Error, "could not get content")
-		}
-		return g.Content, nil, nil
-	}
+	//if groupID != "" {
+	//	g := &model.Group{
+	//		Base: model.Base{
+	//			ID: uuid.MustParse(groupID),
+	//		},
+	//	}
+	//	res := s.db.Preload("Content").
+	//		Preload("Content.RelatedContent").
+	//		Preload("Content.Votes").First(g)
+	//	if res.Error != nil {
+	//		return nil, nil, errors.Wrapf(res.Error, "could not get content")
+	//	}
+	//	return g.Content, nil, nil
+	//}
 
 	// TODO breadchris only get content for user
 	var c []model.Content
@@ -152,8 +152,13 @@ func (s *Store) SearchContent(userID uuid.UUID, page, limit int, groupID string,
 		Select("contents.*").
 		Joins("JOIN content_tags ON content_tags.content_id = contents.id").
 		Joins("JOIN tags ON tags.id = content_tags.tag_id").
+		Joins("JOIN group_content ON group_content.content_id = contents.id").
 		Where("root = ?", true).
 		Where("user_id = ?", userID)
+
+	if groupID != "" {
+		query = query.Where("group_content.group_id = ?", groupID)
+	}
 
 	// If tagNames provided, add a WHERE condition for those tags
 	if len(tags) > 0 {

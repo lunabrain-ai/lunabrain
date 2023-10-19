@@ -74,7 +74,9 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 			Id:      cn.ID.String(),
 			Content: cn.Data,
 			Votes:   int32(len(cn.Votes)),
-			User:    cn.User.Data.Data,
+		}
+		if cn.User != nil {
+			sc.User = cn.User.Data.Data
 		}
 
 		switch t := cn.ContentData.Data.Type.(type) {

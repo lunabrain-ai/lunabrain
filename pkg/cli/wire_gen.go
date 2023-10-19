@@ -92,7 +92,11 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	discordService := discord.New(discordSession)
+	handler, err := discord.NewHandler(discordConfig, discordgoSession, agent)
+	if err != nil {
+		return nil, err
+	}
+	discordService := discord.New(discordSession, handler)
 	protoflowConfig, err := protoflow.NewConfig(provider)
 	if err != nil {
 		return nil, err

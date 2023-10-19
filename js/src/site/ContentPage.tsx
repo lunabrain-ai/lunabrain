@@ -1,11 +1,12 @@
 import React from 'react';
 import {List, PrimaryButton, Stack, TextField} from '@fluentui/react';
 import {FileDrop} from "@/components/FileDrop";
-import {ContentWindow} from "@/components/Content/ContentWindow";
+import {ContentWindow, EditorWindow} from "@/components/Content/ContentWindow";
 import {AccountCard} from "@/components/AccountCard";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {Button, SelectTabData, SelectTabEvent, Tab, TabList} from "@fluentui/react-components";
 import {GroupDialog} from "@/components/GroupManager";
+import {MarkdownPreview} from "@/components/Editor/MarkdownPreview";
 
 export const ContentPage = () => {
     const {groups, currentGroup, setCurrentGroup} = useProjectContext();
