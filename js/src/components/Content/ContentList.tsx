@@ -25,6 +25,7 @@ import QRCode from "@/components/QRCode";
 import {truncateText} from "@/util/text";
 import {ContentCard} from "@/components/Content/ContentCard";
 import {useStyles} from "@/components/Content/styles";
+import SwipeableViews from "react-swipeable-views";
 
 interface ContentListProps {
     content: StoredContent[];
@@ -44,18 +45,24 @@ export const ContentList: React.FC<ContentListProps> = ({
         padding: 10,
     };
 
+    const getContent = (item: StoredContent) => {
+        return (
+            <ContentView item={item} setChecked={(checked) => {
+                if (checked) {
+                    setSelectedContent([...selectedContent, item.id]);
+                } else {
+                    setSelectedContent(selectedContent.filter((c) => c !== item.id));
+                }
+            }} />
+        )
+    }
+
     return (
         <Stack tokens={verticalGapStackTokens}>
             {content.map((item) => {
                 return (
                     <Stack.Item key={item.id} className={styles.stackItem}>
-                        <ContentView item={item} setChecked={(checked) => {
-                            if (checked) {
-                                setSelectedContent([...selectedContent, item.id]);
-                            } else {
-                                setSelectedContent(selectedContent.filter((c) => c !== item.id));
-                            }
-                        }} />
+                        {getContent(item)}
                     </Stack.Item>
                 )
             })}

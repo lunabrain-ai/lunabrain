@@ -39,6 +39,8 @@ func New(db *gorm.DB) (*Store, error) {
 		&model.Group{},
 		&model.Vote{},
 		&model.Tag{},
+		&model.GroupBot{},
+		&model.Bot{},
 	)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not migrate database: %v", err)
@@ -46,7 +48,7 @@ func New(db *gorm.DB) (*Store, error) {
 	return &Store{db: db}, nil
 }
 
-func (s *Store) SaveHNStory(ID int, url string, position *int, contentID uuid.UUID, story *gohn.Item, comments gohn.ItemsIndex) (*model.HNStory, error) {
+func (s *Store) SaveHNStory(ID int, url string, position *int, contentID uuid.UUID, story *gohn.Item, comments gohn.ItemsIndex) (*model.HNStory, bool, error) {
 	hnStory := &model.HNStory{
 		ID:        ID,
 		URL:       url,
@@ -67,27 +69,27 @@ func (s *Store) SaveHNStory(ID int, url string, position *int, contentID uuid.UU
 	res := s.db.First(&existingStory, ID)
 	if res.Error != nil {
 		if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
-			return nil, errors.Wrapf(res.Error, "could not get hn story")
+			return nil, false, errors.Wrapf(res.Error, "could not get hn story")
 		}
 		res = s.db.Create(hnStory)
 		if res.Error != nil {
-			return nil, errors.Wrapf(res.Error, "could not create hn story")
+			return nil, false, errors.Wrapf(res.Error, "could not create hn story")
 		}
-		return hnStory, nil
+		return hnStory, true, nil
 	}
 
 	if position != nil {
 		res = s.db.Model(&model.HNStory{}).Where("position = ?", position).Update("position", nil)
 		if res.Error != nil && !errors.Is(res.Error, gorm.ErrRecordNotFound) {
-			return nil, errors.Wrapf(res.Error, "could not update hn story position")
+			return nil, false, errors.Wrapf(res.Error, "could not update hn story position")
 		}
 	}
 
 	res = s.db.Model(&existingStory).Where(ID).Updates(hnStory)
 	if res.Error != nil {
-		return nil, errors.Wrapf(res.Error, "could not update hn story")
+		return nil, false, errors.Wrapf(res.Error, "could not update hn story")
 	}
-	return hnStory, nil
+	return hnStory, false, nil
 }
 
 func (s *Store) GetHNStory(ID int) (*model.HNStory, error) {

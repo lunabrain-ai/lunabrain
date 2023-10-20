@@ -85,7 +85,7 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     const [currentGroup, setCurrentGroup] = useState<string>('home');
     const [tags, setTags] = useState<Tag[]>([]);
     const [filteredTags, setFilteredTags] = useState<string[]>([]);
-    const [showTagTree, setShowTagTree] = useState<boolean>(false);
+    const [showTagTree, setShowTagTree] = useState<boolean>(true);
     const [userSettings, setUserSettings] = useState<UserSettings>({
         showPreviews: false,
         showQRCodes: false,

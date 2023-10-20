@@ -1,7 +1,7 @@
 package cli
 
 import (
-	collect2 "github.com/lunabrain-ai/lunabrain/pkg/content/source"
+	"github.com/lunabrain-ai/lunabrain/pkg/bot"
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/protoflow-labs/protoflow/pkg/util/reload"
 	"github.com/urfave/cli/v2"
@@ -47,17 +47,23 @@ func liveReload() error {
 }
 
 func NewCollectCommand(
-	discordCollect *collect2.DiscordCollector,
-	hnCollect *collect2.HNCollect,
+	discordBot *bot.Discord,
+	hnBot *bot.HN,
 ) *cli.Command {
 	return &cli.Command{
-		Name:  "collect",
-		Usage: "Collect some data.",
+		Name:  "bot",
+		Usage: "Start a bot.",
 		Subcommands: []*cli.Command{
 			{
 				Name: "hn",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:     "user-id",
+						Required: true,
+					},
+				},
 				Action: func(ctx *cli.Context) error {
-					return hnCollect.Collect()
+					return hnBot.Collect(ctx.String("user-id"))
 				},
 			},
 			{
@@ -70,7 +76,7 @@ func NewCollectCommand(
 				},
 				Action: func(ctx *cli.Context) error {
 					channel := ctx.String("channel")
-					_, err := discordCollect.Collect(channel)
+					_, err := discordBot.Collect(channel)
 					return err
 				},
 			},

@@ -38,6 +38,10 @@ type Handler struct {
 }
 
 func NewHandler(config Config, session *discordgo.Session, b *Bot) (*Handler, error) {
+	if !config.Enabled {
+		slog.Warn("discord is not enabled")
+		return nil, nil
+	}
 	cmdStr := fmt.Sprintf("<@%s>", config.ApplicationID)
 
 	handlers := []*MessageHandler{

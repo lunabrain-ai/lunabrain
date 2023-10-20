@@ -11,6 +11,7 @@ type Group struct {
 
 	Data       datatypes.JSONType[*user.Group]
 	GroupUsers []GroupUser   `gorm:"foreignKey:GroupID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	GroupBots  []GroupBot    `gorm:"foreignKey:GroupID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Invites    []GroupInvite `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Content    []Content     `gorm:"many2many:group_content;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
@@ -23,6 +24,15 @@ type GroupUser struct {
 	User    User  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Group   Group `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Role    string
+}
+
+type GroupBot struct {
+	Base
+
+	BotID   uuid.UUID
+	GroupID uuid.UUID
+	Bot     Bot   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Group   Group `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
 type GroupInvite struct {

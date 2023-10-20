@@ -1,4 +1,4 @@
-package source
+package bot
 
 import (
 	"github.com/slack-go/slack"

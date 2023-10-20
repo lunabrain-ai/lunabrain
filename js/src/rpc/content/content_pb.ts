@@ -468,6 +468,11 @@ export class StoredContent extends Message<StoredContent> {
    */
   user?: User;
 
+  /**
+   * @generated from field: repeated content.Tag tags = 10;
+   */
+  tags: Tag[] = [];
+
   constructor(data?: PartialMessage<StoredContent>) {
     super();
     proto3.util.initPartial(data, this);
@@ -485,6 +490,7 @@ export class StoredContent extends Message<StoredContent> {
     { no: 7, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 8, name: "votes", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
     { no: 9, name: "user", kind: "message", T: User },
+    { no: 10, name: "tags", kind: "message", T: Tag, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): StoredContent {

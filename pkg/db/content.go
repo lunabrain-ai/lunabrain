@@ -38,9 +38,8 @@ func (s *Store) DeleteContent(id uuid.UUID) error {
 	return nil
 }
 
-func (s *Store) saveOrUpdateContent(userID uuid.UUID, data *content.Content, root bool) (*model.Content, error) {
+func (s *Store) saveOrUpdateContent(userID uuid.UUID, botID uuid.UUID, data *content.Content, root bool) (*model.Content, error) {
 	var (
-		c     *model.Content
 		found bool
 		tags  []*model.Tag
 	)
@@ -54,24 +53,41 @@ func (s *Store) saveOrUpdateContent(userID uuid.UUID, data *content.Content, roo
 		tags = append(tags, &tag)
 	}
 
+	c := &model.Content{}
 	switch t := data.Type.(type) {
 	case *content.Content_Data:
 		switch u := t.Data.Type.(type) {
 		case *content.Data_Url:
-			if r := s.db.First(&c, datatypes.JSONQuery("content_data").
-				Equals(u.Url.Url, "data", "url", "url")); r.Error != nil {
-				if !errors.Is(r.Error, gorm.ErrRecordNotFound) {
-					return nil, errors.Wrapf(r.Error, "could not get content")
+			if userID != uuid.Nil {
+				if r := s.db.Model(c).
+					Where("user_id = ?", userID).
+					First(c, datatypes.JSONQuery("content_data").
+						Equals(u.Url.Url, "data", "url", "url")); r.Error != nil {
+					if !errors.Is(r.Error, gorm.ErrRecordNotFound) {
+						return nil, errors.Wrapf(r.Error, "could not get content")
+					}
+				} else {
+					found = true
 				}
-			} else {
-				found = true
 			}
+		}
+	}
+	var bots []*model.Bot
+	if botID != uuid.Nil {
+		bots = []*model.Bot{
+			{
+				Base: model.Base{
+					ID: botID,
+				},
+			},
 		}
 	}
 	var res *gorm.DB
 	if !found {
 		c = &model.Content{
+			// TODO breadchris probably want to use Users instead of UserID
 			UserID: userID,
+			Bots:   bots,
 			ContentData: &model.ContentData{
 				Data: data,
 			},
@@ -82,6 +98,7 @@ func (s *Store) saveOrUpdateContent(userID uuid.UUID, data *content.Content, roo
 		res = s.db.Create(c)
 	} else {
 		// TODO breadchris we currently ignore tag updates for this case
+		// TODO breadchris multiple users cant add the same url
 		res = s.db.Model(c).Update("visit_count", gorm.Expr("visit_count + ?", 1))
 	}
 	if res.Error != nil {
@@ -103,15 +120,15 @@ func (s *Store) UpsertTags(tags []string) error {
 	return nil
 }
 
-func (s *Store) SaveContent(userID uuid.UUID, data *content.Content, related []*content.Content) (uuid.UUID, error) {
-	c, err := s.saveOrUpdateContent(userID, data, true)
+func (s *Store) SaveContent(userID uuid.UUID, botID uuid.UUID, data *content.Content, related []*content.Content) (uuid.UUID, error) {
+	c, err := s.saveOrUpdateContent(userID, botID, data, true)
 	if err != nil {
 		return uuid.Nil, errors.Wrapf(err, "unable to save content")
 	}
 	if related != nil {
 		var relMod []*model.Content
 		for _, rel := range related {
-			rm, err := s.saveOrUpdateContent(userID, rel, false)
+			rm, err := s.saveOrUpdateContent(userID, botID, rel, false)
 			if err != nil {
 				return uuid.UUID{}, errors.Wrapf(err, "unable to save related content")
 			}
@@ -151,14 +168,17 @@ func (s *Store) SearchContent(userID uuid.UUID, page, limit int, groupID string,
 		Distinct().
 		Select("contents.*").
 		Joins("JOIN content_tags ON content_tags.content_id = contents.id").
-		Joins("JOIN tags ON tags.id = content_tags.tag_id").
-		Joins("JOIN group_content ON group_content.content_id = contents.id").
-		Where("root = ?", true).
-		Where("user_id = ?", userID)
+		Joins("JOIN tags ON tags.id = content_tags.tag_id")
 
 	if groupID != "" {
-		query = query.Where("group_content.group_id = ?", groupID)
+		query = query.
+			Joins("JOIN group_content ON group_content.content_id = contents.id").
+			Where("group_content.group_id = ?", groupID)
 	}
+
+	query = query.
+		Where("root = ?", true).
+		Where("user_id = ?", userID)
 
 	// If tagNames provided, add a WHERE condition for those tags
 	if len(tags) > 0 {
@@ -173,6 +193,7 @@ func (s *Store) SearchContent(userID uuid.UUID, page, limit int, groupID string,
 	if res.Error != nil {
 		return nil, nil, errors.Wrapf(res.Error, "could not get content")
 	}
+
 	return c, &pagination, nil
 }
 
@@ -200,12 +221,17 @@ func (s *Store) SetTags(contentID uuid.UUID, tags []string) error {
 			ID: contentID,
 		},
 	}
-	res := s.db.Preload("Tags").First(cnt)
-	if res.Error != nil {
-		return errors.Wrapf(res.Error, "could not set tags")
-	}
-	err := s.db.Model(cnt).Association("Tags").Replace(tagModels)
+	err := s.db.Model(cnt).Association("Tags").Clear()
 	if err != nil {
+		return errors.Wrapf(err, "could not clear tags")
+	}
+
+	if err := s.db.Preload("Tags").First(cnt).Error; err != nil {
+		return errors.Wrapf(err, "could not set tags")
+	}
+
+	cnt.Tags = tagModels
+	if err := s.db.Save(cnt).Error; err != nil {
 		return errors.Wrapf(err, "could not set tags")
 	}
 	return nil

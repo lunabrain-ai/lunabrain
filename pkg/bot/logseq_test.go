@@ -1,4 +1,4 @@
-package source
+package bot
 
 import "testing"
 

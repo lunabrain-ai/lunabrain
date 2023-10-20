@@ -10,37 +10,68 @@ import {
     CardPreview, Input,
     Menu,
     MenuButton, MenuItem, MenuList, MenuPopover,
-    MenuTrigger
+    MenuTrigger,
+    Popover,
+    PopoverSurface,
+    PopoverTrigger
 } from "@fluentui/react-components";
 import {Checkbox, Stack} from "@fluentui/react";
 import {truncateText} from "@/util/text";
 import {IFrameSandbox} from "@/components/IFrameSandbox";
 import {Vote} from "@/components/Vote";
-import {AddCircle16Regular, MoreHorizontal20Regular, SubtractCircle16Regular} from "@fluentui/react-icons";
+import {
+    AddCircle16Regular,
+    Delete24Regular,
+    MoreHorizontal20Regular,
+    SubtractCircle16Regular,
+    Search24Regular,
+} from "@fluentui/react-icons";
 import { StoredContent, Content } from "@/rpc/content/content_pb";
 import {useStyles} from "@/components/Content/styles";
 import QRCode from "@/components/QRCode";
+import {useState} from "react";
+import {FilteredTagInput} from "@/components/Content/FilteredTagInput";
 
 export const ContentCard: React.FC<{
     item: StoredContent,
     setChecked: (checked: boolean) => void,
 }> = ({ item, setChecked }) => {
-    const { userSettings } = useProjectContext();
+    const { userSettings, loadContent, addFilteredTag } = useProjectContext();
 
     const styles = useStyles();
 
     const addTag = async (tag: string) => {
-        item.content?.tags.push(tag)
+        const newTags = [...item.tags.map(t => t.name), tag]
         try {
             const res = await contentService.setTags({
                 contentId: item.id,
-                tags: item.content?.tags,
+                tags: newTags,
             })
             toast.success('Added tag');
+            void loadContent();
         } catch (e: any) {
             toast.error('Failed to add tag');
             console.error(e);
         }
+    }
+
+    const removeTag = async (tag: string) => {
+        const newTags = item.tags.map(t => t.name).filter(t => t !== tag);
+        try {
+            const res = await contentService.setTags({
+                contentId: item.id,
+                tags: newTags,
+            })
+            toast.success('Added tag');
+            void loadContent();
+        } catch (e: any) {
+            toast.error('Failed to add tag');
+            console.error(e);
+        }
+    }
+
+    const searchTag = (tag: string) => {
+        addFilteredTag(tag);
     }
 
     const openURL = () => window.location.href = item.url
@@ -85,7 +116,19 @@ export const ContentCard: React.FC<{
                     </Stack.Item>
                     <Stack.Item>
                         <Stack horizontal tokens={{childrenGap: 3}}>
-                            {item.content?.tags.map((t, i) => <Badge key={i}>{t}</Badge>)}
+                            {item.tags.map((t, i) => (
+                                <Popover key={i} withArrow trapFocus>
+                                    <PopoverTrigger disableButtonEnhancement>
+                                        <Badge key={i}>{t.name}</Badge>
+                                    </PopoverTrigger>
+                                    <PopoverSurface>
+                                    <div>
+                                        <Button icon={<Search24Regular />} onClick={() => searchTag(t.name)} aria-label={"search-tag"} />
+                                        <Button icon={<Delete24Regular />} onClick={() => removeTag(t.name)} aria-label={"delete-tag"} />
+                                    </div>
+                                    </PopoverSurface>
+                                </Popover>
+                            ))}
                             <AddTagBadge onNewTag={addTag} />
                         </Stack>
                     </Stack.Item>
@@ -193,12 +236,14 @@ const GroupButton: React.FC<{ contentId: string, style?: React.CSSProperties}> =
 }
 
 const AddTagBadge: React.FC<{ onNewTag: (tag: string) => void }> = ({ onNewTag }) => {
-    const [tag, setTag] = React.useState<string>('');
     const [addingTag, setAddingTag] = React.useState(false);
     const icon = addingTag ? <SubtractCircle16Regular /> : <AddCircle16Regular />;
-    const addTag = () => {
-        setAddingTag(false);
-        onNewTag(tag);
+    const [selectedTag, setSelectedTag] = useState<string>('');
+    const onAddTag = (tag: string) => {
+        if (tag) {
+            setAddingTag(false);
+            onNewTag(tag);
+        }
     }
 
     // TODO breadchris add tag suggestion
@@ -206,10 +251,7 @@ const AddTagBadge: React.FC<{ onNewTag: (tag: string) => void }> = ({ onNewTag }
         <Stack horizontal tokens={{childrenGap: 3}}>
             <Badge size="medium" onClick={() => setAddingTag(!addingTag)} style={{cursor: 'pointer'}} icon={icon} />
             {addingTag && (
-                <>
-                    <Input placeholder="Add tag" value={tag} onChange={(e) => setTag(e.target.value)} />
-                    <Button onClick={addTag}>Add</Button>
-                </>
+                <FilteredTagInput selectedTag={selectedTag} setSelectedTag={setSelectedTag} onAddTag={onAddTag} />
             )}
         </Stack>
     )

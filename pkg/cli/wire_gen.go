@@ -7,11 +7,11 @@
 package cli
 
 import (
+	"github.com/lunabrain-ai/lunabrain/pkg/bot"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
 	"github.com/lunabrain-ai/lunabrain/pkg/config"
 	"github.com/lunabrain-ai/lunabrain/pkg/content"
-	"github.com/lunabrain-ai/lunabrain/pkg/content/source"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/lunabrain-ai/lunabrain/pkg/log"
@@ -79,7 +79,8 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	service := content.NewService(store, session, agent, builder)
+	normalize := content.NewNormalize(builder)
+	service := content.NewService(store, session, agent, normalize)
 	discordConfig, err := discord.NewConfig(provider)
 	if err != nil {
 		return nil, err
@@ -92,8 +93,8 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	bot := discord.NewBot(agent)
-	handler, err := discord.NewHandler(discordConfig, discordgoSession, bot)
+	discordBot := discord.NewBot(agent)
+	handler, err := discord.NewHandler(discordConfig, discordgoSession, discordBot)
 	if err != nil {
 		return nil, err
 	}
@@ -110,8 +111,8 @@ func Wire() (*cli.App, error) {
 	protoflowProtoflow := protoflow.New(agent, session, bucketBucket, protoflowConfig, client)
 	userService := user.NewService(store, session)
 	apihttpServer := server.New(contentConfig, service, store, bucketBucket, discordService, protoflowProtoflow, sessionManager, userService)
-	discordCollector := source.NewDiscordCollector(discordgoSession, store)
-	hnCollect := source.NewHNCollector(store)
-	app := NewApp(logLog, apihttpServer, discordCollector, hnCollect)
+	botDiscord := bot.NewDiscord(discordgoSession, store)
+	hn := bot.NewHN(store, normalize)
+	app := NewApp(logLog, apihttpServer, botDiscord, hn)
 	return app, nil
 }

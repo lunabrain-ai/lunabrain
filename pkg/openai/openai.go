@@ -153,6 +153,8 @@ func (c *Agent) Call(
 		return nil, err
 	}
 
+	llm.CallbacksHandler = NewHandler()
+
 	completion, err := llm.Call(ctx, []schema.ChatMessage{
 		schema.HumanChatMessage{Content: content},
 	}, llms.WithFunctions(functions))
@@ -172,7 +174,7 @@ func (c *Agent) Ask(
 	}
 
 	events := make(chan rxgo.Item)
-	client.CallbacksHandler = NewHandler(events)
+	client.CallbacksHandler = NewHandler(WithEvents(events))
 
 	go func() {
 		defer close(events)

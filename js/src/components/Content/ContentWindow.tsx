@@ -35,6 +35,7 @@ const MediaViewer: React.FC = ({  }) => {
 
 export const ContentWindow: React.FC = ({  }) => {
     const [inputValue, setInputValue] = useState<string | undefined>('');
+    const [searchValue, setSearchValue] = useState<string | undefined>('');
     const { content, showTagTree, setShowTagTree, loadContent } = useProjectContext();
     const [selectedContent, setSelectedContent] = useState<string[]>([]);
     const [inputType, setInputType] = useState<string>('url');
@@ -95,14 +96,10 @@ export const ContentWindow: React.FC = ({  }) => {
                        styles={{root: {width: '100%', gap: 15, paddingLeft: 10, paddingRight: 10, marginBottom: 20, relative: true}}}>
                     <ToggleButton checked={showTagTree} onClick={() => setShowTagTree(!showTagTree)} icon={<Tag24Regular />} />
                     <Button icon={<DocumentAdd24Regular />} onClick={() => setShowCreate(!showCreate)} />
-                    <Select onChange={onInputTypeChange} value={inputType}>
-                        <option>url</option>
-                        <option>prompt</option>
-                    </Select>
                     <TextField
-                        placeholder={`Enter a ${inputType}...`}
-                        value={inputValue}
-                        onChange={(e, newValue) => setInputValue(newValue)}
+                        placeholder={`Search...`}
+                        value={searchValue}
+                        onChange={(e, newValue) => setSearchValue(newValue)}
                         onKeyPress={(e) => {
                             if (e.key === 'Enter') {
                                 handleSend();
@@ -111,8 +108,10 @@ export const ContentWindow: React.FC = ({  }) => {
                         underlined
                         styles={{root: {width: '100%'}}}
                     />
-                    <PrimaryButton text="Send" onClick={handleSend}/>
-                    <Button disabled={selectedContent.length === 0} onClick={deleteContent} icon={<Delete24Regular />} />
+                    <PrimaryButton text="Search" onClick={handleSend}/>
+                    {selectedContent.length > 0 && (
+                        <Button disabled={selectedContent.length === 0} onClick={deleteContent} icon={<Delete24Regular />} />
+                    )}
                 </Stack>
             </Stack.Item>
             <Stack.Item grow styles={{ root: { overflowY: 'auto' } }}>
@@ -126,6 +125,25 @@ export const ContentWindow: React.FC = ({  }) => {
                         {
                             showCreate && (
                                 <>
+                                    <Stack horizontal>
+                                        <Select onChange={onInputTypeChange} value={inputType}>
+                                            <option>url</option>
+                                            <option>prompt</option>
+                                        </Select>
+                                        <TextField
+                                            placeholder={`Enter a ${inputType}...`}
+                                            value={inputValue}
+                                            onChange={(e, newValue) => setInputValue(newValue)}
+                                            onKeyPress={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    handleSend();
+                                                }
+                                            }}
+                                            underlined
+                                            styles={{root: {width: '100%'}}}
+                                        />
+                                        <PrimaryButton text="Send" onClick={handleSend}/>
+                                    </Stack>
                                     <MarkdownEditor />
                                     <Button>Save</Button>
                                 </>

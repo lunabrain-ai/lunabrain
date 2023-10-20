@@ -221,6 +221,11 @@ public struct Content_StoredContent {
   /// Clears the value of `user`. Subsequent reads from it will return its default value.
   public mutating func clearUser() {_uniqueStorage()._user = nil}
 
+  public var tags: [Content_Tag] {
+    get {return _storage._tags}
+    set {_uniqueStorage()._tags = newValue}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -1112,6 +1117,7 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     7: .same(proto: "url"),
     8: .same(proto: "votes"),
     9: .same(proto: "user"),
+    10: .same(proto: "tags"),
   ]
 
   fileprivate class _StorageClass {
@@ -1124,6 +1130,7 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     var _url: String = String()
     var _votes: Int32 = 0
     var _user: User_User? = nil
+    var _tags: [Content_Tag] = []
 
     static let defaultInstance = _StorageClass()
 
@@ -1139,6 +1146,7 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       _url = source._url
       _votes = source._votes
       _user = source._user
+      _tags = source._tags
     }
   }
 
@@ -1166,6 +1174,7 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         case 7: try { try decoder.decodeSingularStringField(value: &_storage._url) }()
         case 8: try { try decoder.decodeSingularInt32Field(value: &_storage._votes) }()
         case 9: try { try decoder.decodeSingularMessageField(value: &_storage._user) }()
+        case 10: try { try decoder.decodeRepeatedMessageField(value: &_storage._tags) }()
         default: break
         }
       }
@@ -1205,6 +1214,9 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       try { if let v = _storage._user {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
       } }()
+      if !_storage._tags.isEmpty {
+        try visitor.visitRepeatedMessageField(value: _storage._tags, fieldNumber: 10)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -1223,6 +1235,7 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         if _storage._url != rhs_storage._url {return false}
         if _storage._votes != rhs_storage._votes {return false}
         if _storage._user != rhs_storage._user {return false}
+        if _storage._tags != rhs_storage._tags {return false}
         return true
       }
       if !storagesAreEqual {return false}

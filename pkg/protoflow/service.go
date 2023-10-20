@@ -10,8 +10,8 @@ import (
 	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
+	"github.com/lunabrain-ai/lunabrain/pkg/bot"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
-	"github.com/lunabrain-ai/lunabrain/pkg/content/source"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
@@ -362,7 +362,7 @@ func (p *Protoflow) UploadContent(ctx context.Context, c *connect_go.Request[gen
 				isAudio = true
 			case "application/pdf":
 				r := bytes.NewReader(t.File.Data)
-				pd := source.NewPDF(r, int64(len(t.File.Data)))
+				pd := bot.NewPDF(r, int64(len(t.File.Data)))
 				obs = rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
 					pages, err := pd.Load(ctx)
 					if err != nil {

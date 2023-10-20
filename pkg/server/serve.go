@@ -46,6 +46,7 @@ type HTTPServer interface {
 var (
 	ProviderSet = wire.NewSet(
 		content.NewService,
+		content.NewNormalize,
 		user.NewService,
 		shttp.NewSession,
 		content.NewConfig,

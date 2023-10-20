@@ -5,6 +5,7 @@ import (
 	"github.com/go-shiori/go-readability"
 	"github.com/google/uuid"
 	"github.com/lunabrain-ai/lunabrain/gen/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"log/slog"
 	"net/url"
 	"os"
@@ -13,7 +14,17 @@ import (
 	"time"
 )
 
-func (s *Service) articleURL(ul string) ([]*content.Content, error) {
+type Normalize struct {
+	bucket *bucket.Builder
+}
+
+func NewNormalize(b *bucket.Builder) *Normalize {
+	return &Normalize{
+		bucket: b,
+	}
+}
+
+func (s *Normalize) articleURL(ul string) ([]*content.Content, error) {
 	var nCnt []*content.Content
 
 	article, err := readability.FromURL(ul, 30*time.Second)
@@ -57,7 +68,7 @@ func findRepoReadme(dir string) (string, error) {
 	return "", nil
 }
 
-func (s *Service) gitURL(ul string) ([]*content.Content, error) {
+func (s *Normalize) gitURL(ul string) ([]*content.Content, error) {
 	var nCnt []*content.Content
 
 	id := uuid.NewString()
@@ -132,7 +143,7 @@ func (s *Service) gitURL(ul string) ([]*content.Content, error) {
 	return nCnt, nil
 }
 
-func (s *Service) Normalize(c *content.Content) ([]*content.Content, error) {
+func (s *Normalize) Normalize(c *content.Content) ([]*content.Content, error) {
 	var nCnt []*content.Content
 	switch t := c.Type.(type) {
 	case *content.Content_Data:

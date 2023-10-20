@@ -1,8 +1,8 @@
-package source
+package bot
 
 import "github.com/google/wire"
 
 var ProviderSet = wire.NewSet(
-	NewDiscordCollector,
-	NewHNCollector,
+	NewDiscord,
+	NewHN,
 )

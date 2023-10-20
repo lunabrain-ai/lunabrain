@@ -1,4 +1,4 @@
-package source
+package bot
 
 import (
 	"github.com/bwmarrin/discordgo"
@@ -8,12 +8,12 @@ import (
 	"log/slog"
 )
 
-type DiscordCollector struct {
+type Discord struct {
 	session *discordgo.Session
 	db      *db.Store
 }
 
-func (c *DiscordCollector) Collect(channelID string) ([]*model.DiscordMessage, error) {
+func (c *Discord) Collect(channelID string) ([]*model.DiscordMessage, error) {
 	var (
 		msgs []*model.DiscordMessage
 		err  error
@@ -57,7 +57,7 @@ func (c *DiscordCollector) Collect(channelID string) ([]*model.DiscordMessage, e
 	return msgs, nil
 }
 
-func (c *DiscordCollector) createTranscripts(channelID string, msgs []*model.DiscordMessage) error {
+func (c *Discord) createTranscripts(channelID string, msgs []*model.DiscordMessage) error {
 	var transMsgs []*model.DiscordMessage
 	for _, msg := range msgs {
 		transMsgs = append(transMsgs, msg)
@@ -87,7 +87,7 @@ func (c *DiscordCollector) createTranscripts(channelID string, msgs []*model.Dis
 }
 
 // TODO breadchris discord starts with the latest message in the channel, so there will be a retroactive collection and a forward collection
-func (c *DiscordCollector) getHistoricalChannelMessages(channelID string) ([]*model.DiscordMessage, error) {
+func (c *Discord) getHistoricalChannelMessages(channelID string) ([]*model.DiscordMessage, error) {
 	// Get the messages from the channel
 	slog.Debug("getting discord messages", "channelID", channelID)
 	messages, err := c.session.ChannelMessages(channelID, 100, "", "", "")
@@ -136,8 +136,8 @@ func (c *DiscordCollector) getHistoricalChannelMessages(channelID string) ([]*mo
 	return returnMessages, nil
 }
 
-func NewDiscordCollector(session *discordgo.Session, db *db.Store) *DiscordCollector {
-	return &DiscordCollector{
+func NewDiscord(session *discordgo.Session, db *db.Store) *Discord {
+	return &Discord{
 		session: session,
 		db:      db,
 	}

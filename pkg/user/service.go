@@ -56,7 +56,7 @@ func (s *UserService) Register(ctx context.Context, c *connectgo.Request[user.Us
 	if err == nil {
 		return nil, errors.New("user already exists")
 	}
-	u, err := s.sess.NewUser(c.Msg)
+	u, err := s.sess.NewUser(c.Msg, false)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not create user")
 	}

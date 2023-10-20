@@ -7,7 +7,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/gen/content/contentconnect"
-	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
@@ -18,10 +17,10 @@ import (
 )
 
 type Service struct {
-	db     *db.Store
-	sess   *db.Session
-	openai *openai.Agent
-	bucket *bucket.Builder
+	db         *db.Store
+	sess       *db.Session
+	openai     *openai.Agent
+	normalizer *Normalize
 }
 
 var _ contentconnect.ContentServiceHandler = (*Service)(nil)
@@ -31,13 +30,13 @@ func (s *Service) Save(ctx context.Context, c *connect_go.Request[content.Conten
 	if err != nil {
 		return nil, err
 	}
-	norm, err := s.Normalize(c.Msg.Content)
+	norm, err := s.normalizer.Normalize(c.Msg.Content)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to normalize content")
 	}
 	norm = append(norm, c.Msg.Related...)
 
-	cnt, err := s.db.SaveContent(uid, c.Msg.Content, norm)
+	cnt, err := s.db.SaveContent(uid, uuid.Nil, c.Msg.Content, norm)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to save content")
 	}
@@ -70,10 +69,15 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 
 	var storedContent []*content.StoredContent
 	for _, cn := range ct {
+		var tags []*content.Tag
+		for _, t := range cn.Tags {
+			tags = append(tags, &content.Tag{Name: t.Name})
+		}
 		sc := &content.StoredContent{
 			Id:      cn.ID.String(),
 			Content: cn.Data,
 			Votes:   int32(len(cn.Votes)),
+			Tags:    tags,
 		}
 		if cn.User != nil {
 			sc.User = cn.User.Data.Data
@@ -252,12 +256,12 @@ func NewService(
 	db *db.Store,
 	sess *db.Session,
 	openai *openai.Agent,
-	bucket *bucket.Builder,
+	normalizer *Normalize,
 ) *Service {
 	return &Service{
-		db:     db,
-		sess:   sess,
-		openai: openai,
-		bucket: bucket,
+		db:         db,
+		sess:       sess,
+		openai:     openai,
+		normalizer: normalizer,
 	}
 }

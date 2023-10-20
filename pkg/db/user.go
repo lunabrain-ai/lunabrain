@@ -23,6 +23,7 @@ func (s *Session) GetUserByID(id uuid.UUID) (*model.User, error) {
 
 func (s *Session) GetUser(ps *user.User) (*model.User, error) {
 	p := &model.User{}
+
 	res := s.db.First(&p, datatypes.JSONQuery("data").Equals(ps.Email, "email"))
 	if res.Error != nil {
 		return nil, errors.Wrapf(res.Error, "could not get user: %s", ps.Email)
@@ -34,7 +35,7 @@ func (s *Session) GetUser(ps *user.User) (*model.User, error) {
 	return p, nil
 }
 
-func (s *Session) NewUser(ps *user.User) (*model.User, error) {
+func (s *Session) NewUser(ps *user.User, bot bool) (*model.User, error) {
 	id := uuid.New()
 	// TODO breadchris hash password
 	hash, err := HashPassword(ps.Password)

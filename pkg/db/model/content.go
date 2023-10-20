@@ -14,6 +14,7 @@ type Content struct {
 	RelatedContent []*Content `gorm:"many2many:related_content;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Votes          []*Vote    `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Groups         []*Group   `gorm:"many2many:group_content;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Bots           []*Bot     `gorm:"many2many:bot_content;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
 
 type Vote struct {
@@ -32,4 +33,5 @@ type Tag struct {
 	GroupID uuid.UUID  `json:"group_id"`
 	Group   *Group     `json:"group"`
 	Content []*Content `gorm:"many2many:content_tags;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Domain  bool       `json:"domain"`
 }
