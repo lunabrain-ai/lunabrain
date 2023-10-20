@@ -75,6 +75,7 @@ message StoredContent {
   int32 votes = 8;
   user.User user = 9;
   repeated Tag tags = 10;
+  string preview = 11;
 }
 
 message Edge {

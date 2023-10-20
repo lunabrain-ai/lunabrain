@@ -13,6 +13,8 @@ import (
 	"github.com/pkg/errors"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
+	"regexp"
+	"strings"
 	"time"
 )
 
@@ -41,6 +43,29 @@ func (s *Service) Save(ctx context.Context, c *connect_go.Request[content.Conten
 		return nil, errors.Wrapf(err, "unable to save content")
 	}
 	return connect_go.NewResponse(&content.ContentIDs{ContentIds: []string{cnt.String()}}), nil
+}
+
+func trimMarkdownWhitespace(md string) string {
+	// Remove leading and trailing whitespace
+	md = strings.TrimSpace(md)
+
+	// Replace multiple consecutive newlines with a single newline
+	md = regexp.MustCompile(`\n{3,}`).ReplaceAllString(md, "\n\n")
+
+	// Replace multiple spaces with a single space outside of code snippets
+	codeBlocks := regexp.MustCompile("`[^`]+`")
+	matches := codeBlocks.FindAllString(md, -1)
+	for _, match := range matches {
+		md = strings.Replace(md, match, strings.ReplaceAll(match, " ", "␣"), -1)
+	}
+
+	md = regexp.MustCompile(` +`).ReplaceAllString(md, " ")
+
+	for _, match := range matches {
+		md = strings.Replace(md, match, strings.ReplaceAll(match, "␣", " "), -1)
+	}
+
+	return md
 }
 
 func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Query]) (*connect_go.Response[content.Results], error) {
@@ -113,6 +138,7 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 					sc.Title = u.Article.Title
 					sc.Description = u.Article.Excerpt
 					sc.Image = u.Article.Image
+					sc.Preview = trimMarkdownWhitespace(u.Article.Text)
 				}
 			}
 		}

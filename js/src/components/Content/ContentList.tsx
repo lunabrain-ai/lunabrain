@@ -1,31 +1,8 @@
 import * as React from "react";
-import {
-    shorthands,
-    Card,
-    CardHeader,
-    CardPreview,
-    CardFooter,
-    Badge,
-    makeStyles,
-    tokens,
-    Menu,
-    MenuTrigger,
-    MenuButton,
-    MenuPopover, MenuList, MenuItem, Button, Input,
-} from "@fluentui/react-components";
-import {useProjectContext} from "@/providers/ProjectProvider";
 import {StoredContent } from "@/rpc/content/content_pb";
 import {Checkbox, IStackTokens, Stack} from "@fluentui/react";
-import {MoreHorizontal20Regular, AddCircle16Regular, SubtractCircle16Regular} from "@fluentui/react-icons";
-import {Vote} from "@/components/Vote";
-import {contentService, userService} from "@/service";
-import toast from "react-hot-toast";
-import {IFrameSandbox} from "@/components/IFrameSandbox";
-import QRCode from "@/components/QRCode";
-import {truncateText} from "@/util/text";
 import {ContentCard} from "@/components/Content/ContentCard";
 import {useStyles} from "@/components/Content/styles";
-import SwipeableViews from "react-swipeable-views";
 
 interface ContentListProps {
     content: StoredContent[];

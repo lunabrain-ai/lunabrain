@@ -25,18 +25,22 @@ import {
     MoreHorizontal20Regular,
     SubtractCircle16Regular,
     Search24Regular,
+    PreviewLink16Regular,
+    NoteAdd16Regular,
 } from "@fluentui/react-icons";
 import { StoredContent, Content } from "@/rpc/content/content_pb";
 import {useStyles} from "@/components/Content/styles";
 import QRCode from "@/components/QRCode";
 import {useState} from "react";
 import {FilteredTagInput} from "@/components/Content/FilteredTagInput";
+import ReactMarkdown from "react-markdown";
 
 export const ContentCard: React.FC<{
     item: StoredContent,
     setChecked: (checked: boolean) => void,
 }> = ({ item, setChecked }) => {
-    const { userSettings, loadContent, addFilteredTag } = useProjectContext();
+    const { userSettings, loadTags, loadContent, addFilteredTag } = useProjectContext();
+    const [preview, setPreview] = React.useState(false);
 
     const styles = useStyles();
 
@@ -48,7 +52,10 @@ export const ContentCard: React.FC<{
                 tags: newTags,
             })
             toast.success('Added tag');
+
+            // TODO breadchris anti-pattern, this should happen inside the provider
             void loadContent();
+            void loadTags();
         } catch (e: any) {
             toast.error('Failed to add tag');
             console.error(e);
@@ -63,7 +70,10 @@ export const ContentCard: React.FC<{
                 tags: newTags,
             })
             toast.success('Added tag');
+
+            // TODO breadchris anti-pattern, this should happen inside the provider
             void loadContent();
+            void loadTags();
         } catch (e: any) {
             toast.error('Failed to add tag');
             console.error(e);
@@ -75,6 +85,15 @@ export const ContentCard: React.FC<{
     }
 
     const openURL = () => window.location.href = item.url
+
+    const CardActions = () => {
+       return (
+           <Stack horizontal tokens={{childrenGap: 3}} style={{marginTop: 3}}>
+               <PreviewLink16Regular onClick={() => setPreview(!preview)} />
+               <NoteAdd16Regular />
+           </Stack>
+       )
+    }
 
     return (
         <Card className={styles.card}
@@ -89,6 +108,16 @@ export const ContentCard: React.FC<{
                 action={<GroupButton contentId={item.id} />}
             />
             <CardPreview>
+                {preview && (
+                    <Stack>
+                        <Stack.Item>
+                            <CardActions />
+                        </Stack.Item>
+                        <Stack.Item>
+                            <ReactMarkdown>{item.preview}</ReactMarkdown>
+                        </Stack.Item>
+                    </Stack>
+                )}
                 {userSettings.showPreviews && (
                     <IFrameSandbox url={item.url} />
                 )}
@@ -113,6 +142,9 @@ export const ContentCard: React.FC<{
                 <Stack style={{width: '100%'}} horizontal tokens={{childrenGap: 10}}>
                     <Stack.Item>
                         <Vote contentID={item.id} votes={item.votes} />
+                    </Stack.Item>
+                    <Stack.Item>
+                        <CardActions />
                     </Stack.Item>
                     <Stack.Item>
                         <Stack horizontal tokens={{childrenGap: 3}}>

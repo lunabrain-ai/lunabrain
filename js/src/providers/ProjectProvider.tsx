@@ -62,6 +62,7 @@ type ProjectContextType = {
     setShowTagTree: (showTagTree: boolean) => void;
     loadGroups: () => void;
     loadContent: () => void;
+    loadTags: () => void;
 
     userSettings: UserSettings;
     setUserSettings: (userSettings: UserSettings) => void;
@@ -109,15 +110,6 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
         setContent(res.storedContent);
     }
 
-    useEffect(() => {
-        void loadContent();
-    }, [filteredTags, currentGroup]);
-
-    const loadGroups = async () => {
-        const res = await userService.getGroups({});
-        setGroups(res.groups);
-    }
-
     const loadTags = async () => {
         const res = await contentService.getTags({
             groupId: currentGroup === 'home' ? undefined : currentGroup,
@@ -126,11 +118,17 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     }
 
     useEffect(() => {
+        void loadContent();
         void loadTags();
         if (user) {
             window.history.pushState({}, '', groupURL(currentGroup));
         }
-    }, [user, currentGroup]);
+    }, [user, filteredTags, currentGroup]);
+
+    const loadGroups = async () => {
+        const res = await userService.getGroups({});
+        setGroups(res.groups);
+    }
 
     useEffect(() => {
         if (!user) {
@@ -261,6 +259,7 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
                 tags,
                 loadGroups,
                 loadContent,
+                loadTags,
 
                 filteredTags,
                 addFilteredTag,

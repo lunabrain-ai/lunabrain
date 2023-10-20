@@ -4098,6 +4098,10 @@
      * @generated from field: repeated content.Tag tags = 10;
      */
     tags = [];
+    /**
+     * @generated from field: string preview = 11;
+     */
+    preview = "";
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
@@ -4150,7 +4154,14 @@
         /* ScalarType.INT32 */
       },
       { no: 9, name: "user", kind: "message", T: User },
-      { no: 10, name: "tags", kind: "message", T: Tag, repeated: true }
+      { no: 10, name: "tags", kind: "message", T: Tag, repeated: true },
+      {
+        no: 11,
+        name: "preview",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
     ]);
     static fromBinary(bytes, options) {
       return new _StoredContent().fromBinary(bytes, options);

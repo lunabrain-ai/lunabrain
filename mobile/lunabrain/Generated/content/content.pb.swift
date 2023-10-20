@@ -226,6 +226,11 @@ public struct Content_StoredContent {
     set {_uniqueStorage()._tags = newValue}
   }
 
+  public var preview: String {
+    get {return _storage._preview}
+    set {_uniqueStorage()._preview = newValue}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -1118,6 +1123,7 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     8: .same(proto: "votes"),
     9: .same(proto: "user"),
     10: .same(proto: "tags"),
+    11: .same(proto: "preview"),
   ]
 
   fileprivate class _StorageClass {
@@ -1131,6 +1137,7 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     var _votes: Int32 = 0
     var _user: User_User? = nil
     var _tags: [Content_Tag] = []
+    var _preview: String = String()
 
     static let defaultInstance = _StorageClass()
 
@@ -1147,6 +1154,7 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       _votes = source._votes
       _user = source._user
       _tags = source._tags
+      _preview = source._preview
     }
   }
 
@@ -1175,6 +1183,7 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         case 8: try { try decoder.decodeSingularInt32Field(value: &_storage._votes) }()
         case 9: try { try decoder.decodeSingularMessageField(value: &_storage._user) }()
         case 10: try { try decoder.decodeRepeatedMessageField(value: &_storage._tags) }()
+        case 11: try { try decoder.decodeSingularStringField(value: &_storage._preview) }()
         default: break
         }
       }
@@ -1217,6 +1226,9 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       if !_storage._tags.isEmpty {
         try visitor.visitRepeatedMessageField(value: _storage._tags, fieldNumber: 10)
       }
+      if !_storage._preview.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._preview, fieldNumber: 11)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -1236,6 +1248,7 @@ extension Content_StoredContent: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         if _storage._votes != rhs_storage._votes {return false}
         if _storage._user != rhs_storage._user {return false}
         if _storage._tags != rhs_storage._tags {return false}
+        if _storage._preview != rhs_storage._preview {return false}
         return true
       }
       if !storagesAreEqual {return false}
