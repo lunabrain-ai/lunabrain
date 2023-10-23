@@ -14,6 +14,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
 	"github.com/lunabrain-ai/lunabrain/pkg/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/content/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	shttp "github.com/lunabrain-ai/lunabrain/pkg/http"
 	code "github.com/lunabrain-ai/lunabrain/pkg/protoflow"
@@ -46,7 +47,7 @@ type HTTPServer interface {
 var (
 	ProviderSet = wire.NewSet(
 		content.NewService,
-		content.NewNormalize,
+		normalize.NewNormalize,
 		user.NewService,
 		shttp.NewSession,
 		content.NewConfig,

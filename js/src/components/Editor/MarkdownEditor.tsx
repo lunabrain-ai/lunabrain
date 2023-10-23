@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React, {useCallback, useMemo, useState} from 'react'
 import {
     createEditor,
     Descendant,
@@ -9,10 +9,19 @@ import {
     Range,
     Transforms,
 } from 'slate'
+import { Content } from '@/rpc/content/content_pb';
 import { withHistory } from 'slate-history'
 import { Editable, ReactEditor, Slate, withReact } from 'slate-react'
 import { BulletedListElement } from './custom-types'
 import isHotkey from 'is-hotkey'
+import {serialize} from "@/util/slate";
+import {Stack, TextField} from "@fluentui/react";
+import {Button, Toolbar, ToolbarProps, ToolbarRadioButton, ToolbarRadioGroup} from "@fluentui/react-components";
+import {BrainCircuit24Regular, TextT24Regular, Link24Regular, MusicNote224Regular} from "@fluentui/react-icons";
+import {contentService} from "@/service";
+import toast from "react-hot-toast";
+import {textContent, urlContent} from "@/extension/util";
+import {useProjectContext} from "@/providers/ProjectProvider";
 
 const SHORTCUTS = {
     '*': 'list-item',
@@ -43,10 +52,21 @@ const useOnKeydown = (editor: Editor) => {
     return onKeyDown
 }
 
-export const MarkdownEditor = () => {
+export const MarkdownEditor: React.FC<{initial?: Descendant[]}> = ({
+}) => {
+    const { loadContent } = useProjectContext();
+
+    const [text, setText] = useState<string>('');
+    const [currentInputType, setCurrentInputType] = useState<string>('text');
+
     const renderElement = useCallback(props => <Element {...props} />, [])
     const editor = useMemo(
         () => withShortcuts(withReact(withHistory(createEditor()))),
+        []
+    )
+    const initialValue = useMemo(
+        () =>
+            JSON.parse(localStorage.getItem('content') || 'null') || [],
         []
     )
 
@@ -86,15 +106,115 @@ export const MarkdownEditor = () => {
         [editor]
     )
 
+    const onChange: ToolbarProps["onCheckedValueChange"] = (
+        e,
+        { name, checkedItems }
+    ) => {
+        setCurrentInputType(checkedItems[0]);
+    };
+
+    const saveContent = async (content: Content) => {
+        try {
+            const resp = await contentService.save({
+                content: content,
+                related: []
+            });
+            console.log(resp);
+            toast.success('Saved content');
+            void loadContent();
+        } catch (e) {
+            toast.error('Failed to save content');
+            console.error('failed to save', e)
+        }
+    }
+
+    const saveURL = async (url: string) => {
+        const u = new URL(url);
+        await saveContent(urlContent(url, ['app/input']));
+    }
+
+    const saveText = async (text: string) => {
+        await saveContent(textContent(text, ['app/input']));
+        void loadContent();
+    }
+
     return (
-        <Slate editor={editor} initialValue={initialValue}>
-            <Editable
-                onDOMBeforeInput={handleDOMBeforeInput}
-                renderElement={renderElement}
-                placeholder="Write some markdown..."
-                spellCheck
-                autoFocus
-            />
+        <Slate
+            editor={editor}
+            initialValue={initialValue}
+            onChange={(value: Descendant[]) => {
+                const isAstChange = editor.operations.some(
+                    (op: { type: string }) => 'set_selection' !== op.type
+                )
+                if (isAstChange) {
+                    // Save the value to Local Storage.
+                    const content = JSON.stringify(value)
+                    localStorage.setItem('content', content)
+                    //@ts-ignore
+                    if (value.length === 1 && value[0].type === 'paragraph') {
+                        //@ts-ignore
+                        setText(value[0].children[0].text)
+                    }
+                }
+            }}
+        >
+            <Stack>
+                <Stack.Item>
+                    <Editable
+                        style={{height: '100%', maxHeight: '100%', overflowY: 'auto'}}
+                        onDOMBeforeInput={handleDOMBeforeInput}
+                        renderElement={renderElement}
+                        placeholder="Write some markdown..."
+                        spellCheck
+                        autoFocus
+                    />
+                </Stack.Item>
+                <Stack.Item>
+                    <Stack horizontal horizontalAlign={'space-between'} tokens={{childrenGap: 3}}>
+                        <Stack.Item>
+                            <Toolbar
+                                aria-label="with Radio Buttons"
+                                defaultCheckedValues={{
+                                    textOptions: ["text"],
+                                }}
+                                onCheckedValueChange={onChange}
+                            >
+                                <ToolbarRadioGroup>
+                                    <ToolbarRadioButton
+                                        aria-label="Text"
+                                        name="textOptions"
+                                        value="text"
+                                        icon={<TextT24Regular />}
+                                    />
+                                    <ToolbarRadioButton
+                                        aria-label="Link"
+                                        name="textOptions"
+                                        value="link"
+                                        icon={<Link24Regular />}
+                                    />
+                                    <ToolbarRadioButton
+                                        aria-label="prompt"
+                                        name="textOptions"
+                                        value="prompt"
+                                        icon={<BrainCircuit24Regular />}
+                                    />
+                                </ToolbarRadioGroup>
+                            </Toolbar>
+                        </Stack.Item>
+                        <Stack.Item>
+                            <Button onClick={() => {
+                                // TODO breadchris I am not sure how to save different types of content
+                                if (currentInputType === 'text') {
+                                    void saveText(serialize(editor));
+                                }
+                                if (currentInputType === 'link') {
+                                    void saveURL(text);
+                                }
+                            }}>Save</Button>
+                        </Stack.Item>
+                    </Stack>
+                </Stack.Item>
+            </Stack>
         </Slate>
     )
 }
@@ -146,7 +266,6 @@ const withShortcuts = editor => {
                 return
             }
         }
-
         insertText(text)
     }
 
@@ -218,14 +337,3 @@ const Element = ({ attributes, children, element }) => {
             return <p {...attributes}>{children}</p>
     }
 }
-
-const initialValue: Descendant[] = [
-    {
-        type: 'list-item',
-        children: [
-            {
-                text: ''
-            },
-        ],
-    },
-]

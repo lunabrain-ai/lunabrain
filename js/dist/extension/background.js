@@ -8298,24 +8298,6 @@
   var contentService = createPromiseClient(ContentService, transport);
   var userService = createPromiseClient(UserService, transport);
 
-  // src/extension/util.ts
-  function urlContent(url, tags) {
-    return new Content({
-      tags,
-      type: {
-        case: "data",
-        value: new Data({
-          type: {
-            case: "url",
-            value: {
-              url
-            }
-          }
-        })
-      }
-    });
-  }
-
   // src/extension/shared.tsx
   var contentGet = "content/get";
   var contentSave = "content/save";
@@ -8323,11 +8305,10 @@
   // src/extension/background.tsx
   var tabContent = void 0;
   var chromeExt = () => {
-    async function saveContent(tabContent2) {
-      const u = new URL(tabContent2.from);
+    async function saveContent(content) {
       try {
         const resp = await contentService.save({
-          content: urlContent(tabContent2.to, ["browser/history", u.host]),
+          content,
           related: []
         });
         console.log(resp);
@@ -8360,13 +8341,20 @@
         });
       });
     }
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       if (message.action === contentGet) {
         sendResponse({ data: tabContent });
         tabContent = void 0;
       }
       if (message.action === contentSave) {
-        void saveContent(message.data);
+        const content = Content.fromJson(message.data);
+        try {
+          await saveContent(content);
+        } catch (e) {
+          sendResponse({ data: { error: e } });
+          return;
+        }
+        sendResponse({ data: {} });
       }
     });
     chrome.tabs.onCreated.addListener(async (tab) => {

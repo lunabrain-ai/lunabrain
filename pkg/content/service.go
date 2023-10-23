@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/gen/content/contentconnect"
+	"github.com/lunabrain-ai/lunabrain/pkg/content/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
@@ -22,7 +23,7 @@ type Service struct {
 	db         *db.Store
 	sess       *db.Session
 	openai     *openai.Agent
-	normalizer *Normalize
+	normalizer *normalize.Normalize
 }
 
 var _ contentconnect.ContentServiceHandler = (*Service)(nil)
@@ -32,11 +33,12 @@ func (s *Service) Save(ctx context.Context, c *connect_go.Request[content.Conten
 	if err != nil {
 		return nil, err
 	}
-	norm, err := s.normalizer.Normalize(c.Msg.Content)
+	norm, tags, err := s.normalizer.Normalize(c.Msg.Content)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to normalize content")
 	}
 	norm = append(norm, c.Msg.Related...)
+	c.Msg.Content.Tags = append(c.Msg.Content.Tags, tags...)
 
 	cnt, err := s.db.SaveContent(uid, uuid.Nil, c.Msg.Content, norm)
 	if err != nil {
@@ -282,7 +284,7 @@ func NewService(
 	db *db.Store,
 	sess *db.Session,
 	openai *openai.Agent,
-	normalizer *Normalize,
+	normalizer *normalize.Normalize,
 ) *Service {
 	return &Service{
 		db:         db,

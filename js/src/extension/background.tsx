@@ -2,15 +2,15 @@
 import {contentService, projectService, userService} from "@/service";
 import {urlContent} from "@/extension/util";
 import {contentGet, contentSave, TabContent} from "@/extension/shared";
+import { Content } from "@/rpc/content/content_pb";
 
 let tabContent: TabContent|undefined = undefined;
 
 const chromeExt = () => {
-    async function saveContent(tabContent: TabContent) {
-        const u = new URL(tabContent.from);
+    async function saveContent(content: Content) {
         try {
             const resp = await contentService.save({
-                content: urlContent(tabContent.to, ['browser/history', u.host]),
+                content: content,
                 related: []
             });
             console.log(resp);
@@ -54,14 +54,21 @@ const chromeExt = () => {
         });
     }
 
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         // TODO breadchris replace with a typed action
         if (message.action === contentGet) {
             sendResponse({ data: tabContent });
             tabContent = undefined;
         }
         if (message.action === contentSave) {
-            void saveContent(message.data);
+            const content = Content.fromJson(message.data);
+            try {
+                await saveContent(content);
+            } catch (e) {
+                sendResponse({ data: { error: e } });
+                return;
+            }
+            sendResponse({ data: {} });
         }
     });
 

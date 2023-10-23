@@ -10,7 +10,14 @@ struct ContentView: View {
     
     var body: some View {
         TabView {
-            MarkupEditorView(html: $demoHtml).tabItem {
+            VStack{
+                MarkupEditorView(html: $demoHtml)
+                Button(action: {
+                    
+                }) {
+                    Image(systemName: "paperplane")
+                }
+            }.tabItem {
                 Label("Markdown", systemImage: "list.dash").padding()
             }
             VStack {

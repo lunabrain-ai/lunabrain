@@ -34,6 +34,7 @@ import QRCode from "@/components/QRCode";
 import {useState} from "react";
 import {FilteredTagInput} from "@/components/Content/FilteredTagInput";
 import ReactMarkdown from "react-markdown";
+import {MarkdownEditor} from "@/components/Editor/MarkdownEditor";
 
 export const ContentCard: React.FC<{
     item: StoredContent,
@@ -90,7 +91,6 @@ export const ContentCard: React.FC<{
        return (
            <Stack horizontal tokens={{childrenGap: 3}} style={{marginTop: 3}}>
                <PreviewLink16Regular onClick={() => setPreview(!preview)} />
-               <NoteAdd16Regular />
            </Stack>
        )
     }
@@ -108,35 +108,45 @@ export const ContentCard: React.FC<{
                 action={<GroupButton contentId={item.id} />}
             />
             <CardPreview>
-                {preview && (
-                    <Stack>
-                        <Stack.Item>
-                            <CardActions />
-                        </Stack.Item>
-                        <Stack.Item>
-                            <ReactMarkdown>{item.preview}</ReactMarkdown>
-                        </Stack.Item>
-                    </Stack>
-                )}
-                {userSettings.showPreviews && (
-                    <IFrameSandbox url={item.url} />
-                )}
-                {userSettings.showQRCodes && (
-                    <QRCode text={item.url} />
-                )}
-                {userSettings.showRelatedContent && (
-                    <>
-                        {item.related.length > 0 && (
-                            <Stack horizontal disableShrink tokens={{childrenGap: 5}} style={{width: '100%', overflowX: 'scroll', display: 'flex', flexFlow: 'row nowrap'}}>
-                                {item.related.map((r) => (
-                                    <Stack.Item key={r.id} style={{width: 100}} grow>
-                                        <RelatedContentCard key={r.id} content={r} />
+                <Stack horizontal>
+                    {preview && (
+                        <>
+                            <Stack.Item grow={1}>
+                                <Stack>
+                                    <Stack.Item>
+                                        <CardActions />
                                     </Stack.Item>
-                                ))}
-                            </Stack>
-                        )}
-                    </>
-                )}
+                                    <Stack.Item style={{maxHeight: '70vh', overflowY: 'auto'}}>
+                                        <ReactMarkdown>{item.preview}</ReactMarkdown>
+                                    </Stack.Item>
+                                </Stack>
+                            </Stack.Item>
+                        </>
+                    )}
+                    {userSettings.showPreviews && (
+                        <Stack.Item>
+                            <IFrameSandbox url={item.url} />
+                        </Stack.Item>
+                    )}
+                    {userSettings.showQRCodes && (
+                        <Stack.Item>
+                            <QRCode text={item.url} />
+                        </Stack.Item>
+                    )}
+                    {userSettings.showRelatedContent && (
+                        <Stack.Item>
+                            {item.related.length > 0 && (
+                                <Stack horizontal disableShrink tokens={{childrenGap: 5}} style={{width: '100%', overflowX: 'scroll', display: 'flex', flexFlow: 'row nowrap'}}>
+                                    {item.related.map((r) => (
+                                        <Stack.Item key={r.id} style={{width: 100}} grow>
+                                            <RelatedContentCard key={r.id} content={r} />
+                                        </Stack.Item>
+                                    ))}
+                                </Stack>
+                            )}
+                        </Stack.Item>
+                    )}
+                </Stack>
             </CardPreview>
             <CardFooter>
                 <Stack style={{width: '100%'}} horizontal tokens={{childrenGap: 10}}>
@@ -210,19 +220,27 @@ const contentDisplay = (content: Content): ContentDisplay|undefined => {
     return undefined;
 }
 
-const RelatedContentCard: React.FC<{content: Content}> = ({ content }) => {
+export const RelatedContentCard: React.FC<{
+    content: Content,
+    setChecked?: (checked: boolean) => void,
+}> = ({ content, setChecked }) => {
     const cd = contentDisplay(content);
     if (!cd) {
         return null;
     }
-    console.log(cd)
     return (
-        <Card>
+        <Card
+            floatingAction={
+                <Checkbox onChange={(ev, checked) => {setChecked && setChecked(checked || false)}} />
+            }
+        >
             <CardHeader
                 header={cd.type}
             />
             <CardPreview>
-                {cd.info}
+                <ReactMarkdown>
+                    {cd.info}
+                </ReactMarkdown>
             </CardPreview>
             <CardFooter>
                 {content.tags.map((t, i) => <Badge key={i}>{t}</Badge>)}

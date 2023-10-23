@@ -1,18 +1,18 @@
 import React, {useState} from 'react';
 import {List, PrimaryButton, Spinner, SpinnerSize, Stack, TextField} from "@fluentui/react";
-import {Tag24Regular, Delete24Regular, DocumentAdd24Regular} from "@fluentui/react-icons";
+import {Tag24Regular, Delete24Regular, TextT24Regular, Link24Regular, MusicNote224Regular} from "@fluentui/react-icons";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {MarkdownEditor} from "@/components/Editor/MarkdownEditor";
 import YouTube from "react-youtube";
 import {AudioPlayer} from "@/components/AudioPlayer";
 import {ContentList} from "@/components/Content/ContentList";
 import {contentService} from "@/service";
-import {urlContent} from "@/extension/util";
-import {Button, Select, SelectProps, Switch, ToggleButton} from "@fluentui/react-components";
+import {
+    Button,
+    Card,
+} from "@fluentui/react-components";
 import {TagManager} from "@/components/TagManager";
 import toast from "react-hot-toast";
-import {MarkdownPreview} from "@/components/Editor/MarkdownPreview";
-import {PinterestGridView} from "@/components/PinterestGridView";
 
 const MediaViewer: React.FC = ({  }) => {
     const { media } = useProjectContext();
@@ -39,37 +39,6 @@ export const ContentWindow: React.FC = ({  }) => {
     const { content, showTagTree, setShowTagTree, loadContent } = useProjectContext();
     const [selectedContent, setSelectedContent] = useState<string[]>([]);
     const [inputType, setInputType] = useState<string>('url');
-    const [showCreate, setShowCreate] = useState<boolean>(false);
-
-    const saveURL = async (url: string) => {
-        try {
-            const u = new URL(url);
-        } catch (e) {
-            console.error('invalid url', e);
-            return;
-        }
-        try {
-            const resp = await contentService.save({
-                content: urlContent(url, ['app/input']),
-                related: []
-            });
-            console.log(resp);
-            toast.success('Saved content');
-        } catch (e) {
-            toast.error('Failed to save content');
-            console.error('failed to save', e)
-        }
-    }
-
-    const handleSend = async () => {
-        if (inputValue && inputValue.trim() !== '') {
-            if (inputType === 'url') {
-                await saveURL(inputValue);
-                void loadContent();
-            }
-            setInputValue('');
-        }
-    };
 
     const deleteContent = async () => {
         try {
@@ -85,85 +54,62 @@ export const ContentWindow: React.FC = ({  }) => {
         }
     }
 
-    const onInputTypeChange: SelectProps["onChange"] = (event, data) => {
-        setInputType(data.value);
-    };
-
-    return (
-        <Stack styles={{ root: { height: '100vh' } }} verticalFill>
-            <Stack.Item disableShrink>
-                <Stack horizontal verticalAlign="end" horizontalAlign="center"
-                       styles={{root: {width: '100%', gap: 15, paddingLeft: 10, paddingRight: 10, marginBottom: 20, relative: true}}}>
-                    <ToggleButton checked={showTagTree} onClick={() => setShowTagTree(!showTagTree)} icon={<Tag24Regular />} />
-                    <Button icon={<DocumentAdd24Regular />} onClick={() => setShowCreate(!showCreate)} />
-                    <TextField
-                        placeholder={`Search...`}
-                        value={searchValue}
-                        onChange={(e, newValue) => setSearchValue(newValue)}
-                        onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                                handleSend();
-                            }
-                        }}
-                        underlined
-                        styles={{root: {width: '100%'}}}
-                    />
-                    <PrimaryButton text="Search" onClick={handleSend}/>
+    const CreateCard = () => {
+        return (
+            <Card>
+                <Stack>
+                    <Stack.Item>
+                        <MarkdownEditor />
+                    </Stack.Item>
                     {selectedContent.length > 0 && (
-                        <Button disabled={selectedContent.length === 0} onClick={deleteContent} icon={<Delete24Regular />} />
+                        <Stack horizontalAlign={'end'} tokens={{childrenGap: 3}}>
+                            <Stack.Item>
+                                <Button disabled={selectedContent.length === 0} onClick={deleteContent} icon={<Delete24Regular />} />
+                            </Stack.Item>
+                        </Stack>
                     )}
                 </Stack>
-            </Stack.Item>
+            </Card>
+        );
+    }
+
+    const SearchStack = () => {
+        return (
+            <Stack horizontal verticalAlign="end" horizontalAlign="center"
+                   styles={{root: {width: '100%', gap: 15, paddingLeft: 10, paddingRight: 10, marginBottom: 20, relative: true}}}>
+                <TextField
+                    placeholder={`Search...`}
+                    value={searchValue}
+                    onChange={(e, newValue) => setSearchValue(newValue)}
+                    underlined
+                    styles={{root: {width: '100%'}}}
+                />
+                <PrimaryButton text="Search" onClick={() => {}}/>
+            </Stack>
+        )
+    }
+
+    return (
+        <Stack style={{ padding: '5px', height: '95vh' }} verticalFill>
             <Stack.Item grow styles={{ root: { overflowY: 'auto' } }}>
                 <Stack horizontal>
+                    <Stack.Item style={{ width: '100%'}}>
+                        <ContentList content={content} selectedContent={selectedContent} setSelectedContent={setSelectedContent} />
+                    </Stack.Item>
                     <Stack.Item>
                         {showTagTree && (
-                            <TagManager />
+                            <Stack style={{marginTop: 10}}>
+                                <SearchStack />
+                                <TagManager />
+                            </Stack>
                         )}
-                    </Stack.Item>
-                    <Stack.Item style={{width: '100%'}}>
-                        {
-                            showCreate && (
-                                <>
-                                    <Stack horizontal>
-                                        <Select onChange={onInputTypeChange} value={inputType}>
-                                            <option>url</option>
-                                            <option>prompt</option>
-                                        </Select>
-                                        <TextField
-                                            placeholder={`Enter a ${inputType}...`}
-                                            value={inputValue}
-                                            onChange={(e, newValue) => setInputValue(newValue)}
-                                            onKeyPress={(e) => {
-                                                if (e.key === 'Enter') {
-                                                    handleSend();
-                                                }
-                                            }}
-                                            underlined
-                                            styles={{root: {width: '100%'}}}
-                                        />
-                                        <PrimaryButton text="Send" onClick={handleSend}/>
-                                    </Stack>
-                                    <MarkdownEditor />
-                                    <Button>Save</Button>
-                                </>
-                            )
-                        }
-                        <ContentList content={content} selectedContent={selectedContent} setSelectedContent={setSelectedContent} />
                     </Stack.Item>
                 </Stack>
             </Stack.Item>
+            <Stack.Item disableShrink>
+                {/*<SearchStack />*/}
+                <CreateCard />
+            </Stack.Item>
         </Stack>
-    )
-}
-
-export const EditorWindow: React.FC = ({  }) => {
-    return (
-        <>
-            <Stack verticalFill verticalAlign="space-between"
-                   styles={{root: {height: '90vh', overflowY: 'auto', width: '100%', margin: '0 auto', paddingTop: 10, display: 'flex', flexDirection: 'column'}}}>
-                <MarkdownEditor />
-            </Stack>
-        </>
     )
 }

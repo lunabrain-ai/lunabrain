@@ -14,6 +14,8 @@ import {
     TableCellLayout, TableColumnId, useTableFeatures, TableColumnDefinition, createTableColumn, useTableSort,
 } from "@fluentui/react-components";
 import {TextField} from "@fluentui/react";
+import {Scheduler, SchedulerData} from "@bitnoi.se/react-scheduler";
+import {TimelineComponent} from "@/components/Timeline";
 
 const ellipsisStyle: React.CSSProperties = {
     whiteSpace: 'nowrap',
@@ -72,6 +74,16 @@ const columns: TableColumnDefinition<Item>[] = [
     }),
 ];
 
+const transformHistoryItems = (historyItems: chrome.history.HistoryItem[]): any[] => {
+    return historyItems.map((item, index) => ({
+        id: index,
+        content: item.title || item.url,
+        start: new Date(item.lastVisitTime || 0),
+        // Optionally, specify an end date if available
+        // end: ...
+    }));
+};
+
 export const History: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [historyItems, setHistoryItems] = useState<chrome.history.HistoryItem[]>([]);
@@ -114,6 +126,7 @@ export const History: React.FC = () => {
 
     return (
         <div style={{height: '800px', width: '800px'}}>
+            <TimelineComponent items={transformHistoryItems(historyItems)} />
             <TextField
                 placeholder="Search history..."
                 value={searchTerm}

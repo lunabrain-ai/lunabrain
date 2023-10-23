@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Badge, Button, Input, Tree, TreeItem, TreeItemLayout} from "@fluentui/react-components";
 import { Tag } from "@/rpc/content/content_pb";
 import {useProjectContext} from "@/providers/ProjectProvider";
-import {FilteredTagInput, FilteredTagInput} from "@/components/Content/FilteredTagInput";
+import {FilteredTagInput} from "@/components/Content/FilteredTagInput";
 
 export const TagManager = () => {
     const {addFilteredTag, tags, filteredTags, removeFilteredTag} = useProjectContext();

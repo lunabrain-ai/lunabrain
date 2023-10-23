@@ -1,8 +1,11 @@
 import * as React from "react";
 import {StoredContent } from "@/rpc/content/content_pb";
 import {Checkbox, IStackTokens, Stack} from "@fluentui/react";
-import {ContentCard} from "@/components/Content/ContentCard";
+import {ContentCard, RelatedContentCard} from "@/components/Content/ContentCard";
 import {useStyles} from "@/components/Content/styles";
+import {Input} from "@fluentui/react-components";
+import {MarkdownPreview} from "@/components/Editor/MarkdownPreview";
+import {MarkdownEditor} from "@/components/Editor/MarkdownEditor";
 
 interface ContentListProps {
     content: StoredContent[];
@@ -60,7 +63,10 @@ const ContentView: React.FC<{
             const d = c.type.value;
             switch (d.type.case) {
                 case 'text':
-                    return <div>{d.type.value.data}</div>
+                    if (!item.content) {
+                        return <>Unknown</>;
+                    }
+                    return <RelatedContentCard content={item.content} setChecked={setChecked} />;
                 case 'file':
                     return <span>{d.type.value.file}</span>
                 case 'url':

@@ -180,6 +180,7 @@ message Segment {
   string text = 3;
   uint64 start_time = 4;
   uint64 end_time = 5;
+
 }
 
 message Transcript {

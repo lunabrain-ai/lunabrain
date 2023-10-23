@@ -247,20 +247,20 @@
           {
             Object.freeze(emptyObject);
           }
-          function Component14(props, context, updater) {
+          function Component(props, context, updater) {
             this.props = props;
             this.context = context;
             this.refs = emptyObject;
             this.updater = updater || ReactNoopUpdateQueue;
           }
-          Component14.prototype.isReactComponent = {};
-          Component14.prototype.setState = function(partialState, callback) {
+          Component.prototype.isReactComponent = {};
+          Component.prototype.setState = function(partialState, callback) {
             if (typeof partialState !== "object" && typeof partialState !== "function" && partialState != null) {
               throw new Error("setState(...): takes an object of state variables to update or a function which returns an object of state variables.");
             }
             this.updater.enqueueSetState(this, partialState, callback, "setState");
           };
-          Component14.prototype.forceUpdate = function(callback) {
+          Component.prototype.forceUpdate = function(callback) {
             this.updater.enqueueForceUpdate(this, callback, "forceUpdate");
           };
           {
@@ -269,7 +269,7 @@
               replaceState: ["replaceState", "Refactor your code to use setState instead (see https://github.com/facebook/react/issues/3236)."]
             };
             var defineDeprecationWarning = function(methodName, info) {
-              Object.defineProperty(Component14.prototype, methodName, {
+              Object.defineProperty(Component.prototype, methodName, {
                 get: function() {
                   warn2("%s(...) is deprecated in plain JavaScript React classes. %s", info[0], info[1]);
                   return void 0;
@@ -284,7 +284,7 @@
           }
           function ComponentDummy() {
           }
-          ComponentDummy.prototype = Component14.prototype;
+          ComponentDummy.prototype = Component.prototype;
           function PureComponent(props, context, updater) {
             this.props = props;
             this.context = context;
@@ -293,9 +293,9 @@
           }
           var pureComponentPrototype = PureComponent.prototype = new ComponentDummy();
           pureComponentPrototype.constructor = PureComponent;
-          assign3(pureComponentPrototype, Component14.prototype);
+          assign3(pureComponentPrototype, Component.prototype);
           pureComponentPrototype.isPureReactComponent = true;
-          function createRef6() {
+          function createRef() {
             var refObject = {
               current: null
             };
@@ -519,7 +519,7 @@
             }
             return element;
           };
-          function createElement34(type, config, children) {
+          function createElement4(type, config, children) {
             var propName;
             var props = {};
             var key = null;
@@ -587,7 +587,7 @@
             var newElement = ReactElement(oldElement.type, newKey, oldElement.ref, oldElement._self, oldElement._source, oldElement._owner, oldElement.props);
             return newElement;
           }
-          function cloneElement4(element, config, children) {
+          function cloneElement2(element, config, children) {
             if (element === null || element === void 0) {
               throw new Error("React.cloneElement(...): The argument must be a React element, but you passed " + element + ".");
             }
@@ -793,7 +793,7 @@
             }
             return children;
           }
-          function createContext15(defaultValue) {
+          function createContext6(defaultValue) {
             var context = {
               $$typeof: REACT_CONTEXT_TYPE,
               // As a workaround to support multiple concurrent renderers, we categorize
@@ -980,7 +980,7 @@
             }
             return lazyType;
           }
-          function forwardRef17(render) {
+          function forwardRef2(render) {
             {
               if (render != null && render.$$typeof === REACT_MEMO_TYPE) {
                 error("forwardRef requires a render function but received a `memo` component. Instead of forwardRef(memo(...)), use memo(forwardRef(...)).");
@@ -1041,7 +1041,7 @@
             }
             return false;
           }
-          function memo4(type, compare) {
+          function memo(type, compare) {
             {
               if (!isValidElementType(type)) {
                 error("memo: The first argument must be a component. Instead received: %s", type === null ? "null" : typeof type);
@@ -1079,7 +1079,7 @@
             }
             return dispatcher;
           }
-          function useContext17(Context) {
+          function useContext6(Context) {
             var dispatcher = resolveDispatcher();
             {
               if (Context._context !== void 0) {
@@ -1093,19 +1093,19 @@
             }
             return dispatcher.useContext(Context);
           }
-          function useState13(initialState) {
+          function useState3(initialState) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useState(initialState);
           }
-          function useReducer2(reducer, initialArg, init) {
+          function useReducer(reducer, initialArg, init) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useReducer(reducer, initialArg, init);
           }
-          function useRef23(initialValue) {
+          function useRef2(initialValue) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useRef(initialValue);
           }
-          function useEffect24(create, deps) {
+          function useEffect4(create, deps) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useEffect(create, deps);
           }
@@ -1113,15 +1113,15 @@
             var dispatcher = resolveDispatcher();
             return dispatcher.useInsertionEffect(create, deps);
           }
-          function useLayoutEffect3(create, deps) {
+          function useLayoutEffect2(create, deps) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useLayoutEffect(create, deps);
           }
-          function useCallback12(callback, deps) {
+          function useCallback2(callback, deps) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useCallback(callback, deps);
           }
-          function useMemo5(create, deps) {
+          function useMemo2(create, deps) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useMemo(create, deps);
           }
@@ -1143,7 +1143,7 @@
             var dispatcher = resolveDispatcher();
             return dispatcher.useDeferredValue(value);
           }
-          function useId3() {
+          function useId2() {
             var dispatcher = resolveDispatcher();
             return dispatcher.useId();
           }
@@ -1358,8 +1358,8 @@
               return describeNativeComponentFrame(fn, false);
             }
           }
-          function shouldConstruct(Component15) {
-            var prototype = Component15.prototype;
+          function shouldConstruct(Component2) {
+            var prototype = Component2.prototype;
             return !!(prototype && prototype.isReactComponent);
           }
           function describeUnknownElementTypeFrameInDEV(type, source, ownerFn) {
@@ -1618,7 +1618,7 @@
                 error("React.createElement: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s", typeString, info);
               }
             }
-            var element = createElement34.apply(this, arguments);
+            var element = createElement4.apply(this, arguments);
             if (element == null) {
               return element;
             }
@@ -1657,7 +1657,7 @@
             return validatedFactory;
           }
           function cloneElementWithValidation(element, props, children) {
-            var newElement = cloneElement4.apply(this, arguments);
+            var newElement = cloneElement2.apply(this, arguments);
             for (var i = 2; i < arguments.length; i++) {
               validateChildKeys(arguments[i], newElement.type);
             }
@@ -1857,15 +1857,15 @@
           var createElement$1 = createElementWithValidation;
           var cloneElement$1 = cloneElementWithValidation;
           var createFactory2 = createFactoryWithValidation;
-          var Children4 = {
+          var Children3 = {
             map: mapChildren,
             forEach: forEachChildren,
             count: countChildren,
             toArray,
             only: onlyChild
           };
-          exports.Children = Children4;
-          exports.Component = Component14;
+          exports.Children = Children3;
+          exports.Component = Component;
           exports.Fragment = REACT_FRAGMENT_TYPE;
           exports.Profiler = REACT_PROFILER_TYPE;
           exports.PureComponent = PureComponent;
@@ -1873,29 +1873,29 @@
           exports.Suspense = REACT_SUSPENSE_TYPE;
           exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = ReactSharedInternals;
           exports.cloneElement = cloneElement$1;
-          exports.createContext = createContext15;
+          exports.createContext = createContext6;
           exports.createElement = createElement$1;
           exports.createFactory = createFactory2;
-          exports.createRef = createRef6;
-          exports.forwardRef = forwardRef17;
+          exports.createRef = createRef;
+          exports.forwardRef = forwardRef2;
           exports.isValidElement = isValidElement4;
           exports.lazy = lazy;
-          exports.memo = memo4;
+          exports.memo = memo;
           exports.startTransition = startTransition;
           exports.unstable_act = act;
-          exports.useCallback = useCallback12;
-          exports.useContext = useContext17;
+          exports.useCallback = useCallback2;
+          exports.useContext = useContext6;
           exports.useDebugValue = useDebugValue;
           exports.useDeferredValue = useDeferredValue;
-          exports.useEffect = useEffect24;
-          exports.useId = useId3;
+          exports.useEffect = useEffect4;
+          exports.useId = useId2;
           exports.useImperativeHandle = useImperativeHandle;
           exports.useInsertionEffect = useInsertionEffect3;
-          exports.useLayoutEffect = useLayoutEffect3;
-          exports.useMemo = useMemo5;
-          exports.useReducer = useReducer2;
-          exports.useRef = useRef23;
-          exports.useState = useState13;
+          exports.useLayoutEffect = useLayoutEffect2;
+          exports.useMemo = useMemo2;
+          exports.useReducer = useReducer;
+          exports.useRef = useRef2;
+          exports.useState = useState3;
           exports.useSyncExternalStore = useSyncExternalStore;
           exports.useTransition = useTransition;
           exports.version = ReactVersion;
@@ -2000,7 +2000,7 @@
           }
           var ImmediatePriority = 1;
           var UserBlockingPriority = 2;
-          var NormalPriority2 = 3;
+          var NormalPriority = 3;
           var LowPriority = 4;
           var IdlePriority = 5;
           function markTaskErrored(task, ms) {
@@ -2028,7 +2028,7 @@
           var timerQueue = [];
           var taskIdCounter = 1;
           var currentTask = null;
-          var currentPriorityLevel = NormalPriority2;
+          var currentPriorityLevel = NormalPriority;
           var isPerformingWork = false;
           var isHostCallbackScheduled = false;
           var isHostTimeoutScheduled = false;
@@ -2137,12 +2137,12 @@
             switch (priorityLevel) {
               case ImmediatePriority:
               case UserBlockingPriority:
-              case NormalPriority2:
+              case NormalPriority:
               case LowPriority:
               case IdlePriority:
                 break;
               default:
-                priorityLevel = NormalPriority2;
+                priorityLevel = NormalPriority;
             }
             var previousPriorityLevel = currentPriorityLevel;
             currentPriorityLevel = priorityLevel;
@@ -2157,8 +2157,8 @@
             switch (currentPriorityLevel) {
               case ImmediatePriority:
               case UserBlockingPriority:
-              case NormalPriority2:
-                priorityLevel = NormalPriority2;
+              case NormalPriority:
+                priorityLevel = NormalPriority;
                 break;
               default:
                 priorityLevel = currentPriorityLevel;
@@ -2211,7 +2211,7 @@
               case LowPriority:
                 timeout = LOW_PRIORITY_TIMEOUT;
                 break;
-              case NormalPriority2:
+              case NormalPriority:
               default:
                 timeout = NORMAL_PRIORITY_TIMEOUT;
                 break;
@@ -2346,7 +2346,7 @@
           exports.unstable_IdlePriority = IdlePriority;
           exports.unstable_ImmediatePriority = ImmediatePriority;
           exports.unstable_LowPriority = LowPriority;
-          exports.unstable_NormalPriority = NormalPriority2;
+          exports.unstable_NormalPriority = NormalPriority;
           exports.unstable_Profiling = unstable_Profiling;
           exports.unstable_UserBlockingPriority = UserBlockingPriority;
           exports.unstable_cancelCallback = unstable_cancelCallback;
@@ -2391,9 +2391,9 @@
           if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
             __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
           }
-          var React93 = require_react();
+          var React23 = require_react();
           var Scheduler = require_scheduler();
-          var ReactSharedInternals = React93.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React23.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           var suppressWarning = false;
           function setSuppressWarning(newSuppressWarning) {
             {
@@ -2442,7 +2442,7 @@
           var HostPortal = 4;
           var HostComponent = 5;
           var HostText = 6;
-          var Fragment11 = 7;
+          var Fragment5 = 7;
           var Mode = 8;
           var ContextConsumer = 9;
           var ContextProvider = 10;
@@ -3428,8 +3428,8 @@
               return describeNativeComponentFrame(fn, false);
             }
           }
-          function shouldConstruct(Component14) {
-            var prototype = Component14.prototype;
+          function shouldConstruct(Component) {
+            var prototype = Component.prototype;
             return !!(prototype && prototype.isReactComponent);
           }
           function describeUnknownElementTypeFrameInDEV(type, source, ownerFn) {
@@ -3598,7 +3598,7 @@
                 return "DehydratedFragment";
               case ForwardRef:
                 return getWrappedName$1(type, type.render, "ForwardRef");
-              case Fragment11:
+              case Fragment5:
                 return "Fragment";
               case HostComponent:
                 return type;
@@ -3998,7 +3998,7 @@
             {
               if (props.value == null) {
                 if (typeof props.children === "object" && props.children !== null) {
-                  React93.Children.forEach(props.children, function(child) {
+                  React23.Children.forEach(props.children, function(child) {
                     if (child == null) {
                       return;
                     }
@@ -6007,7 +6007,7 @@
           var getCurrentPriorityLevel = Scheduler.unstable_getCurrentPriorityLevel;
           var ImmediatePriority = Scheduler.unstable_ImmediatePriority;
           var UserBlockingPriority = Scheduler.unstable_UserBlockingPriority;
-          var NormalPriority2 = Scheduler.unstable_NormalPriority;
+          var NormalPriority = Scheduler.unstable_NormalPriority;
           var LowPriority = Scheduler.unstable_LowPriority;
           var IdlePriority = Scheduler.unstable_IdlePriority;
           var unstable_yieldValue = Scheduler.unstable_yieldValue;
@@ -6079,13 +6079,13 @@
                       schedulerPriority = UserBlockingPriority;
                       break;
                     case DefaultEventPriority:
-                      schedulerPriority = NormalPriority2;
+                      schedulerPriority = NormalPriority;
                       break;
                     case IdleEventPriority:
                       schedulerPriority = IdlePriority;
                       break;
                     default:
-                      schedulerPriority = NormalPriority2;
+                      schedulerPriority = NormalPriority;
                       break;
                   }
                   injectedHook.onCommitFiberRoot(rendererID, root3, schedulerPriority, didError);
@@ -7000,7 +7000,7 @@
           function setCurrentUpdatePriority(newPriority) {
             currentUpdatePriority = newPriority;
           }
-          function runWithPriority2(priority, fn) {
+          function runWithPriority(priority, fn) {
             var previousPriority = currentUpdatePriority;
             try {
               currentUpdatePriority = priority;
@@ -7532,7 +7532,7 @@
                     return DiscreteEventPriority;
                   case UserBlockingPriority:
                     return ContinuousEventPriority;
-                  case NormalPriority2:
+                  case NormalPriority:
                   case LowPriority:
                     return DefaultEventPriority;
                   case IdlePriority:
@@ -8388,12 +8388,12 @@
             }
             accumulateEnterLeaveTwoPhaseListeners(dispatchQueue, leave, enter, from, to);
           }
-          function is2(x, y) {
+          function is(x, y) {
             return x === y && (x !== 0 || 1 / x === 1 / y) || x !== x && y !== y;
           }
-          var objectIs2 = typeof Object.is === "function" ? Object.is : is2;
+          var objectIs = typeof Object.is === "function" ? Object.is : is;
           function shallowEqual(objA, objB) {
-            if (objectIs2(objA, objB)) {
+            if (objectIs(objA, objB)) {
               return true;
             }
             if (typeof objA !== "object" || objA === null || typeof objB !== "object" || objB === null) {
@@ -8406,7 +8406,7 @@
             }
             for (var i = 0; i < keysA.length; i++) {
               var currentKey = keysA[i];
-              if (!hasOwnProperty.call(objB, currentKey) || !objectIs2(objA[currentKey], objB[currentKey])) {
+              if (!hasOwnProperty.call(objB, currentKey) || !objectIs(objA[currentKey], objB[currentKey])) {
                 return false;
               }
             }
@@ -9397,7 +9397,7 @@
               }
             }
           }
-          function createElement34(type, props, rootContainerElement, parentNamespace) {
+          function createElement4(type, props, rootContainerElement, parentNamespace) {
             var isCustomComponentTag;
             var ownerDocument = getOwnerDocumentFromRootContainer(rootContainerElement);
             var domElement;
@@ -10258,7 +10258,7 @@
               }
               parentNamespace = hostContextDev.namespace;
             }
-            var domElement = createElement34(type, props, rootContainerInstance, parentNamespace);
+            var domElement = createElement4(type, props, rootContainerInstance, parentNamespace);
             precacheFiberNode(internalInstanceHandle, domElement);
             updateFiberProps(domElement, props);
             return domElement;
@@ -10862,9 +10862,9 @@
           var contextStackCursor = createCursor(emptyContextObject);
           var didPerformWorkStackCursor = createCursor(false);
           var previousContext = emptyContextObject;
-          function getUnmaskedContext(workInProgress2, Component14, didPushOwnContextIfProvider) {
+          function getUnmaskedContext(workInProgress2, Component, didPushOwnContextIfProvider) {
             {
-              if (didPushOwnContextIfProvider && isContextProvider(Component14)) {
+              if (didPushOwnContextIfProvider && isContextProvider(Component)) {
                 return previousContext;
               }
               return contextStackCursor.current;
@@ -11001,8 +11001,8 @@
                   case HostRoot:
                     return node.stateNode.context;
                   case ClassComponent: {
-                    var Component14 = node.type;
-                    if (isContextProvider(Component14)) {
+                    var Component = node.type;
+                    if (isContextProvider(Component)) {
                       return node.stateNode.__reactInternalMemoizedMergedChildContext;
                     }
                     break;
@@ -11764,10 +11764,10 @@
               pendingLegacyContextWarning = /* @__PURE__ */ new Map();
             };
           }
-          function resolveDefaultProps(Component14, baseProps) {
-            if (Component14 && Component14.defaultProps) {
+          function resolveDefaultProps(Component, baseProps) {
+            if (Component && Component.defaultProps) {
               var props = assign3({}, baseProps);
-              var defaultProps = Component14.defaultProps;
+              var defaultProps = Component.defaultProps;
               for (var propName in defaultProps) {
                 if (props[propName] === void 0) {
                   props[propName] = defaultProps[propName];
@@ -12445,7 +12445,7 @@
             }
           }
           var fakeInternalInstance = {};
-          var emptyRefsObject = new React93.Component().refs;
+          var emptyRefsObject = new React23.Component().refs;
           var didWarnAboutStateAssignmentForComponent;
           var didWarnAboutUninitializedState;
           var didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate;
@@ -12676,8 +12676,8 @@
               if (typeof ctor.getSnapshotBeforeUpdate === "function") {
                 error("%s: getSnapshotBeforeUpdate() is defined as a static method and will be ignored. Instead, declare it as an instance method.", name);
               }
-              var _state2 = instance.state;
-              if (_state2 && (typeof _state2 !== "object" || isArray(_state2))) {
+              var _state = instance.state;
+              if (_state && (typeof _state !== "object" || isArray(_state))) {
                 error("%s.state: must be set to an object or null", name);
               }
               if (typeof instance.getChildContext === "function" && typeof ctor.childContextTypes !== "object") {
@@ -13269,7 +13269,7 @@
               }
             }
             function updateFragment2(returnFiber, current2, fragment, lanes, key) {
-              if (current2 === null || current2.tag !== Fragment11) {
+              if (current2 === null || current2.tag !== Fragment5) {
                 var created = createFiberFromFragment(fragment, returnFiber.mode, lanes, key);
                 created.return = returnFiber;
                 return created;
@@ -13672,7 +13672,7 @@
                 if (child.key === key) {
                   var elementType = element.type;
                   if (elementType === REACT_FRAGMENT_TYPE) {
-                    if (child.tag === Fragment11) {
+                    if (child.tag === Fragment5) {
                       deleteRemainingChildren(returnFiber, child.sibling);
                       var existing = useFiber(child, element.props.children);
                       existing.return = returnFiber;
@@ -14055,14 +14055,14 @@
               }
             }
             for (var i = 0; i < prevDeps.length && i < nextDeps.length; i++) {
-              if (objectIs2(nextDeps[i], prevDeps[i])) {
+              if (objectIs(nextDeps[i], prevDeps[i])) {
                 continue;
               }
               return false;
             }
             return true;
           }
-          function renderWithHooks(current2, workInProgress2, Component14, props, secondArg, nextRenderLanes) {
+          function renderWithHooks(current2, workInProgress2, Component, props, secondArg, nextRenderLanes) {
             renderLanes = nextRenderLanes;
             currentlyRenderingFiber$1 = workInProgress2;
             {
@@ -14082,7 +14082,7 @@
                 ReactCurrentDispatcher$1.current = HooksDispatcherOnMountInDEV;
               }
             }
-            var children = Component14(props, secondArg);
+            var children = Component(props, secondArg);
             if (didScheduleRenderPhaseUpdateDuringThisPass) {
               var numberOfReRenders = 0;
               do {
@@ -14102,7 +14102,7 @@
                   hookTypesUpdateIndexDev = -1;
                 }
                 ReactCurrentDispatcher$1.current = HooksDispatcherOnRerenderInDEV;
-                children = Component14(props, secondArg);
+                children = Component(props, secondArg);
               } while (didScheduleRenderPhaseUpdateDuringThisPass);
             }
             ReactCurrentDispatcher$1.current = ContextOnlyDispatcher;
@@ -14338,7 +14338,7 @@
               } else {
                 newBaseQueueLast.next = newBaseQueueFirst;
               }
-              if (!objectIs2(newState, hook.memoizedState)) {
+              if (!objectIs(newState, hook.memoizedState)) {
                 markWorkInProgressReceivedUpdate();
               }
               hook.memoizedState = newState;
@@ -14380,7 +14380,7 @@
                 newState = reducer(newState, action);
                 update = update.next;
               } while (update !== firstRenderPhaseUpdate);
-              if (!objectIs2(newState, hook.memoizedState)) {
+              if (!objectIs(newState, hook.memoizedState)) {
                 markWorkInProgressReceivedUpdate();
               }
               hook.memoizedState = newState;
@@ -14424,7 +14424,7 @@
               {
                 if (!didWarnUncachedGetSnapshot) {
                   var cachedSnapshot = getSnapshot();
-                  if (!objectIs2(nextSnapshot, cachedSnapshot)) {
+                  if (!objectIs(nextSnapshot, cachedSnapshot)) {
                     error("The result of getSnapshot should be cached to avoid an infinite loop");
                     didWarnUncachedGetSnapshot = true;
                   }
@@ -14456,14 +14456,14 @@
             {
               if (!didWarnUncachedGetSnapshot) {
                 var cachedSnapshot = getSnapshot();
-                if (!objectIs2(nextSnapshot, cachedSnapshot)) {
+                if (!objectIs(nextSnapshot, cachedSnapshot)) {
                   error("The result of getSnapshot should be cached to avoid an infinite loop");
                   didWarnUncachedGetSnapshot = true;
                 }
               }
             }
             var prevSnapshot = hook.memoizedState;
-            var snapshotChanged = !objectIs2(prevSnapshot, nextSnapshot);
+            var snapshotChanged = !objectIs(prevSnapshot, nextSnapshot);
             if (snapshotChanged) {
               hook.memoizedState = nextSnapshot;
               markWorkInProgressReceivedUpdate();
@@ -14525,7 +14525,7 @@
             var prevValue = inst.value;
             try {
               var nextValue = latestGetSnapshot();
-              return !objectIs2(prevValue, nextValue);
+              return !objectIs(prevValue, nextValue);
             } catch (error2) {
               return true;
             }
@@ -14772,7 +14772,7 @@
           function updateDeferredValueImpl(hook, prevValue, value) {
             var shouldDeferValue = !includesOnlyNonUrgentLanes(renderLanes);
             if (shouldDeferValue) {
-              if (!objectIs2(value, prevValue)) {
+              if (!objectIs(value, prevValue)) {
                 var deferredLane = claimNextTransitionLane();
                 currentlyRenderingFiber$1.lanes = mergeLanes(currentlyRenderingFiber$1.lanes, deferredLane);
                 markSkippedUpdateLanes(deferredLane);
@@ -14922,7 +14922,7 @@
                     var eagerState = lastRenderedReducer(currentState, action);
                     update.hasEagerState = true;
                     update.eagerState = eagerState;
-                    if (objectIs2(eagerState, currentState)) {
+                    if (objectIs(eagerState, currentState)) {
                       enqueueConcurrentHookUpdateAndEagerlyBailout(fiber, queue, update, lane);
                       return;
                     }
@@ -16212,22 +16212,22 @@
             workInProgress2.child = reconcileChildFibers(workInProgress2, current2.child, null, renderLanes2);
             workInProgress2.child = reconcileChildFibers(workInProgress2, null, nextChildren, renderLanes2);
           }
-          function updateForwardRef(current2, workInProgress2, Component14, nextProps, renderLanes2) {
+          function updateForwardRef(current2, workInProgress2, Component, nextProps, renderLanes2) {
             {
               if (workInProgress2.type !== workInProgress2.elementType) {
-                var innerPropTypes = Component14.propTypes;
+                var innerPropTypes = Component.propTypes;
                 if (innerPropTypes) {
                   checkPropTypes(
                     innerPropTypes,
                     nextProps,
                     // Resolved props
                     "prop",
-                    getComponentNameFromType(Component14)
+                    getComponentNameFromType(Component)
                   );
                 }
               }
             }
-            var render2 = Component14.render;
+            var render2 = Component.render;
             var ref = workInProgress2.ref;
             var nextChildren;
             var hasId;
@@ -16265,11 +16265,11 @@
             reconcileChildren(current2, workInProgress2, nextChildren, renderLanes2);
             return workInProgress2.child;
           }
-          function updateMemoComponent(current2, workInProgress2, Component14, nextProps, renderLanes2) {
+          function updateMemoComponent(current2, workInProgress2, Component, nextProps, renderLanes2) {
             if (current2 === null) {
-              var type = Component14.type;
-              if (isSimpleFunctionComponent(type) && Component14.compare === null && // SimpleMemoComponent codepath doesn't resolve outer props either.
-              Component14.defaultProps === void 0) {
+              var type = Component.type;
+              if (isSimpleFunctionComponent(type) && Component.compare === null && // SimpleMemoComponent codepath doesn't resolve outer props either.
+              Component.defaultProps === void 0) {
                 var resolvedType = type;
                 {
                   resolvedType = resolveFunctionForHotReloading(type);
@@ -16293,14 +16293,14 @@
                   );
                 }
               }
-              var child = createFiberFromTypeAndProps(Component14.type, null, nextProps, workInProgress2, workInProgress2.mode, renderLanes2);
+              var child = createFiberFromTypeAndProps(Component.type, null, nextProps, workInProgress2, workInProgress2.mode, renderLanes2);
               child.ref = workInProgress2.ref;
               child.return = workInProgress2;
               workInProgress2.child = child;
               return child;
             }
             {
-              var _type = Component14.type;
+              var _type = Component.type;
               var _innerPropTypes = _type.propTypes;
               if (_innerPropTypes) {
                 checkPropTypes(
@@ -16316,7 +16316,7 @@
             var hasScheduledUpdateOrContext = checkScheduledUpdateOrContext(current2, renderLanes2);
             if (!hasScheduledUpdateOrContext) {
               var prevProps = currentChild.memoizedProps;
-              var compare = Component14.compare;
+              var compare = Component.compare;
               compare = compare !== null ? compare : shallowEqual;
               if (compare(prevProps, nextProps) && current2.ref === workInProgress2.ref) {
                 return bailoutOnAlreadyFinishedWork(current2, workInProgress2, renderLanes2);
@@ -16329,7 +16329,7 @@
             workInProgress2.child = newChild;
             return newChild;
           }
-          function updateSimpleMemoComponent(current2, workInProgress2, Component14, nextProps, renderLanes2) {
+          function updateSimpleMemoComponent(current2, workInProgress2, Component, nextProps, renderLanes2) {
             {
               if (workInProgress2.type !== workInProgress2.elementType) {
                 var outerMemoType = workInProgress2.elementType;
@@ -16369,7 +16369,7 @@
                 }
               }
             }
-            return updateFunctionComponent(current2, workInProgress2, Component14, nextProps, renderLanes2);
+            return updateFunctionComponent(current2, workInProgress2, Component, nextProps, renderLanes2);
           }
           function updateOffscreenComponent(current2, workInProgress2, renderLanes2) {
             var nextProps = workInProgress2.pendingProps;
@@ -16459,24 +16459,24 @@
               }
             }
           }
-          function updateFunctionComponent(current2, workInProgress2, Component14, nextProps, renderLanes2) {
+          function updateFunctionComponent(current2, workInProgress2, Component, nextProps, renderLanes2) {
             {
               if (workInProgress2.type !== workInProgress2.elementType) {
-                var innerPropTypes = Component14.propTypes;
+                var innerPropTypes = Component.propTypes;
                 if (innerPropTypes) {
                   checkPropTypes(
                     innerPropTypes,
                     nextProps,
                     // Resolved props
                     "prop",
-                    getComponentNameFromType(Component14)
+                    getComponentNameFromType(Component)
                   );
                 }
               }
             }
             var context;
             {
-              var unmaskedContext = getUnmaskedContext(workInProgress2, Component14, true);
+              var unmaskedContext = getUnmaskedContext(workInProgress2, Component, true);
               context = getMaskedContext(workInProgress2, unmaskedContext);
             }
             var nextChildren;
@@ -16488,12 +16488,12 @@
             {
               ReactCurrentOwner$1.current = workInProgress2;
               setIsRendering(true);
-              nextChildren = renderWithHooks(current2, workInProgress2, Component14, nextProps, context, renderLanes2);
+              nextChildren = renderWithHooks(current2, workInProgress2, Component, nextProps, context, renderLanes2);
               hasId = checkDidRenderIdHook();
               if (workInProgress2.mode & StrictLegacyMode) {
                 setIsStrictModeForDevtools(true);
                 try {
-                  nextChildren = renderWithHooks(current2, workInProgress2, Component14, nextProps, context, renderLanes2);
+                  nextChildren = renderWithHooks(current2, workInProgress2, Component, nextProps, context, renderLanes2);
                   hasId = checkDidRenderIdHook();
                 } finally {
                   setIsStrictModeForDevtools(false);
@@ -16515,7 +16515,7 @@
             reconcileChildren(current2, workInProgress2, nextChildren, renderLanes2);
             return workInProgress2.child;
           }
-          function updateClassComponent(current2, workInProgress2, Component14, nextProps, renderLanes2) {
+          function updateClassComponent(current2, workInProgress2, Component, nextProps, renderLanes2) {
             {
               switch (shouldError(workInProgress2)) {
                 case false: {
@@ -16538,20 +16538,20 @@
                 }
               }
               if (workInProgress2.type !== workInProgress2.elementType) {
-                var innerPropTypes = Component14.propTypes;
+                var innerPropTypes = Component.propTypes;
                 if (innerPropTypes) {
                   checkPropTypes(
                     innerPropTypes,
                     nextProps,
                     // Resolved props
                     "prop",
-                    getComponentNameFromType(Component14)
+                    getComponentNameFromType(Component)
                   );
                 }
               }
             }
             var hasContext;
-            if (isContextProvider(Component14)) {
+            if (isContextProvider(Component)) {
               hasContext = true;
               pushContextProvider(workInProgress2);
             } else {
@@ -16562,15 +16562,15 @@
             var shouldUpdate;
             if (instance === null) {
               resetSuspendedCurrentOnMountInLegacyMode(current2, workInProgress2);
-              constructClassInstance(workInProgress2, Component14, nextProps);
-              mountClassInstance(workInProgress2, Component14, nextProps, renderLanes2);
+              constructClassInstance(workInProgress2, Component, nextProps);
+              mountClassInstance(workInProgress2, Component, nextProps, renderLanes2);
               shouldUpdate = true;
             } else if (current2 === null) {
-              shouldUpdate = resumeMountClassInstance(workInProgress2, Component14, nextProps, renderLanes2);
+              shouldUpdate = resumeMountClassInstance(workInProgress2, Component, nextProps, renderLanes2);
             } else {
-              shouldUpdate = updateClassInstance(current2, workInProgress2, Component14, nextProps, renderLanes2);
+              shouldUpdate = updateClassInstance(current2, workInProgress2, Component, nextProps, renderLanes2);
             }
-            var nextUnitOfWork = finishClassComponent(current2, workInProgress2, Component14, shouldUpdate, hasContext, renderLanes2);
+            var nextUnitOfWork = finishClassComponent(current2, workInProgress2, Component, shouldUpdate, hasContext, renderLanes2);
             {
               var inst = workInProgress2.stateNode;
               if (shouldUpdate && inst.props !== nextProps) {
@@ -16582,19 +16582,19 @@
             }
             return nextUnitOfWork;
           }
-          function finishClassComponent(current2, workInProgress2, Component14, shouldUpdate, hasContext, renderLanes2) {
+          function finishClassComponent(current2, workInProgress2, Component, shouldUpdate, hasContext, renderLanes2) {
             markRef(current2, workInProgress2);
             var didCaptureError = (workInProgress2.flags & DidCapture) !== NoFlags;
             if (!shouldUpdate && !didCaptureError) {
               if (hasContext) {
-                invalidateContextProvider(workInProgress2, Component14, false);
+                invalidateContextProvider(workInProgress2, Component, false);
               }
               return bailoutOnAlreadyFinishedWork(current2, workInProgress2, renderLanes2);
             }
             var instance = workInProgress2.stateNode;
             ReactCurrentOwner$1.current = workInProgress2;
             var nextChildren;
-            if (didCaptureError && typeof Component14.getDerivedStateFromError !== "function") {
+            if (didCaptureError && typeof Component.getDerivedStateFromError !== "function") {
               nextChildren = null;
               {
                 stopProfilerTimerIfRunning();
@@ -16628,7 +16628,7 @@
             }
             workInProgress2.memoizedState = instance.state;
             if (hasContext) {
-              invalidateContextProvider(workInProgress2, Component14, true);
+              invalidateContextProvider(workInProgress2, Component, true);
             }
             return workInProgress2.child;
           }
@@ -16728,45 +16728,45 @@
             var lazyComponent = elementType;
             var payload = lazyComponent._payload;
             var init = lazyComponent._init;
-            var Component14 = init(payload);
-            workInProgress2.type = Component14;
-            var resolvedTag = workInProgress2.tag = resolveLazyComponentTag(Component14);
-            var resolvedProps = resolveDefaultProps(Component14, props);
+            var Component = init(payload);
+            workInProgress2.type = Component;
+            var resolvedTag = workInProgress2.tag = resolveLazyComponentTag(Component);
+            var resolvedProps = resolveDefaultProps(Component, props);
             var child;
             switch (resolvedTag) {
               case FunctionComponent: {
                 {
-                  validateFunctionComponentInDev(workInProgress2, Component14);
-                  workInProgress2.type = Component14 = resolveFunctionForHotReloading(Component14);
+                  validateFunctionComponentInDev(workInProgress2, Component);
+                  workInProgress2.type = Component = resolveFunctionForHotReloading(Component);
                 }
-                child = updateFunctionComponent(null, workInProgress2, Component14, resolvedProps, renderLanes2);
+                child = updateFunctionComponent(null, workInProgress2, Component, resolvedProps, renderLanes2);
                 return child;
               }
               case ClassComponent: {
                 {
-                  workInProgress2.type = Component14 = resolveClassForHotReloading(Component14);
+                  workInProgress2.type = Component = resolveClassForHotReloading(Component);
                 }
-                child = updateClassComponent(null, workInProgress2, Component14, resolvedProps, renderLanes2);
+                child = updateClassComponent(null, workInProgress2, Component, resolvedProps, renderLanes2);
                 return child;
               }
               case ForwardRef: {
                 {
-                  workInProgress2.type = Component14 = resolveForwardRefForHotReloading(Component14);
+                  workInProgress2.type = Component = resolveForwardRefForHotReloading(Component);
                 }
-                child = updateForwardRef(null, workInProgress2, Component14, resolvedProps, renderLanes2);
+                child = updateForwardRef(null, workInProgress2, Component, resolvedProps, renderLanes2);
                 return child;
               }
               case MemoComponent: {
                 {
                   if (workInProgress2.type !== workInProgress2.elementType) {
-                    var outerPropTypes = Component14.propTypes;
+                    var outerPropTypes = Component.propTypes;
                     if (outerPropTypes) {
                       checkPropTypes(
                         outerPropTypes,
                         resolvedProps,
                         // Resolved for outer only
                         "prop",
-                        getComponentNameFromType(Component14)
+                        getComponentNameFromType(Component)
                       );
                     }
                   }
@@ -16774,8 +16774,8 @@
                 child = updateMemoComponent(
                   null,
                   workInProgress2,
-                  Component14,
-                  resolveDefaultProps(Component14.type, resolvedProps),
+                  Component,
+                  resolveDefaultProps(Component.type, resolvedProps),
                   // The inner type can have defaults too
                   renderLanes2
                 );
@@ -16784,33 +16784,33 @@
             }
             var hint = "";
             {
-              if (Component14 !== null && typeof Component14 === "object" && Component14.$$typeof === REACT_LAZY_TYPE) {
+              if (Component !== null && typeof Component === "object" && Component.$$typeof === REACT_LAZY_TYPE) {
                 hint = " Did you wrap a component in React.lazy() more than once?";
               }
             }
-            throw new Error("Element type is invalid. Received a promise that resolves to: " + Component14 + ". " + ("Lazy element type must resolve to a class or function." + hint));
+            throw new Error("Element type is invalid. Received a promise that resolves to: " + Component + ". " + ("Lazy element type must resolve to a class or function." + hint));
           }
-          function mountIncompleteClassComponent(_current, workInProgress2, Component14, nextProps, renderLanes2) {
+          function mountIncompleteClassComponent(_current, workInProgress2, Component, nextProps, renderLanes2) {
             resetSuspendedCurrentOnMountInLegacyMode(_current, workInProgress2);
             workInProgress2.tag = ClassComponent;
             var hasContext;
-            if (isContextProvider(Component14)) {
+            if (isContextProvider(Component)) {
               hasContext = true;
               pushContextProvider(workInProgress2);
             } else {
               hasContext = false;
             }
             prepareToReadContext(workInProgress2, renderLanes2);
-            constructClassInstance(workInProgress2, Component14, nextProps);
-            mountClassInstance(workInProgress2, Component14, nextProps, renderLanes2);
-            return finishClassComponent(null, workInProgress2, Component14, true, hasContext, renderLanes2);
+            constructClassInstance(workInProgress2, Component, nextProps);
+            mountClassInstance(workInProgress2, Component, nextProps, renderLanes2);
+            return finishClassComponent(null, workInProgress2, Component, true, hasContext, renderLanes2);
           }
-          function mountIndeterminateComponent(_current, workInProgress2, Component14, renderLanes2) {
+          function mountIndeterminateComponent(_current, workInProgress2, Component, renderLanes2) {
             resetSuspendedCurrentOnMountInLegacyMode(_current, workInProgress2);
             var props = workInProgress2.pendingProps;
             var context;
             {
-              var unmaskedContext = getUnmaskedContext(workInProgress2, Component14, false);
+              var unmaskedContext = getUnmaskedContext(workInProgress2, Component, false);
               context = getMaskedContext(workInProgress2, unmaskedContext);
             }
             prepareToReadContext(workInProgress2, renderLanes2);
@@ -16820,8 +16820,8 @@
               markComponentRenderStarted(workInProgress2);
             }
             {
-              if (Component14.prototype && typeof Component14.prototype.render === "function") {
-                var componentName = getComponentNameFromType(Component14) || "Unknown";
+              if (Component.prototype && typeof Component.prototype.render === "function") {
+                var componentName = getComponentNameFromType(Component) || "Unknown";
                 if (!didWarnAboutBadClass[componentName]) {
                   error("The <%s /> component appears to have a render method, but doesn't extend React.Component. This is likely to cause errors. Change %s to extend React.Component instead.", componentName, componentName);
                   didWarnAboutBadClass[componentName] = true;
@@ -16832,7 +16832,7 @@
               }
               setIsRendering(true);
               ReactCurrentOwner$1.current = workInProgress2;
-              value = renderWithHooks(null, workInProgress2, Component14, props, context, renderLanes2);
+              value = renderWithHooks(null, workInProgress2, Component, props, context, renderLanes2);
               hasId = checkDidRenderIdHook();
               setIsRendering(false);
             }
@@ -16842,7 +16842,7 @@
             workInProgress2.flags |= PerformedWork;
             {
               if (typeof value === "object" && value !== null && typeof value.render === "function" && value.$$typeof === void 0) {
-                var _componentName = getComponentNameFromType(Component14) || "Unknown";
+                var _componentName = getComponentNameFromType(Component) || "Unknown";
                 if (!didWarnAboutModulePatternComponent[_componentName]) {
                   error("The <%s /> component appears to be a function component that returns a class instance. Change %s to a class that extends React.Component instead. If you can't use a class try assigning the prototype on the function as a workaround. `%s.prototype = React.Component.prototype`. Don't use an arrow function since it cannot be called with `new` by React.", _componentName, _componentName, _componentName);
                   didWarnAboutModulePatternComponent[_componentName] = true;
@@ -16855,7 +16855,7 @@
               typeof value === "object" && value !== null && typeof value.render === "function" && value.$$typeof === void 0
             ) {
               {
-                var _componentName2 = getComponentNameFromType(Component14) || "Unknown";
+                var _componentName2 = getComponentNameFromType(Component) || "Unknown";
                 if (!didWarnAboutModulePatternComponent[_componentName2]) {
                   error("The <%s /> component appears to be a function component that returns a class instance. Change %s to a class that extends React.Component instead. If you can't use a class try assigning the prototype on the function as a workaround. `%s.prototype = React.Component.prototype`. Don't use an arrow function since it cannot be called with `new` by React.", _componentName2, _componentName2, _componentName2);
                   didWarnAboutModulePatternComponent[_componentName2] = true;
@@ -16865,7 +16865,7 @@
               workInProgress2.memoizedState = null;
               workInProgress2.updateQueue = null;
               var hasContext = false;
-              if (isContextProvider(Component14)) {
+              if (isContextProvider(Component)) {
                 hasContext = true;
                 pushContextProvider(workInProgress2);
               } else {
@@ -16874,15 +16874,15 @@
               workInProgress2.memoizedState = value.state !== null && value.state !== void 0 ? value.state : null;
               initializeUpdateQueue(workInProgress2);
               adoptClassInstance(workInProgress2, value);
-              mountClassInstance(workInProgress2, Component14, props, renderLanes2);
-              return finishClassComponent(null, workInProgress2, Component14, true, hasContext, renderLanes2);
+              mountClassInstance(workInProgress2, Component, props, renderLanes2);
+              return finishClassComponent(null, workInProgress2, Component, true, hasContext, renderLanes2);
             } else {
               workInProgress2.tag = FunctionComponent;
               {
                 if (workInProgress2.mode & StrictLegacyMode) {
                   setIsStrictModeForDevtools(true);
                   try {
-                    value = renderWithHooks(null, workInProgress2, Component14, props, context, renderLanes2);
+                    value = renderWithHooks(null, workInProgress2, Component, props, context, renderLanes2);
                     hasId = checkDidRenderIdHook();
                   } finally {
                     setIsStrictModeForDevtools(false);
@@ -16894,16 +16894,16 @@
               }
               reconcileChildren(null, workInProgress2, value, renderLanes2);
               {
-                validateFunctionComponentInDev(workInProgress2, Component14);
+                validateFunctionComponentInDev(workInProgress2, Component);
               }
               return workInProgress2.child;
             }
           }
-          function validateFunctionComponentInDev(workInProgress2, Component14) {
+          function validateFunctionComponentInDev(workInProgress2, Component) {
             {
-              if (Component14) {
-                if (Component14.childContextTypes) {
-                  error("%s(...): childContextTypes cannot be defined on a function component.", Component14.displayName || Component14.name || "Component");
+              if (Component) {
+                if (Component.childContextTypes) {
+                  error("%s(...): childContextTypes cannot be defined on a function component.", Component.displayName || Component.name || "Component");
                 }
               }
               if (workInProgress2.ref !== null) {
@@ -16922,15 +16922,15 @@
                   error("Function components cannot be given refs. Attempts to access this ref will fail. Did you mean to use React.forwardRef()?%s", info);
                 }
               }
-              if (typeof Component14.getDerivedStateFromProps === "function") {
-                var _componentName3 = getComponentNameFromType(Component14) || "Unknown";
+              if (typeof Component.getDerivedStateFromProps === "function") {
+                var _componentName3 = getComponentNameFromType(Component) || "Unknown";
                 if (!didWarnAboutGetDerivedStateOnFunctionComponent[_componentName3]) {
                   error("%s: Function components do not support getDerivedStateFromProps.", _componentName3);
                   didWarnAboutGetDerivedStateOnFunctionComponent[_componentName3] = true;
                 }
               }
-              if (typeof Component14.contextType === "object" && Component14.contextType !== null) {
-                var _componentName4 = getComponentNameFromType(Component14) || "Unknown";
+              if (typeof Component.contextType === "object" && Component.contextType !== null) {
+                var _componentName4 = getComponentNameFromType(Component) || "Unknown";
                 if (!didWarnAboutContextTypeOnFunctionComponent[_componentName4]) {
                   error("%s: Function components do not support contextType.", _componentName4);
                   didWarnAboutContextTypeOnFunctionComponent[_componentName4] = true;
@@ -17554,7 +17554,7 @@
             {
               if (oldProps !== null) {
                 var oldValue = oldProps.value;
-                if (objectIs2(oldValue, newValue)) {
+                if (objectIs(oldValue, newValue)) {
                   if (oldProps.children === newProps.children && !hasContextChanged()) {
                     return bailoutOnAlreadyFinishedWork(current2, workInProgress2, renderLanes2);
                   }
@@ -17692,8 +17692,8 @@
                 pushHostContext(workInProgress2);
                 break;
               case ClassComponent: {
-                var Component14 = workInProgress2.type;
-                if (isContextProvider(Component14)) {
+                var Component = workInProgress2.type;
+                if (isContextProvider(Component)) {
                   pushContextProvider(workInProgress2);
                 }
                 break;
@@ -17820,10 +17820,10 @@
                 return mountLazyComponent(current2, workInProgress2, elementType, renderLanes2);
               }
               case FunctionComponent: {
-                var Component14 = workInProgress2.type;
+                var Component = workInProgress2.type;
                 var unresolvedProps = workInProgress2.pendingProps;
-                var resolvedProps = workInProgress2.elementType === Component14 ? unresolvedProps : resolveDefaultProps(Component14, unresolvedProps);
-                return updateFunctionComponent(current2, workInProgress2, Component14, resolvedProps, renderLanes2);
+                var resolvedProps = workInProgress2.elementType === Component ? unresolvedProps : resolveDefaultProps(Component, unresolvedProps);
+                return updateFunctionComponent(current2, workInProgress2, Component, resolvedProps, renderLanes2);
               }
               case ClassComponent: {
                 var _Component = workInProgress2.type;
@@ -17847,7 +17847,7 @@
                 var _resolvedProps2 = workInProgress2.elementType === type ? _unresolvedProps2 : resolveDefaultProps(type, _unresolvedProps2);
                 return updateForwardRef(current2, workInProgress2, type, _resolvedProps2, renderLanes2);
               }
-              case Fragment11:
+              case Fragment5:
                 return updateFragment(current2, workInProgress2, renderLanes2);
               case Mode:
                 return updateMode(current2, workInProgress2, renderLanes2);
@@ -18120,7 +18120,7 @@
               case SimpleMemoComponent:
               case FunctionComponent:
               case ForwardRef:
-              case Fragment11:
+              case Fragment5:
               case Mode:
               case Profiler:
               case ContextConsumer:
@@ -18128,8 +18128,8 @@
                 bubbleProperties(workInProgress2);
                 return null;
               case ClassComponent: {
-                var Component14 = workInProgress2.type;
-                if (isContextProvider(Component14)) {
+                var Component = workInProgress2.type;
+                if (isContextProvider(Component)) {
                   popContext(workInProgress2);
                 }
                 bubbleProperties(workInProgress2);
@@ -18447,8 +18447,8 @@
             popTreeContext(workInProgress2);
             switch (workInProgress2.tag) {
               case ClassComponent: {
-                var Component14 = workInProgress2.type;
-                if (isContextProvider(Component14)) {
+                var Component = workInProgress2.type;
+                if (isContextProvider(Component)) {
                   popContext(workInProgress2);
                 }
                 var flags = workInProgress2.flags;
@@ -18621,23 +18621,23 @@
             var ref = current2.ref;
             if (ref !== null) {
               if (typeof ref === "function") {
-                var retVal2;
+                var retVal;
                 try {
                   if (enableProfilerTimer && enableProfilerCommitHooks && current2.mode & ProfileMode) {
                     try {
                       startLayoutEffectTimer();
-                      retVal2 = ref(null);
+                      retVal = ref(null);
                     } finally {
                       recordLayoutEffectDuration(current2);
                     }
                   } else {
-                    retVal2 = ref(null);
+                    retVal = ref(null);
                   }
                 } catch (error2) {
                   captureCommitPhaseError(current2, nearestMountedAncestor, error2);
                 }
                 {
-                  if (typeof retVal2 === "function") {
+                  if (typeof retVal === "function") {
                     error("Unexpected return value from a callback ref in %s. A callback ref should not return a function.", getComponentNameFromFiber(current2));
                   }
                 }
@@ -19178,19 +19178,19 @@
                   instanceToUse = instance;
               }
               if (typeof ref === "function") {
-                var retVal2;
+                var retVal;
                 if (finishedWork.mode & ProfileMode) {
                   try {
                     startLayoutEffectTimer();
-                    retVal2 = ref(instanceToUse);
+                    retVal = ref(instanceToUse);
                   } finally {
                     recordLayoutEffectDuration(finishedWork);
                   }
                 } else {
-                  retVal2 = ref(instanceToUse);
+                  retVal = ref(instanceToUse);
                 }
                 {
-                  if (typeof retVal2 === "function") {
+                  if (typeof retVal === "function") {
                     error("Unexpected return value from a callback ref in %s. A callback ref should not return a function.", getComponentNameFromFiber(finishedWork));
                   }
                 }
@@ -20550,13 +20550,13 @@
                   schedulerPriorityLevel = UserBlockingPriority;
                   break;
                 case DefaultEventPriority:
-                  schedulerPriorityLevel = NormalPriority2;
+                  schedulerPriorityLevel = NormalPriority;
                   break;
                 case IdleEventPriority:
                   schedulerPriorityLevel = IdlePriority;
                   break;
                 default:
-                  schedulerPriorityLevel = NormalPriority2;
+                  schedulerPriorityLevel = NormalPriority;
                   break;
               }
               newCallbackNode = scheduleCallback$1(schedulerPriorityLevel, performConcurrentWorkOnRoot.bind(null, root3));
@@ -20733,7 +20733,7 @@
                       var getSnapshot = check.getSnapshot;
                       var renderedValue = check.value;
                       try {
-                        if (!objectIs2(getSnapshot(), renderedValue)) {
+                        if (!objectIs(getSnapshot(), renderedValue)) {
                           return false;
                         }
                       } catch (error2) {
@@ -21234,7 +21234,7 @@
               if (!rootDoesHavePassiveEffects) {
                 rootDoesHavePassiveEffects = true;
                 pendingPassiveTransitions = transitions;
-                scheduleCallback$1(NormalPriority2, function() {
+                scheduleCallback$1(NormalPriority, function() {
                   flushPassiveEffects();
                   return null;
                 });
@@ -21367,7 +21367,7 @@
               pendingPassiveProfilerEffects.push(fiber);
               if (!rootDoesHavePassiveEffects) {
                 rootDoesHavePassiveEffects = true;
-                scheduleCallback$1(NormalPriority2, function() {
+                scheduleCallback$1(NormalPriority, function() {
                   flushPassiveEffects();
                   return null;
                 });
@@ -22135,18 +22135,18 @@
           var createFiber = function(tag, pendingProps, key, mode) {
             return new FiberNode(tag, pendingProps, key, mode);
           };
-          function shouldConstruct$1(Component14) {
-            var prototype = Component14.prototype;
+          function shouldConstruct$1(Component) {
+            var prototype = Component.prototype;
             return !!(prototype && prototype.isReactComponent);
           }
           function isSimpleFunctionComponent(type) {
             return typeof type === "function" && !shouldConstruct$1(type) && type.defaultProps === void 0;
           }
-          function resolveLazyComponentTag(Component14) {
-            if (typeof Component14 === "function") {
-              return shouldConstruct$1(Component14) ? ClassComponent : FunctionComponent;
-            } else if (Component14 !== void 0 && Component14 !== null) {
-              var $$typeof = Component14.$$typeof;
+          function resolveLazyComponentTag(Component) {
+            if (typeof Component === "function") {
+              return shouldConstruct$1(Component) ? ClassComponent : FunctionComponent;
+            } else if (Component !== void 0 && Component !== null) {
+              var $$typeof = Component.$$typeof;
               if ($$typeof === REACT_FORWARD_REF_TYPE) {
                 return ForwardRef;
               }
@@ -22379,7 +22379,7 @@
             return fiber;
           }
           function createFiberFromFragment(elements, mode, lanes, key) {
-            var fiber = createFiber(Fragment11, elements, key, mode);
+            var fiber = createFiber(Fragment5, elements, key, mode);
             fiber.lanes = lanes;
             return fiber;
           }
@@ -22556,7 +22556,7 @@
             return root3;
           }
           var ReactVersion = "18.2.0";
-          function createPortal2(children, containerInfo, implementation) {
+          function createPortal(children, containerInfo, implementation) {
             var key = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : null;
             {
               checkKeyStringCoercion(key);
@@ -22583,9 +22583,9 @@
             var fiber = get(parentComponent);
             var parentContext = findCurrentUnmaskedContext(fiber);
             if (fiber.tag === ClassComponent) {
-              var Component14 = fiber.type;
-              if (isContextProvider(Component14)) {
-                return processChildContext(fiber, Component14, parentContext);
+              var Component = fiber.type;
+              if (isContextProvider(Component)) {
+                return processChildContext(fiber, Component, parentContext);
               }
             }
             return parentContext;
@@ -23386,7 +23386,7 @@
           setAttemptContinuousHydration(attemptContinuousHydration$1);
           setAttemptHydrationAtCurrentPriority(attemptHydrationAtCurrentPriority$1);
           setGetCurrentUpdatePriority(getCurrentUpdatePriority);
-          setAttemptHydrationAtPriority(runWithPriority2);
+          setAttemptHydrationAtPriority(runWithPriority);
           {
             if (typeof Map !== "function" || // $FlowIssue Flow incorrectly thinks Map has no prototype
             Map.prototype == null || typeof Map.prototype.forEach !== "function" || typeof Set !== "function" || // $FlowIssue Flow incorrectly thinks Set has no prototype
@@ -23401,7 +23401,7 @@
             if (!isValidContainer(container)) {
               throw new Error("Target container is not a DOM element.");
             }
-            return createPortal2(children, container, null, key);
+            return createPortal(children, container, null, key);
           }
           function renderSubtreeIntoContainer(parentComponent, element, containerNode, callback) {
             return unstable_renderSubtreeIntoContainer(parentComponent, element, containerNode, callback);
@@ -26010,7 +26010,7 @@
       if (true) {
         (function() {
           "use strict";
-          var React93 = require_react();
+          var React23 = require_react();
           var REACT_ELEMENT_TYPE = Symbol.for("react.element");
           var REACT_PORTAL_TYPE = Symbol.for("react.portal");
           var REACT_FRAGMENT_TYPE = Symbol.for("react.fragment");
@@ -26036,7 +26036,7 @@
             }
             return null;
           }
-          var ReactSharedInternals = React93.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React23.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           function error(format2) {
             {
               {
@@ -26367,8 +26367,8 @@
               return describeNativeComponentFrame(fn, false);
             }
           }
-          function shouldConstruct(Component14) {
-            var prototype = Component14.prototype;
+          function shouldConstruct(Component) {
+            var prototype = Component.prototype;
             return !!(prototype && prototype.isReactComponent);
           }
           function describeUnknownElementTypeFrameInDEV(type, source, ownerFn) {
@@ -26893,681 +26893,15 @@
     }
   });
 
-  // ../node_modules/scheduler/cjs/scheduler.development.js
-  var require_scheduler_development2 = __commonJS({
-    "../node_modules/scheduler/cjs/scheduler.development.js"(exports) {
-      "use strict";
-      if (true) {
-        (function() {
-          "use strict";
-          var enableSchedulerDebugging = false;
-          var enableProfiling = true;
-          var requestHostCallback;
-          var requestHostTimeout;
-          var cancelHostTimeout;
-          var requestPaint;
-          var hasPerformanceNow = typeof performance === "object" && typeof performance.now === "function";
-          if (hasPerformanceNow) {
-            var localPerformance = performance;
-            exports.unstable_now = function() {
-              return localPerformance.now();
-            };
-          } else {
-            var localDate = Date;
-            var initialTime = localDate.now();
-            exports.unstable_now = function() {
-              return localDate.now() - initialTime;
-            };
-          }
-          if (
-            // If Scheduler runs in a non-DOM environment, it falls back to a naive
-            // implementation using setTimeout.
-            typeof window === "undefined" || // Check if MessageChannel is supported, too.
-            typeof MessageChannel !== "function"
-          ) {
-            var _callback = null;
-            var _timeoutID = null;
-            var _flushCallback = function() {
-              if (_callback !== null) {
-                try {
-                  var currentTime = exports.unstable_now();
-                  var hasRemainingTime = true;
-                  _callback(hasRemainingTime, currentTime);
-                  _callback = null;
-                } catch (e) {
-                  setTimeout(_flushCallback, 0);
-                  throw e;
-                }
-              }
-            };
-            requestHostCallback = function(cb) {
-              if (_callback !== null) {
-                setTimeout(requestHostCallback, 0, cb);
-              } else {
-                _callback = cb;
-                setTimeout(_flushCallback, 0);
-              }
-            };
-            requestHostTimeout = function(cb, ms) {
-              _timeoutID = setTimeout(cb, ms);
-            };
-            cancelHostTimeout = function() {
-              clearTimeout(_timeoutID);
-            };
-            exports.unstable_shouldYield = function() {
-              return false;
-            };
-            requestPaint = exports.unstable_forceFrameRate = function() {
-            };
-          } else {
-            var _setTimeout = window.setTimeout;
-            var _clearTimeout = window.clearTimeout;
-            if (typeof console !== "undefined") {
-              var requestAnimationFrame = window.requestAnimationFrame;
-              var cancelAnimationFrame = window.cancelAnimationFrame;
-              if (typeof requestAnimationFrame !== "function") {
-                console["error"]("This browser doesn't support requestAnimationFrame. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills");
-              }
-              if (typeof cancelAnimationFrame !== "function") {
-                console["error"]("This browser doesn't support cancelAnimationFrame. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills");
-              }
-            }
-            var isMessageLoopRunning = false;
-            var scheduledHostCallback = null;
-            var taskTimeoutID = -1;
-            var yieldInterval = 5;
-            var deadline = 0;
-            {
-              exports.unstable_shouldYield = function() {
-                return exports.unstable_now() >= deadline;
-              };
-              requestPaint = function() {
-              };
-            }
-            exports.unstable_forceFrameRate = function(fps) {
-              if (fps < 0 || fps > 125) {
-                console["error"]("forceFrameRate takes a positive int between 0 and 125, forcing frame rates higher than 125 fps is not supported");
-                return;
-              }
-              if (fps > 0) {
-                yieldInterval = Math.floor(1e3 / fps);
-              } else {
-                yieldInterval = 5;
-              }
-            };
-            var performWorkUntilDeadline = function() {
-              if (scheduledHostCallback !== null) {
-                var currentTime = exports.unstable_now();
-                deadline = currentTime + yieldInterval;
-                var hasTimeRemaining = true;
-                try {
-                  var hasMoreWork = scheduledHostCallback(hasTimeRemaining, currentTime);
-                  if (!hasMoreWork) {
-                    isMessageLoopRunning = false;
-                    scheduledHostCallback = null;
-                  } else {
-                    port.postMessage(null);
-                  }
-                } catch (error) {
-                  port.postMessage(null);
-                  throw error;
-                }
-              } else {
-                isMessageLoopRunning = false;
-              }
-            };
-            var channel = new MessageChannel();
-            var port = channel.port2;
-            channel.port1.onmessage = performWorkUntilDeadline;
-            requestHostCallback = function(callback) {
-              scheduledHostCallback = callback;
-              if (!isMessageLoopRunning) {
-                isMessageLoopRunning = true;
-                port.postMessage(null);
-              }
-            };
-            requestHostTimeout = function(callback, ms) {
-              taskTimeoutID = _setTimeout(function() {
-                callback(exports.unstable_now());
-              }, ms);
-            };
-            cancelHostTimeout = function() {
-              _clearTimeout(taskTimeoutID);
-              taskTimeoutID = -1;
-            };
-          }
-          function push(heap, node) {
-            var index = heap.length;
-            heap.push(node);
-            siftUp(heap, node, index);
-          }
-          function peek(heap) {
-            var first = heap[0];
-            return first === void 0 ? null : first;
-          }
-          function pop(heap) {
-            var first = heap[0];
-            if (first !== void 0) {
-              var last = heap.pop();
-              if (last !== first) {
-                heap[0] = last;
-                siftDown(heap, last, 0);
-              }
-              return first;
-            } else {
-              return null;
-            }
-          }
-          function siftUp(heap, node, i) {
-            var index = i;
-            while (true) {
-              var parentIndex = index - 1 >>> 1;
-              var parent = heap[parentIndex];
-              if (parent !== void 0 && compare(parent, node) > 0) {
-                heap[parentIndex] = node;
-                heap[index] = parent;
-                index = parentIndex;
-              } else {
-                return;
-              }
-            }
-          }
-          function siftDown(heap, node, i) {
-            var index = i;
-            var length = heap.length;
-            while (index < length) {
-              var leftIndex = (index + 1) * 2 - 1;
-              var left = heap[leftIndex];
-              var rightIndex = leftIndex + 1;
-              var right = heap[rightIndex];
-              if (left !== void 0 && compare(left, node) < 0) {
-                if (right !== void 0 && compare(right, left) < 0) {
-                  heap[index] = right;
-                  heap[rightIndex] = node;
-                  index = rightIndex;
-                } else {
-                  heap[index] = left;
-                  heap[leftIndex] = node;
-                  index = leftIndex;
-                }
-              } else if (right !== void 0 && compare(right, node) < 0) {
-                heap[index] = right;
-                heap[rightIndex] = node;
-                index = rightIndex;
-              } else {
-                return;
-              }
-            }
-          }
-          function compare(a, b) {
-            var diff = a.sortIndex - b.sortIndex;
-            return diff !== 0 ? diff : a.id - b.id;
-          }
-          var NoPriority = 0;
-          var ImmediatePriority = 1;
-          var UserBlockingPriority = 2;
-          var NormalPriority2 = 3;
-          var LowPriority = 4;
-          var IdlePriority = 5;
-          var runIdCounter = 0;
-          var mainThreadIdCounter = 0;
-          var profilingStateSize = 4;
-          var sharedProfilingBuffer = (
-            // $FlowFixMe Flow doesn't know about SharedArrayBuffer
-            typeof SharedArrayBuffer === "function" ? new SharedArrayBuffer(profilingStateSize * Int32Array.BYTES_PER_ELEMENT) : (
-              // $FlowFixMe Flow doesn't know about ArrayBuffer
-              typeof ArrayBuffer === "function" ? new ArrayBuffer(profilingStateSize * Int32Array.BYTES_PER_ELEMENT) : null
-            )
-          );
-          var profilingState = sharedProfilingBuffer !== null ? new Int32Array(sharedProfilingBuffer) : [];
-          var PRIORITY = 0;
-          var CURRENT_TASK_ID = 1;
-          var CURRENT_RUN_ID = 2;
-          var QUEUE_SIZE = 3;
-          {
-            profilingState[PRIORITY] = NoPriority;
-            profilingState[QUEUE_SIZE] = 0;
-            profilingState[CURRENT_TASK_ID] = 0;
-          }
-          var INITIAL_EVENT_LOG_SIZE = 131072;
-          var MAX_EVENT_LOG_SIZE = 524288;
-          var eventLogSize = 0;
-          var eventLogBuffer = null;
-          var eventLog = null;
-          var eventLogIndex = 0;
-          var TaskStartEvent = 1;
-          var TaskCompleteEvent = 2;
-          var TaskErrorEvent = 3;
-          var TaskCancelEvent = 4;
-          var TaskRunEvent = 5;
-          var TaskYieldEvent = 6;
-          var SchedulerSuspendEvent = 7;
-          var SchedulerResumeEvent = 8;
-          function logEvent(entries) {
-            if (eventLog !== null) {
-              var offset = eventLogIndex;
-              eventLogIndex += entries.length;
-              if (eventLogIndex + 1 > eventLogSize) {
-                eventLogSize *= 2;
-                if (eventLogSize > MAX_EVENT_LOG_SIZE) {
-                  console["error"]("Scheduler Profiling: Event log exceeded maximum size. Don't forget to call `stopLoggingProfilingEvents()`.");
-                  stopLoggingProfilingEvents();
-                  return;
-                }
-                var newEventLog = new Int32Array(eventLogSize * 4);
-                newEventLog.set(eventLog);
-                eventLogBuffer = newEventLog.buffer;
-                eventLog = newEventLog;
-              }
-              eventLog.set(entries, offset);
-            }
-          }
-          function startLoggingProfilingEvents() {
-            eventLogSize = INITIAL_EVENT_LOG_SIZE;
-            eventLogBuffer = new ArrayBuffer(eventLogSize * 4);
-            eventLog = new Int32Array(eventLogBuffer);
-            eventLogIndex = 0;
-          }
-          function stopLoggingProfilingEvents() {
-            var buffer = eventLogBuffer;
-            eventLogSize = 0;
-            eventLogBuffer = null;
-            eventLog = null;
-            eventLogIndex = 0;
-            return buffer;
-          }
-          function markTaskStart(task, ms) {
-            {
-              profilingState[QUEUE_SIZE]++;
-              if (eventLog !== null) {
-                logEvent([TaskStartEvent, ms * 1e3, task.id, task.priorityLevel]);
-              }
-            }
-          }
-          function markTaskCompleted(task, ms) {
-            {
-              profilingState[PRIORITY] = NoPriority;
-              profilingState[CURRENT_TASK_ID] = 0;
-              profilingState[QUEUE_SIZE]--;
-              if (eventLog !== null) {
-                logEvent([TaskCompleteEvent, ms * 1e3, task.id]);
-              }
-            }
-          }
-          function markTaskCanceled(task, ms) {
-            {
-              profilingState[QUEUE_SIZE]--;
-              if (eventLog !== null) {
-                logEvent([TaskCancelEvent, ms * 1e3, task.id]);
-              }
-            }
-          }
-          function markTaskErrored(task, ms) {
-            {
-              profilingState[PRIORITY] = NoPriority;
-              profilingState[CURRENT_TASK_ID] = 0;
-              profilingState[QUEUE_SIZE]--;
-              if (eventLog !== null) {
-                logEvent([TaskErrorEvent, ms * 1e3, task.id]);
-              }
-            }
-          }
-          function markTaskRun(task, ms) {
-            {
-              runIdCounter++;
-              profilingState[PRIORITY] = task.priorityLevel;
-              profilingState[CURRENT_TASK_ID] = task.id;
-              profilingState[CURRENT_RUN_ID] = runIdCounter;
-              if (eventLog !== null) {
-                logEvent([TaskRunEvent, ms * 1e3, task.id, runIdCounter]);
-              }
-            }
-          }
-          function markTaskYield(task, ms) {
-            {
-              profilingState[PRIORITY] = NoPriority;
-              profilingState[CURRENT_TASK_ID] = 0;
-              profilingState[CURRENT_RUN_ID] = 0;
-              if (eventLog !== null) {
-                logEvent([TaskYieldEvent, ms * 1e3, task.id, runIdCounter]);
-              }
-            }
-          }
-          function markSchedulerSuspended(ms) {
-            {
-              mainThreadIdCounter++;
-              if (eventLog !== null) {
-                logEvent([SchedulerSuspendEvent, ms * 1e3, mainThreadIdCounter]);
-              }
-            }
-          }
-          function markSchedulerUnsuspended(ms) {
-            {
-              if (eventLog !== null) {
-                logEvent([SchedulerResumeEvent, ms * 1e3, mainThreadIdCounter]);
-              }
-            }
-          }
-          var maxSigned31BitInt = 1073741823;
-          var IMMEDIATE_PRIORITY_TIMEOUT = -1;
-          var USER_BLOCKING_PRIORITY_TIMEOUT = 250;
-          var NORMAL_PRIORITY_TIMEOUT = 5e3;
-          var LOW_PRIORITY_TIMEOUT = 1e4;
-          var IDLE_PRIORITY_TIMEOUT = maxSigned31BitInt;
-          var taskQueue = [];
-          var timerQueue = [];
-          var taskIdCounter = 1;
-          var currentTask = null;
-          var currentPriorityLevel = NormalPriority2;
-          var isPerformingWork = false;
-          var isHostCallbackScheduled = false;
-          var isHostTimeoutScheduled = false;
-          function advanceTimers(currentTime) {
-            var timer = peek(timerQueue);
-            while (timer !== null) {
-              if (timer.callback === null) {
-                pop(timerQueue);
-              } else if (timer.startTime <= currentTime) {
-                pop(timerQueue);
-                timer.sortIndex = timer.expirationTime;
-                push(taskQueue, timer);
-                {
-                  markTaskStart(timer, currentTime);
-                  timer.isQueued = true;
-                }
-              } else {
-                return;
-              }
-              timer = peek(timerQueue);
-            }
-          }
-          function handleTimeout(currentTime) {
-            isHostTimeoutScheduled = false;
-            advanceTimers(currentTime);
-            if (!isHostCallbackScheduled) {
-              if (peek(taskQueue) !== null) {
-                isHostCallbackScheduled = true;
-                requestHostCallback(flushWork);
-              } else {
-                var firstTimer = peek(timerQueue);
-                if (firstTimer !== null) {
-                  requestHostTimeout(handleTimeout, firstTimer.startTime - currentTime);
-                }
-              }
-            }
-          }
-          function flushWork(hasTimeRemaining, initialTime2) {
-            {
-              markSchedulerUnsuspended(initialTime2);
-            }
-            isHostCallbackScheduled = false;
-            if (isHostTimeoutScheduled) {
-              isHostTimeoutScheduled = false;
-              cancelHostTimeout();
-            }
-            isPerformingWork = true;
-            var previousPriorityLevel = currentPriorityLevel;
-            try {
-              if (enableProfiling) {
-                try {
-                  return workLoop(hasTimeRemaining, initialTime2);
-                } catch (error) {
-                  if (currentTask !== null) {
-                    var currentTime = exports.unstable_now();
-                    markTaskErrored(currentTask, currentTime);
-                    currentTask.isQueued = false;
-                  }
-                  throw error;
-                }
-              } else {
-                return workLoop(hasTimeRemaining, initialTime2);
-              }
-            } finally {
-              currentTask = null;
-              currentPriorityLevel = previousPriorityLevel;
-              isPerformingWork = false;
-              {
-                var _currentTime = exports.unstable_now();
-                markSchedulerSuspended(_currentTime);
-              }
-            }
-          }
-          function workLoop(hasTimeRemaining, initialTime2) {
-            var currentTime = initialTime2;
-            advanceTimers(currentTime);
-            currentTask = peek(taskQueue);
-            while (currentTask !== null && !enableSchedulerDebugging) {
-              if (currentTask.expirationTime > currentTime && (!hasTimeRemaining || exports.unstable_shouldYield())) {
-                break;
-              }
-              var callback = currentTask.callback;
-              if (typeof callback === "function") {
-                currentTask.callback = null;
-                currentPriorityLevel = currentTask.priorityLevel;
-                var didUserCallbackTimeout = currentTask.expirationTime <= currentTime;
-                markTaskRun(currentTask, currentTime);
-                var continuationCallback = callback(didUserCallbackTimeout);
-                currentTime = exports.unstable_now();
-                if (typeof continuationCallback === "function") {
-                  currentTask.callback = continuationCallback;
-                  markTaskYield(currentTask, currentTime);
-                } else {
-                  {
-                    markTaskCompleted(currentTask, currentTime);
-                    currentTask.isQueued = false;
-                  }
-                  if (currentTask === peek(taskQueue)) {
-                    pop(taskQueue);
-                  }
-                }
-                advanceTimers(currentTime);
-              } else {
-                pop(taskQueue);
-              }
-              currentTask = peek(taskQueue);
-            }
-            if (currentTask !== null) {
-              return true;
-            } else {
-              var firstTimer = peek(timerQueue);
-              if (firstTimer !== null) {
-                requestHostTimeout(handleTimeout, firstTimer.startTime - currentTime);
-              }
-              return false;
-            }
-          }
-          function unstable_runWithPriority(priorityLevel, eventHandler) {
-            switch (priorityLevel) {
-              case ImmediatePriority:
-              case UserBlockingPriority:
-              case NormalPriority2:
-              case LowPriority:
-              case IdlePriority:
-                break;
-              default:
-                priorityLevel = NormalPriority2;
-            }
-            var previousPriorityLevel = currentPriorityLevel;
-            currentPriorityLevel = priorityLevel;
-            try {
-              return eventHandler();
-            } finally {
-              currentPriorityLevel = previousPriorityLevel;
-            }
-          }
-          function unstable_next(eventHandler) {
-            var priorityLevel;
-            switch (currentPriorityLevel) {
-              case ImmediatePriority:
-              case UserBlockingPriority:
-              case NormalPriority2:
-                priorityLevel = NormalPriority2;
-                break;
-              default:
-                priorityLevel = currentPriorityLevel;
-                break;
-            }
-            var previousPriorityLevel = currentPriorityLevel;
-            currentPriorityLevel = priorityLevel;
-            try {
-              return eventHandler();
-            } finally {
-              currentPriorityLevel = previousPriorityLevel;
-            }
-          }
-          function unstable_wrapCallback(callback) {
-            var parentPriorityLevel = currentPriorityLevel;
-            return function() {
-              var previousPriorityLevel = currentPriorityLevel;
-              currentPriorityLevel = parentPriorityLevel;
-              try {
-                return callback.apply(this, arguments);
-              } finally {
-                currentPriorityLevel = previousPriorityLevel;
-              }
-            };
-          }
-          function unstable_scheduleCallback(priorityLevel, callback, options) {
-            var currentTime = exports.unstable_now();
-            var startTime;
-            if (typeof options === "object" && options !== null) {
-              var delay = options.delay;
-              if (typeof delay === "number" && delay > 0) {
-                startTime = currentTime + delay;
-              } else {
-                startTime = currentTime;
-              }
-            } else {
-              startTime = currentTime;
-            }
-            var timeout;
-            switch (priorityLevel) {
-              case ImmediatePriority:
-                timeout = IMMEDIATE_PRIORITY_TIMEOUT;
-                break;
-              case UserBlockingPriority:
-                timeout = USER_BLOCKING_PRIORITY_TIMEOUT;
-                break;
-              case IdlePriority:
-                timeout = IDLE_PRIORITY_TIMEOUT;
-                break;
-              case LowPriority:
-                timeout = LOW_PRIORITY_TIMEOUT;
-                break;
-              case NormalPriority2:
-              default:
-                timeout = NORMAL_PRIORITY_TIMEOUT;
-                break;
-            }
-            var expirationTime = startTime + timeout;
-            var newTask = {
-              id: taskIdCounter++,
-              callback,
-              priorityLevel,
-              startTime,
-              expirationTime,
-              sortIndex: -1
-            };
-            {
-              newTask.isQueued = false;
-            }
-            if (startTime > currentTime) {
-              newTask.sortIndex = startTime;
-              push(timerQueue, newTask);
-              if (peek(taskQueue) === null && newTask === peek(timerQueue)) {
-                if (isHostTimeoutScheduled) {
-                  cancelHostTimeout();
-                } else {
-                  isHostTimeoutScheduled = true;
-                }
-                requestHostTimeout(handleTimeout, startTime - currentTime);
-              }
-            } else {
-              newTask.sortIndex = expirationTime;
-              push(taskQueue, newTask);
-              {
-                markTaskStart(newTask, currentTime);
-                newTask.isQueued = true;
-              }
-              if (!isHostCallbackScheduled && !isPerformingWork) {
-                isHostCallbackScheduled = true;
-                requestHostCallback(flushWork);
-              }
-            }
-            return newTask;
-          }
-          function unstable_pauseExecution() {
-          }
-          function unstable_continueExecution() {
-            if (!isHostCallbackScheduled && !isPerformingWork) {
-              isHostCallbackScheduled = true;
-              requestHostCallback(flushWork);
-            }
-          }
-          function unstable_getFirstCallbackNode() {
-            return peek(taskQueue);
-          }
-          function unstable_cancelCallback(task) {
-            {
-              if (task.isQueued) {
-                var currentTime = exports.unstable_now();
-                markTaskCanceled(task, currentTime);
-                task.isQueued = false;
-              }
-            }
-            task.callback = null;
-          }
-          function unstable_getCurrentPriorityLevel() {
-            return currentPriorityLevel;
-          }
-          var unstable_requestPaint = requestPaint;
-          var unstable_Profiling = {
-            startLoggingProfilingEvents,
-            stopLoggingProfilingEvents,
-            sharedProfilingBuffer
-          };
-          exports.unstable_IdlePriority = IdlePriority;
-          exports.unstable_ImmediatePriority = ImmediatePriority;
-          exports.unstable_LowPriority = LowPriority;
-          exports.unstable_NormalPriority = NormalPriority2;
-          exports.unstable_Profiling = unstable_Profiling;
-          exports.unstable_UserBlockingPriority = UserBlockingPriority;
-          exports.unstable_cancelCallback = unstable_cancelCallback;
-          exports.unstable_continueExecution = unstable_continueExecution;
-          exports.unstable_getCurrentPriorityLevel = unstable_getCurrentPriorityLevel;
-          exports.unstable_getFirstCallbackNode = unstable_getFirstCallbackNode;
-          exports.unstable_next = unstable_next;
-          exports.unstable_pauseExecution = unstable_pauseExecution;
-          exports.unstable_requestPaint = unstable_requestPaint;
-          exports.unstable_runWithPriority = unstable_runWithPriority;
-          exports.unstable_scheduleCallback = unstable_scheduleCallback;
-          exports.unstable_wrapCallback = unstable_wrapCallback;
-        })();
-      }
-    }
-  });
-
-  // ../node_modules/scheduler/index.js
-  var require_scheduler2 = __commonJS({
-    "../node_modules/scheduler/index.js"(exports, module) {
-      "use strict";
-      if (false) {
-        module.exports = null;
-      } else {
-        module.exports = require_scheduler_development2();
-      }
-    }
-  });
-
   // src/extension/content.tsx
-  var import_react15 = __toESM(require_react(), 1);
+  var import_react6 = __toESM(require_react(), 1);
   var import_client = __toESM(require_client(), 1);
 
   // ../node_modules/source-map-support/register.js
   require_source_map_support().install();
 
   // src/extension/FloatingPanel.tsx
-  var import_react13 = __toESM(require_react(), 1);
+  var import_react4 = __toESM(require_react(), 1);
 
   // ../node_modules/@fluentui/set-version/lib/setVersion.js
   var packagesCache = {};
@@ -27594,25 +26928,6 @@
   setVersion("@fluentui/react", "8.111.1");
 
   // ../node_modules/tslib/tslib.es6.mjs
-  var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
-      d2.__proto__ = b2;
-    } || function(d2, b2) {
-      for (var p in b2)
-        if (Object.prototype.hasOwnProperty.call(b2, p))
-          d2[p] = b2[p];
-    };
-    return extendStatics(d, b);
-  };
-  function __extends(d, b) {
-    if (typeof b !== "function" && b !== null)
-      throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() {
-      this.constructor = d;
-    }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  }
   var __assign = function() {
     __assign = Object.assign || function __assign3(t) {
       for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -27636,16 +26951,6 @@
           t[p[i]] = s[p[i]];
       }
     return t;
-  }
-  function __decorate(decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function")
-      r = Reflect.decorate(decorators, target, key, desc);
-    else
-      for (var i = decorators.length - 1; i >= 0; i--)
-        if (d = decorators[i])
-          r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
   }
   function __spreadArray(to, from, pack) {
     if (pack || arguments.length === 2)
@@ -27679,14 +26984,14 @@
   var _global = {};
   try {
     _global = window || {};
-  } catch (_a5) {
+  } catch (_a2) {
   }
   var _stylesheet;
   var Stylesheet = (
     /** @class */
     function() {
       function Stylesheet2(config, serializedStylesheet) {
-        var _a5, _b, _c, _d, _e, _f;
+        var _a2, _b, _c, _d, _e, _f;
         this._rules = [];
         this._preservedRules = [];
         this._counter = 0;
@@ -27701,7 +27006,7 @@
           namespace: void 0,
           cspSettings: void 0
         }, config);
-        this._classNameToArgs = (_a5 = serializedStylesheet === null || serializedStylesheet === void 0 ? void 0 : serializedStylesheet.classNameToArgs) !== null && _a5 !== void 0 ? _a5 : this._classNameToArgs;
+        this._classNameToArgs = (_a2 = serializedStylesheet === null || serializedStylesheet === void 0 ? void 0 : serializedStylesheet.classNameToArgs) !== null && _a2 !== void 0 ? _a2 : this._classNameToArgs;
         this._counter = (_b = serializedStylesheet === null || serializedStylesheet === void 0 ? void 0 : serializedStylesheet.counter) !== null && _b !== void 0 ? _b : this._counter;
         this._keyToClassName = (_d = (_c = this._config.classNameCache) !== null && _c !== void 0 ? _c : serializedStylesheet === null || serializedStylesheet === void 0 ? void 0 : serializedStylesheet.keyToClassName) !== null && _d !== void 0 ? _d : this._keyToClassName;
         this._preservedRules = (_e = serializedStylesheet === null || serializedStylesheet === void 0 ? void 0 : serializedStylesheet.preservedRules) !== null && _e !== void 0 ? _e : this._preservedRules;
@@ -27711,9 +27016,9 @@
         _stylesheet = _global[STYLESHEET_SETTING];
         if (!_stylesheet || _stylesheet._lastStyleElement && _stylesheet._lastStyleElement.ownerDocument !== document) {
           var fabricConfig = (_global === null || _global === void 0 ? void 0 : _global.FabricConfig) || {};
-          var stylesheet3 = new Stylesheet2(fabricConfig.mergeStyles, fabricConfig.serializedStylesheet);
-          _stylesheet = stylesheet3;
-          _global[STYLESHEET_SETTING] = stylesheet3;
+          var stylesheet = new Stylesheet2(fabricConfig.mergeStyles, fabricConfig.serializedStylesheet);
+          _stylesheet = stylesheet;
+          _global[STYLESHEET_SETTING] = stylesheet;
         }
         return _stylesheet;
       };
@@ -27873,7 +27178,7 @@
     }
     var classes = [];
     var objects = [];
-    var stylesheet3 = Stylesheet.getInstance();
+    var stylesheet = Stylesheet.getInstance();
     function _processArgs(argsList) {
       for (var _i2 = 0, argsList_1 = argsList; _i2 < argsList_1.length; _i2++) {
         var arg = argsList_1[_i2];
@@ -27882,7 +27187,7 @@
             if (arg.indexOf(" ") >= 0) {
               _processArgs(arg.split(" "));
             } else {
-              var translatedArgs = stylesheet3.argsFromClassName(arg);
+              var translatedArgs = stylesheet.argsFromClassName(arg);
               if (translatedArgs) {
                 _processArgs(translatedArgs);
               } else {
@@ -27938,11 +27243,11 @@
   // ../node_modules/@fluentui/merge-styles/lib/getVendorSettings.js
   var _vendorSettings;
   function getVendorSettings() {
-    var _a5;
+    var _a2;
     if (!_vendorSettings) {
       var doc = typeof document !== "undefined" ? document : void 0;
       var nav = typeof navigator !== "undefined" ? navigator : void 0;
-      var userAgent = (_a5 = nav === null || nav === void 0 ? void 0 : nav.userAgent) === null || _a5 === void 0 ? void 0 : _a5.toLowerCase();
+      var userAgent = (_a2 = nav === null || nav === void 0 ? void 0 : nav.userAgent) === null || _a2 === void 0 ? void 0 : _a2.toLowerCase();
       if (!doc) {
         _vendorSettings = {
           isWebkit: true,
@@ -28131,8 +27436,8 @@
         ]);
       }
     }
-    return replacementInfo.reverse().reduce(function(selector, _a5) {
-      var matchIndex = _a5[0], matchEndIndex = _a5[1], replacement = _a5[2];
+    return replacementInfo.reverse().reduce(function(selector, _a2) {
+      var matchIndex = _a2[0], matchEndIndex = _a2[1], replacement = _a2[2];
       var prefix = selector.slice(0, matchIndex);
       var suffix = selector.slice(matchEndIndex);
       return prefix + replacement + suffix;
@@ -28172,7 +27477,7 @@
     if (currentSelector === void 0) {
       currentSelector = "&";
     }
-    var stylesheet3 = Stylesheet.getInstance();
+    var stylesheet = Stylesheet.getInstance();
     var currentRules = rules2[currentSelector];
     if (!currentRules) {
       currentRules = {};
@@ -28182,7 +27487,7 @@
     for (var _i = 0, args_1 = args; _i < args_1.length; _i++) {
       var arg = args_1[_i];
       if (typeof arg === "string") {
-        var expandedRules = stylesheet3.argsFromClassName(arg);
+        var expandedRules = stylesheet.argsFromClassName(arg);
         if (expandedRules) {
           extractRules(expandedRules, rules2, currentSelector);
         }
@@ -28236,8 +27541,8 @@
   function getKeyForRules(options, rules2) {
     var serialized = [options.rtl ? "rtl" : "ltr"];
     var hasProps = false;
-    for (var _i = 0, _a5 = rules2.__order; _i < _a5.length; _i++) {
-      var selector = _a5[_i];
+    for (var _i = 0, _a2 = rules2.__order; _i < _a2.length; _i++) {
+      var selector = _a2[_i];
       serialized.push(selector);
       var rulesForSelector = rules2[selector];
       for (var propName in rulesForSelector) {
@@ -28287,17 +27592,17 @@
     var rules2 = extractRules(args);
     var key = getKeyForRules(options, rules2);
     if (key) {
-      var stylesheet3 = Stylesheet.getInstance();
+      var stylesheet = Stylesheet.getInstance();
       var registration = {
-        className: stylesheet3.classNameFromKey(key),
+        className: stylesheet.classNameFromKey(key),
         key,
         args
       };
       if (!registration.className) {
-        registration.className = stylesheet3.getClassName(getDisplayName(rules2));
+        registration.className = stylesheet.getClassName(getDisplayName(rules2));
         var rulesToInsert = [];
-        for (var _a5 = 0, _b = rules2.__order; _a5 < _b.length; _a5++) {
-          var selector = _b[_a5];
+        for (var _a2 = 0, _b = rules2.__order; _a2 < _b.length; _a2++) {
+          var selector = _b[_a2];
           rulesToInsert.push(selector, serializeRuleEntries(options, rules2[selector]));
         }
         registration.rulesToInsert = rulesToInsert;
@@ -28310,7 +27615,7 @@
     if (specificityMultiplier === void 0) {
       specificityMultiplier = 1;
     }
-    var stylesheet3 = Stylesheet.getInstance();
+    var stylesheet = Stylesheet.getInstance();
     var className = registration.className, key = registration.key, args = registration.args, rulesToInsert = registration.rulesToInsert;
     if (rulesToInsert) {
       for (var i = 0; i < rulesToInsert.length; i += 2) {
@@ -28319,10 +27624,10 @@
           var selector = rulesToInsert[i];
           selector = selector.replace(/&/g, repeatString(".".concat(registration.className), specificityMultiplier));
           var processedRule = "".concat(selector, "{").concat(rules2, "}").concat(selector.indexOf("@") === 0 ? "}" : "");
-          stylesheet3.insertRule(processedRule);
+          stylesheet.insertRule(processedRule);
         }
       }
-      stylesheet3.cacheClassName(className, key, args, rulesToInsert);
+      stylesheet.cacheClassName(className, key, args, rulesToInsert);
     }
   }
   function styleToClassName(options) {
@@ -28339,16 +27644,9 @@
   }
 
   // ../node_modules/@fluentui/merge-styles/lib/mergeStyles.js
-  function mergeStyles() {
-    var args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-      args[_i] = arguments[_i];
-    }
-    return mergeCss(args, getStyleOptions());
-  }
   function mergeCss(args, options) {
     var styleArgs = args instanceof Array ? args : [args];
-    var _a5 = extractStyleParts(styleArgs), classes = _a5.classes, objects = _a5.objects;
+    var _a2 = extractStyleParts(styleArgs), classes = _a2.classes, objects = _a2.objects;
     if (objects.length) {
       classes.push(styleToClassName(options || {}, objects));
     }
@@ -28366,8 +27664,8 @@
     }
     var mergedSet = {};
     var workingSubcomponentStyles = {};
-    for (var _a5 = 0, styleSets_1 = styleSets; _a5 < styleSets_1.length; _a5++) {
-      var currentSet = styleSets_1[_a5];
+    for (var _a2 = 0, styleSets_1 = styleSets; _a2 < styleSets_1.length; _a2++) {
+      var currentSet = styleSets_1[_a2];
       if (currentSet) {
         for (var prop in currentSet) {
           if (currentSet.hasOwnProperty(prop)) {
@@ -28415,130 +27713,21 @@
     return mergedSet;
   }
 
-  // ../node_modules/@fluentui/merge-styles/lib/mergeStyleSets.js
-  function mergeStyleSets() {
-    var styleSets = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-      styleSets[_i] = arguments[_i];
-    }
-    return mergeCssSets(styleSets, getStyleOptions());
-  }
-  function mergeCssSets(styleSets, options) {
-    var classNameSet = { subComponentStyles: {} };
-    var styleSet = styleSets[0];
-    if (!styleSet && styleSets.length <= 1) {
-      return { subComponentStyles: {} };
-    }
-    var concatenatedStyleSet = concatStyleSets.apply(void 0, styleSets);
-    var registrations = [];
-    for (var styleSetArea in concatenatedStyleSet) {
-      if (concatenatedStyleSet.hasOwnProperty(styleSetArea)) {
-        if (styleSetArea === "subComponentStyles") {
-          classNameSet.subComponentStyles = concatenatedStyleSet.subComponentStyles || {};
-          continue;
-        }
-        var styles2 = concatenatedStyleSet[styleSetArea];
-        var _a5 = extractStyleParts(styles2), classes = _a5.classes, objects = _a5.objects;
-        if (objects === null || objects === void 0 ? void 0 : objects.length) {
-          var registration = styleToRegistration(options || {}, { displayName: styleSetArea }, objects);
-          if (registration) {
-            registrations.push(registration);
-            classNameSet[styleSetArea] = classes.concat([registration.className]).join(" ");
-          }
-        } else {
-          classNameSet[styleSetArea] = classes.join(" ");
-        }
-      }
-    }
-    for (var _i = 0, registrations_1 = registrations; _i < registrations_1.length; _i++) {
-      var registration = registrations_1[_i];
-      if (registration) {
-        applyRegistration(registration, options === null || options === void 0 ? void 0 : options.specificityMultiplier);
-      }
-    }
-    return classNameSet;
-  }
-
-  // ../node_modules/@fluentui/merge-styles/lib/concatStyleSetsWithProps.js
-  function concatStyleSetsWithProps(styleProps) {
-    var allStyles = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-      allStyles[_i - 1] = arguments[_i];
-    }
-    var result = [];
-    for (var _a5 = 0, allStyles_1 = allStyles; _a5 < allStyles_1.length; _a5++) {
-      var styles2 = allStyles_1[_a5];
-      if (styles2) {
-        result.push(typeof styles2 === "function" ? styles2(styleProps) : styles2);
-      }
-    }
-    if (result.length === 1) {
-      return result[0];
-    } else if (result.length) {
-      return concatStyleSets.apply(void 0, result);
-    }
-    return {};
-  }
-
   // ../node_modules/@fluentui/merge-styles/lib/fontFace.js
   function fontFace(font) {
-    var stylesheet3 = Stylesheet.getInstance();
+    var stylesheet = Stylesheet.getInstance();
     var rule = serializeRuleEntries(getStyleOptions(), font);
-    var className = stylesheet3.classNameFromKey(rule);
+    var className = stylesheet.classNameFromKey(rule);
     if (className) {
       return;
     }
-    var name = stylesheet3.getClassName();
-    stylesheet3.insertRule("@font-face{".concat(rule, "}"), true);
-    stylesheet3.cacheClassName(name, rule, [], ["font-face", rule]);
-  }
-
-  // ../node_modules/@fluentui/merge-styles/lib/keyframes.js
-  function keyframes(timeline) {
-    var stylesheet3 = Stylesheet.getInstance();
-    var rulesArray = [];
-    for (var prop in timeline) {
-      if (timeline.hasOwnProperty(prop)) {
-        rulesArray.push(prop, "{", serializeRuleEntries(getStyleOptions(), timeline[prop]), "}");
-      }
-    }
-    var rules2 = rulesArray.join("");
-    var className = stylesheet3.classNameFromKey(rules2);
-    if (className) {
-      return className;
-    }
-    var name = stylesheet3.getClassName();
-    stylesheet3.insertRule("@keyframes ".concat(name, "{").concat(rules2, "}"), true);
-    stylesheet3.cacheClassName(name, rules2, [], ["keyframes", rules2]);
-    return name;
+    var name = stylesheet.getClassName();
+    stylesheet.insertRule("@font-face{".concat(rule, "}"), true);
+    stylesheet.cacheClassName(name, rule, [], ["font-face", rule]);
   }
 
   // ../node_modules/@fluentui/merge-styles/lib/version.js
   setVersion("@fluentui/merge-styles", "8.5.12");
-
-  // ../node_modules/@fluentui/style-utilities/lib/utilities/buildClassMap.js
-  function buildClassMap(styles2) {
-    var classes = {};
-    var _loop_1 = function(styleName2) {
-      if (styles2.hasOwnProperty(styleName2)) {
-        var className_1;
-        Object.defineProperty(classes, styleName2, {
-          get: function() {
-            if (className_1 === void 0) {
-              className_1 = mergeStyles(styles2[styleName2]).toString();
-            }
-            return className_1;
-          },
-          enumerable: true,
-          configurable: true
-        });
-      }
-    };
-    for (var styleName in styles2) {
-      _loop_1(styleName);
-    }
-    return classes;
-  }
 
   // ../node_modules/@fluentui/utilities/lib/dom/canUseDOM.js
   function canUseDOM() {
@@ -28561,562 +27750,6 @@
     }
   }
 
-  // ../node_modules/@fluentui/utilities/lib/Async.js
-  var Async = (
-    /** @class */
-    function() {
-      function Async2(parent, onError) {
-        this._timeoutIds = null;
-        this._immediateIds = null;
-        this._intervalIds = null;
-        this._animationFrameIds = null;
-        this._isDisposed = false;
-        this._parent = parent || null;
-        this._onErrorHandler = onError;
-        this._noop = function() {
-        };
-      }
-      Async2.prototype.dispose = function() {
-        var id;
-        this._isDisposed = true;
-        this._parent = null;
-        if (this._timeoutIds) {
-          for (id in this._timeoutIds) {
-            if (this._timeoutIds.hasOwnProperty(id)) {
-              this.clearTimeout(parseInt(id, 10));
-            }
-          }
-          this._timeoutIds = null;
-        }
-        if (this._immediateIds) {
-          for (id in this._immediateIds) {
-            if (this._immediateIds.hasOwnProperty(id)) {
-              this.clearImmediate(parseInt(id, 10));
-            }
-          }
-          this._immediateIds = null;
-        }
-        if (this._intervalIds) {
-          for (id in this._intervalIds) {
-            if (this._intervalIds.hasOwnProperty(id)) {
-              this.clearInterval(parseInt(id, 10));
-            }
-          }
-          this._intervalIds = null;
-        }
-        if (this._animationFrameIds) {
-          for (id in this._animationFrameIds) {
-            if (this._animationFrameIds.hasOwnProperty(id)) {
-              this.cancelAnimationFrame(parseInt(id, 10));
-            }
-          }
-          this._animationFrameIds = null;
-        }
-      };
-      Async2.prototype.setTimeout = function(callback, duration) {
-        var _this = this;
-        var timeoutId = 0;
-        if (!this._isDisposed) {
-          if (!this._timeoutIds) {
-            this._timeoutIds = {};
-          }
-          timeoutId = setTimeout(function() {
-            try {
-              if (_this._timeoutIds) {
-                delete _this._timeoutIds[timeoutId];
-              }
-              callback.apply(_this._parent);
-            } catch (e) {
-              _this._logError(e);
-            }
-          }, duration);
-          this._timeoutIds[timeoutId] = true;
-        }
-        return timeoutId;
-      };
-      Async2.prototype.clearTimeout = function(id) {
-        if (this._timeoutIds && this._timeoutIds[id]) {
-          clearTimeout(id);
-          delete this._timeoutIds[id];
-        }
-      };
-      Async2.prototype.setImmediate = function(callback, targetElement) {
-        var _this = this;
-        var immediateId = 0;
-        var win = getWindow(targetElement);
-        if (!this._isDisposed) {
-          if (!this._immediateIds) {
-            this._immediateIds = {};
-          }
-          var setImmediateCallback = function() {
-            try {
-              if (_this._immediateIds) {
-                delete _this._immediateIds[immediateId];
-              }
-              callback.apply(_this._parent);
-            } catch (e) {
-              _this._logError(e);
-            }
-          };
-          immediateId = win.setTimeout(setImmediateCallback, 0);
-          this._immediateIds[immediateId] = true;
-        }
-        return immediateId;
-      };
-      Async2.prototype.clearImmediate = function(id, targetElement) {
-        var win = getWindow(targetElement);
-        if (this._immediateIds && this._immediateIds[id]) {
-          win.clearTimeout(id);
-          delete this._immediateIds[id];
-        }
-      };
-      Async2.prototype.setInterval = function(callback, duration) {
-        var _this = this;
-        var intervalId = 0;
-        if (!this._isDisposed) {
-          if (!this._intervalIds) {
-            this._intervalIds = {};
-          }
-          intervalId = setInterval(function() {
-            try {
-              callback.apply(_this._parent);
-            } catch (e) {
-              _this._logError(e);
-            }
-          }, duration);
-          this._intervalIds[intervalId] = true;
-        }
-        return intervalId;
-      };
-      Async2.prototype.clearInterval = function(id) {
-        if (this._intervalIds && this._intervalIds[id]) {
-          clearInterval(id);
-          delete this._intervalIds[id];
-        }
-      };
-      Async2.prototype.throttle = function(func, wait, options) {
-        var _this = this;
-        if (this._isDisposed) {
-          return this._noop;
-        }
-        var waitMS = wait || 0;
-        var leading = true;
-        var trailing = true;
-        var lastExecuteTime = 0;
-        var lastResult;
-        var lastArgs;
-        var timeoutId = null;
-        if (options && typeof options.leading === "boolean") {
-          leading = options.leading;
-        }
-        if (options && typeof options.trailing === "boolean") {
-          trailing = options.trailing;
-        }
-        var callback = function(userCall) {
-          var now = Date.now();
-          var delta = now - lastExecuteTime;
-          var waitLength = leading ? waitMS - delta : waitMS;
-          if (delta >= waitMS && (!userCall || leading)) {
-            lastExecuteTime = now;
-            if (timeoutId) {
-              _this.clearTimeout(timeoutId);
-              timeoutId = null;
-            }
-            lastResult = func.apply(_this._parent, lastArgs);
-          } else if (timeoutId === null && trailing) {
-            timeoutId = _this.setTimeout(callback, waitLength);
-          }
-          return lastResult;
-        };
-        var resultFunction = function() {
-          var args = [];
-          for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-          }
-          lastArgs = args;
-          return callback(true);
-        };
-        return resultFunction;
-      };
-      Async2.prototype.debounce = function(func, wait, options) {
-        var _this = this;
-        if (this._isDisposed) {
-          var noOpFunction = function() {
-          };
-          noOpFunction.cancel = function() {
-            return;
-          };
-          noOpFunction.flush = function() {
-            return null;
-          };
-          noOpFunction.pending = function() {
-            return false;
-          };
-          return noOpFunction;
-        }
-        var waitMS = wait || 0;
-        var leading = false;
-        var trailing = true;
-        var maxWait = null;
-        var lastCallTime = 0;
-        var lastExecuteTime = Date.now();
-        var lastResult;
-        var lastArgs;
-        var timeoutId = null;
-        if (options && typeof options.leading === "boolean") {
-          leading = options.leading;
-        }
-        if (options && typeof options.trailing === "boolean") {
-          trailing = options.trailing;
-        }
-        if (options && typeof options.maxWait === "number" && !isNaN(options.maxWait)) {
-          maxWait = options.maxWait;
-        }
-        var markExecuted = function(time) {
-          if (timeoutId) {
-            _this.clearTimeout(timeoutId);
-            timeoutId = null;
-          }
-          lastExecuteTime = time;
-        };
-        var invokeFunction = function(time) {
-          markExecuted(time);
-          lastResult = func.apply(_this._parent, lastArgs);
-        };
-        var callback = function(userCall) {
-          var now = Date.now();
-          var executeImmediately = false;
-          if (userCall) {
-            if (leading && now - lastCallTime >= waitMS) {
-              executeImmediately = true;
-            }
-            lastCallTime = now;
-          }
-          var delta = now - lastCallTime;
-          var waitLength = waitMS - delta;
-          var maxWaitDelta = now - lastExecuteTime;
-          var maxWaitExpired = false;
-          if (maxWait !== null) {
-            if (maxWaitDelta >= maxWait && timeoutId) {
-              maxWaitExpired = true;
-            } else {
-              waitLength = Math.min(waitLength, maxWait - maxWaitDelta);
-            }
-          }
-          if (delta >= waitMS || maxWaitExpired || executeImmediately) {
-            invokeFunction(now);
-          } else if ((timeoutId === null || !userCall) && trailing) {
-            timeoutId = _this.setTimeout(callback, waitLength);
-          }
-          return lastResult;
-        };
-        var pending = function() {
-          return !!timeoutId;
-        };
-        var cancel = function() {
-          if (pending()) {
-            markExecuted(Date.now());
-          }
-        };
-        var flush = function() {
-          if (pending()) {
-            invokeFunction(Date.now());
-          }
-          return lastResult;
-        };
-        var resultFunction = function() {
-          var args = [];
-          for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-          }
-          lastArgs = args;
-          return callback(true);
-        };
-        resultFunction.cancel = cancel;
-        resultFunction.flush = flush;
-        resultFunction.pending = pending;
-        return resultFunction;
-      };
-      Async2.prototype.requestAnimationFrame = function(callback, targetElement) {
-        var _this = this;
-        var animationFrameId = 0;
-        var win = getWindow(targetElement);
-        if (!this._isDisposed) {
-          if (!this._animationFrameIds) {
-            this._animationFrameIds = {};
-          }
-          var animationFrameCallback = function() {
-            try {
-              if (_this._animationFrameIds) {
-                delete _this._animationFrameIds[animationFrameId];
-              }
-              callback.apply(_this._parent);
-            } catch (e) {
-              _this._logError(e);
-            }
-          };
-          animationFrameId = win.requestAnimationFrame ? win.requestAnimationFrame(animationFrameCallback) : win.setTimeout(animationFrameCallback, 0);
-          this._animationFrameIds[animationFrameId] = true;
-        }
-        return animationFrameId;
-      };
-      Async2.prototype.cancelAnimationFrame = function(id, targetElement) {
-        var win = getWindow(targetElement);
-        if (this._animationFrameIds && this._animationFrameIds[id]) {
-          win.cancelAnimationFrame ? win.cancelAnimationFrame(id) : win.clearTimeout(id);
-          delete this._animationFrameIds[id];
-        }
-      };
-      Async2.prototype._logError = function(e) {
-        if (this._onErrorHandler) {
-          this._onErrorHandler(e);
-        }
-      };
-      return Async2;
-    }()
-  );
-
-  // ../node_modules/@fluentui/utilities/lib/object.js
-  function shallowCompare(a, b) {
-    if (!a || !b) {
-      return !a && !b;
-    }
-    for (var propName in a) {
-      if (a.hasOwnProperty(propName)) {
-        if (!b.hasOwnProperty(propName) || b[propName] !== a[propName]) {
-          return false;
-        }
-      }
-    }
-    for (var propName in b) {
-      if (b.hasOwnProperty(propName)) {
-        if (!a.hasOwnProperty(propName)) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-  function assign(target) {
-    var args = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-      args[_i - 1] = arguments[_i];
-    }
-    return filteredAssign.apply(this, [null, target].concat(args));
-  }
-  function filteredAssign(isAllowed, target) {
-    var args = [];
-    for (var _i = 2; _i < arguments.length; _i++) {
-      args[_i - 2] = arguments[_i];
-    }
-    target = target || {};
-    for (var _a5 = 0, args_1 = args; _a5 < args_1.length; _a5++) {
-      var sourceObject = args_1[_a5];
-      if (sourceObject) {
-        for (var propName in sourceObject) {
-          if (sourceObject.hasOwnProperty(propName) && (!isAllowed || isAllowed(propName))) {
-            target[propName] = sourceObject[propName];
-          }
-        }
-      }
-    }
-    return target;
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/EventGroup.js
-  var EventGroup = (
-    /** @class */
-    function() {
-      function EventGroup2(parent) {
-        this._id = EventGroup2._uniqueId++;
-        this._parent = parent;
-        this._eventRecords = [];
-      }
-      EventGroup2.raise = function(target, eventName, eventArgs, bubbleEvent) {
-        var retVal2;
-        if (EventGroup2._isElement(target)) {
-          if (typeof document !== "undefined" && document.createEvent) {
-            var ev = document.createEvent("HTMLEvents");
-            ev.initEvent(eventName, bubbleEvent || false, true);
-            assign(ev, eventArgs);
-            retVal2 = target.dispatchEvent(ev);
-          } else if (typeof document !== "undefined" && document.createEventObject) {
-            var evObj = document.createEventObject(eventArgs);
-            target.fireEvent("on" + eventName, evObj);
-          }
-        } else {
-          while (target && retVal2 !== false) {
-            var events = target.__events__;
-            var eventRecords = events ? events[eventName] : null;
-            if (eventRecords) {
-              for (var id in eventRecords) {
-                if (eventRecords.hasOwnProperty(id)) {
-                  var eventRecordList = eventRecords[id];
-                  for (var listIndex = 0; retVal2 !== false && listIndex < eventRecordList.length; listIndex++) {
-                    var record = eventRecordList[listIndex];
-                    if (record.objectCallback) {
-                      retVal2 = record.objectCallback.call(record.parent, eventArgs);
-                    }
-                  }
-                }
-              }
-            }
-            target = bubbleEvent ? target.parent : null;
-          }
-        }
-        return retVal2;
-      };
-      EventGroup2.isObserved = function(target, eventName) {
-        var events = target && target.__events__;
-        return !!events && !!events[eventName];
-      };
-      EventGroup2.isDeclared = function(target, eventName) {
-        var declaredEvents = target && target.__declaredEvents;
-        return !!declaredEvents && !!declaredEvents[eventName];
-      };
-      EventGroup2.stopPropagation = function(event) {
-        if (event.stopPropagation) {
-          event.stopPropagation();
-        } else {
-          event.cancelBubble = true;
-        }
-      };
-      EventGroup2._isElement = function(target) {
-        return !!target && (!!target.addEventListener || typeof HTMLElement !== "undefined" && target instanceof HTMLElement);
-      };
-      EventGroup2.prototype.dispose = function() {
-        if (!this._isDisposed) {
-          this._isDisposed = true;
-          this.off();
-          this._parent = null;
-        }
-      };
-      EventGroup2.prototype.onAll = function(target, events, useCapture) {
-        for (var eventName in events) {
-          if (events.hasOwnProperty(eventName)) {
-            this.on(target, eventName, events[eventName], useCapture);
-          }
-        }
-      };
-      EventGroup2.prototype.on = function(target, eventName, callback, options) {
-        var _this = this;
-        if (eventName.indexOf(",") > -1) {
-          var events = eventName.split(/[ ,]+/);
-          for (var i = 0; i < events.length; i++) {
-            this.on(target, events[i], callback, options);
-          }
-        } else {
-          var parent_1 = this._parent;
-          var eventRecord = {
-            target,
-            eventName,
-            parent: parent_1,
-            callback,
-            options
-          };
-          var events = target.__events__ = target.__events__ || {};
-          events[eventName] = events[eventName] || {
-            count: 0
-          };
-          events[eventName][this._id] = events[eventName][this._id] || [];
-          events[eventName][this._id].push(eventRecord);
-          events[eventName].count++;
-          if (EventGroup2._isElement(target)) {
-            var processElementEvent = function() {
-              var args = [];
-              for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-              }
-              if (_this._isDisposed) {
-                return;
-              }
-              var result;
-              try {
-                result = callback.apply(parent_1, args);
-                if (result === false && args[0]) {
-                  var e = args[0];
-                  if (e.preventDefault) {
-                    e.preventDefault();
-                  }
-                  if (e.stopPropagation) {
-                    e.stopPropagation();
-                  }
-                  e.cancelBubble = true;
-                }
-              } catch (e2) {
-              }
-              return result;
-            };
-            eventRecord.elementCallback = processElementEvent;
-            if (target.addEventListener) {
-              target.addEventListener(eventName, processElementEvent, options);
-            } else if (target.attachEvent) {
-              target.attachEvent("on" + eventName, processElementEvent);
-            }
-          } else {
-            var processObjectEvent = function() {
-              var args = [];
-              for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-              }
-              if (_this._isDisposed) {
-                return;
-              }
-              return callback.apply(parent_1, args);
-            };
-            eventRecord.objectCallback = processObjectEvent;
-          }
-          this._eventRecords.push(eventRecord);
-        }
-      };
-      EventGroup2.prototype.off = function(target, eventName, callback, options) {
-        for (var i = 0; i < this._eventRecords.length; i++) {
-          var eventRecord = this._eventRecords[i];
-          if ((!target || target === eventRecord.target) && (!eventName || eventName === eventRecord.eventName) && (!callback || callback === eventRecord.callback) && (typeof options !== "boolean" || options === eventRecord.options)) {
-            var events = eventRecord.target.__events__;
-            var targetArrayLookup = events[eventRecord.eventName];
-            var targetArray = targetArrayLookup ? targetArrayLookup[this._id] : null;
-            if (targetArray) {
-              if (targetArray.length === 1 || !callback) {
-                targetArrayLookup.count -= targetArray.length;
-                delete events[eventRecord.eventName][this._id];
-              } else {
-                targetArrayLookup.count--;
-                targetArray.splice(targetArray.indexOf(eventRecord), 1);
-              }
-              if (!targetArrayLookup.count) {
-                delete events[eventRecord.eventName];
-              }
-            }
-            if (eventRecord.elementCallback) {
-              if (eventRecord.target.removeEventListener) {
-                eventRecord.target.removeEventListener(eventRecord.eventName, eventRecord.elementCallback, eventRecord.options);
-              } else if (eventRecord.target.detachEvent) {
-                eventRecord.target.detachEvent("on" + eventRecord.eventName, eventRecord.elementCallback);
-              }
-            }
-            this._eventRecords.splice(i--, 1);
-          }
-        }
-      };
-      EventGroup2.prototype.raise = function(eventName, eventArgs, bubbleEvent) {
-        return EventGroup2.raise(this._parent, eventName, eventArgs, bubbleEvent);
-      };
-      EventGroup2.prototype.declare = function(event) {
-        var declaredEvents = this._parent.__declaredEvents = this._parent.__declaredEvents || {};
-        if (typeof event === "string") {
-          declaredEvents[event] = true;
-        } else {
-          for (var i = 0; i < event.length; i++) {
-            declaredEvents[event[i]] = true;
-          }
-        }
-      };
-      EventGroup2._uniqueId = 0;
-      return EventGroup2;
-    }()
-  );
-
   // ../node_modules/@fluentui/utilities/lib/dom/getDocument.js
   function getDocument(rootElement) {
     if (!canUseDOM() || typeof document === "undefined") {
@@ -29127,55 +27760,6 @@
     }
   }
 
-  // ../node_modules/@fluentui/utilities/lib/scroll.js
-  var _scrollbarWidth;
-  var DisabledScrollClassName = mergeStyles({
-    overflow: "hidden !important"
-  });
-  var DATA_IS_SCROLLABLE_ATTRIBUTE = "data-is-scrollable";
-  function getScrollbarWidth() {
-    if (_scrollbarWidth === void 0) {
-      var scrollDiv = document.createElement("div");
-      scrollDiv.style.setProperty("width", "100px");
-      scrollDiv.style.setProperty("height", "100px");
-      scrollDiv.style.setProperty("overflow", "scroll");
-      scrollDiv.style.setProperty("position", "absolute");
-      scrollDiv.style.setProperty("top", "-9999px");
-      document.body.appendChild(scrollDiv);
-      _scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
-      document.body.removeChild(scrollDiv);
-    }
-    return _scrollbarWidth;
-  }
-  function findScrollableParent(startingElement) {
-    var el = startingElement;
-    var doc = getDocument(startingElement);
-    while (el && el !== doc.body) {
-      if (el.getAttribute(DATA_IS_SCROLLABLE_ATTRIBUTE) === "true") {
-        return el;
-      }
-      el = el.parentElement;
-    }
-    el = startingElement;
-    while (el && el !== doc.body) {
-      if (el.getAttribute(DATA_IS_SCROLLABLE_ATTRIBUTE) !== "false") {
-        var computedStyles = getComputedStyle(el);
-        var overflowY = computedStyles ? computedStyles.getPropertyValue("overflow-y") : "";
-        if (overflowY && (overflowY === "scroll" || overflowY === "auto")) {
-          return el;
-        }
-      }
-      el = el.parentElement;
-    }
-    if (!el || el === doc.body) {
-      el = getWindow(startingElement);
-    }
-    return el;
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/BaseComponent.js
-  var React = __toESM(require_react());
-
   // ../node_modules/@fluentui/utilities/lib/warn/warn.js
   var _warningCallback = void 0;
   function warn(message) {
@@ -29183,32 +27767,6 @@
       _warningCallback(message);
     } else if (console && console.warn) {
       console.warn(message);
-    }
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/warn/warnConditionallyRequiredProps.js
-  function warnConditionallyRequiredProps(componentName, props, requiredProps, conditionalPropName, condition) {
-    if (condition === true && true) {
-      for (var _i = 0, requiredProps_1 = requiredProps; _i < requiredProps_1.length; _i++) {
-        var requiredPropName = requiredProps_1[_i];
-        if (!(requiredPropName in props)) {
-          warn("".concat(componentName, " property '").concat(requiredPropName, "' is required when '").concat(conditionalPropName, "' is used.'"));
-        }
-      }
-    }
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/warn/warnMutuallyExclusive.js
-  function warnMutuallyExclusive(componentName, props, exclusiveMap) {
-    if (true) {
-      for (var propName in exclusiveMap) {
-        if (props && props[propName] !== void 0) {
-          var propInExclusiveMapValue = exclusiveMap[propName];
-          if (propInExclusiveMapValue && props[propInExclusiveMapValue] !== void 0) {
-            warn("".concat(componentName, " property '").concat(propName, "' is mutually exclusive with '").concat(exclusiveMap[propName], "'. ") + "Use one or the other.");
-          }
-        }
-      }
     }
   }
 
@@ -29227,212 +27785,6 @@
       }
     }
   }
-
-  // ../node_modules/@fluentui/utilities/lib/BaseComponent.js
-  var BaseComponent = (
-    /** @class */
-    function(_super) {
-      __extends(BaseComponent2, _super);
-      function BaseComponent2(props, context) {
-        var _this = _super.call(this, props, context) || this;
-        _makeAllSafe(_this, BaseComponent2.prototype, [
-          "componentDidMount",
-          "shouldComponentUpdate",
-          "getSnapshotBeforeUpdate",
-          "render",
-          "componentDidUpdate",
-          "componentWillUnmount"
-        ]);
-        return _this;
-      }
-      BaseComponent2.prototype.componentDidUpdate = function(prevProps, prevState) {
-        this._updateComponentRef(prevProps, this.props);
-      };
-      BaseComponent2.prototype.componentDidMount = function() {
-        this._setComponentRef(this.props.componentRef, this);
-      };
-      BaseComponent2.prototype.componentWillUnmount = function() {
-        this._setComponentRef(this.props.componentRef, null);
-        if (this.__disposables) {
-          for (var i = 0, len = this._disposables.length; i < len; i++) {
-            var disposable = this.__disposables[i];
-            if (disposable.dispose) {
-              disposable.dispose();
-            }
-          }
-          this.__disposables = null;
-        }
-      };
-      Object.defineProperty(BaseComponent2.prototype, "className", {
-        /**
-         * Gets the object's class name.
-         */
-        get: function() {
-          if (!this.__className) {
-            var funcNameRegex = /function (.{1,})\(/;
-            var results = funcNameRegex.exec(this.constructor.toString());
-            this.__className = results && results.length > 1 ? results[1] : "";
-          }
-          return this.__className;
-        },
-        enumerable: false,
-        configurable: true
-      });
-      Object.defineProperty(BaseComponent2.prototype, "_disposables", {
-        /**
-         * Allows subclasses to push things to this._disposables to be auto disposed.
-         */
-        get: function() {
-          if (!this.__disposables) {
-            this.__disposables = [];
-          }
-          return this.__disposables;
-        },
-        enumerable: false,
-        configurable: true
-      });
-      Object.defineProperty(BaseComponent2.prototype, "_async", {
-        /**
-         * Gets the async instance associated with the component, created on demand. The async instance gives
-         * subclasses a way to execute setTimeout/setInterval async calls safely, where the callbacks
-         * will be cleared/ignored automatically after unmounting. The helpers within the async object also
-         * preserve the this pointer so that you don't need to "bind" the callbacks.
-         */
-        get: function() {
-          if (!this.__async) {
-            this.__async = new Async(this);
-            this._disposables.push(this.__async);
-          }
-          return this.__async;
-        },
-        enumerable: false,
-        configurable: true
-      });
-      Object.defineProperty(BaseComponent2.prototype, "_events", {
-        /**
-         * Gets the event group instance assocaited with the component, created on demand. The event instance
-         * provides on/off methods for listening to DOM (or regular javascript object) events. The event callbacks
-         * will be automatically disconnected after unmounting. The helpers within the events object also
-         * preserve the this reference so that you don't need to "bind" the callbacks.
-         */
-        get: function() {
-          if (!this.__events) {
-            this.__events = new EventGroup(this);
-            this._disposables.push(this.__events);
-          }
-          return this.__events;
-        },
-        enumerable: false,
-        configurable: true
-      });
-      BaseComponent2.prototype._resolveRef = function(refName) {
-        var _this = this;
-        if (!this.__resolves) {
-          this.__resolves = {};
-        }
-        if (!this.__resolves[refName]) {
-          this.__resolves[refName] = function(ref) {
-            return _this[refName] = ref;
-          };
-        }
-        return this.__resolves[refName];
-      };
-      BaseComponent2.prototype._updateComponentRef = function(currentProps, newProps) {
-        if (newProps === void 0) {
-          newProps = {};
-        }
-        if (currentProps && newProps && currentProps.componentRef !== newProps.componentRef) {
-          this._setComponentRef(currentProps.componentRef, null);
-          this._setComponentRef(newProps.componentRef, this);
-        }
-      };
-      BaseComponent2.prototype._warnDeprecations = function(deprecationMap) {
-        warnDeprecations(this.className, this.props, deprecationMap);
-      };
-      BaseComponent2.prototype._warnMutuallyExclusive = function(mutuallyExclusiveMap) {
-        warnMutuallyExclusive(this.className, this.props, mutuallyExclusiveMap);
-      };
-      BaseComponent2.prototype._warnConditionallyRequiredProps = function(requiredProps, conditionalPropName, condition) {
-        warnConditionallyRequiredProps(this.className, this.props, requiredProps, conditionalPropName, condition);
-      };
-      BaseComponent2.prototype._setComponentRef = function(ref, value) {
-        if (!this._skipComponentRefResolution && ref) {
-          if (typeof ref === "function") {
-            ref(value);
-          }
-          if (typeof ref === "object") {
-            ref.current = value;
-          }
-        }
-      };
-      return BaseComponent2;
-    }(React.Component)
-  );
-  function _makeAllSafe(obj, prototype, methodNames) {
-    for (var i = 0, len = methodNames.length; i < len; i++) {
-      _makeSafe(obj, prototype, methodNames[i]);
-    }
-  }
-  function _makeSafe(obj, prototype, methodName) {
-    var classMethod = obj[methodName];
-    var prototypeMethod = prototype[methodName];
-    if (classMethod || prototypeMethod) {
-      obj[methodName] = function() {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-          args[_i] = arguments[_i];
-        }
-        var retVal2;
-        if (prototypeMethod) {
-          retVal2 = prototypeMethod.apply(this, args);
-        }
-        if (classMethod !== prototypeMethod) {
-          retVal2 = classMethod.apply(this, args);
-        }
-        return retVal2;
-      };
-    }
-  }
-  function nullRender() {
-    return null;
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/DelayedRender.js
-  var React2 = __toESM(require_react());
-  var DelayedRender = (
-    /** @class */
-    function(_super) {
-      __extends(DelayedRender2, _super);
-      function DelayedRender2(props) {
-        var _this = _super.call(this, props) || this;
-        _this.state = {
-          isRendered: getWindow() === void 0
-        };
-        return _this;
-      }
-      DelayedRender2.prototype.componentDidMount = function() {
-        var _this = this;
-        var delay = this.props.delay;
-        this._timeoutId = window.setTimeout(function() {
-          _this.setState({
-            isRendered: true
-          });
-        }, delay);
-      };
-      DelayedRender2.prototype.componentWillUnmount = function() {
-        if (this._timeoutId) {
-          clearTimeout(this._timeoutId);
-        }
-      };
-      DelayedRender2.prototype.render = function() {
-        return this.state.isRendered ? React2.Children.only(this.props.children) : null;
-      };
-      DelayedRender2.defaultProps = {
-        delay: 0
-      };
-      return DelayedRender2;
-    }(React2.Component)
-  );
 
   // ../node_modules/@fluentui/utilities/lib/GlobalSettings.js
   var GLOBAL_SETTINGS_PROP_NAME = "__globalSettings__";
@@ -29485,222 +27837,17 @@
     }()
   );
   function _getGlobalSettings() {
-    var _a5;
+    var _a2;
     var win = getWindow();
     var globalObj = win || {};
     if (!globalObj[GLOBAL_SETTINGS_PROP_NAME]) {
-      globalObj[GLOBAL_SETTINGS_PROP_NAME] = (_a5 = {}, _a5[CALLBACK_STATE_PROP_NAME] = {}, _a5);
+      globalObj[GLOBAL_SETTINGS_PROP_NAME] = (_a2 = {}, _a2[CALLBACK_STATE_PROP_NAME] = {}, _a2);
     }
     return globalObj[GLOBAL_SETTINGS_PROP_NAME];
   }
   function _getCallbacks() {
     var globalSettings = _getGlobalSettings();
     return globalSettings[CALLBACK_STATE_PROP_NAME];
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/KeyCodes.js
-  var KeyCodes = {
-    backspace: 8,
-    tab: 9,
-    enter: 13,
-    shift: 16,
-    ctrl: 17,
-    alt: 18,
-    pauseBreak: 19,
-    capslock: 20,
-    escape: 27,
-    space: 32,
-    pageUp: 33,
-    pageDown: 34,
-    end: 35,
-    home: 36,
-    left: 37,
-    up: 38,
-    right: 39,
-    down: 40,
-    insert: 45,
-    del: 46,
-    zero: 48,
-    one: 49,
-    two: 50,
-    three: 51,
-    four: 52,
-    five: 53,
-    six: 54,
-    seven: 55,
-    eight: 56,
-    nine: 57,
-    colon: 58,
-    a: 65,
-    b: 66,
-    c: 67,
-    d: 68,
-    e: 69,
-    f: 70,
-    g: 71,
-    h: 72,
-    i: 73,
-    j: 74,
-    k: 75,
-    l: 76,
-    m: 77,
-    n: 78,
-    o: 79,
-    p: 80,
-    q: 81,
-    r: 82,
-    s: 83,
-    t: 84,
-    u: 85,
-    v: 86,
-    w: 87,
-    x: 88,
-    y: 89,
-    z: 90,
-    leftWindow: 91,
-    rightWindow: 92,
-    select: 93,
-    /* eslint-disable @typescript-eslint/naming-convention */
-    zero_numpad: 96,
-    one_numpad: 97,
-    two_numpad: 98,
-    three_numpad: 99,
-    four_numpad: 100,
-    five_numpad: 101,
-    six_numpad: 102,
-    seven_numpad: 103,
-    eight_numpad: 104,
-    nine_numpad: 105,
-    /* eslint-enable @typescript-eslint/naming-convention */
-    multiply: 106,
-    add: 107,
-    subtract: 109,
-    decimalPoint: 110,
-    divide: 111,
-    f1: 112,
-    f2: 113,
-    f3: 114,
-    f4: 115,
-    f5: 116,
-    f6: 117,
-    f7: 118,
-    f8: 119,
-    f9: 120,
-    f10: 121,
-    f11: 122,
-    f12: 123,
-    numlock: 144,
-    scrollLock: 145,
-    semicolon: 186,
-    equalSign: 187,
-    comma: 188,
-    dash: 189,
-    period: 190,
-    forwardSlash: 191,
-    graveAccent: 192,
-    openBracket: 219,
-    backSlash: 220,
-    closeBracket: 221,
-    singleQuote: 222
-  };
-
-  // ../node_modules/@fluentui/utilities/lib/Rectangle.js
-  var Rectangle = (
-    /** @class */
-    function() {
-      function Rectangle2(left, right, top, bottom) {
-        if (left === void 0) {
-          left = 0;
-        }
-        if (right === void 0) {
-          right = 0;
-        }
-        if (top === void 0) {
-          top = 0;
-        }
-        if (bottom === void 0) {
-          bottom = 0;
-        }
-        this.top = top;
-        this.bottom = bottom;
-        this.left = left;
-        this.right = right;
-      }
-      Object.defineProperty(Rectangle2.prototype, "width", {
-        /**
-         * Calculated automatically by subtracting the right from left
-         */
-        get: function() {
-          return this.right - this.left;
-        },
-        enumerable: false,
-        configurable: true
-      });
-      Object.defineProperty(Rectangle2.prototype, "height", {
-        /**
-         * Calculated automatically by subtracting the bottom from top.
-         */
-        get: function() {
-          return this.bottom - this.top;
-        },
-        enumerable: false,
-        configurable: true
-      });
-      Rectangle2.prototype.equals = function(rect) {
-        return parseFloat(this.top.toFixed(4)) === parseFloat(rect.top.toFixed(4)) && parseFloat(this.bottom.toFixed(4)) === parseFloat(rect.bottom.toFixed(4)) && parseFloat(this.left.toFixed(4)) === parseFloat(rect.left.toFixed(4)) && parseFloat(this.right.toFixed(4)) === parseFloat(rect.right.toFixed(4));
-      };
-      return Rectangle2;
-    }()
-  );
-
-  // ../node_modules/@fluentui/utilities/lib/appendFunction.js
-  function appendFunction(parent) {
-    var functions = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-      functions[_i - 1] = arguments[_i];
-    }
-    if (functions.length < 2) {
-      return functions[0];
-    }
-    return function() {
-      var args = [];
-      for (var _i2 = 0; _i2 < arguments.length; _i2++) {
-        args[_i2] = arguments[_i2];
-      }
-      functions.forEach(function(f) {
-        return f && f.apply(parent, args);
-      });
-    };
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/aria.js
-  function mergeAriaAttributeValues() {
-    var ariaAttributes = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-      ariaAttributes[_i] = arguments[_i];
-    }
-    var mergedAttribute = ariaAttributes.filter(function(arg) {
-      return arg;
-    }).join(" ").trim();
-    return mergedAttribute === "" ? void 0 : mergedAttribute;
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/array.js
-  function addElementAtIndex(array, index, itemToAdd) {
-    var copy = array.slice();
-    copy.splice(index, 0, itemToAdd);
-    return copy;
-  }
-  function arraysEqual(array1, array2) {
-    if (array1.length !== array2.length) {
-      return false;
-    }
-    for (var i = 0; i < array1.length; i++) {
-      if (array1[i] !== array2[i]) {
-        return false;
-      }
-    }
-    return true;
   }
 
   // ../node_modules/@fluentui/utilities/lib/sessionStorage.js
@@ -29714,9 +27861,9 @@
     return result;
   }
   function setItem(key, data) {
-    var _a5;
+    var _a2;
     try {
-      (_a5 = getWindow()) === null || _a5 === void 0 ? void 0 : _a5.sessionStorage.setItem(key, data);
+      (_a2 = getWindow()) === null || _a2 === void 0 ? void 0 : _a2.sessionStorage.setItem(key, data);
     } catch (e) {
     }
   }
@@ -29760,403 +27907,6 @@
     setRTL(_isRTL);
   }
 
-  // ../node_modules/@fluentui/dom-utilities/lib/isVirtualElement.js
-  function isVirtualElement(element) {
-    return element && !!element._virtual;
-  }
-
-  // ../node_modules/@fluentui/dom-utilities/lib/getVirtualParent.js
-  function getVirtualParent(child) {
-    var parent;
-    if (child && isVirtualElement(child)) {
-      parent = child._virtual.parent;
-    }
-    return parent;
-  }
-
-  // ../node_modules/@fluentui/dom-utilities/lib/getParent.js
-  function getParent(child, allowVirtualParents) {
-    if (allowVirtualParents === void 0) {
-      allowVirtualParents = true;
-    }
-    return child && (allowVirtualParents && getVirtualParent(child) || child.parentNode && child.parentNode);
-  }
-
-  // ../node_modules/@fluentui/dom-utilities/lib/elementContains.js
-  function elementContains(parent, child, allowVirtualParents) {
-    if (allowVirtualParents === void 0) {
-      allowVirtualParents = true;
-    }
-    var isContained = false;
-    if (parent && child) {
-      if (allowVirtualParents) {
-        if (parent === child) {
-          isContained = true;
-        } else {
-          isContained = false;
-          while (child) {
-            var nextParent = getParent(child);
-            if (nextParent === parent) {
-              isContained = true;
-              break;
-            }
-            child = nextParent;
-          }
-        }
-      } else if (parent.contains) {
-        isContained = parent.contains(child);
-      }
-    }
-    return isContained;
-  }
-
-  // ../node_modules/@fluentui/dom-utilities/lib/findElementRecursive.js
-  function findElementRecursive(element, matchFunction) {
-    if (!element || element === document.body) {
-      return null;
-    }
-    return matchFunction(element) ? element : findElementRecursive(getParent(element), matchFunction);
-  }
-
-  // ../node_modules/@fluentui/dom-utilities/lib/elementContainsAttribute.js
-  function elementContainsAttribute(element, attribute) {
-    var elementMatch = findElementRecursive(element, function(testElement) {
-      return testElement.hasAttribute(attribute);
-    });
-    return elementMatch && elementMatch.getAttribute(attribute);
-  }
-
-  // ../node_modules/@fluentui/dom-utilities/lib/setPortalAttribute.js
-  var DATA_PORTAL_ATTRIBUTE = "data-portal-element";
-  function setPortalAttribute(element) {
-    element.setAttribute(DATA_PORTAL_ATTRIBUTE, "true");
-  }
-
-  // ../node_modules/@fluentui/dom-utilities/lib/portalContainsElement.js
-  function portalContainsElement(target, parent) {
-    var elementMatch = findElementRecursive(target, function(testElement) {
-      return parent === testElement || testElement.hasAttribute(DATA_PORTAL_ATTRIBUTE);
-    });
-    return elementMatch !== null && elementMatch.hasAttribute(DATA_PORTAL_ATTRIBUTE);
-  }
-
-  // ../node_modules/@fluentui/dom-utilities/lib/setVirtualParent.js
-  function setVirtualParent(child, parent) {
-    var virtualChild = child;
-    var virtualParent = parent;
-    if (!virtualChild._virtual) {
-      virtualChild._virtual = {
-        children: []
-      };
-    }
-    var oldParent = virtualChild._virtual.parent;
-    if (oldParent && oldParent !== parent) {
-      var index = oldParent._virtual.children.indexOf(virtualChild);
-      if (index > -1) {
-        oldParent._virtual.children.splice(index, 1);
-      }
-    }
-    virtualChild._virtual.parent = virtualParent || void 0;
-    if (virtualParent) {
-      if (!virtualParent._virtual) {
-        virtualParent._virtual = {
-          children: []
-        };
-      }
-      virtualParent._virtual.children.push(virtualChild);
-    }
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/focus.js
-  var IS_FOCUSABLE_ATTRIBUTE = "data-is-focusable";
-  var IS_VISIBLE_ATTRIBUTE = "data-is-visible";
-  var FOCUSZONE_ID_ATTRIBUTE = "data-focuszone-id";
-  var FOCUSZONE_SUB_ATTRIBUTE = "data-is-sub-focuszone";
-  function getFirstFocusable(rootElement, currentElement, includeElementsInFocusZones) {
-    return getNextElement(rootElement, currentElement, true, false, false, includeElementsInFocusZones);
-  }
-  function getLastFocusable(rootElement, currentElement, includeElementsInFocusZones) {
-    return getPreviousElement(rootElement, currentElement, true, false, true, includeElementsInFocusZones);
-  }
-  function focusFirstChild(rootElement, bypassHiddenElements) {
-    var element = getNextElement(rootElement, rootElement, true, false, false, true, void 0, void 0, bypassHiddenElements);
-    if (element) {
-      focusAsync(element);
-      return true;
-    }
-    return false;
-  }
-  function getPreviousElement(rootElement, currentElement, checkNode, suppressParentTraversal, traverseChildren, includeElementsInFocusZones, allowFocusRoot, tabbable) {
-    if (!currentElement || !allowFocusRoot && currentElement === rootElement) {
-      return null;
-    }
-    var isCurrentElementVisible = isElementVisible(currentElement);
-    if (traverseChildren && isCurrentElementVisible && (includeElementsInFocusZones || !(isElementFocusZone(currentElement) || isElementFocusSubZone(currentElement)))) {
-      var childMatch = getPreviousElement(rootElement, currentElement.lastElementChild, true, true, true, includeElementsInFocusZones, allowFocusRoot, tabbable);
-      if (childMatch) {
-        if (tabbable && isElementTabbable(childMatch, true) || !tabbable) {
-          return childMatch;
-        }
-        var childMatchSiblingMatch = getPreviousElement(rootElement, childMatch.previousElementSibling, true, true, true, includeElementsInFocusZones, allowFocusRoot, tabbable);
-        if (childMatchSiblingMatch) {
-          return childMatchSiblingMatch;
-        }
-        var childMatchParent = childMatch.parentElement;
-        while (childMatchParent && childMatchParent !== currentElement) {
-          var childMatchParentMatch = getPreviousElement(rootElement, childMatchParent.previousElementSibling, true, true, true, includeElementsInFocusZones, allowFocusRoot, tabbable);
-          if (childMatchParentMatch) {
-            return childMatchParentMatch;
-          }
-          childMatchParent = childMatchParent.parentElement;
-        }
-      }
-    }
-    if (checkNode && isCurrentElementVisible && isElementTabbable(currentElement, tabbable)) {
-      return currentElement;
-    }
-    var siblingMatch = getPreviousElement(rootElement, currentElement.previousElementSibling, true, true, true, includeElementsInFocusZones, allowFocusRoot, tabbable);
-    if (siblingMatch) {
-      return siblingMatch;
-    }
-    if (!suppressParentTraversal) {
-      return getPreviousElement(rootElement, currentElement.parentElement, true, false, false, includeElementsInFocusZones, allowFocusRoot, tabbable);
-    }
-    return null;
-  }
-  function getNextElement(rootElement, currentElement, checkNode, suppressParentTraversal, suppressChildTraversal, includeElementsInFocusZones, allowFocusRoot, tabbable, bypassHiddenElements) {
-    if (!currentElement || currentElement === rootElement && suppressChildTraversal && !allowFocusRoot) {
-      return null;
-    }
-    var checkElementVisibility = bypassHiddenElements ? isElementVisibleAndNotHidden : isElementVisible;
-    var isCurrentElementVisible = checkElementVisibility(currentElement);
-    if (checkNode && isCurrentElementVisible && isElementTabbable(currentElement, tabbable)) {
-      return currentElement;
-    }
-    if (!suppressChildTraversal && isCurrentElementVisible && (includeElementsInFocusZones || !(isElementFocusZone(currentElement) || isElementFocusSubZone(currentElement)))) {
-      var childMatch = getNextElement(rootElement, currentElement.firstElementChild, true, true, false, includeElementsInFocusZones, allowFocusRoot, tabbable, bypassHiddenElements);
-      if (childMatch) {
-        return childMatch;
-      }
-    }
-    if (currentElement === rootElement) {
-      return null;
-    }
-    var siblingMatch = getNextElement(rootElement, currentElement.nextElementSibling, true, true, false, includeElementsInFocusZones, allowFocusRoot, tabbable, bypassHiddenElements);
-    if (siblingMatch) {
-      return siblingMatch;
-    }
-    if (!suppressParentTraversal) {
-      return getNextElement(rootElement, currentElement.parentElement, false, false, true, includeElementsInFocusZones, allowFocusRoot, tabbable, bypassHiddenElements);
-    }
-    return null;
-  }
-  function isElementVisible(element) {
-    if (!element || !element.getAttribute) {
-      return false;
-    }
-    var visibilityAttribute = element.getAttribute(IS_VISIBLE_ATTRIBUTE);
-    if (visibilityAttribute !== null && visibilityAttribute !== void 0) {
-      return visibilityAttribute === "true";
-    }
-    return element.offsetHeight !== 0 || element.offsetParent !== null || // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    element.isVisible === true;
-  }
-  function isElementVisibleAndNotHidden(element) {
-    return !!element && isElementVisible(element) && !element.hidden && window.getComputedStyle(element).visibility !== "hidden";
-  }
-  function isElementTabbable(element, checkTabIndex) {
-    if (!element || element.disabled) {
-      return false;
-    }
-    var tabIndex = 0;
-    var tabIndexAttributeValue = null;
-    if (element && element.getAttribute) {
-      tabIndexAttributeValue = element.getAttribute("tabIndex");
-      if (tabIndexAttributeValue) {
-        tabIndex = parseInt(tabIndexAttributeValue, 10);
-      }
-    }
-    var isFocusableAttribute = element.getAttribute ? element.getAttribute(IS_FOCUSABLE_ATTRIBUTE) : null;
-    var isTabIndexSet = tabIndexAttributeValue !== null && tabIndex >= 0;
-    var result = !!element && isFocusableAttribute !== "false" && (element.tagName === "A" || element.tagName === "BUTTON" || element.tagName === "INPUT" || element.tagName === "TEXTAREA" || element.tagName === "SELECT" || isFocusableAttribute === "true" || isTabIndexSet);
-    return checkTabIndex ? tabIndex !== -1 && result : result;
-  }
-  function isElementFocusZone(element) {
-    return !!(element && element.getAttribute && !!element.getAttribute(FOCUSZONE_ID_ATTRIBUTE));
-  }
-  function isElementFocusSubZone(element) {
-    return !!(element && element.getAttribute && element.getAttribute(FOCUSZONE_SUB_ATTRIBUTE) === "true");
-  }
-  function doesElementContainFocus(element) {
-    var document2 = getDocument(element);
-    var currentActiveElement = document2 && document2.activeElement;
-    if (currentActiveElement && elementContains(element, currentActiveElement)) {
-      return true;
-    }
-    return false;
-  }
-  function shouldWrapFocus(element, noWrapDataAttribute) {
-    return elementContainsAttribute(element, noWrapDataAttribute) === "true" ? false : true;
-  }
-  var targetToFocusOnNextRepaint = void 0;
-  function focusAsync(element) {
-    if (element) {
-      if (targetToFocusOnNextRepaint) {
-        targetToFocusOnNextRepaint = element;
-        return;
-      }
-      targetToFocusOnNextRepaint = element;
-      var win = getWindow(element);
-      if (win) {
-        win.requestAnimationFrame(function() {
-          targetToFocusOnNextRepaint && targetToFocusOnNextRepaint.focus();
-          targetToFocusOnNextRepaint = void 0;
-        });
-      }
-    }
-  }
-  function getFocusableByIndexPath(parent, path) {
-    var element = parent;
-    for (var _i = 0, path_1 = path; _i < path_1.length; _i++) {
-      var index = path_1[_i];
-      var nextChild = element.children[Math.min(index, element.children.length - 1)];
-      if (!nextChild) {
-        break;
-      }
-      element = nextChild;
-    }
-    element = isElementTabbable(element) && isElementVisible(element) ? element : getNextElement(parent, element, true) || getPreviousElement(parent, element);
-    return element;
-  }
-  function getElementIndexPath(fromElement, toElement) {
-    var path = [];
-    while (toElement && fromElement && toElement !== fromElement) {
-      var parent_1 = getParent(toElement, true);
-      if (parent_1 === null) {
-        return [];
-      }
-      path.unshift(Array.prototype.indexOf.call(parent_1.children, toElement));
-      toElement = parent_1;
-    }
-    return path;
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/dom/on.js
-  function on(element, eventName, callback, options) {
-    element.addEventListener(eventName, callback, options);
-    return function() {
-      return element.removeEventListener(eventName, callback, options);
-    };
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/classNamesFunction.js
-  var MAX_CACHE_COUNT = 50;
-  var DEFAULT_SPECIFICITY_MULTIPLIER = 5;
-  var _memoizedClassNames = 0;
-  var stylesheet = Stylesheet.getInstance();
-  if (stylesheet && stylesheet.onReset) {
-    stylesheet.onReset(function() {
-      return _memoizedClassNames++;
-    });
-  }
-  var retVal = "__retval__";
-  function classNamesFunction(options) {
-    if (options === void 0) {
-      options = {};
-    }
-    var map = /* @__PURE__ */ new Map();
-    var styleCalcCount = 0;
-    var getClassNamesCount = 0;
-    var currentMemoizedClassNames = _memoizedClassNames;
-    var getClassNames10 = function(styleFunctionOrObject, styleProps) {
-      var _a5;
-      if (styleProps === void 0) {
-        styleProps = {};
-      }
-      if (options.useStaticStyles && typeof styleFunctionOrObject === "function" && styleFunctionOrObject.__noStyleOverride__) {
-        return styleFunctionOrObject(styleProps);
-      }
-      getClassNamesCount++;
-      var current = map;
-      var theme = styleProps.theme;
-      var rtl = theme && theme.rtl !== void 0 ? theme.rtl : getRTL2();
-      var disableCaching = options.disableCaching;
-      if (currentMemoizedClassNames !== _memoizedClassNames) {
-        currentMemoizedClassNames = _memoizedClassNames;
-        map = /* @__PURE__ */ new Map();
-        styleCalcCount = 0;
-      }
-      if (!options.disableCaching) {
-        current = _traverseMap(map, styleFunctionOrObject);
-        current = _traverseMap(current, styleProps);
-      }
-      if (disableCaching || !current[retVal]) {
-        if (styleFunctionOrObject === void 0) {
-          current[retVal] = {};
-        } else {
-          current[retVal] = mergeCssSets([
-            typeof styleFunctionOrObject === "function" ? styleFunctionOrObject(styleProps) : styleFunctionOrObject
-          ], { rtl: !!rtl, specificityMultiplier: options.useStaticStyles ? DEFAULT_SPECIFICITY_MULTIPLIER : void 0 });
-        }
-        if (!disableCaching) {
-          styleCalcCount++;
-        }
-      }
-      if (styleCalcCount > (options.cacheSize || MAX_CACHE_COUNT)) {
-        var win = getWindow();
-        if ((_a5 = win === null || win === void 0 ? void 0 : win.FabricConfig) === null || _a5 === void 0 ? void 0 : _a5.enableClassNameCacheFullWarning) {
-          console.warn("Styles are being recalculated too frequently. Cache miss rate is ".concat(styleCalcCount, "/").concat(getClassNamesCount, "."));
-          console.trace();
-        }
-        map.clear();
-        styleCalcCount = 0;
-        options.disableCaching = true;
-      }
-      return current[retVal];
-    };
-    return getClassNames10;
-  }
-  function _traverseEdge(current, value) {
-    value = _normalizeValue(value);
-    if (!current.has(value)) {
-      current.set(value, /* @__PURE__ */ new Map());
-    }
-    return current.get(value);
-  }
-  function _traverseMap(current, inputs) {
-    if (typeof inputs === "function") {
-      var cachedInputsFromStyled = inputs.__cachedInputs__;
-      if (cachedInputsFromStyled) {
-        for (var _i = 0, _a5 = inputs.__cachedInputs__; _i < _a5.length; _i++) {
-          var input = _a5[_i];
-          current = _traverseEdge(current, input);
-        }
-      } else {
-        current = _traverseEdge(current, inputs);
-      }
-    } else if (typeof inputs === "object") {
-      for (var propName in inputs) {
-        if (inputs.hasOwnProperty(propName)) {
-          current = _traverseEdge(current, inputs[propName]);
-        }
-      }
-    }
-    return current;
-  }
-  function _normalizeValue(value) {
-    switch (value) {
-      case void 0:
-        return "__undefined__";
-      case null:
-        return "__null__";
-      default:
-        return value;
-    }
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/componentAs/composeComponentAs.js
-  var React3 = __toESM(require_react());
-
   // ../node_modules/@fluentui/utilities/lib/memoize.js
   var _initializedStylesheetResets = false;
   var _resetCounter = 0;
@@ -30177,8 +27927,8 @@
       return cb;
     }
     if (!_initializedStylesheetResets) {
-      var stylesheet3 = Stylesheet.getInstance();
-      if (stylesheet3 && stylesheet3.onReset) {
+      var stylesheet = Stylesheet.getInstance();
+      if (stylesheet && stylesheet.onReset) {
         Stylesheet.getInstance().onReset(resetMemoizations);
       }
       _initializedStylesheetResets = true;
@@ -30215,24 +27965,6 @@
       return currentNode.value;
     };
   }
-  function createMemoizer(getValue) {
-    if (!_weakMap) {
-      return getValue;
-    }
-    var cache = new _weakMap();
-    function memoizedGetValue(input) {
-      if (!input || typeof input !== "function" && typeof input !== "object") {
-        return getValue(input);
-      }
-      if (cache.has(input)) {
-        return cache.get(input);
-      }
-      var value = getValue(input);
-      cache.set(input, value);
-      return value;
-    }
-    return memoizedGetValue;
-  }
   function _normalizeArg(val) {
     if (!val) {
       return _emptyObject;
@@ -30249,38 +27981,6 @@
     };
   }
 
-  // ../node_modules/@fluentui/utilities/lib/componentAs/composeComponentAs.js
-  function createComposedComponent(outer) {
-    var Outer = outer;
-    var outerMemoizer = createMemoizer(function(inner) {
-      if (outer === inner) {
-        throw new Error("Attempted to compose a component with itself.");
-      }
-      var Inner = inner;
-      var innerMemoizer = createMemoizer(function(defaultRender) {
-        var InnerWithDefaultRender = function(innerProps) {
-          return React3.createElement(Inner, __assign({}, innerProps, { defaultRender }));
-        };
-        return InnerWithDefaultRender;
-      });
-      var OuterWithDefaultRender = function(outerProps) {
-        var defaultRender = outerProps.defaultRender;
-        return React3.createElement(Outer, __assign({}, outerProps, { defaultRender: defaultRender ? innerMemoizer(defaultRender) : Inner }));
-      };
-      return OuterWithDefaultRender;
-    });
-    return outerMemoizer;
-  }
-  var componentAsMemoizer = createMemoizer(createComposedComponent);
-  function composeComponentAs(outer, inner) {
-    return componentAsMemoizer(outer)(inner);
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/controlled.js
-  function isControlled(props, valueProp) {
-    return props[valueProp] !== void 0 && props[valueProp] !== null;
-  }
-
   // ../node_modules/@fluentui/utilities/lib/css.js
   function css() {
     var args = [];
@@ -30288,8 +27988,8 @@
       args[_i] = arguments[_i];
     }
     var classes = [];
-    for (var _a5 = 0, args_1 = args; _a5 < args_1.length; _a5++) {
-      var arg = args_1[_a5];
+    for (var _a2 = 0, args_1 = args; _a2 < args_1.length; _a2++) {
+      var arg = args_1[_a2];
       if (arg) {
         if (typeof arg === "string") {
           classes.push(arg);
@@ -30350,7 +28050,7 @@
         Customizations2._suppressUpdates = true;
         try {
           code();
-        } catch (_a5) {
+        } catch (_a2) {
         }
         Customizations2._suppressUpdates = false;
         if (!suppressUpdate) {
@@ -30376,224 +28076,15 @@
     }()
   );
 
-  // ../node_modules/@fluentui/utilities/lib/customizations/Customizer.js
-  var React5 = __toESM(require_react());
-
   // ../node_modules/@fluentui/utilities/lib/customizations/CustomizerContext.js
-  var React4 = __toESM(require_react());
-  var CustomizerContext = React4.createContext({
+  var React = __toESM(require_react());
+  var CustomizerContext = React.createContext({
     customizations: {
       inCustomizerContext: false,
       settings: {},
       scopedSettings: {}
     }
   });
-
-  // ../node_modules/@fluentui/utilities/lib/customizations/mergeSettings.js
-  function mergeSettings(oldSettings, newSettings) {
-    if (oldSettings === void 0) {
-      oldSettings = {};
-    }
-    var mergeSettingsWith = _isSettingsFunction(newSettings) ? newSettings : _settingsMergeWith(newSettings);
-    return mergeSettingsWith(oldSettings);
-  }
-  function mergeScopedSettings(oldSettings, newSettings) {
-    if (oldSettings === void 0) {
-      oldSettings = {};
-    }
-    var mergeSettingsWith = _isSettingsFunction(newSettings) ? newSettings : _scopedSettingsMergeWith(newSettings);
-    return mergeSettingsWith(oldSettings);
-  }
-  function _isSettingsFunction(settings) {
-    return typeof settings === "function";
-  }
-  function _settingsMergeWith(newSettings) {
-    return function(settings) {
-      return newSettings ? __assign(__assign({}, settings), newSettings) : settings;
-    };
-  }
-  function _scopedSettingsMergeWith(scopedSettingsFromProps) {
-    if (scopedSettingsFromProps === void 0) {
-      scopedSettingsFromProps = {};
-    }
-    return function(oldScopedSettings) {
-      var newScopedSettings = __assign({}, oldScopedSettings);
-      for (var scopeName in scopedSettingsFromProps) {
-        if (scopedSettingsFromProps.hasOwnProperty(scopeName)) {
-          newScopedSettings[scopeName] = __assign(__assign({}, oldScopedSettings[scopeName]), scopedSettingsFromProps[scopeName]);
-        }
-      }
-      return newScopedSettings;
-    };
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/customizations/mergeCustomizations.js
-  function mergeCustomizations(props, parentContext) {
-    var _a5 = (parentContext || {}).customizations, customizations = _a5 === void 0 ? { settings: {}, scopedSettings: {} } : _a5;
-    return {
-      customizations: {
-        settings: mergeSettings(customizations.settings, props.settings),
-        scopedSettings: mergeScopedSettings(customizations.scopedSettings, props.scopedSettings),
-        inCustomizerContext: true
-      }
-    };
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/customizations/Customizer.js
-  var Customizer = (
-    /** @class */
-    function(_super) {
-      __extends(Customizer2, _super);
-      function Customizer2() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this._onCustomizationChange = function() {
-          return _this.forceUpdate();
-        };
-        return _this;
-      }
-      Customizer2.prototype.componentDidMount = function() {
-        Customizations.observe(this._onCustomizationChange);
-      };
-      Customizer2.prototype.componentWillUnmount = function() {
-        Customizations.unobserve(this._onCustomizationChange);
-      };
-      Customizer2.prototype.render = function() {
-        var _this = this;
-        var contextTransform = this.props.contextTransform;
-        return React5.createElement(CustomizerContext.Consumer, null, function(parentContext) {
-          var newContext = mergeCustomizations(_this.props, parentContext);
-          if (contextTransform) {
-            newContext = contextTransform(newContext);
-          }
-          return React5.createElement(CustomizerContext.Provider, { value: newContext }, _this.props.children);
-        });
-      };
-      return Customizer2;
-    }(React5.Component)
-  );
-
-  // ../node_modules/@fluentui/utilities/lib/customizations/customizable.js
-  var React6 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/utilities/lib/hoistStatics.js
-  function hoistStatics(source, dest) {
-    for (var name_1 in source) {
-      if (source.hasOwnProperty(name_1)) {
-        dest[name_1] = source[name_1];
-      }
-    }
-    return dest;
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/customizations/customizable.js
-  function customizable(scope, fields, concatStyles) {
-    return function customizableFactory(ComposedComponent) {
-      var _a5;
-      var resultClass = (_a5 = /** @class */
-      function(_super) {
-        __extends(ComponentWithInjectedProps, _super);
-        function ComponentWithInjectedProps(props) {
-          var _this = _super.call(this, props) || this;
-          _this._styleCache = {};
-          _this._onSettingChanged = _this._onSettingChanged.bind(_this);
-          return _this;
-        }
-        ComponentWithInjectedProps.prototype.componentDidMount = function() {
-          Customizations.observe(this._onSettingChanged);
-        };
-        ComponentWithInjectedProps.prototype.componentWillUnmount = function() {
-          Customizations.unobserve(this._onSettingChanged);
-        };
-        ComponentWithInjectedProps.prototype.render = function() {
-          var _this = this;
-          return React6.createElement(CustomizerContext.Consumer, null, function(context) {
-            var defaultProps = Customizations.getSettings(fields, scope, context.customizations);
-            var componentProps = _this.props;
-            if (defaultProps.styles && typeof defaultProps.styles === "function") {
-              defaultProps.styles = defaultProps.styles(__assign(__assign({}, defaultProps), componentProps));
-            }
-            if (concatStyles && defaultProps.styles) {
-              if (_this._styleCache.default !== defaultProps.styles || _this._styleCache.component !== componentProps.styles) {
-                var mergedStyles = concatStyleSets(defaultProps.styles, componentProps.styles);
-                _this._styleCache.default = defaultProps.styles;
-                _this._styleCache.component = componentProps.styles;
-                _this._styleCache.merged = mergedStyles;
-              }
-              return React6.createElement(ComposedComponent, __assign({}, defaultProps, componentProps, { styles: _this._styleCache.merged }));
-            }
-            return React6.createElement(ComposedComponent, __assign({}, defaultProps, componentProps));
-          });
-        };
-        ComponentWithInjectedProps.prototype._onSettingChanged = function() {
-          this.forceUpdate();
-        };
-        return ComponentWithInjectedProps;
-      }(React6.Component), _a5.displayName = "Customized" + scope, _a5);
-      return hoistStatics(ComposedComponent, resultClass);
-    };
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/customizations/useCustomizationSettings.js
-  var React7 = __toESM(require_react());
-  function useCustomizationSettings(properties, scopeName) {
-    var forceUpdate = useForceUpdate();
-    var customizations = React7.useContext(CustomizerContext).customizations;
-    var inCustomizerContext = customizations.inCustomizerContext;
-    React7.useEffect(function() {
-      if (!inCustomizerContext) {
-        Customizations.observe(forceUpdate);
-      }
-      return function() {
-        if (!inCustomizerContext) {
-          Customizations.unobserve(forceUpdate);
-        }
-      };
-    }, [inCustomizerContext]);
-    return Customizations.getSettings(properties, scopeName, customizations);
-  }
-  function useForceUpdate() {
-    var _a5 = React7.useState(0), setValue = _a5[1];
-    return function() {
-      return setValue(function(value) {
-        return ++value;
-      });
-    };
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/extendComponent.js
-  function extendComponent(parent, methods) {
-    for (var name_1 in methods) {
-      if (methods.hasOwnProperty(name_1)) {
-        parent[name_1] = appendFunction(parent, parent[name_1], methods[name_1]);
-      }
-    }
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/getId.js
-  var CURRENT_ID_PROPERTY = "__currentId__";
-  var DEFAULT_ID_STRING = "id__";
-  var _global2 = getWindow() || {};
-  if (_global2[CURRENT_ID_PROPERTY] === void 0) {
-    _global2[CURRENT_ID_PROPERTY] = 0;
-  }
-  var _initializedStylesheetResets2 = false;
-  function getId(prefix) {
-    if (!_initializedStylesheetResets2) {
-      var stylesheet3 = Stylesheet.getInstance();
-      if (stylesheet3 && stylesheet3.onReset) {
-        stylesheet3.onReset(resetIds);
-      }
-      _initializedStylesheetResets2 = true;
-    }
-    var index = _global2[CURRENT_ID_PROPERTY]++;
-    return (prefix === void 0 ? DEFAULT_ID_STRING : prefix) + index;
-  }
-  function resetIds(counter) {
-    if (counter === void 0) {
-      counter = 0;
-    }
-    _global2[CURRENT_ID_PROPERTY] = counter;
-  }
 
   // ../node_modules/@fluentui/utilities/lib/properties.js
   var toObjectMap = function() {
@@ -30602,8 +28093,8 @@
       items[_i] = arguments[_i];
     }
     var result = {};
-    for (var _a5 = 0, items_1 = items; _a5 < items_1.length; _a5++) {
-      var item = items_1[_a5];
+    for (var _a2 = 0, items_1 = items; _a2 < items_1.length; _a2++) {
+      var item = items_1[_a2];
       var keys = Array.isArray(item) ? item : Object.keys(item);
       for (var _b = 0, keys_1 = keys; _b < keys_1.length; _b++) {
         var key = keys_1[_b];
@@ -30876,7 +28367,6 @@
     "width"
     // canvas, embed, iframe, img, input, object, video
   ]);
-  var divProperties = htmlElementProperties;
   function getNativeProps(props, allowedPropNames, excludedPropNames) {
     var isArray = Array.isArray(allowedPropNames);
     var result = {};
@@ -30890,215 +28380,6 @@
     }
     return result;
   }
-
-  // ../node_modules/@fluentui/utilities/lib/initializeComponentRef.js
-  function initializeComponentRef(obj) {
-    extendComponent(obj, {
-      componentDidMount: _onMount,
-      componentDidUpdate: _onUpdate,
-      componentWillUnmount: _onUnmount
-    });
-  }
-  function _onMount() {
-    _setComponentRef(this.props.componentRef, this);
-  }
-  function _onUpdate(prevProps) {
-    if (prevProps.componentRef !== this.props.componentRef) {
-      _setComponentRef(prevProps.componentRef, null);
-      _setComponentRef(this.props.componentRef, this);
-    }
-  }
-  function _onUnmount() {
-    _setComponentRef(this.props.componentRef, null);
-  }
-  function _setComponentRef(componentRef, value) {
-    if (componentRef) {
-      if (typeof componentRef === "object") {
-        componentRef.current = value;
-      } else if (typeof componentRef === "function") {
-        componentRef(value);
-      }
-    }
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/keyboard.js
-  var _a2;
-  var DirectionalKeyCodes = (_a2 = {}, _a2[KeyCodes.up] = 1, _a2[KeyCodes.down] = 1, _a2[KeyCodes.left] = 1, _a2[KeyCodes.right] = 1, _a2[KeyCodes.home] = 1, _a2[KeyCodes.end] = 1, _a2[KeyCodes.tab] = 1, _a2[KeyCodes.pageUp] = 1, _a2[KeyCodes.pageDown] = 1, _a2);
-  function isDirectionalKeyCode(which) {
-    return !!DirectionalKeyCodes[which];
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/setFocusVisibility.js
-  var IsFocusVisibleClassName = "ms-Fabric--isFocusVisible";
-  var IsFocusHiddenClassName = "ms-Fabric--isFocusHidden";
-  function updateClassList(el, enabled) {
-    if (el) {
-      el.classList.add(enabled ? IsFocusVisibleClassName : IsFocusHiddenClassName);
-      el.classList.remove(enabled ? IsFocusHiddenClassName : IsFocusVisibleClassName);
-    }
-  }
-  function setFocusVisibility(enabled, target, registeredProviders) {
-    var _a5;
-    if (registeredProviders) {
-      registeredProviders.forEach(function(ref) {
-        return updateClassList(ref.current, enabled);
-      });
-    } else {
-      updateClassList((_a5 = getWindow(target)) === null || _a5 === void 0 ? void 0 : _a5.document.body, enabled);
-    }
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/FocusRectsProvider.js
-  var React9 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/utilities/lib/useFocusRects.js
-  var React8 = __toESM(require_react());
-  var mountCounters = /* @__PURE__ */ new WeakMap();
-  var callbackMap = /* @__PURE__ */ new WeakMap();
-  function setMountCounters(key, delta) {
-    var newValue;
-    var currValue = mountCounters.get(key);
-    if (currValue) {
-      newValue = currValue + delta;
-    } else {
-      newValue = 1;
-    }
-    mountCounters.set(key, newValue);
-    return newValue;
-  }
-  function setCallbackMap(context) {
-    var callbacks = callbackMap.get(context);
-    if (callbacks) {
-      return callbacks;
-    }
-    var onMouseDown = function(ev) {
-      return _onMouseDown(ev, context.registeredProviders);
-    };
-    var onPointerDown = function(ev) {
-      return _onPointerDown(ev, context.registeredProviders);
-    };
-    var onKeyDown = function(ev) {
-      return _onKeyDown(ev, context.registeredProviders);
-    };
-    var onKeyUp = function(ev) {
-      return _onKeyUp(ev, context.registeredProviders);
-    };
-    callbacks = { onMouseDown, onPointerDown, onKeyDown, onKeyUp };
-    callbackMap.set(context, callbacks);
-    return callbacks;
-  }
-  var FocusRectsContext = React8.createContext(void 0);
-  function useFocusRects(rootRef) {
-    var context = React8.useContext(FocusRectsContext);
-    React8.useEffect(function() {
-      var _a5, _b, _c, _d;
-      var win = getWindow(rootRef === null || rootRef === void 0 ? void 0 : rootRef.current);
-      if (!win || ((_a5 = win.FabricConfig) === null || _a5 === void 0 ? void 0 : _a5.disableFocusRects) === true) {
-        return void 0;
-      }
-      var el = win;
-      var onMouseDown;
-      var onPointerDown;
-      var onKeyDown;
-      var onKeyUp;
-      if (((_b = context === null || context === void 0 ? void 0 : context.providerRef) === null || _b === void 0 ? void 0 : _b.current) && ((_d = (_c = context === null || context === void 0 ? void 0 : context.providerRef) === null || _c === void 0 ? void 0 : _c.current) === null || _d === void 0 ? void 0 : _d.addEventListener)) {
-        el = context.providerRef.current;
-        var callbacks = (
-          /*@__NOINLINE__*/
-          setCallbackMap(context)
-        );
-        onMouseDown = callbacks.onMouseDown;
-        onPointerDown = callbacks.onPointerDown;
-        onKeyDown = callbacks.onKeyDown;
-        onKeyUp = callbacks.onKeyUp;
-      } else {
-        onMouseDown = _onMouseDown;
-        onPointerDown = _onPointerDown;
-        onKeyDown = _onKeyDown;
-        onKeyUp = _onKeyUp;
-      }
-      var count = setMountCounters(el, 1);
-      if (count <= 1) {
-        el.addEventListener("mousedown", onMouseDown, true);
-        el.addEventListener("pointerdown", onPointerDown, true);
-        el.addEventListener("keydown", onKeyDown, true);
-        el.addEventListener("keyup", onKeyUp, true);
-      }
-      return function() {
-        var _a6;
-        if (!win || ((_a6 = win.FabricConfig) === null || _a6 === void 0 ? void 0 : _a6.disableFocusRects) === true) {
-          return;
-        }
-        count = setMountCounters(el, -1);
-        if (count === 0) {
-          el.removeEventListener("mousedown", onMouseDown, true);
-          el.removeEventListener("pointerdown", onPointerDown, true);
-          el.removeEventListener("keydown", onKeyDown, true);
-          el.removeEventListener("keyup", onKeyUp, true);
-        }
-      };
-    }, [context, rootRef]);
-  }
-  var FocusRects = function(props) {
-    useFocusRects(props.rootRef);
-    return null;
-  };
-  function _onMouseDown(ev, registeredProviders) {
-    setFocusVisibility(false, ev.target, registeredProviders);
-  }
-  function _onPointerDown(ev, registeredProviders) {
-    if (ev.pointerType !== "mouse") {
-      setFocusVisibility(false, ev.target, registeredProviders);
-    }
-  }
-  function _onKeyDown(ev, registeredProviders) {
-    if (isDirectionalKeyCode(ev.which)) {
-      setFocusVisibility(true, ev.target, registeredProviders);
-    }
-  }
-  function _onKeyUp(ev, registeredProviders) {
-    if (isDirectionalKeyCode(ev.which)) {
-      setFocusVisibility(true, ev.target, registeredProviders);
-    }
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/FocusRectsProvider.js
-  var FocusRectsProvider = function(props) {
-    var providerRef = props.providerRef, layerRoot = props.layerRoot;
-    var registeredProviders = React9.useState([])[0];
-    var parentContext = React9.useContext(FocusRectsContext);
-    var inheritParentContext = parentContext !== void 0 && !layerRoot;
-    var context = React9.useMemo(function() {
-      return inheritParentContext ? void 0 : {
-        providerRef,
-        registeredProviders,
-        registerProvider: function(ref) {
-          registeredProviders.push(ref);
-          parentContext === null || parentContext === void 0 ? void 0 : parentContext.registerProvider(ref);
-        },
-        unregisterProvider: function(ref) {
-          parentContext === null || parentContext === void 0 ? void 0 : parentContext.unregisterProvider(ref);
-          var i = registeredProviders.indexOf(ref);
-          if (i >= 0) {
-            registeredProviders.splice(i, 1);
-          }
-        }
-      };
-    }, [providerRef, registeredProviders, parentContext, inheritParentContext]);
-    React9.useEffect(function() {
-      if (context) {
-        context.registerProvider(context.providerRef);
-        return function() {
-          return context.unregisterProvider(context.providerRef);
-        };
-      }
-    }, [context]);
-    if (context) {
-      return React9.createElement(FocusRectsContext.Provider, { value: context }, props.children);
-    } else {
-      return React9.createElement(React9.Fragment, null, props.children);
-    }
-  };
 
   // ../node_modules/@fluentui/utilities/lib/localStorage.js
   function getItem2(key) {
@@ -31140,8 +28421,8 @@
     for (var _i = 1; _i < arguments.length; _i++) {
       args[_i - 1] = arguments[_i];
     }
-    for (var _a5 = 0, args_1 = args; _a5 < args_1.length; _a5++) {
-      var arg = args_1[_a5];
+    for (var _a2 = 0, args_1 = args; _a2 < args_1.length; _a2++) {
+      var arg = args_1[_a2];
       _merge(target || {}, arg);
     }
     return target;
@@ -31168,271 +28449,8 @@
     return target;
   }
 
-  // ../node_modules/@fluentui/utilities/lib/mobileDetector.js
-  var isIOS = function() {
-    if (!window || !window.navigator || !window.navigator.userAgent) {
-      return false;
-    }
-    return /iPad|iPhone|iPod/i.test(window.navigator.userAgent);
-  };
-
-  // ../node_modules/@fluentui/utilities/lib/modalize.js
-  var tagsToIgnore = ["TEMPLATE", "STYLE", "SCRIPT"];
-  function modalize(target) {
-    var targetDocument = getDocument(target);
-    if (!targetDocument) {
-      return function() {
-        return void 0;
-      };
-    }
-    var affectedNodes = [];
-    while (target !== targetDocument.body && target.parentElement) {
-      for (var _i = 0, _a5 = target.parentElement.children; _i < _a5.length; _i++) {
-        var sibling = _a5[_i];
-        var ariaHidden = sibling.getAttribute("aria-hidden");
-        if (sibling !== target && (ariaHidden === null || ariaHidden === void 0 ? void 0 : ariaHidden.toLowerCase()) !== "true" && tagsToIgnore.indexOf(sibling.tagName) === -1) {
-          affectedNodes.push([sibling, ariaHidden]);
-        }
-      }
-      target = target.parentElement;
-    }
-    affectedNodes.forEach(function(_a6) {
-      var node = _a6[0];
-      node.setAttribute("aria-hidden", "true");
-    });
-    return function() {
-      unmodalize(affectedNodes);
-      affectedNodes = [];
-    };
-  }
-  function unmodalize(affectedNodes) {
-    affectedNodes.forEach(function(_a5) {
-      var node = _a5[0], originalValue = _a5[1];
-      if (originalValue) {
-        node.setAttribute("aria-hidden", originalValue);
-      } else {
-        node.removeAttribute("aria-hidden");
-      }
-    });
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/osDetector.js
-  var isMacResult;
-  function isMac(reset) {
-    var _a5;
-    if (typeof isMacResult === "undefined" || reset) {
-      var win = getWindow();
-      var userAgent = (_a5 = win === null || win === void 0 ? void 0 : win.navigator) === null || _a5 === void 0 ? void 0 : _a5.userAgent;
-      isMacResult = !!userAgent && userAgent.indexOf("Macintosh") !== -1;
-    }
-    return !!isMacResult;
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/renderFunction/composeRenderFunction.js
-  function createComposedRenderFunction(outer) {
-    var outerMemoizer = createMemoizer(function(inner) {
-      var innerMemoizer = createMemoizer(function(defaultRender) {
-        return function(innerProps) {
-          return inner(innerProps, defaultRender);
-        };
-      });
-      return function(outerProps, defaultRender) {
-        return outer(outerProps, defaultRender ? innerMemoizer(defaultRender) : inner);
-      };
-    });
-    return outerMemoizer;
-  }
-  var memoizer = createMemoizer(createComposedRenderFunction);
-  function composeRenderFunction(outer, inner) {
-    return memoizer(outer)(inner);
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/styled.js
-  var React10 = __toESM(require_react());
-  var DefaultFields = ["theme", "styles"];
-  function styled(Component14, baseStyles, getProps, customizable2, pure) {
-    customizable2 = customizable2 || { scope: "", fields: void 0 };
-    var scope = customizable2.scope, _a5 = customizable2.fields, fields = _a5 === void 0 ? DefaultFields : _a5;
-    var Wrapped = React10.forwardRef(function(props, forwardedRef) {
-      var styles2 = React10.useRef();
-      var settings = useCustomizationSettings(fields, scope);
-      var customizedStyles = settings.styles, dir = settings.dir, rest = __rest(settings, ["styles", "dir"]);
-      var additionalProps = getProps ? getProps(props) : void 0;
-      var cache = styles2.current && styles2.current.__cachedInputs__ || [];
-      var propStyles = props.styles;
-      if (!styles2.current || customizedStyles !== cache[1] || propStyles !== cache[2]) {
-        var concatenatedStyles = function(styleProps) {
-          return concatStyleSetsWithProps(styleProps, baseStyles, customizedStyles, propStyles);
-        };
-        concatenatedStyles.__cachedInputs__ = [
-          baseStyles,
-          customizedStyles,
-          propStyles
-        ];
-        concatenatedStyles.__noStyleOverride__ = !customizedStyles && !propStyles;
-        styles2.current = concatenatedStyles;
-      }
-      return React10.createElement(Component14, __assign({ ref: forwardedRef }, rest, additionalProps, props, { styles: styles2.current }));
-    });
-    Wrapped.displayName = "Styled".concat(Component14.displayName || Component14.name);
-    var pureComponent = pure ? React10.memo(Wrapped) : Wrapped;
-    if (Wrapped.displayName) {
-      pureComponent.displayName = Wrapped.displayName;
-    }
-    return pureComponent;
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/warn/warnControlledUsage.js
-  var warningsMap;
-  if (true) {
-    warningsMap = {
-      valueOnChange: {},
-      valueDefaultValue: {},
-      controlledToUncontrolled: {},
-      uncontrolledToControlled: {}
-    };
-  }
-  function warnControlledUsage(params) {
-    if (true) {
-      var componentId = params.componentId, componentName = params.componentName, defaultValueProp = params.defaultValueProp, props = params.props, oldProps = params.oldProps, onChangeProp = params.onChangeProp, readOnlyProp = params.readOnlyProp, valueProp = params.valueProp;
-      var oldIsControlled = oldProps ? isControlled(oldProps, valueProp) : void 0;
-      var newIsControlled = isControlled(props, valueProp);
-      if (newIsControlled) {
-        var hasOnChange = !!props[onChangeProp];
-        var isReadOnly = !!(readOnlyProp && props[readOnlyProp]);
-        if (!(hasOnChange || isReadOnly) && !warningsMap.valueOnChange[componentId]) {
-          warningsMap.valueOnChange[componentId] = true;
-          warn("Warning: You provided a '".concat(String(valueProp), "' prop to a ").concat(String(componentName), " without an '").concat(String(onChangeProp), "' handler. ") + "This will render a read-only field. If the field should be mutable use '".concat(String(defaultValueProp), "'. ") + "Otherwise, set '".concat(String(onChangeProp), "'").concat(readOnlyProp ? " or '".concat(String(readOnlyProp), "'") : "", "."));
-        }
-        var defaultValue = props[defaultValueProp];
-        if (defaultValue !== void 0 && defaultValue !== null && !warningsMap.valueDefaultValue[componentId]) {
-          warningsMap.valueDefaultValue[componentId] = true;
-          warn("Warning: You provided both '".concat(String(valueProp), "' and '").concat(String(defaultValueProp), "' to a ").concat(componentName, ". ") + "Form fields must be either controlled or uncontrolled (specify either the '".concat(String(valueProp), "' prop, ") + "or the '".concat(String(defaultValueProp), "' prop, but not both). Decide between using a controlled or uncontrolled ") + "".concat(componentName, " and remove one of these props. More info: https://fb.me/react-controlled-components"));
-        }
-      }
-      if (oldProps && newIsControlled !== oldIsControlled) {
-        var oldType = oldIsControlled ? "a controlled" : "an uncontrolled";
-        var newType = oldIsControlled ? "uncontrolled" : "controlled";
-        var warnMap = oldIsControlled ? warningsMap.controlledToUncontrolled : warningsMap.uncontrolledToControlled;
-        if (!warnMap[componentId]) {
-          warnMap[componentId] = true;
-          warn("Warning: A component is changing ".concat(oldType, " ").concat(componentName, " to be ").concat(newType, ". ") + "".concat(componentName, "s should not switch from controlled to uncontrolled (or vice versa). ") + "Decide between using controlled or uncontrolled for the lifetime of the component. More info: https://fb.me/react-controlled-components");
-        }
-      }
-    }
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/ie11Detector.js
-  var isIE11 = function() {
-    var _a5;
-    var win = getWindow();
-    if (!((_a5 = win === null || win === void 0 ? void 0 : win.navigator) === null || _a5 === void 0 ? void 0 : _a5.userAgent)) {
-      return false;
-    }
-    return win.navigator.userAgent.indexOf("rv:11.0") > -1;
-  };
-
-  // ../node_modules/@fluentui/utilities/lib/getPropsWithDefaults.js
-  function getPropsWithDefaults(defaultProps, propsWithoutDefaults) {
-    var props = __assign({}, propsWithoutDefaults);
-    for (var _i = 0, _a5 = Object.keys(defaultProps); _i < _a5.length; _i++) {
-      var key = _a5[_i];
-      if (props[key] === void 0) {
-        props[key] = defaultProps[key];
-      }
-    }
-    return props;
-  }
-
-  // ../node_modules/@fluentui/utilities/lib/createMergedRef.js
-  var createResolver = function(local) {
-    return function(newValue) {
-      for (var _i = 0, _a5 = local.refs; _i < _a5.length; _i++) {
-        var ref = _a5[_i];
-        if (typeof ref === "function") {
-          ref(newValue);
-        } else if (ref) {
-          ref.current = newValue;
-        }
-      }
-    };
-  };
-  var createMergedRef = function(value) {
-    var local = {
-      refs: []
-    };
-    return function() {
-      var newRefs = [];
-      for (var _i = 0; _i < arguments.length; _i++) {
-        newRefs[_i] = arguments[_i];
-      }
-      if (!local.resolver || !arraysEqual(local.refs, newRefs)) {
-        local.resolver = createResolver(local);
-      }
-      local.refs = newRefs;
-      return local.resolver;
-    };
-  };
-
-  // ../node_modules/@fluentui/utilities/lib/useIsomorphicLayoutEffect.js
-  var React11 = __toESM(require_react());
-  var useIsomorphicLayoutEffect = canUseDOM() ? React11.useLayoutEffect : React11.useEffect;
-
   // ../node_modules/@fluentui/utilities/lib/version.js
   setVersion("@fluentui/utilities", "8.13.18");
-
-  // ../node_modules/@fluentui/style-utilities/lib/utilities/icons.js
-  var ICON_SETTING_NAME = "icons";
-  var _iconSettings = GlobalSettings.getValue(ICON_SETTING_NAME, {
-    __options: {
-      disableWarnings: false,
-      warnOnMissingIcons: true
-    },
-    __remapped: {}
-  });
-  var stylesheet2 = Stylesheet.getInstance();
-  if (stylesheet2 && stylesheet2.onReset) {
-    stylesheet2.onReset(function() {
-      for (var name_1 in _iconSettings) {
-        if (_iconSettings.hasOwnProperty(name_1) && !!_iconSettings[name_1].subset) {
-          _iconSettings[name_1].subset.className = void 0;
-        }
-      }
-    });
-  }
-  var normalizeIconName = function(name) {
-    return name.toLowerCase();
-  };
-  function getIcon(name) {
-    var icon = void 0;
-    var options = _iconSettings.__options;
-    name = name ? normalizeIconName(name) : "";
-    name = _iconSettings.__remapped[name] || name;
-    if (name) {
-      icon = _iconSettings[name];
-      if (icon) {
-        var subset = icon.subset;
-        if (subset && subset.fontFace) {
-          if (!subset.isRegistered) {
-            fontFace(subset.fontFace);
-            subset.isRegistered = true;
-          }
-          if (!subset.className) {
-            subset.className = mergeStyles(subset.style, {
-              fontFamily: subset.fontFace.fontFamily,
-              fontWeight: subset.fontFace.fontWeight || "normal",
-              fontStyle: subset.fontFace.fontStyle || "normal"
-            });
-          }
-        }
-      } else {
-        if (!options.disableWarnings && options.warnOnMissingIcons) {
-          warn('The icon "'.concat(name, '" was used but not registered. See https://github.com/microsoft/fluentui/wiki/Using-icons for more information.'));
-        }
-      }
-    }
-    return icon;
-  }
 
   // ../node_modules/@fluentui/theme/lib/utilities/makeSemanticColors.js
   function makeSemanticColors(p, e, s, isInverted, depComments) {
@@ -31469,7 +28487,7 @@
       depComments = false;
     }
     var result = {};
-    var _a5 = p || {}, white = _a5.white, black = _a5.black, themePrimary = _a5.themePrimary, themeDark = _a5.themeDark, themeDarker = _a5.themeDarker, themeDarkAlt = _a5.themeDarkAlt, themeLighter = _a5.themeLighter, neutralLight = _a5.neutralLight, neutralLighter = _a5.neutralLighter, neutralDark = _a5.neutralDark, neutralQuaternary = _a5.neutralQuaternary, neutralQuaternaryAlt = _a5.neutralQuaternaryAlt, neutralPrimary = _a5.neutralPrimary, neutralSecondary = _a5.neutralSecondary, neutralSecondaryAlt = _a5.neutralSecondaryAlt, neutralTertiary = _a5.neutralTertiary, neutralTertiaryAlt = _a5.neutralTertiaryAlt, neutralLighterAlt = _a5.neutralLighterAlt, accent = _a5.accent;
+    var _a2 = p || {}, white = _a2.white, black = _a2.black, themePrimary = _a2.themePrimary, themeDark = _a2.themeDark, themeDarker = _a2.themeDarker, themeDarkAlt = _a2.themeDarkAlt, themeLighter = _a2.themeLighter, neutralLight = _a2.neutralLight, neutralLighter = _a2.neutralLighter, neutralDark = _a2.neutralDark, neutralQuaternary = _a2.neutralQuaternary, neutralQuaternaryAlt = _a2.neutralQuaternaryAlt, neutralPrimary = _a2.neutralPrimary, neutralSecondary = _a2.neutralSecondary, neutralSecondaryAlt = _a2.neutralSecondaryAlt, neutralTertiary = _a2.neutralTertiary, neutralTertiaryAlt = _a2.neutralTertiaryAlt, neutralLighterAlt = _a2.neutralLighterAlt, accent = _a2.accent;
     if (white) {
       result.bodyBackground = white;
       result.bodyFrameBackground = white;
@@ -31615,14 +28633,14 @@
 
   // ../node_modules/@fluentui/theme/lib/mergeThemes.js
   function mergeThemes(theme, partialTheme) {
-    var _a5, _b, _c;
+    var _a2, _b, _c;
     if (partialTheme === void 0) {
       partialTheme = {};
     }
     var mergedTheme = merge({}, theme, partialTheme, {
       semanticColors: getSemanticColors(partialTheme.palette, partialTheme.effects, partialTheme.semanticColors, partialTheme.isInverted === void 0 ? theme.isInverted : partialTheme.isInverted)
     });
-    if (((_a5 = partialTheme.palette) === null || _a5 === void 0 ? void 0 : _a5.themePrimary) && !((_b = partialTheme.palette) === null || _b === void 0 ? void 0 : _b.accent)) {
+    if (((_a2 = partialTheme.palette) === null || _a2 === void 0 ? void 0 : _a2.themePrimary) && !((_b = partialTheme.palette) === null || _b === void 0 ? void 0 : _b.accent)) {
       mergedTheme.palette.accent = partialTheme.palette.themePrimary;
     }
     if (partialTheme.defaultFontStyle) {
@@ -31717,143 +28735,6 @@
     l1: "20px",
     l2: "32px"
   };
-
-  // ../node_modules/@fluentui/theme/lib/motion/AnimationStyles.js
-  var EASING_FUNCTION_1 = "cubic-bezier(.1,.9,.2,1)";
-  var EASING_FUNCTION_2 = "cubic-bezier(.1,.25,.75,.9)";
-  var DURATION_1 = "0.167s";
-  var DURATION_2 = "0.267s";
-  var DURATION_3 = "0.367s";
-  var DURATION_4 = "0.467s";
-  var FADE_IN = keyframes({
-    from: { opacity: 0 },
-    to: { opacity: 1 }
-  });
-  var FADE_OUT = keyframes({
-    from: { opacity: 1 },
-    to: { opacity: 0, visibility: "hidden" }
-  });
-  var SLIDE_RIGHT_IN10 = _createSlideInX(-10);
-  var SLIDE_RIGHT_IN20 = _createSlideInX(-20);
-  var SLIDE_RIGHT_IN40 = _createSlideInX(-40);
-  var SLIDE_RIGHT_IN400 = _createSlideInX(-400);
-  var SLIDE_LEFT_IN10 = _createSlideInX(10);
-  var SLIDE_LEFT_IN20 = _createSlideInX(20);
-  var SLIDE_LEFT_IN40 = _createSlideInX(40);
-  var SLIDE_LEFT_IN400 = _createSlideInX(400);
-  var SLIDE_UP_IN10 = _createSlideInY(10);
-  var SLIDE_UP_IN20 = _createSlideInY(20);
-  var SLIDE_DOWN_IN10 = _createSlideInY(-10);
-  var SLIDE_DOWN_IN20 = _createSlideInY(-20);
-  var SLIDE_RIGHT_OUT10 = _createSlideOutX(10);
-  var SLIDE_RIGHT_OUT20 = _createSlideOutX(20);
-  var SLIDE_RIGHT_OUT40 = _createSlideOutX(40);
-  var SLIDE_RIGHT_OUT400 = _createSlideOutX(400);
-  var SLIDE_LEFT_OUT10 = _createSlideOutX(-10);
-  var SLIDE_LEFT_OUT20 = _createSlideOutX(-20);
-  var SLIDE_LEFT_OUT40 = _createSlideOutX(-40);
-  var SLIDE_LEFT_OUT400 = _createSlideOutX(-400);
-  var SLIDE_UP_OUT10 = _createSlideOutY(-10);
-  var SLIDE_UP_OUT20 = _createSlideOutY(-20);
-  var SLIDE_DOWN_OUT10 = _createSlideOutY(10);
-  var SLIDE_DOWN_OUT20 = _createSlideOutY(20);
-  var SCALE_UP100 = keyframes({
-    from: { transform: "scale3d(.98,.98,1)" },
-    to: { transform: "scale3d(1,1,1)" }
-  });
-  var SCALE_DOWN98 = keyframes({
-    from: { transform: "scale3d(1,1,1)" },
-    to: { transform: "scale3d(.98,.98,1)" }
-  });
-  var SCALE_DOWN100 = keyframes({
-    from: { transform: "scale3d(1.03,1.03,1)" },
-    to: { transform: "scale3d(1,1,1)" }
-  });
-  var SCALE_UP103 = keyframes({
-    from: { transform: "scale3d(1,1,1)" },
-    to: { transform: "scale3d(1.03,1.03,1)" }
-  });
-  var ROTATE90 = keyframes({
-    from: { transform: "rotateZ(0deg)" },
-    to: { transform: "rotateZ(90deg)" }
-  });
-  var ROTATE_N90 = keyframes({
-    from: { transform: "rotateZ(0deg)" },
-    to: { transform: "rotateZ(-90deg)" }
-  });
-  var AnimationStyles = {
-    slideRightIn10: _createAnimation("".concat(FADE_IN, ",").concat(SLIDE_RIGHT_IN10), DURATION_3, EASING_FUNCTION_1),
-    slideRightIn20: _createAnimation("".concat(FADE_IN, ",").concat(SLIDE_RIGHT_IN20), DURATION_3, EASING_FUNCTION_1),
-    slideRightIn40: _createAnimation("".concat(FADE_IN, ",").concat(SLIDE_RIGHT_IN40), DURATION_3, EASING_FUNCTION_1),
-    slideRightIn400: _createAnimation("".concat(FADE_IN, ",").concat(SLIDE_RIGHT_IN400), DURATION_3, EASING_FUNCTION_1),
-    slideLeftIn10: _createAnimation("".concat(FADE_IN, ",").concat(SLIDE_LEFT_IN10), DURATION_3, EASING_FUNCTION_1),
-    slideLeftIn20: _createAnimation("".concat(FADE_IN, ",").concat(SLIDE_LEFT_IN20), DURATION_3, EASING_FUNCTION_1),
-    slideLeftIn40: _createAnimation("".concat(FADE_IN, ",").concat(SLIDE_LEFT_IN40), DURATION_3, EASING_FUNCTION_1),
-    slideLeftIn400: _createAnimation("".concat(FADE_IN, ",").concat(SLIDE_LEFT_IN400), DURATION_3, EASING_FUNCTION_1),
-    slideUpIn10: _createAnimation("".concat(FADE_IN, ",").concat(SLIDE_UP_IN10), DURATION_3, EASING_FUNCTION_1),
-    slideUpIn20: _createAnimation("".concat(FADE_IN, ",").concat(SLIDE_UP_IN20), DURATION_3, EASING_FUNCTION_1),
-    slideDownIn10: _createAnimation("".concat(FADE_IN, ",").concat(SLIDE_DOWN_IN10), DURATION_3, EASING_FUNCTION_1),
-    slideDownIn20: _createAnimation("".concat(FADE_IN, ",").concat(SLIDE_DOWN_IN20), DURATION_3, EASING_FUNCTION_1),
-    slideRightOut10: _createAnimation("".concat(FADE_OUT, ",").concat(SLIDE_RIGHT_OUT10), DURATION_3, EASING_FUNCTION_1),
-    slideRightOut20: _createAnimation("".concat(FADE_OUT, ",").concat(SLIDE_RIGHT_OUT20), DURATION_3, EASING_FUNCTION_1),
-    slideRightOut40: _createAnimation("".concat(FADE_OUT, ",").concat(SLIDE_RIGHT_OUT40), DURATION_3, EASING_FUNCTION_1),
-    slideRightOut400: _createAnimation("".concat(FADE_OUT, ",").concat(SLIDE_RIGHT_OUT400), DURATION_3, EASING_FUNCTION_1),
-    slideLeftOut10: _createAnimation("".concat(FADE_OUT, ",").concat(SLIDE_LEFT_OUT10), DURATION_3, EASING_FUNCTION_1),
-    slideLeftOut20: _createAnimation("".concat(FADE_OUT, ",").concat(SLIDE_LEFT_OUT20), DURATION_3, EASING_FUNCTION_1),
-    slideLeftOut40: _createAnimation("".concat(FADE_OUT, ",").concat(SLIDE_LEFT_OUT40), DURATION_3, EASING_FUNCTION_1),
-    slideLeftOut400: _createAnimation("".concat(FADE_OUT, ",").concat(SLIDE_LEFT_OUT400), DURATION_3, EASING_FUNCTION_1),
-    slideUpOut10: _createAnimation("".concat(FADE_OUT, ",").concat(SLIDE_UP_OUT10), DURATION_3, EASING_FUNCTION_1),
-    slideUpOut20: _createAnimation("".concat(FADE_OUT, ",").concat(SLIDE_UP_OUT20), DURATION_3, EASING_FUNCTION_1),
-    slideDownOut10: _createAnimation("".concat(FADE_OUT, ",").concat(SLIDE_DOWN_OUT10), DURATION_3, EASING_FUNCTION_1),
-    slideDownOut20: _createAnimation("".concat(FADE_OUT, ",").concat(SLIDE_DOWN_OUT20), DURATION_3, EASING_FUNCTION_1),
-    scaleUpIn100: _createAnimation("".concat(FADE_IN, ",").concat(SCALE_UP100), DURATION_3, EASING_FUNCTION_1),
-    scaleDownIn100: _createAnimation("".concat(FADE_IN, ",").concat(SCALE_DOWN100), DURATION_3, EASING_FUNCTION_1),
-    scaleUpOut103: _createAnimation("".concat(FADE_OUT, ",").concat(SCALE_UP103), DURATION_1, EASING_FUNCTION_2),
-    scaleDownOut98: _createAnimation("".concat(FADE_OUT, ",").concat(SCALE_DOWN98), DURATION_1, EASING_FUNCTION_2),
-    fadeIn100: _createAnimation(FADE_IN, DURATION_1, EASING_FUNCTION_2),
-    fadeIn200: _createAnimation(FADE_IN, DURATION_2, EASING_FUNCTION_2),
-    fadeIn400: _createAnimation(FADE_IN, DURATION_3, EASING_FUNCTION_2),
-    fadeIn500: _createAnimation(FADE_IN, DURATION_4, EASING_FUNCTION_2),
-    fadeOut100: _createAnimation(FADE_OUT, DURATION_1, EASING_FUNCTION_2),
-    fadeOut200: _createAnimation(FADE_OUT, DURATION_2, EASING_FUNCTION_2),
-    fadeOut400: _createAnimation(FADE_OUT, DURATION_3, EASING_FUNCTION_2),
-    fadeOut500: _createAnimation(FADE_OUT, DURATION_4, EASING_FUNCTION_2),
-    rotate90deg: _createAnimation(ROTATE90, "0.1s", EASING_FUNCTION_2),
-    rotateN90deg: _createAnimation(ROTATE_N90, "0.1s", EASING_FUNCTION_2)
-    // expandCollapse 100/200/400, delay 100/200
-  };
-  function _createAnimation(animationName, animationDuration, animationTimingFunction) {
-    return {
-      animationName,
-      animationDuration,
-      animationTimingFunction,
-      animationFillMode: "both"
-    };
-  }
-  function _createSlideInX(fromX) {
-    return keyframes({
-      from: { transform: "translate3d(".concat(fromX, "px,0,0)"), pointerEvents: "none" },
-      to: { transform: "translate3d(0,0,0)", pointerEvents: "auto" }
-    });
-  }
-  function _createSlideInY(fromY) {
-    return keyframes({
-      from: { transform: "translate3d(0,".concat(fromY, "px,0)"), pointerEvents: "none" },
-      to: { transform: "translate3d(0,0,0)", pointerEvents: "auto" }
-    });
-  }
-  function _createSlideOutX(toX) {
-    return keyframes({
-      from: { transform: "translate3d(0,0,0)" },
-      to: { transform: "translate3d(".concat(toX, "px,0,0)") }
-    });
-  }
-  function _createSlideOutY(toY) {
-    return keyframes({
-      from: { transform: "translate3d(0,0,0)" },
-      to: { transform: "translate3d(0,".concat(toY, "px,0)") }
-    });
-  }
 
   // ../node_modules/@fluentui/theme/lib/fonts/FluentFonts.js
   var LocalizedFontNames;
@@ -32049,8 +28930,8 @@
     }
   }
   function _getFontBaseUrl() {
-    var _a5, _b;
-    var fabricConfig = (_a5 = getWindow()) === null || _a5 === void 0 ? void 0 : _a5.FabricConfig;
+    var _a2, _b;
+    var fabricConfig = (_a2 = getWindow()) === null || _a2 === void 0 ? void 0 : _a2.FabricConfig;
     return (_b = fabricConfig === null || fabricConfig === void 0 ? void 0 : fabricConfig.fontBaseUrl) !== null && _b !== void 0 ? _b : DefaultBaseUrl;
   }
   registerDefaultFontFaces(_getFontBaseUrl());
@@ -32077,156 +28958,19 @@
     return mergeThemes(baseTheme, theme);
   }
 
-  // ../node_modules/@fluentui/style-utilities/lib/styles/CommonStyles.js
-  var HighContrastSelector = "@media screen and (-ms-high-contrast: active), screen and (forced-colors: active)";
-  var ScreenWidthMinMedium = 480;
-  var ScreenWidthMinLarge = 640;
-  var ScreenWidthMinXLarge = 1024;
-  var ScreenWidthMinXXLarge = 1366;
-  var ScreenWidthMinXXXLarge = 1920;
-  var ScreenWidthMaxSmall = ScreenWidthMinMedium - 1;
-  var ScreenWidthMaxMedium = ScreenWidthMinLarge - 1;
-  var ScreenWidthMaxLarge = ScreenWidthMinXLarge - 1;
-  var ScreenWidthMaxXLarge = ScreenWidthMinXXLarge - 1;
-  var ScreenWidthMaxXXLarge = ScreenWidthMinXXXLarge - 1;
-  function getScreenSelector(min, max) {
-    var minSelector = typeof min === "number" ? " and (min-width: ".concat(min, "px)") : "";
-    var maxSelector = typeof max === "number" ? " and (max-width: ".concat(max, "px)") : "";
-    return "@media only screen".concat(minSelector).concat(maxSelector);
-  }
-  function getHighContrastNoAdjustStyle() {
-    return {
-      forcedColorAdjust: "none",
-      MsHighContrastAdjust: "none"
-    };
-  }
-
-  // ../node_modules/@fluentui/style-utilities/lib/styles/zIndexes.js
-  var ZIndexes;
-  (function(ZIndexes2) {
-    ZIndexes2.Nav = 1;
-    ZIndexes2.ScrollablePane = 1;
-    ZIndexes2.FocusStyle = 1;
-    ZIndexes2.Coachmark = 1e3;
-    ZIndexes2.Layer = 1e6;
-    ZIndexes2.KeytipLayer = 1000001;
-  })(ZIndexes || (ZIndexes = {}));
-
-  // ../node_modules/@fluentui/style-utilities/lib/styles/getFocusStyle.js
-  function getFocusStyle(theme, insetOrOptions, position, highContrastStyle, borderColor, outlineColor, isFocusedOnly, borderRadius) {
-    if (typeof insetOrOptions === "number" || !insetOrOptions) {
-      return _getFocusStyleInternal(theme, {
-        inset: insetOrOptions,
-        position,
-        highContrastStyle,
-        borderColor,
-        outlineColor,
-        isFocusedOnly,
-        borderRadius
-      });
-    } else {
-      return _getFocusStyleInternal(theme, insetOrOptions);
-    }
-  }
-  function _getFocusStyleInternal(theme, options) {
-    var _a5, _b;
-    if (options === void 0) {
-      options = {};
-    }
-    var borderRadius = options.borderRadius, _c = options.inset, inset = _c === void 0 ? 0 : _c, _d = options.width, width = _d === void 0 ? 1 : _d, _e = options.position, position = _e === void 0 ? "relative" : _e, highContrastStyle = options.highContrastStyle, _f = options.borderColor, borderColor = _f === void 0 ? theme.palette.white : _f, _g = options.outlineColor, outlineColor = _g === void 0 ? theme.palette.neutralSecondary : _g, _h = options.isFocusedOnly, isFocusedOnly = _h === void 0 ? true : _h, pointerEvents = options.pointerEvents;
-    return {
-      // Clear browser-specific focus styles and use 'transparent' as placeholder for focus style.
-      outline: "transparent",
-      // Requirement because pseudo-element is absolutely positioned.
-      position,
-      selectors: (_a5 = {
-        // Clear the focus border in Firefox.
-        // Reference: http://stackoverflow.com/a/199319/1436671
-        "::-moz-focus-inner": {
-          border: "0"
-        }
-      }, // When the element that uses this mixin is in a :focus state, add a pseudo-element to
-      // create a border.
-      _a5[".".concat(IsFocusVisibleClassName, " &").concat(isFocusedOnly ? ":focus" : "", ":after")] = {
-        content: '""',
-        position: "absolute",
-        pointerEvents,
-        left: inset + 1,
-        top: inset + 1,
-        bottom: inset + 1,
-        right: inset + 1,
-        border: "".concat(width, "px solid ").concat(borderColor),
-        outline: "".concat(width, "px solid ").concat(outlineColor),
-        zIndex: ZIndexes.FocusStyle,
-        borderRadius,
-        selectors: (_b = {}, _b[HighContrastSelector] = highContrastStyle, _b)
-      }, _a5)
-    };
-  }
-  function focusClear() {
-    return {
-      selectors: {
-        "&::-moz-focus-inner": {
-          // Clear the focus border in Firefox. Reference: http://stackoverflow.com/a/199319/1436671
-          border: 0
-        },
-        "&": {
-          // Clear browser specific focus styles and use transparent as placeholder for focus style
-          outline: "transparent"
-        }
-      }
-    };
-  }
-  var getInputFocusStyle = function(borderColor, borderRadius, borderType, borderPosition) {
-    var _a5, _b, _c;
-    if (borderType === void 0) {
-      borderType = "border";
-    }
-    if (borderPosition === void 0) {
-      borderPosition = -1;
-    }
-    var isBorderBottom = borderType === "borderBottom";
-    return {
-      borderColor,
-      selectors: {
-        ":after": (_a5 = {
-          pointerEvents: "none",
-          content: "''",
-          position: "absolute",
-          left: isBorderBottom ? 0 : borderPosition,
-          top: borderPosition,
-          bottom: borderPosition,
-          right: isBorderBottom ? 0 : borderPosition
-        }, _a5[borderType] = "2px solid ".concat(borderColor), _a5.borderRadius = borderRadius, _a5.width = borderType === "borderBottom" ? "100%" : void 0, _a5.selectors = (_b = {}, _b[HighContrastSelector] = (_c = {}, _c[borderType === "border" ? "borderColor" : "borderBottomColor"] = "Highlight", _c), _b), _a5)
-      }
-    };
-  };
-
-  // ../node_modules/@fluentui/style-utilities/lib/styles/hiddenContentStyle.js
-  var hiddenContentStyle = {
-    position: "absolute",
-    width: 1,
-    height: 1,
-    margin: -1,
-    padding: 0,
-    border: 0,
-    overflow: "hidden",
-    whiteSpace: "nowrap"
-  };
-
   // ../node_modules/@fluentui/style-utilities/lib/styles/getGlobalClassNames.js
-  var _getGlobalClassNames = memoizeFunction(function(classNames2, disableGlobalClassNames) {
+  var _getGlobalClassNames = memoizeFunction(function(classNames, disableGlobalClassNames) {
     var styleSheet = Stylesheet.getInstance();
     if (disableGlobalClassNames) {
-      return Object.keys(classNames2).reduce(function(acc, className) {
-        acc[className] = styleSheet.getClassName(classNames2[className]);
+      return Object.keys(classNames).reduce(function(acc, className) {
+        acc[className] = styleSheet.getClassName(classNames[className]);
         return acc;
       }, {});
     }
-    return classNames2;
+    return classNames;
   });
-  function getGlobalClassNames(classNames2, theme, disableGlobalClassNames) {
-    return _getGlobalClassNames(classNames2, disableGlobalClassNames !== void 0 ? disableGlobalClassNames : theme.disableGlobalClassNames);
+  function getGlobalClassNames(classNames, theme, disableGlobalClassNames) {
+    return _getGlobalClassNames(classNames, disableGlobalClassNames !== void 0 ? disableGlobalClassNames : theme.disableGlobalClassNames);
   }
 
   // ../node_modules/@microsoft/load-themed-styles/lib-es6/index.js
@@ -32302,8 +29046,8 @@
   function reloadStyles() {
     if (_themeState.theme) {
       var themableStyles = [];
-      for (var _i = 0, _a5 = _themeState.registeredThemableStyles; _i < _a5.length; _i++) {
-        var styleRecord = _a5[_i];
+      for (var _i = 0, _a2 = _themeState.registeredThemableStyles; _i < _a2.length; _i++) {
+        var styleRecord = _a2[_i];
         themableStyles.push(styleRecord.themableStyle);
       }
       if (themableStyles.length > 0) {
@@ -32343,7 +29087,7 @@
     }
     var head = document.getElementsByTagName("head")[0];
     var styleElement = document.createElement("style");
-    var _a5 = resolveThemableArray(styleArray), styleString = _a5.styleString, themable = _a5.themable;
+    var _a2 = resolveThemableArray(styleArray), styleString = _a2.styleString, themable = _a2.themable;
     styleElement.setAttribute("data-load-themed-styles", "true");
     if (_styleNonce) {
       styleElement.setAttribute("nonce", _styleNonce);
@@ -32378,7 +29122,7 @@
   var _onThemeChangeCallbacks = [];
   var ThemeSettingName = "theme";
   function initializeThemeInCustomizations() {
-    var _a5;
+    var _a2;
     var _b, _c;
     var win = getWindow();
     if ((_b = win === null || win === void 0 ? void 0 : win.FabricConfig) === null || _b === void 0 ? void 0 : _b.legacyTheme) {
@@ -32387,27 +29131,18 @@
       if ((_c = win === null || win === void 0 ? void 0 : win.FabricConfig) === null || _c === void 0 ? void 0 : _c.theme) {
         _theme = createTheme(win.FabricConfig.theme);
       }
-      Customizations.applySettings((_a5 = {}, _a5[ThemeSettingName] = _theme, _a5));
+      Customizations.applySettings((_a2 = {}, _a2[ThemeSettingName] = _theme, _a2));
     }
   }
   initializeThemeInCustomizations();
-  function getTheme(depComments) {
-    if (depComments === void 0) {
-      depComments = false;
-    }
-    if (depComments === true) {
-      _theme = createTheme({}, depComments);
-    }
-    return _theme;
-  }
   function loadTheme2(theme, depComments) {
-    var _a5;
+    var _a2;
     if (depComments === void 0) {
       depComments = false;
     }
     _theme = createTheme(theme, depComments);
     loadTheme(__assign(__assign(__assign(__assign({}, _theme.palette), _theme.semanticColors), _theme.effects), _loadFonts(_theme)));
-    Customizations.applySettings((_a5 = {}, _a5[ThemeSettingName] = _theme, _a5));
+    Customizations.applySettings((_a2 = {}, _a2[ThemeSettingName] = _theme, _a2));
     _onThemeChangeCallbacks.forEach(function(callback) {
       try {
         callback(_theme);
@@ -32418,8 +29153,8 @@
   }
   function _loadFonts(theme) {
     var lines = {};
-    for (var _i = 0, _a5 = Object.keys(theme.fonts); _i < _a5.length; _i++) {
-      var fontName = _a5[_i];
+    for (var _i = 0, _a2 = Object.keys(theme.fonts); _i < _a2.length; _i++) {
+      var fontName = _a2[_i];
       var font = theme.fonts[fontName];
       for (var _b = 0, _c = Object.keys(font); _b < _c.length; _b++) {
         var propName = _c[_b];
@@ -32434,7292 +29169,17 @@
     return lines;
   }
 
-  // ../node_modules/@fluentui/style-utilities/lib/styles/GeneralStyles.js
-  var normalize2 = {
-    boxShadow: "none",
-    margin: 0,
-    padding: 0,
-    boxSizing: "border-box"
-  };
-
-  // ../node_modules/@fluentui/style-utilities/lib/styles/getPlaceholderStyles.js
-  function getPlaceholderStyles(styles2) {
-    return {
-      selectors: {
-        "::placeholder": styles2,
-        ":-ms-input-placeholder": styles2,
-        "::-ms-input-placeholder": styles2
-        // Edge
-      }
-    };
-  }
-
-  // ../node_modules/@fluentui/style-utilities/lib/classNames/AnimationClassNames.js
-  var AnimationClassNames = buildClassMap(AnimationStyles);
-
   // ../node_modules/@fluentui/style-utilities/lib/version.js
   setVersion("@fluentui/style-utilities", "8.9.17");
 
   // ../node_modules/@fluentui/style-utilities/lib/index.js
   initializeThemeInCustomizations();
 
-  // ../node_modules/@fluentui/react/lib/components/Callout/Callout.js
-  var React25 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react/lib/components/Callout/CalloutContent.base.js
-  var React21 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react/lib/common/DirectionalHint.js
-  var DirectionalHint = {
-    /**
-     * Appear above the target element, with the left edges of the callout and target aligning.
-     */
-    topLeftEdge: 0,
-    /**
-     * Appear above the target element, with the centers of the callout and target aligning.
-     */
-    topCenter: 1,
-    /**
-     * Appear above the target element, with the right edges of the callout and target aligning.
-     */
-    topRightEdge: 2,
-    /**
-     * Appear above the target element, aligning with the target element such that the callout tends toward
-     * the center of the screen.
-     */
-    topAutoEdge: 3,
-    /**
-     * Appear below the target element, with the left edges of the callout and target aligning.
-     */
-    bottomLeftEdge: 4,
-    /**
-     * Appear below the target element, with the centers of the callout and target aligning.
-     */
-    bottomCenter: 5,
-    /**
-     * Appear below the target element, with the right edges of the callout and target aligning.
-     */
-    bottomRightEdge: 6,
-    /**
-     * Appear below the target element, aligning with the target element such that the callout tends toward
-     * the center of the screen.
-     */
-    bottomAutoEdge: 7,
-    /**
-     * Appear to the left of the target element, with the top edges of the callout and target aligning.
-     */
-    leftTopEdge: 8,
-    /**
-     * Appear to the left of the target element, with the centers of the callout and target aligning.
-     */
-    leftCenter: 9,
-    /**
-     * Appear to the left of the target element, with the bottom edges of the callout and target aligning.
-     */
-    leftBottomEdge: 10,
-    /**
-     * Appear to the right of the target element, with the top edges of the callout and target aligning.
-     */
-    rightTopEdge: 11,
-    /**
-     * Appear to the right of the target element, with the centers of the callout and target aligning.
-     */
-    rightCenter: 12,
-    /**
-     * Appear to the right of the target element, with the bottom edges of the callout and target aligning.
-     */
-    rightBottomEdge: 13
-  };
-
-  // ../node_modules/@fluentui/react/lib/utilities/positioning/positioning.types.js
-  var RectangleEdge;
-  (function(RectangleEdge2) {
-    RectangleEdge2[RectangleEdge2["top"] = 1] = "top";
-    RectangleEdge2[RectangleEdge2["bottom"] = -1] = "bottom";
-    RectangleEdge2[RectangleEdge2["left"] = 2] = "left";
-    RectangleEdge2[RectangleEdge2["right"] = -2] = "right";
-  })(RectangleEdge || (RectangleEdge = {}));
-  var Position;
-  (function(Position2) {
-    Position2[Position2["top"] = 0] = "top";
-    Position2[Position2["bottom"] = 1] = "bottom";
-    Position2[Position2["start"] = 2] = "start";
-    Position2[Position2["end"] = 3] = "end";
-  })(Position || (Position = {}));
-
-  // ../node_modules/@fluentui/react/lib/utilities/positioning/positioning.js
-  var _a3;
-  function _createPositionData(targetEdge, alignmentEdge, isAuto) {
-    return {
-      targetEdge,
-      alignmentEdge,
-      isAuto
-    };
-  }
-  var DirectionalDictionary = (_a3 = {}, _a3[DirectionalHint.topLeftEdge] = _createPositionData(RectangleEdge.top, RectangleEdge.left), _a3[DirectionalHint.topCenter] = _createPositionData(RectangleEdge.top), _a3[DirectionalHint.topRightEdge] = _createPositionData(RectangleEdge.top, RectangleEdge.right), _a3[DirectionalHint.topAutoEdge] = _createPositionData(RectangleEdge.top, void 0, true), _a3[DirectionalHint.bottomLeftEdge] = _createPositionData(RectangleEdge.bottom, RectangleEdge.left), _a3[DirectionalHint.bottomCenter] = _createPositionData(RectangleEdge.bottom), _a3[DirectionalHint.bottomRightEdge] = _createPositionData(RectangleEdge.bottom, RectangleEdge.right), _a3[DirectionalHint.bottomAutoEdge] = _createPositionData(RectangleEdge.bottom, void 0, true), _a3[DirectionalHint.leftTopEdge] = _createPositionData(RectangleEdge.left, RectangleEdge.top), _a3[DirectionalHint.leftCenter] = _createPositionData(RectangleEdge.left), _a3[DirectionalHint.leftBottomEdge] = _createPositionData(RectangleEdge.left, RectangleEdge.bottom), _a3[DirectionalHint.rightTopEdge] = _createPositionData(RectangleEdge.right, RectangleEdge.top), _a3[DirectionalHint.rightCenter] = _createPositionData(RectangleEdge.right), _a3[DirectionalHint.rightBottomEdge] = _createPositionData(RectangleEdge.right, RectangleEdge.bottom), _a3);
-  function _isRectangleWithinBounds(rect, boundingRect) {
-    if (rect.top < boundingRect.top) {
-      return false;
-    }
-    if (rect.bottom > boundingRect.bottom) {
-      return false;
-    }
-    if (rect.left < boundingRect.left) {
-      return false;
-    }
-    if (rect.right > boundingRect.right) {
-      return false;
-    }
-    return true;
-  }
-  function _getOutOfBoundsEdges(rect, boundingRect) {
-    var outOfBounds = [];
-    if (rect.top < boundingRect.top) {
-      outOfBounds.push(RectangleEdge.top);
-    }
-    if (rect.bottom > boundingRect.bottom) {
-      outOfBounds.push(RectangleEdge.bottom);
-    }
-    if (rect.left < boundingRect.left) {
-      outOfBounds.push(RectangleEdge.left);
-    }
-    if (rect.right > boundingRect.right) {
-      outOfBounds.push(RectangleEdge.right);
-    }
-    return outOfBounds;
-  }
-  function _getEdgeValue(rect, edge) {
-    return rect[RectangleEdge[edge]];
-  }
-  function _setEdgeValue(rect, edge, value) {
-    rect[RectangleEdge[edge]] = value;
-    return rect;
-  }
-  function _getCenterValue(rect, edge) {
-    var edges = _getFlankingEdges(edge);
-    return (_getEdgeValue(rect, edges.positiveEdge) + _getEdgeValue(rect, edges.negativeEdge)) / 2;
-  }
-  function _getRelativeEdgeValue(edge, value) {
-    if (edge > 0) {
-      return value;
-    } else {
-      return value * -1;
-    }
-  }
-  function _getRelativeRectEdgeValue(edge, rect) {
-    return _getRelativeEdgeValue(edge, _getEdgeValue(rect, edge));
-  }
-  function _getRelativeEdgeDifference(rect, hostRect, edge) {
-    var edgeDifference = _getEdgeValue(rect, edge) - _getEdgeValue(hostRect, edge);
-    return _getRelativeEdgeValue(edge, edgeDifference);
-  }
-  function _moveEdge(rect, edge, newValue, maintainSize) {
-    if (maintainSize === void 0) {
-      maintainSize = true;
-    }
-    var difference = _getEdgeValue(rect, edge) - newValue;
-    var returnRect = _setEdgeValue(rect, edge, newValue);
-    if (maintainSize) {
-      returnRect = _setEdgeValue(rect, edge * -1, _getEdgeValue(rect, edge * -1) - difference);
-    }
-    return returnRect;
-  }
-  function _alignEdges(rect, target, edge, gap) {
-    if (gap === void 0) {
-      gap = 0;
-    }
-    return _moveEdge(rect, edge, _getEdgeValue(target, edge) + _getRelativeEdgeValue(edge, gap));
-  }
-  function _alignOppositeEdges(rect, target, targetEdge, gap) {
-    if (gap === void 0) {
-      gap = 0;
-    }
-    var oppositeEdge = targetEdge * -1;
-    var adjustedGap = _getRelativeEdgeValue(oppositeEdge, gap);
-    return _moveEdge(rect, targetEdge * -1, _getEdgeValue(target, targetEdge) + adjustedGap);
-  }
-  function _isEdgeInBounds(rect, bounds, edge) {
-    var adjustedRectValue = _getRelativeRectEdgeValue(edge, rect);
-    return adjustedRectValue > _getRelativeRectEdgeValue(edge, bounds);
-  }
-  function _getOutOfBoundsDegree(rect, bounds) {
-    var breakingEdges = _getOutOfBoundsEdges(rect, bounds);
-    var total = 0;
-    for (var _i = 0, breakingEdges_1 = breakingEdges; _i < breakingEdges_1.length; _i++) {
-      var edge = breakingEdges_1[_i];
-      total += Math.pow(_getRelativeEdgeDifference(rect, bounds, edge), 2);
-    }
-    return total;
-  }
-  function _flipToFit(rect, target, bounding, positionData, gap) {
-    if (gap === void 0) {
-      gap = 0;
-    }
-    var directions = [
-      RectangleEdge.left,
-      RectangleEdge.right,
-      RectangleEdge.bottom,
-      RectangleEdge.top
-    ];
-    if (getRTL2()) {
-      directions[0] *= -1;
-      directions[1] *= -1;
-    }
-    var currentEstimate = rect;
-    var currentEdge = positionData.targetEdge;
-    var currentAlignment = positionData.alignmentEdge;
-    var oobDegree;
-    var bestEdge = currentEdge;
-    var bestAlignment = currentAlignment;
-    for (var i = 0; i < 4; i++) {
-      if (!_isEdgeInBounds(currentEstimate, bounding, currentEdge)) {
-        var currentOOBDegree = _getOutOfBoundsDegree(currentEstimate, bounding);
-        if (!oobDegree || currentOOBDegree < oobDegree) {
-          oobDegree = currentOOBDegree;
-          bestEdge = currentEdge;
-          bestAlignment = currentAlignment;
-        }
-        directions.splice(directions.indexOf(currentEdge), 1);
-        if (directions.length > 0) {
-          if (directions.indexOf(currentEdge * -1) > -1) {
-            currentEdge = currentEdge * -1;
-          } else {
-            currentAlignment = currentEdge;
-            currentEdge = directions.slice(-1)[0];
-          }
-          currentEstimate = _estimatePosition(rect, target, { targetEdge: currentEdge, alignmentEdge: currentAlignment }, gap);
-        }
-      } else {
-        return {
-          elementRectangle: currentEstimate,
-          targetEdge: currentEdge,
-          alignmentEdge: currentAlignment
-        };
-      }
-    }
-    currentEstimate = _estimatePosition(rect, target, { targetEdge: bestEdge, alignmentEdge: bestAlignment }, gap);
-    return {
-      elementRectangle: currentEstimate,
-      targetEdge: bestEdge,
-      alignmentEdge: bestAlignment
-    };
-  }
-  function _flipAlignmentEdge(elementEstimate, target, gap, coverTarget) {
-    var alignmentEdge = elementEstimate.alignmentEdge, targetEdge = elementEstimate.targetEdge, elementRectangle = elementEstimate.elementRectangle;
-    var oppositeEdge = alignmentEdge * -1;
-    var newEstimate = _estimatePosition(elementRectangle, target, { targetEdge, alignmentEdge: oppositeEdge }, gap, coverTarget);
-    return {
-      elementRectangle: newEstimate,
-      targetEdge,
-      alignmentEdge: oppositeEdge
-    };
-  }
-  function _adjustFitWithinBounds(element, target, bounding, positionData, gap, directionalHintFixed, coverTarget) {
-    if (gap === void 0) {
-      gap = 0;
-    }
-    var alignmentEdge = positionData.alignmentEdge, alignTargetEdge = positionData.alignTargetEdge;
-    var elementEstimate = {
-      elementRectangle: element,
-      targetEdge: positionData.targetEdge,
-      alignmentEdge
-    };
-    if (!directionalHintFixed && !coverTarget) {
-      elementEstimate = _flipToFit(element, target, bounding, positionData, gap);
-    }
-    var outOfBounds = _getOutOfBoundsEdges(elementEstimate.elementRectangle, bounding);
-    var fixedEdge = directionalHintFixed ? -elementEstimate.targetEdge : void 0;
-    if (outOfBounds.length > 0) {
-      if (alignTargetEdge) {
-        if (elementEstimate.alignmentEdge && outOfBounds.indexOf(elementEstimate.alignmentEdge * -1) > -1) {
-          var flippedElementEstimate = _flipAlignmentEdge(elementEstimate, target, gap, coverTarget);
-          if (_isRectangleWithinBounds(flippedElementEstimate.elementRectangle, bounding)) {
-            return flippedElementEstimate;
-          } else {
-            elementEstimate = _alignOutOfBoundsEdges(_getOutOfBoundsEdges(flippedElementEstimate.elementRectangle, bounding), elementEstimate, bounding, fixedEdge);
-          }
-        } else {
-          elementEstimate = _alignOutOfBoundsEdges(outOfBounds, elementEstimate, bounding, fixedEdge);
-        }
-      } else {
-        elementEstimate = _alignOutOfBoundsEdges(outOfBounds, elementEstimate, bounding, fixedEdge);
-      }
-    }
-    return elementEstimate;
-  }
-  function _alignOutOfBoundsEdges(outOfBoundsEdges, elementEstimate, bounding, preserveEdge) {
-    for (var _i = 0, outOfBoundsEdges_1 = outOfBoundsEdges; _i < outOfBoundsEdges_1.length; _i++) {
-      var direction = outOfBoundsEdges_1[_i];
-      var edgeAttempt = void 0;
-      if (preserveEdge && preserveEdge === direction * -1) {
-        edgeAttempt = _moveEdge(elementEstimate.elementRectangle, direction, _getEdgeValue(bounding, direction), false);
-        elementEstimate.forcedInBounds = true;
-      } else {
-        edgeAttempt = _alignEdges(elementEstimate.elementRectangle, bounding, direction);
-        var inBounds = _isEdgeInBounds(edgeAttempt, bounding, direction * -1);
-        if (!inBounds) {
-          edgeAttempt = _moveEdge(edgeAttempt, direction * -1, _getEdgeValue(bounding, direction * -1), false);
-          elementEstimate.forcedInBounds = true;
-        }
-      }
-      elementEstimate.elementRectangle = edgeAttempt;
-    }
-    return elementEstimate;
-  }
-  function _centerEdgeToPoint(rect, edge, point) {
-    var positiveEdge = _getFlankingEdges(edge).positiveEdge;
-    var elementMiddle = _getCenterValue(rect, edge);
-    var distanceToMiddle = elementMiddle - _getEdgeValue(rect, positiveEdge);
-    return _moveEdge(rect, positiveEdge, point - distanceToMiddle);
-  }
-  function _estimatePosition(elementToPosition, target, positionData, gap, coverTarget) {
-    if (gap === void 0) {
-      gap = 0;
-    }
-    var estimatedElementPosition = new Rectangle(elementToPosition.left, elementToPosition.right, elementToPosition.top, elementToPosition.bottom);
-    var alignmentEdge = positionData.alignmentEdge, targetEdge = positionData.targetEdge;
-    var elementEdge = coverTarget ? targetEdge : targetEdge * -1;
-    estimatedElementPosition = coverTarget ? _alignEdges(estimatedElementPosition, target, targetEdge, gap) : _alignOppositeEdges(estimatedElementPosition, target, targetEdge, gap);
-    if (!alignmentEdge) {
-      var targetMiddlePoint = _getCenterValue(target, targetEdge);
-      estimatedElementPosition = _centerEdgeToPoint(estimatedElementPosition, elementEdge, targetMiddlePoint);
-    } else {
-      estimatedElementPosition = _alignEdges(estimatedElementPosition, target, alignmentEdge);
-    }
-    return estimatedElementPosition;
-  }
-  function _getFlankingEdges(edge) {
-    if (edge === RectangleEdge.top || edge === RectangleEdge.bottom) {
-      return {
-        positiveEdge: RectangleEdge.left,
-        negativeEdge: RectangleEdge.right
-      };
-    } else {
-      return {
-        positiveEdge: RectangleEdge.top,
-        negativeEdge: RectangleEdge.bottom
-      };
-    }
-  }
-  function _finalizeReturnEdge(elementRectangle, returnEdge, bounds) {
-    if (bounds && Math.abs(_getRelativeEdgeDifference(elementRectangle, bounds, returnEdge)) > Math.abs(_getRelativeEdgeDifference(elementRectangle, bounds, returnEdge * -1))) {
-      return returnEdge * -1;
-    }
-    return returnEdge;
-  }
-  function _isEdgeOnBounds(elementRectangle, edge, bounds) {
-    return bounds !== void 0 && _getEdgeValue(elementRectangle, edge) === _getEdgeValue(bounds, edge);
-  }
-  function _finalizeElementPosition(elementRectangle, hostElement, targetEdge, bounds, alignmentEdge, coverTarget, doNotFinalizeReturnEdge, forceWithinBounds) {
-    var returnValue = {};
-    var hostRect = _getRectangleFromElement(hostElement);
-    var elementEdge = coverTarget ? targetEdge : targetEdge * -1;
-    var returnEdge = alignmentEdge ? alignmentEdge : _getFlankingEdges(targetEdge).positiveEdge;
-    if (!doNotFinalizeReturnEdge || _isEdgeOnBounds(elementRectangle, getOppositeEdge(returnEdge), bounds)) {
-      returnEdge = _finalizeReturnEdge(elementRectangle, returnEdge, bounds);
-    }
-    returnValue[RectangleEdge[elementEdge]] = _getRelativeEdgeDifference(elementRectangle, hostRect, elementEdge);
-    returnValue[RectangleEdge[returnEdge]] = _getRelativeEdgeDifference(elementRectangle, hostRect, returnEdge);
-    if (forceWithinBounds) {
-      returnValue[RectangleEdge[elementEdge * -1]] = _getRelativeEdgeDifference(elementRectangle, hostRect, elementEdge * -1);
-      returnValue[RectangleEdge[returnEdge * -1]] = _getRelativeEdgeDifference(elementRectangle, hostRect, returnEdge * -1);
-    }
-    return returnValue;
-  }
-  function _calculateActualBeakWidthInPixels(beakWidth) {
-    return Math.sqrt(beakWidth * beakWidth * 2);
-  }
-  function _getPositionData(directionalHint, directionalHintForRTL, previousPositions) {
-    if (directionalHint === void 0) {
-      directionalHint = DirectionalHint.bottomAutoEdge;
-    }
-    if (previousPositions) {
-      return {
-        alignmentEdge: previousPositions.alignmentEdge,
-        isAuto: previousPositions.isAuto,
-        targetEdge: previousPositions.targetEdge
-      };
-    }
-    var positionInformation = __assign({}, DirectionalDictionary[directionalHint]);
-    if (getRTL2()) {
-      if (positionInformation.alignmentEdge && positionInformation.alignmentEdge % 2 === 0) {
-        positionInformation.alignmentEdge = positionInformation.alignmentEdge * -1;
-      }
-      return directionalHintForRTL !== void 0 ? DirectionalDictionary[directionalHintForRTL] : positionInformation;
-    }
-    return positionInformation;
-  }
-  function _getAlignmentData(positionData, target, boundingRect, coverTarget, alignTargetEdge) {
-    if (positionData.isAuto) {
-      positionData.alignmentEdge = getClosestEdge(positionData.targetEdge, target, boundingRect);
-    }
-    positionData.alignTargetEdge = alignTargetEdge;
-    return positionData;
-  }
-  function getClosestEdge(targetEdge, target, boundingRect) {
-    var targetCenter = _getCenterValue(target, targetEdge);
-    var boundingCenter = _getCenterValue(boundingRect, targetEdge);
-    var _a5 = _getFlankingEdges(targetEdge), positiveEdge = _a5.positiveEdge, negativeEdge = _a5.negativeEdge;
-    if (targetCenter <= boundingCenter) {
-      return positiveEdge;
-    } else {
-      return negativeEdge;
-    }
-  }
-  function _positionElementWithinBounds(elementToPosition, target, bounding, positionData, gap, directionalHintFixed, coverTarget) {
-    var estimatedElementPosition = _estimatePosition(elementToPosition, target, positionData, gap, coverTarget);
-    if (_isRectangleWithinBounds(estimatedElementPosition, bounding)) {
-      return {
-        elementRectangle: estimatedElementPosition,
-        targetEdge: positionData.targetEdge,
-        alignmentEdge: positionData.alignmentEdge
-      };
-    } else {
-      return _adjustFitWithinBounds(estimatedElementPosition, target, bounding, positionData, gap, directionalHintFixed, coverTarget);
-    }
-  }
-  function _finalizeBeakPosition(elementPosition, positionedBeak, bounds) {
-    var targetEdge = elementPosition.targetEdge * -1;
-    var actualElement = new Rectangle(0, elementPosition.elementRectangle.width, 0, elementPosition.elementRectangle.height);
-    var returnValue = {};
-    var returnEdge = _finalizeReturnEdge(elementPosition.elementRectangle, elementPosition.alignmentEdge ? elementPosition.alignmentEdge : _getFlankingEdges(targetEdge).positiveEdge, bounds);
-    var beakEdgeDifference = _getRelativeEdgeDifference(elementPosition.elementRectangle, elementPosition.targetRectangle, targetEdge);
-    var showBeak = beakEdgeDifference > Math.abs(_getEdgeValue(positionedBeak, targetEdge));
-    returnValue[RectangleEdge[targetEdge]] = _getEdgeValue(positionedBeak, targetEdge);
-    returnValue[RectangleEdge[returnEdge]] = _getRelativeEdgeDifference(positionedBeak, actualElement, returnEdge);
-    return {
-      elementPosition: __assign({}, returnValue),
-      closestEdge: getClosestEdge(elementPosition.targetEdge, positionedBeak, actualElement),
-      targetEdge,
-      hideBeak: !showBeak
-    };
-  }
-  function _positionBeak(beakWidth, elementPosition) {
-    var target = elementPosition.targetRectangle;
-    var _a5 = _getFlankingEdges(elementPosition.targetEdge), positiveEdge = _a5.positiveEdge, negativeEdge = _a5.negativeEdge;
-    var beakTargetPoint = _getCenterValue(target, elementPosition.targetEdge);
-    var elementBounds = new Rectangle(beakWidth / 2, elementPosition.elementRectangle.width - beakWidth / 2, beakWidth / 2, elementPosition.elementRectangle.height - beakWidth / 2);
-    var beakPosition = new Rectangle(0, beakWidth, 0, beakWidth);
-    beakPosition = _moveEdge(beakPosition, elementPosition.targetEdge * -1, -beakWidth / 2);
-    beakPosition = _centerEdgeToPoint(beakPosition, elementPosition.targetEdge * -1, beakTargetPoint - _getRelativeRectEdgeValue(positiveEdge, elementPosition.elementRectangle));
-    if (!_isEdgeInBounds(beakPosition, elementBounds, positiveEdge)) {
-      beakPosition = _alignEdges(beakPosition, elementBounds, positiveEdge);
-    } else if (!_isEdgeInBounds(beakPosition, elementBounds, negativeEdge)) {
-      beakPosition = _alignEdges(beakPosition, elementBounds, negativeEdge);
-    }
-    return beakPosition;
-  }
-  function _getRectangleFromElement(element) {
-    var clientRect = element.getBoundingClientRect();
-    return new Rectangle(clientRect.left, clientRect.right, clientRect.top, clientRect.bottom);
-  }
-  function _getRectangleFromIRect(rect) {
-    return new Rectangle(rect.left, rect.right, rect.top, rect.bottom);
-  }
-  function _getTargetRect(bounds, target) {
-    var targetRectangle;
-    if (target) {
-      if (!!target.preventDefault) {
-        var ev = target;
-        targetRectangle = new Rectangle(ev.clientX, ev.clientX, ev.clientY, ev.clientY);
-      } else if (!!target.getBoundingClientRect) {
-        targetRectangle = _getRectangleFromElement(target);
-      } else {
-        var rectOrPoint = target;
-        var left = rectOrPoint.left || rectOrPoint.x;
-        var top_1 = rectOrPoint.top || rectOrPoint.y;
-        var right = rectOrPoint.right || left;
-        var bottom = rectOrPoint.bottom || top_1;
-        targetRectangle = new Rectangle(left, right, top_1, bottom);
-      }
-      if (!_isRectangleWithinBounds(targetRectangle, bounds)) {
-        var outOfBounds = _getOutOfBoundsEdges(targetRectangle, bounds);
-        for (var _i = 0, outOfBounds_1 = outOfBounds; _i < outOfBounds_1.length; _i++) {
-          var direction = outOfBounds_1[_i];
-          targetRectangle[RectangleEdge[direction]] = bounds[RectangleEdge[direction]];
-        }
-      }
-    } else {
-      targetRectangle = new Rectangle(0, 0, 0, 0);
-    }
-    return targetRectangle;
-  }
-  function _positionElementRelative(props, elementToPosition, boundingRect, previousPositions) {
-    var gap = props.gapSpace ? props.gapSpace : 0;
-    var targetRect = _getTargetRect(boundingRect, props.target);
-    var positionData = _getAlignmentData(_getPositionData(props.directionalHint, props.directionalHintForRTL, previousPositions), targetRect, boundingRect, props.coverTarget, props.alignTargetEdge);
-    var positionedElement = _positionElementWithinBounds(_getRectangleFromElement(elementToPosition), targetRect, boundingRect, positionData, gap, props.directionalHintFixed, props.coverTarget);
-    return __assign(__assign({}, positionedElement), { targetRectangle: targetRect });
-  }
-  function _finalizePositionData(positionedElement, hostElement, bounds, coverTarget, doNotFinalizeReturnEdge) {
-    var finalizedElement = _finalizeElementPosition(positionedElement.elementRectangle, hostElement, positionedElement.targetEdge, bounds, positionedElement.alignmentEdge, coverTarget, doNotFinalizeReturnEdge, positionedElement.forcedInBounds);
-    return {
-      elementPosition: finalizedElement,
-      targetEdge: positionedElement.targetEdge,
-      alignmentEdge: positionedElement.alignmentEdge
-    };
-  }
-  function _positionCallout(props, hostElement, callout, previousPositions, doNotFinalizeReturnEdge) {
-    var beakWidth = props.isBeakVisible ? props.beakWidth || 0 : 0;
-    var gap = _calculateActualBeakWidthInPixels(beakWidth) / 2 + (props.gapSpace ? props.gapSpace : 0);
-    var positionProps = props;
-    positionProps.gapSpace = gap;
-    var boundingRect = props.bounds ? _getRectangleFromIRect(props.bounds) : new Rectangle(0, window.innerWidth - getScrollbarWidth(), 0, window.innerHeight);
-    var positionedElement = _positionElementRelative(positionProps, callout, boundingRect, previousPositions);
-    var beakPositioned = _positionBeak(beakWidth, positionedElement);
-    var finalizedBeakPosition = _finalizeBeakPosition(positionedElement, beakPositioned, boundingRect);
-    return __assign(__assign({}, _finalizePositionData(positionedElement, hostElement, boundingRect, props.coverTarget, doNotFinalizeReturnEdge)), { beakPosition: finalizedBeakPosition });
-  }
-  function _positionCard(props, hostElement, callout, previousPositions) {
-    return _positionCallout(props, hostElement, callout, previousPositions, true);
-  }
-  function positionCallout(props, hostElement, elementToPosition, previousPositions) {
-    return _positionCallout(props, hostElement, elementToPosition, previousPositions);
-  }
-  function positionCard(props, hostElement, elementToPosition, previousPositions) {
-    return _positionCard(props, hostElement, elementToPosition, previousPositions);
-  }
-  function getOppositeEdge(edge) {
-    return edge * -1;
-  }
-  function _getBoundsFromTargetWindow(target, targetWindow) {
-    var segments = void 0;
-    if (targetWindow.getWindowSegments) {
-      segments = targetWindow.getWindowSegments();
-    }
-    if (segments === void 0 || segments.length <= 1) {
-      return {
-        top: 0,
-        left: 0,
-        right: targetWindow.innerWidth,
-        bottom: targetWindow.innerHeight,
-        width: targetWindow.innerWidth,
-        height: targetWindow.innerHeight
-      };
-    }
-    var x = 0;
-    var y = 0;
-    if (target !== null && !!target.getBoundingClientRect) {
-      var clientRect = target.getBoundingClientRect();
-      x = (clientRect.left + clientRect.right) / 2;
-      y = (clientRect.top + clientRect.bottom) / 2;
-    } else if (target !== null) {
-      x = target.left || target.x;
-      y = target.top || target.y;
-    }
-    var bounds = { top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 };
-    for (var _i = 0, segments_1 = segments; _i < segments_1.length; _i++) {
-      var segment = segments_1[_i];
-      if (x && segment.left <= x && segment.right >= x && y && segment.top <= y && segment.bottom >= y) {
-        bounds = {
-          top: segment.top,
-          left: segment.left,
-          right: segment.right,
-          bottom: segment.bottom,
-          width: segment.width,
-          height: segment.height
-        };
-      }
-    }
-    return bounds;
-  }
-  function getBoundsFromTargetWindow(target, targetWindow) {
-    return _getBoundsFromTargetWindow(target, targetWindow);
-  }
-
-  // ../node_modules/@fluentui/react/lib/components/Popup/Popup.js
-  var React20 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react-hooks/lib/version.js
-  setVersion("@fluentui/react-hooks", "8.6.29");
-
-  // ../node_modules/@fluentui/react-hooks/lib/useAsync.js
-  var React12 = __toESM(require_react());
-  function useAsync() {
-    var asyncRef = React12.useRef();
-    if (!asyncRef.current) {
-      asyncRef.current = new Async();
-    }
-    React12.useEffect(function() {
-      return function() {
-        var _a5;
-        (_a5 = asyncRef.current) === null || _a5 === void 0 ? void 0 : _a5.dispose();
-        asyncRef.current = void 0;
-      };
-    }, []);
-    return asyncRef.current;
-  }
-
-  // ../node_modules/@fluentui/react-hooks/lib/useConst.js
-  var React13 = __toESM(require_react());
-  function useConst(initialValue) {
-    var ref = React13.useRef();
-    if (ref.current === void 0) {
-      ref.current = {
-        value: typeof initialValue === "function" ? initialValue() : initialValue
-      };
-    }
-    return ref.current.value;
-  }
-
-  // ../node_modules/@fluentui/react-hooks/lib/useId.js
-  var React14 = __toESM(require_react());
-  function useId(prefix, providedId) {
-    var ref = React14.useRef(providedId);
-    if (!ref.current) {
-      ref.current = getId(prefix);
-    }
-    return ref.current;
-  }
-
-  // ../node_modules/@fluentui/react-hooks/lib/useMergedRefs.js
-  var React15 = __toESM(require_react());
-  function useMergedRefs() {
-    var refs = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-      refs[_i] = arguments[_i];
-    }
-    var mergedCallback = React15.useCallback(function(value) {
-      mergedCallback.current = value;
-      for (var _i2 = 0, refs_1 = refs; _i2 < refs_1.length; _i2++) {
-        var ref = refs_1[_i2];
-        if (typeof ref === "function") {
-          ref(value);
-        } else if (ref) {
-          ref.current = value;
-        }
-      }
-    }, __spreadArray([], refs, true));
-    return mergedCallback;
-  }
-
-  // ../node_modules/@fluentui/react-hooks/lib/useOnEvent.js
-  var React16 = __toESM(require_react());
-  function useOnEvent(element, eventName, callback, useCapture) {
-    var callbackRef = React16.useRef(callback);
-    callbackRef.current = callback;
-    React16.useEffect(function() {
-      var actualElement = element && "current" in element ? element.current : element;
-      if (!actualElement) {
-        return;
-      }
-      var dispose = on(actualElement, eventName, function(ev) {
-        return callbackRef.current(ev);
-      }, useCapture);
-      return dispose;
-    }, [element, eventName, useCapture]);
-  }
-
-  // ../node_modules/@fluentui/react-hooks/lib/usePrevious.js
-  var import_react = __toESM(require_react());
-  function usePrevious(value) {
-    var ref = (0, import_react.useRef)();
-    (0, import_react.useEffect)(function() {
-      ref.current = value;
-    });
-    return ref.current;
-  }
-
-  // ../node_modules/@fluentui/react-hooks/lib/useTarget.js
-  var React18 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react-window-provider/lib/WindowProvider.js
-  var React17 = __toESM(require_react());
-  var WindowContext = React17.createContext({
-    window: typeof window === "object" ? window : void 0
-  });
-  var useWindow = function() {
-    return React17.useContext(WindowContext).window;
-  };
-
-  // ../node_modules/@fluentui/react-hooks/lib/useTarget.js
-  function useTarget(target, hostElement) {
-    var previousTargetProp = React18.useRef();
-    var targetRef = React18.useRef(null);
-    var targetWindow = useWindow();
-    if (!target || target !== previousTargetProp.current || typeof target === "string") {
-      var currentElement = hostElement === null || hostElement === void 0 ? void 0 : hostElement.current;
-      if (target) {
-        if (typeof target === "string") {
-          var currentDoc = getDocument(currentElement);
-          targetRef.current = currentDoc ? currentDoc.querySelector(target) : null;
-        } else if ("stopPropagation" in target) {
-          targetRef.current = target;
-        } else if ("getBoundingClientRect" in target) {
-          targetRef.current = target;
-        } else if ("current" in target) {
-          targetRef.current = target.current;
-        } else {
-          targetRef.current = target;
-        }
-      }
-      previousTargetProp.current = target;
-    }
-    return [targetRef, targetWindow];
-  }
-
-  // ../node_modules/@fluentui/react-hooks/lib/useWarnings.js
-  var React19 = __toESM(require_react());
-  var warningId = 0;
-  function useWarnings(options) {
-    if (true) {
-      var name_1 = options.name, props = options.props, _a5 = options.other, other = _a5 === void 0 ? [] : _a5, conditionallyRequired = options.conditionallyRequired, deprecations = options.deprecations, mutuallyExclusive = options.mutuallyExclusive, controlledUsage = options.controlledUsage;
-      var hasWarnedRef = React19.useRef(false);
-      var componentId = useConst(function() {
-        return "useWarnings_".concat(warningId++);
-      });
-      var oldProps = usePrevious(props);
-      if (!hasWarnedRef.current) {
-        hasWarnedRef.current = true;
-        for (var _i = 0, other_1 = other; _i < other_1.length; _i++) {
-          var warning = other_1[_i];
-          warn(warning);
-        }
-        if (conditionallyRequired) {
-          for (var _b = 0, conditionallyRequired_1 = conditionallyRequired; _b < conditionallyRequired_1.length; _b++) {
-            var req = conditionallyRequired_1[_b];
-            warnConditionallyRequiredProps(name_1, props, req.requiredProps, req.conditionalPropName, req.condition);
-          }
-        }
-        deprecations && warnDeprecations(name_1, props, deprecations);
-        mutuallyExclusive && warnMutuallyExclusive(name_1, props, mutuallyExclusive);
-      }
-      controlledUsage && warnControlledUsage(__assign(__assign({}, controlledUsage), { componentId, props, componentName: name_1, oldProps }));
-    }
-  }
-
-  // ../node_modules/@fluentui/react/lib/components/Popup/Popup.js
-  function useScrollbarAsync(props, root2) {
-    var async = useAsync();
-    var _a5 = React20.useState(false), needsVerticalScrollBarState = _a5[0], setNeedsVerticalScrollBar = _a5[1];
-    React20.useEffect(function() {
-      async.requestAnimationFrame(function() {
-        var _a6;
-        if (props.style && props.style.overflowY) {
-          return;
-        }
-        var needsVerticalScrollBar = false;
-        if (root2 && root2.current && ((_a6 = root2.current) === null || _a6 === void 0 ? void 0 : _a6.firstElementChild)) {
-          var rootHeight = root2.current.clientHeight;
-          var firstChildHeight = root2.current.firstElementChild.clientHeight;
-          if (rootHeight > 0 && firstChildHeight > rootHeight) {
-            needsVerticalScrollBar = firstChildHeight - rootHeight > 1;
-          }
-        }
-        if (needsVerticalScrollBarState !== needsVerticalScrollBar) {
-          setNeedsVerticalScrollBar(needsVerticalScrollBar);
-        }
-      });
-      return function() {
-        return async.dispose();
-      };
-    });
-    return needsVerticalScrollBarState;
-  }
-  function defaultFocusRestorer(options) {
-    var originalElement = options.originalElement, containsFocus = options.containsFocus;
-    if (originalElement && containsFocus && originalElement !== getWindow()) {
-      setTimeout(function() {
-        var _a5;
-        (_a5 = originalElement.focus) === null || _a5 === void 0 ? void 0 : _a5.call(originalElement);
-      }, 0);
-    }
-  }
-  function useRestoreFocus(props, root2) {
-    var _a5 = props.onRestoreFocus, onRestoreFocus = _a5 === void 0 ? defaultFocusRestorer : _a5;
-    var originalFocusedElement = React20.useRef();
-    var containsFocus = React20.useRef(false);
-    React20.useEffect(function() {
-      originalFocusedElement.current = getDocument().activeElement;
-      if (doesElementContainFocus(root2.current)) {
-        containsFocus.current = true;
-      }
-      return function() {
-        var _a6;
-        onRestoreFocus === null || onRestoreFocus === void 0 ? void 0 : onRestoreFocus({
-          originalElement: originalFocusedElement.current,
-          containsFocus: containsFocus.current,
-          documentContainsFocus: ((_a6 = getDocument()) === null || _a6 === void 0 ? void 0 : _a6.hasFocus()) || false
-        });
-        originalFocusedElement.current = void 0;
-      };
-    }, []);
-    useOnEvent(root2, "focus", React20.useCallback(function() {
-      containsFocus.current = true;
-    }, []), true);
-    useOnEvent(root2, "blur", React20.useCallback(function(ev) {
-      if (root2.current && ev.relatedTarget && !root2.current.contains(ev.relatedTarget)) {
-        containsFocus.current = false;
-      }
-    }, []), true);
-  }
-  function useHideSiblingNodes(props, root2) {
-    var shouldHideSiblings = String(props["aria-modal"]).toLowerCase() === "true" && props.enableAriaHiddenSiblings;
-    React20.useEffect(function() {
-      if (!(shouldHideSiblings && root2.current)) {
-        return;
-      }
-      var unmodalize2 = modalize(root2.current);
-      return unmodalize2;
-    }, [root2, shouldHideSiblings]);
-  }
-  var Popup = React20.forwardRef(function(propsWithoutDefaults, forwardedRef) {
-    var props = getPropsWithDefaults({ shouldRestoreFocus: true, enableAriaHiddenSiblings: true }, propsWithoutDefaults);
-    var root2 = React20.useRef();
-    var mergedRootRef = useMergedRefs(root2, forwardedRef);
-    useHideSiblingNodes(props, root2);
-    useRestoreFocus(props, root2);
-    var role = props.role, className = props.className, ariaLabel = props.ariaLabel, ariaLabelledBy = props.ariaLabelledBy, ariaDescribedBy = props.ariaDescribedBy, style = props.style, children = props.children, onDismiss = props.onDismiss;
-    var needsVerticalScrollBar = useScrollbarAsync(props, root2);
-    var onKeyDown = React20.useCallback(function(ev) {
-      switch (ev.which) {
-        case KeyCodes.escape:
-          if (onDismiss) {
-            onDismiss(ev);
-            ev.preventDefault();
-            ev.stopPropagation();
-          }
-          break;
-      }
-    }, [onDismiss]);
-    var win = useWindow();
-    useOnEvent(win, "keydown", onKeyDown);
-    return React20.createElement("div", __assign({ ref: mergedRootRef }, getNativeProps(props, divProperties), { className, role, "aria-label": ariaLabel, "aria-labelledby": ariaLabelledBy, "aria-describedby": ariaDescribedBy, onKeyDown, style: __assign({ overflowY: needsVerticalScrollBar ? "scroll" : void 0, outline: "none" }, style) }), children);
-  });
-  Popup.displayName = "Popup";
-
-  // ../node_modules/@fluentui/react/lib/components/Callout/CalloutContent.base.js
-  var _a4;
-  var COMPONENT_NAME = "CalloutContentBase";
-  var ANIMATIONS = (_a4 = {}, _a4[RectangleEdge.top] = AnimationClassNames.slideUpIn10, _a4[RectangleEdge.bottom] = AnimationClassNames.slideDownIn10, _a4[RectangleEdge.left] = AnimationClassNames.slideLeftIn10, _a4[RectangleEdge.right] = AnimationClassNames.slideRightIn10, _a4);
-  var BEAK_ORIGIN_POSITION = { top: 0, left: 0 };
-  var OFF_SCREEN_STYLE = {
-    opacity: 0,
-    filter: "opacity(0)",
-    pointerEvents: "none"
-  };
-  var ARIA_ROLE_ATTRIBUTES = ["role", "aria-roledescription"];
-  var DEFAULT_PROPS = {
-    preventDismissOnLostFocus: false,
-    preventDismissOnScroll: false,
-    preventDismissOnResize: false,
-    isBeakVisible: true,
-    beakWidth: 16,
-    gapSpace: 0,
-    minPagePadding: 8,
-    directionalHint: DirectionalHint.bottomAutoEdge
-  };
-  var getClassNames = classNamesFunction({
-    disableCaching: true
-    // disabling caching because stylesProp.position mutates often
-  });
-  function useBounds(_a5, targetRef, targetWindow) {
-    var bounds = _a5.bounds, _b = _a5.minPagePadding, minPagePadding = _b === void 0 ? DEFAULT_PROPS.minPagePadding : _b, target = _a5.target;
-    var _c = React21.useState(false), targetWindowResized = _c[0], setTargetWindowResized = _c[1];
-    var cachedBounds = React21.useRef();
-    var getBounds = React21.useCallback(function() {
-      if (!cachedBounds.current || targetWindowResized) {
-        var currentBounds = typeof bounds === "function" ? targetWindow ? bounds(target, targetWindow) : void 0 : bounds;
-        if (!currentBounds && targetWindow) {
-          currentBounds = getBoundsFromTargetWindow(targetRef.current, targetWindow);
-          currentBounds = {
-            top: currentBounds.top + minPagePadding,
-            left: currentBounds.left + minPagePadding,
-            right: currentBounds.right - minPagePadding,
-            bottom: currentBounds.bottom - minPagePadding,
-            width: currentBounds.width - minPagePadding * 2,
-            height: currentBounds.height - minPagePadding * 2
-          };
-        }
-        cachedBounds.current = currentBounds;
-        targetWindowResized && setTargetWindowResized(false);
-      }
-      return cachedBounds.current;
-    }, [bounds, minPagePadding, target, targetRef, targetWindow, targetWindowResized]);
-    var async = useAsync();
-    useOnEvent(targetWindow, "resize", async.debounce(function() {
-      setTargetWindowResized(true);
-    }, 500, { leading: true }));
-    return getBounds;
-  }
-  function useMaxHeight(_a5, getBounds, positions) {
-    var _b;
-    var calloutMaxHeight = _a5.calloutMaxHeight, finalHeight = _a5.finalHeight, directionalHint = _a5.directionalHint, directionalHintFixed = _a5.directionalHintFixed, hidden = _a5.hidden;
-    var _c = React21.useState(), maxHeight = _c[0], setMaxHeight = _c[1];
-    var _d = (_b = positions === null || positions === void 0 ? void 0 : positions.elementPosition) !== null && _b !== void 0 ? _b : {}, top = _d.top, bottom = _d.bottom;
-    React21.useEffect(function() {
-      var _a6;
-      var _b2 = (_a6 = getBounds()) !== null && _a6 !== void 0 ? _a6 : {}, topBounds = _b2.top, bottomBounds = _b2.bottom;
-      var calculatedHeight;
-      if (typeof top === "number" && bottomBounds) {
-        calculatedHeight = bottomBounds - top;
-      } else if (typeof bottom === "number" && typeof topBounds === "number" && bottomBounds) {
-        calculatedHeight = bottomBounds - topBounds - bottom;
-      }
-      if (!calloutMaxHeight && !hidden || calloutMaxHeight && calculatedHeight && calloutMaxHeight > calculatedHeight) {
-        setMaxHeight(calculatedHeight);
-      } else if (calloutMaxHeight) {
-        setMaxHeight(calloutMaxHeight);
-      } else {
-        setMaxHeight(void 0);
-      }
-    }, [bottom, calloutMaxHeight, finalHeight, directionalHint, directionalHintFixed, getBounds, hidden, positions, top]);
-    return maxHeight;
-  }
-  function usePositions(props, hostElement, calloutElement, targetRef, getBounds) {
-    var _a5 = React21.useState(), positions = _a5[0], setPositions = _a5[1];
-    var positionAttempts = React21.useRef(0);
-    var previousTarget = React21.useRef();
-    var async = useAsync();
-    var hidden = props.hidden, target = props.target, finalHeight = props.finalHeight, calloutMaxHeight = props.calloutMaxHeight, onPositioned = props.onPositioned, directionalHint = props.directionalHint;
-    React21.useEffect(function() {
-      if (!hidden) {
-        var timerId_1 = async.requestAnimationFrame(function() {
-          var _a6, _b;
-          if (hostElement.current && calloutElement) {
-            var currentProps = __assign(__assign({}, props), { target: targetRef.current, bounds: getBounds() });
-            var dupeCalloutElement = calloutElement.cloneNode(true);
-            dupeCalloutElement.style.maxHeight = calloutMaxHeight ? "".concat(calloutMaxHeight) : "";
-            dupeCalloutElement.style.visibility = "hidden";
-            (_a6 = calloutElement.parentElement) === null || _a6 === void 0 ? void 0 : _a6.appendChild(dupeCalloutElement);
-            var previousPositions = previousTarget.current === target ? positions : void 0;
-            var newPositions = finalHeight ? positionCard(currentProps, hostElement.current, dupeCalloutElement, previousPositions) : positionCallout(currentProps, hostElement.current, dupeCalloutElement, previousPositions);
-            (_b = calloutElement.parentElement) === null || _b === void 0 ? void 0 : _b.removeChild(dupeCalloutElement);
-            if (!positions && newPositions || positions && newPositions && !arePositionsEqual(positions, newPositions) && positionAttempts.current < 5) {
-              positionAttempts.current++;
-              setPositions(newPositions);
-            } else if (positionAttempts.current > 0) {
-              positionAttempts.current = 0;
-              onPositioned === null || onPositioned === void 0 ? void 0 : onPositioned(positions);
-            }
-          }
-        }, calloutElement);
-        previousTarget.current = target;
-        return function() {
-          async.cancelAnimationFrame(timerId_1);
-          previousTarget.current = void 0;
-        };
-      } else {
-        setPositions(void 0);
-        positionAttempts.current = 0;
-      }
-    }, [
-      hidden,
-      directionalHint,
-      async,
-      calloutElement,
-      calloutMaxHeight,
-      hostElement,
-      targetRef,
-      finalHeight,
-      getBounds,
-      onPositioned,
-      positions,
-      props,
-      target
-    ]);
-    return positions;
-  }
-  function useAutoFocus(_a5, positions, calloutElement) {
-    var hidden = _a5.hidden, setInitialFocus = _a5.setInitialFocus;
-    var async = useAsync();
-    var hasPositions = !!positions;
-    React21.useEffect(function() {
-      if (!hidden && setInitialFocus && hasPositions && calloutElement) {
-        var timerId_2 = async.requestAnimationFrame(function() {
-          return focusFirstChild(calloutElement);
-        }, calloutElement);
-        return function() {
-          return async.cancelAnimationFrame(timerId_2);
-        };
-      }
-    }, [hidden, hasPositions, async, calloutElement, setInitialFocus]);
-  }
-  function useDismissHandlers(_a5, positions, hostElement, targetRef, targetWindow) {
-    var hidden = _a5.hidden, onDismiss = _a5.onDismiss, preventDismissOnScroll = _a5.preventDismissOnScroll, preventDismissOnResize = _a5.preventDismissOnResize, preventDismissOnLostFocus = _a5.preventDismissOnLostFocus, dismissOnTargetClick = _a5.dismissOnTargetClick, shouldDismissOnWindowFocus = _a5.shouldDismissOnWindowFocus, preventDismissOnEvent = _a5.preventDismissOnEvent;
-    var isMouseDownOnPopup = React21.useRef(false);
-    var async = useAsync();
-    var mouseDownHandlers = useConst([
-      function() {
-        isMouseDownOnPopup.current = true;
-      },
-      function() {
-        isMouseDownOnPopup.current = false;
-      }
-    ]);
-    var positionsExists = !!positions;
-    React21.useEffect(function() {
-      var dismissOnScroll = function(ev) {
-        if (positionsExists && !preventDismissOnScroll) {
-          dismissOnClickOrScroll(ev);
-        }
-      };
-      var dismissOnResize = function(ev) {
-        if (!preventDismissOnResize && !(preventDismissOnEvent && preventDismissOnEvent(ev))) {
-          onDismiss === null || onDismiss === void 0 ? void 0 : onDismiss(ev);
-        }
-      };
-      var dismissOnLostFocus = function(ev) {
-        if (!preventDismissOnLostFocus) {
-          dismissOnClickOrScroll(ev);
-        }
-      };
-      var dismissOnClickOrScroll = function(ev) {
-        var eventPaths = ev.composedPath ? ev.composedPath() : [];
-        var target = eventPaths.length > 0 ? eventPaths[0] : ev.target;
-        var isEventTargetOutsideCallout = hostElement.current && !elementContains(hostElement.current, target);
-        if (isEventTargetOutsideCallout && isMouseDownOnPopup.current) {
-          isMouseDownOnPopup.current = false;
-          return;
-        }
-        if (!targetRef.current && isEventTargetOutsideCallout || ev.target !== targetWindow && isEventTargetOutsideCallout && (!targetRef.current || "stopPropagation" in targetRef.current || dismissOnTargetClick || target !== targetRef.current && !elementContains(targetRef.current, target))) {
-          if (preventDismissOnEvent && preventDismissOnEvent(ev)) {
-            return;
-          }
-          onDismiss === null || onDismiss === void 0 ? void 0 : onDismiss(ev);
-        }
-      };
-      var dismissOnTargetWindowBlur = function(ev) {
-        if (!shouldDismissOnWindowFocus) {
-          return;
-        }
-        if ((preventDismissOnEvent && !preventDismissOnEvent(ev) || !preventDismissOnEvent && !preventDismissOnLostFocus) && !(targetWindow === null || targetWindow === void 0 ? void 0 : targetWindow.document.hasFocus()) && ev.relatedTarget === null) {
-          onDismiss === null || onDismiss === void 0 ? void 0 : onDismiss(ev);
-        }
-      };
-      var disposablesPromise = new Promise(function(resolve2) {
-        async.setTimeout(function() {
-          if (!hidden && targetWindow) {
-            var disposables_1 = [
-              on(targetWindow, "scroll", dismissOnScroll, true),
-              on(targetWindow, "resize", dismissOnResize, true),
-              on(targetWindow.document.documentElement, "focus", dismissOnLostFocus, true),
-              on(targetWindow.document.documentElement, "click", dismissOnLostFocus, true),
-              on(targetWindow, "blur", dismissOnTargetWindowBlur, true)
-            ];
-            resolve2(function() {
-              disposables_1.forEach(function(dispose) {
-                return dispose();
-              });
-            });
-          }
-        }, 0);
-      });
-      return function() {
-        disposablesPromise.then(function(dispose) {
-          return dispose();
-        });
-      };
-    }, [
-      hidden,
-      async,
-      hostElement,
-      targetRef,
-      targetWindow,
-      onDismiss,
-      shouldDismissOnWindowFocus,
-      dismissOnTargetClick,
-      preventDismissOnLostFocus,
-      preventDismissOnResize,
-      preventDismissOnScroll,
-      positionsExists,
-      preventDismissOnEvent
-    ]);
-    return mouseDownHandlers;
-  }
-  var CalloutContentBase = React21.memo(React21.forwardRef(function(propsWithoutDefaults, forwardedRef) {
-    var props = getPropsWithDefaults(DEFAULT_PROPS, propsWithoutDefaults);
-    var styles2 = props.styles, style = props.style, ariaLabel = props.ariaLabel, ariaDescribedBy = props.ariaDescribedBy, ariaLabelledBy = props.ariaLabelledBy, className = props.className, isBeakVisible = props.isBeakVisible, children = props.children, beakWidth = props.beakWidth, calloutWidth = props.calloutWidth, calloutMaxWidth = props.calloutMaxWidth, calloutMinWidth = props.calloutMinWidth, doNotLayer = props.doNotLayer, finalHeight = props.finalHeight, _a5 = props.hideOverflow, hideOverflow = _a5 === void 0 ? !!finalHeight : _a5, backgroundColor = props.backgroundColor, calloutMaxHeight = props.calloutMaxHeight, onScroll = props.onScroll, _b = props.shouldRestoreFocus, shouldRestoreFocus = _b === void 0 ? true : _b, target = props.target, hidden = props.hidden, onLayerMounted = props.onLayerMounted, popupProps = props.popupProps;
-    var hostElement = React21.useRef(null);
-    var _c = React21.useState(null), calloutElement = _c[0], setCalloutElement = _c[1];
-    var calloutCallback = React21.useCallback(function(calloutEl) {
-      setCalloutElement(calloutEl);
-    }, []);
-    var rootRef = useMergedRefs(hostElement, forwardedRef);
-    var _d = useTarget(props.target, {
-      current: calloutElement
-    }), targetRef = _d[0], targetWindow = _d[1];
-    var getBounds = useBounds(props, targetRef, targetWindow);
-    var positions = usePositions(props, hostElement, calloutElement, targetRef, getBounds);
-    var maxHeight = useMaxHeight(props, getBounds, positions);
-    var _e = useDismissHandlers(props, positions, hostElement, targetRef, targetWindow), mouseDownOnPopup = _e[0], mouseUpOnPopup = _e[1];
-    var isForcedInBounds = (positions === null || positions === void 0 ? void 0 : positions.elementPosition.top) && (positions === null || positions === void 0 ? void 0 : positions.elementPosition.bottom);
-    var cssPositions = __assign(__assign({}, positions === null || positions === void 0 ? void 0 : positions.elementPosition), { maxHeight });
-    if (isForcedInBounds) {
-      cssPositions.bottom = void 0;
-    }
-    useAutoFocus(props, positions, calloutElement);
-    React21.useEffect(function() {
-      if (!hidden) {
-        onLayerMounted === null || onLayerMounted === void 0 ? void 0 : onLayerMounted();
-      }
-    }, [hidden]);
-    if (!targetWindow) {
-      return null;
-    }
-    var overflowYHidden = hideOverflow;
-    var beakVisible = isBeakVisible && !!target;
-    var classNames2 = getClassNames(styles2, {
-      theme: props.theme,
-      className,
-      overflowYHidden,
-      calloutWidth,
-      positions,
-      beakWidth,
-      backgroundColor,
-      calloutMaxWidth,
-      calloutMinWidth,
-      doNotLayer
-    });
-    var overflowStyle = __assign(__assign({ maxHeight: calloutMaxHeight ? calloutMaxHeight : "100%" }, style), overflowYHidden && { overflowY: "hidden" });
-    var visibilityStyle = props.hidden ? { visibility: "hidden" } : void 0;
-    return React21.createElement(
-      "div",
-      { ref: rootRef, className: classNames2.container, style: visibilityStyle },
-      React21.createElement(
-        "div",
-        __assign({}, getNativeProps(props, divProperties, ARIA_ROLE_ATTRIBUTES), {
-          className: css(classNames2.root, positions && positions.targetEdge && ANIMATIONS[positions.targetEdge]),
-          style: positions ? __assign({}, cssPositions) : OFF_SCREEN_STYLE,
-          // Safari and Firefox on Mac OS requires this to back-stop click events so focus remains in the Callout.
-          // See https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#Clicking_and_focus
-          tabIndex: -1,
-          ref: calloutCallback
-        }),
-        beakVisible && React21.createElement("div", { className: classNames2.beak, style: getBeakPosition(positions) }),
-        beakVisible && React21.createElement("div", { className: classNames2.beakCurtain }),
-        React21.createElement(
-          Popup,
-          __assign({
-            // don't use getNativeElementProps for role and roledescription because it will also
-            // pass through data-* props (resulting in them being used in two places)
-            role: props.role,
-            "aria-roledescription": props["aria-roledescription"],
-            ariaDescribedBy,
-            ariaLabel,
-            ariaLabelledBy,
-            className: classNames2.calloutMain,
-            onDismiss: props.onDismiss,
-            onMouseDown: mouseDownOnPopup,
-            onMouseUp: mouseUpOnPopup,
-            onRestoreFocus: props.onRestoreFocus,
-            onScroll,
-            shouldRestoreFocus,
-            style: overflowStyle
-          }, popupProps),
-          children
-        )
-      )
-    );
-  }), function(previousProps, nextProps) {
-    if (!nextProps.shouldUpdateWhenHidden && previousProps.hidden && nextProps.hidden) {
-      return true;
-    }
-    return shallowCompare(previousProps, nextProps);
-  });
-  function getBeakPosition(positions) {
-    var _a5, _b;
-    var beakPositionStyle = __assign(__assign({}, (_a5 = positions === null || positions === void 0 ? void 0 : positions.beakPosition) === null || _a5 === void 0 ? void 0 : _a5.elementPosition), { display: ((_b = positions === null || positions === void 0 ? void 0 : positions.beakPosition) === null || _b === void 0 ? void 0 : _b.hideBeak) ? "none" : void 0 });
-    if (!beakPositionStyle.top && !beakPositionStyle.bottom && !beakPositionStyle.left && !beakPositionStyle.right) {
-      beakPositionStyle.left = BEAK_ORIGIN_POSITION.left;
-      beakPositionStyle.top = BEAK_ORIGIN_POSITION.top;
-    }
-    return beakPositionStyle;
-  }
-  function arePositionsEqual(prevElementPositions, newElementPosition) {
-    return comparePositions(prevElementPositions.elementPosition, newElementPosition.elementPosition) && comparePositions(prevElementPositions.beakPosition.elementPosition, newElementPosition.beakPosition.elementPosition);
-  }
-  function comparePositions(prevElementPositions, newElementPositions) {
-    for (var key in newElementPositions) {
-      if (newElementPositions.hasOwnProperty(key)) {
-        var oldPositionEdge = prevElementPositions[key];
-        var newPositionEdge = newElementPositions[key];
-        if (oldPositionEdge !== void 0 && newPositionEdge !== void 0) {
-          if (oldPositionEdge.toFixed(2) !== newPositionEdge.toFixed(2)) {
-            return false;
-          }
-        } else {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-  CalloutContentBase.displayName = COMPONENT_NAME;
-
-  // ../node_modules/@fluentui/react/lib/components/Callout/CalloutContent.styles.js
-  function getBeakStyle(beakWidth) {
-    return {
-      height: beakWidth,
-      width: beakWidth
-    };
-  }
-  var GlobalClassNames = {
-    container: "ms-Callout-container",
-    root: "ms-Callout",
-    beak: "ms-Callout-beak",
-    beakCurtain: "ms-Callout-beakCurtain",
-    calloutMain: "ms-Callout-main"
-  };
-  var getStyles = function(props) {
-    var _a5;
-    var theme = props.theme, className = props.className, overflowYHidden = props.overflowYHidden, calloutWidth = props.calloutWidth, beakWidth = props.beakWidth, backgroundColor = props.backgroundColor, calloutMaxWidth = props.calloutMaxWidth, calloutMinWidth = props.calloutMinWidth, doNotLayer = props.doNotLayer;
-    var classNames2 = getGlobalClassNames(GlobalClassNames, theme);
-    var semanticColors = theme.semanticColors, effects = theme.effects;
-    return {
-      container: [
-        classNames2.container,
-        {
-          position: "relative"
-        }
-      ],
-      root: [
-        classNames2.root,
-        theme.fonts.medium,
-        {
-          position: "absolute",
-          display: "flex",
-          zIndex: doNotLayer ? ZIndexes.Layer : void 0,
-          boxSizing: "border-box",
-          borderRadius: effects.roundedCorner2,
-          boxShadow: effects.elevation16,
-          selectors: (_a5 = {}, _a5[HighContrastSelector] = {
-            borderWidth: 1,
-            borderStyle: "solid",
-            borderColor: "WindowText"
-          }, _a5)
-        },
-        focusClear(),
-        className,
-        !!calloutWidth && { width: calloutWidth },
-        !!calloutMaxWidth && { maxWidth: calloutMaxWidth },
-        !!calloutMinWidth && { minWidth: calloutMinWidth }
-      ],
-      beak: [
-        classNames2.beak,
-        {
-          position: "absolute",
-          backgroundColor: semanticColors.menuBackground,
-          boxShadow: "inherit",
-          border: "inherit",
-          boxSizing: "border-box",
-          transform: "rotate(45deg)"
-        },
-        getBeakStyle(beakWidth),
-        backgroundColor && {
-          backgroundColor
-        }
-      ],
-      beakCurtain: [
-        classNames2.beakCurtain,
-        {
-          position: "absolute",
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0,
-          backgroundColor: semanticColors.menuBackground,
-          borderRadius: effects.roundedCorner2
-        }
-      ],
-      calloutMain: [
-        classNames2.calloutMain,
-        {
-          backgroundColor: semanticColors.menuBackground,
-          overflowX: "hidden",
-          overflowY: "auto",
-          position: "relative",
-          width: "100%",
-          borderRadius: effects.roundedCorner2
-        },
-        overflowYHidden && {
-          overflowY: "hidden"
-        },
-        backgroundColor && {
-          backgroundColor
-        }
-      ]
-    };
-  };
-
-  // ../node_modules/@fluentui/react/lib/components/Callout/CalloutContent.js
-  var CalloutContent = styled(CalloutContentBase, getStyles, void 0, {
-    scope: "CalloutContent"
-  });
-
-  // ../node_modules/@fluentui/react-portal-compat-context/lib/PortalCompatContext.js
-  var React22 = __toESM(require_react());
-  var PortalCompatContext = /* @__PURE__ */ React22.createContext(void 0);
-  var portalCompatContextDefaultValue = () => () => void 0;
-  var PortalCompatContextProvider = PortalCompatContext.Provider;
-  function usePortalCompat() {
-    var _React_useContext3;
-    return (_React_useContext3 = React22.useContext(PortalCompatContext)) !== null && _React_useContext3 !== void 0 ? _React_useContext3 : portalCompatContextDefaultValue;
-  }
-
-  // ../node_modules/@fluentui/react/lib/components/Layer/Layer.base.js
-  var React24 = __toESM(require_react());
-  var ReactDOM = __toESM(require_react_dom());
-
-  // ../node_modules/@fluentui/react/lib/components/Fabric/Fabric.base.js
-  var React23 = __toESM(require_react());
-  var getClassNames2 = classNamesFunction();
-  var getFabricTheme = memoizeFunction(function(theme, isRTL) {
-    return createTheme(__assign(__assign({}, theme), { rtl: isRTL }));
-  });
-  var getDir = function(_a5) {
-    var theme = _a5.theme, dir = _a5.dir;
-    var contextDir = getRTL2(theme) ? "rtl" : "ltr";
-    var pageDir = getRTL2() ? "rtl" : "ltr";
-    var componentDir = dir ? dir : contextDir;
-    return {
-      // If Fabric dir !== contextDir
-      // Or If contextDir !== pageDir
-      // Then we need to set dir of the Fabric root
-      rootDir: componentDir !== contextDir || componentDir !== pageDir ? componentDir : dir,
-      // If dir !== contextDir || pageDir
-      // then set contextual theme around content
-      needsTheme: componentDir !== contextDir
-    };
-  };
-  var FabricBase = React23.forwardRef(function(props, ref) {
-    var className = props.className, theme = props.theme, applyTheme = props.applyTheme, applyThemeToBody = props.applyThemeToBody, styles2 = props.styles;
-    var classNames2 = getClassNames2(styles2, {
-      theme,
-      applyTheme,
-      className
-    });
-    var rootElement = React23.useRef(null);
-    useApplyThemeToBody(applyThemeToBody, classNames2, rootElement);
-    return React23.createElement(React23.Fragment, null, useRenderedContent(props, classNames2, rootElement, ref));
-  });
-  FabricBase.displayName = "FabricBase";
-  function useRenderedContent(props, _a5, rootElement, ref) {
-    var root2 = _a5.root;
-    var _b = props.as, Root2 = _b === void 0 ? "div" : _b, dir = props.dir, theme = props.theme;
-    var divProps = getNativeProps(props, divProperties, ["dir"]);
-    var _c = getDir(props), rootDir = _c.rootDir, needsTheme = _c.needsTheme;
-    var renderedContent = React23.createElement(
-      FocusRectsProvider,
-      { providerRef: rootElement },
-      React23.createElement(Root2, __assign({ dir: rootDir }, divProps, { className: root2, ref: useMergedRefs(rootElement, ref) }))
-    );
-    if (needsTheme) {
-      renderedContent = // eslint-disable-next-line deprecation/deprecation
-      React23.createElement(Customizer, { settings: { theme: getFabricTheme(theme, dir === "rtl") } }, renderedContent);
-    }
-    return renderedContent;
-  }
-  function useApplyThemeToBody(applyThemeToBody, _a5, rootElement) {
-    var bodyThemed = _a5.bodyThemed;
-    React23.useEffect(function() {
-      if (applyThemeToBody) {
-        var currentDoc_1 = getDocument(rootElement.current);
-        if (currentDoc_1) {
-          currentDoc_1.body.classList.add(bodyThemed);
-          return function() {
-            currentDoc_1.body.classList.remove(bodyThemed);
-          };
-        }
-      }
-    }, [bodyThemed, applyThemeToBody, rootElement]);
-    return rootElement;
-  }
-
-  // ../node_modules/@fluentui/react/lib/components/Fabric/Fabric.styles.js
-  var inheritFont = { fontFamily: "inherit" };
-  var GlobalClassNames2 = {
-    root: "ms-Fabric",
-    bodyThemed: "ms-Fabric-bodyThemed"
-  };
-  var getStyles2 = function(props) {
-    var applyTheme = props.applyTheme, className = props.className, preventBlanketFontInheritance = props.preventBlanketFontInheritance, theme = props.theme;
-    var classNames2 = getGlobalClassNames(GlobalClassNames2, theme);
-    return {
-      root: [
-        classNames2.root,
-        theme.fonts.medium,
-        {
-          color: theme.palette.neutralPrimary
-        },
-        !preventBlanketFontInheritance && {
-          "& button": inheritFont,
-          "& input": inheritFont,
-          "& textarea": inheritFont
-        },
-        // apply theme to only if applyTheme is true
-        applyTheme && {
-          color: theme.semanticColors.bodyText,
-          backgroundColor: theme.semanticColors.bodyBackground
-        },
-        className
-      ],
-      bodyThemed: [
-        {
-          backgroundColor: theme.semanticColors.bodyBackground
-        }
-      ]
-    };
-  };
-
-  // ../node_modules/@fluentui/react/lib/components/Fabric/Fabric.js
-  var Fabric = styled(FabricBase, getStyles2, void 0, {
-    scope: "Fabric"
-  });
-
-  // ../node_modules/@fluentui/react/lib/components/Layer/Layer.notification.js
-  var _layersByHostId = {};
-  var _layerHostsById = {};
-  var defaultHostId = "fluent-default-layer-host";
-  var _defaultHostSelector = "#".concat(defaultHostId);
-  function registerLayer(hostId, callback) {
-    if (!_layersByHostId[hostId]) {
-      _layersByHostId[hostId] = [];
-    }
-    _layersByHostId[hostId].push(callback);
-    var layerHosts = _layerHostsById[hostId];
-    if (layerHosts) {
-      for (var _i = 0, layerHosts_1 = layerHosts; _i < layerHosts_1.length; _i++) {
-        var layerHost = layerHosts_1[_i];
-        layerHost.notifyLayersChanged();
-      }
-    }
-  }
-  function unregisterLayer(hostId, callback) {
-    var layers = _layersByHostId[hostId];
-    if (layers) {
-      var idx = layers.indexOf(callback);
-      if (idx >= 0) {
-        layers.splice(idx, 1);
-        if (layers.length === 0) {
-          delete _layersByHostId[hostId];
-        }
-      }
-    }
-    var layerHosts = _layerHostsById[hostId];
-    if (layerHosts) {
-      for (var _i = 0, layerHosts_2 = layerHosts; _i < layerHosts_2.length; _i++) {
-        var layerHost = layerHosts_2[_i];
-        layerHost.notifyLayersChanged();
-      }
-    }
-  }
-  function getLayerHost(hostId) {
-    var layerHosts = _layerHostsById[hostId];
-    return layerHosts && layerHosts[0] || void 0;
-  }
-  function createDefaultLayerHost(doc) {
-    var host = doc.createElement("div");
-    host.setAttribute("id", defaultHostId);
-    host.style.cssText = "position:fixed;z-index:1000000";
-    doc === null || doc === void 0 ? void 0 : doc.body.appendChild(host);
-    return host;
-  }
-  function getDefaultTarget() {
-    return _defaultHostSelector;
-  }
-
-  // ../node_modules/@fluentui/react/lib/components/Layer/Layer.base.js
-  var getClassNames3 = classNamesFunction();
-  var getFocusVisibility = function(providerRef) {
-    if (providerRef === null || providerRef === void 0 ? void 0 : providerRef.current) {
-      return providerRef.current.classList.contains(IsFocusVisibleClassName);
-    }
-    return false;
-  };
-  var LayerBase = React24.forwardRef(function(props, ref) {
-    var registerPortalEl = usePortalCompat();
-    var rootRef = React24.useRef(null);
-    var mergedRef = useMergedRefs(rootRef, ref);
-    var layerRef = React24.useRef();
-    var fabricElementRef = React24.useRef(null);
-    var focusContext = React24.useContext(FocusRectsContext);
-    var _a5 = React24.useState(false), needRaiseLayerMount = _a5[0], setNeedRaiseLayerMount = _a5[1];
-    var focusRectsRef = React24.useCallback(function(el) {
-      var isFocusVisible = getFocusVisibility(focusContext === null || focusContext === void 0 ? void 0 : focusContext.providerRef);
-      if (el && isFocusVisible) {
-        el.classList.add(IsFocusVisibleClassName);
-      }
-    }, [focusContext]);
-    var children = props.children, className = props.className, eventBubblingEnabled = props.eventBubblingEnabled, fabricProps = props.fabricProps, hostId = props.hostId, insertFirst = props.insertFirst, _b = props.onLayerDidMount, onLayerDidMount = _b === void 0 ? function() {
-      return void 0;
-    } : _b, _c = props.onLayerMounted, onLayerMounted = _c === void 0 ? function() {
-      return void 0;
-    } : _c, onLayerWillUnmount = props.onLayerWillUnmount, styles2 = props.styles, theme = props.theme;
-    var fabricRef = useMergedRefs(fabricElementRef, fabricProps === null || fabricProps === void 0 ? void 0 : fabricProps.ref, focusRectsRef);
-    var classNames2 = getClassNames3(styles2, {
-      theme,
-      className,
-      isNotHost: !hostId
-    });
-    var getHost = function(doc) {
-      var _a6, _b2;
-      if (hostId) {
-        var layerHost = getLayerHost(hostId);
-        if (layerHost) {
-          return (_a6 = layerHost.rootRef.current) !== null && _a6 !== void 0 ? _a6 : null;
-        }
-        return (_b2 = doc.getElementById(hostId)) !== null && _b2 !== void 0 ? _b2 : null;
-      } else {
-        var defaultHostSelector = getDefaultTarget();
-        var host = defaultHostSelector ? doc.querySelector(defaultHostSelector) : null;
-        if (!host) {
-          host = createDefaultLayerHost(doc);
-        }
-        return host;
-      }
-    };
-    var removeLayerElement = function() {
-      onLayerWillUnmount === null || onLayerWillUnmount === void 0 ? void 0 : onLayerWillUnmount();
-      var elem = layerRef.current;
-      layerRef.current = void 0;
-      if (elem && elem.parentNode) {
-        elem.parentNode.removeChild(elem);
-      }
-    };
-    var createLayerElement = function() {
-      var _a6;
-      var doc = getDocument(rootRef.current);
-      if (!doc) {
-        return;
-      }
-      var host = getHost(doc);
-      if (!host) {
-        return;
-      }
-      removeLayerElement();
-      var el = ((_a6 = host.ownerDocument) !== null && _a6 !== void 0 ? _a6 : doc).createElement("div");
-      el.className = classNames2.root;
-      setPortalAttribute(el);
-      setVirtualParent(el, rootRef.current);
-      insertFirst ? host.insertBefore(el, host.firstChild) : host.appendChild(el);
-      layerRef.current = el;
-      setNeedRaiseLayerMount(true);
-    };
-    useIsomorphicLayoutEffect(function() {
-      createLayerElement();
-      if (hostId) {
-        registerLayer(hostId, createLayerElement);
-      }
-      var unregisterPortalEl = layerRef.current ? registerPortalEl(layerRef.current) : void 0;
-      return function() {
-        if (unregisterPortalEl) {
-          unregisterPortalEl();
-        }
-        removeLayerElement();
-        if (hostId) {
-          unregisterLayer(hostId, createLayerElement);
-        }
-      };
-    }, [hostId]);
-    React24.useEffect(function() {
-      if (layerRef.current && needRaiseLayerMount) {
-        onLayerMounted === null || onLayerMounted === void 0 ? void 0 : onLayerMounted();
-        onLayerDidMount === null || onLayerDidMount === void 0 ? void 0 : onLayerDidMount();
-        setNeedRaiseLayerMount(false);
-      }
-    }, [needRaiseLayerMount, onLayerMounted, onLayerDidMount]);
-    useDebugWarnings(props);
-    return React24.createElement("span", { className: "ms-layer", ref: mergedRef }, layerRef.current && ReactDOM.createPortal(React24.createElement(
-      FocusRectsProvider,
-      { layerRoot: true, providerRef: fabricRef },
-      React24.createElement(Fabric, __assign({}, !eventBubblingEnabled && getFilteredEvents(), fabricProps, { className: css(classNames2.content, fabricProps === null || fabricProps === void 0 ? void 0 : fabricProps.className), ref: fabricRef }), children)
-    ), layerRef.current));
-  });
-  LayerBase.displayName = "LayerBase";
-  var filteredEventProps;
-  var onFilterEvent = function(ev) {
-    if (ev.eventPhase === Event.BUBBLING_PHASE && ev.type !== "mouseenter" && ev.type !== "mouseleave" && ev.type !== "touchstart" && ev.type !== "touchend") {
-      ev.stopPropagation();
-    }
-  };
-  function getFilteredEvents() {
-    if (!filteredEventProps) {
-      filteredEventProps = {};
-      [
-        "onClick",
-        "onContextMenu",
-        "onDoubleClick",
-        "onDrag",
-        "onDragEnd",
-        "onDragEnter",
-        "onDragExit",
-        "onDragLeave",
-        "onDragOver",
-        "onDragStart",
-        "onDrop",
-        "onMouseDown",
-        "onMouseEnter",
-        "onMouseLeave",
-        "onMouseMove",
-        "onMouseOver",
-        "onMouseOut",
-        "onMouseUp",
-        "onTouchMove",
-        "onTouchStart",
-        "onTouchCancel",
-        "onTouchEnd",
-        "onKeyDown",
-        "onKeyPress",
-        "onKeyUp",
-        "onFocus",
-        "onBlur",
-        "onChange",
-        "onInput",
-        "onInvalid",
-        "onSubmit"
-      ].forEach(function(name) {
-        return filteredEventProps[name] = onFilterEvent;
-      });
-    }
-    return filteredEventProps;
-  }
-  function useDebugWarnings(props) {
-    if (true) {
-      useWarnings({
-        name: "Layer",
-        props,
-        deprecations: { onLayerMounted: "onLayerDidMount" }
-      });
-    }
-  }
-
-  // ../node_modules/@fluentui/react/lib/components/Layer/Layer.styles.js
-  var GlobalClassNames3 = {
-    root: "ms-Layer",
-    rootNoHost: "ms-Layer--fixed",
-    content: "ms-Layer-content"
-  };
-  var getStyles3 = function(props) {
-    var className = props.className, isNotHost = props.isNotHost, theme = props.theme;
-    var classNames2 = getGlobalClassNames(GlobalClassNames3, theme);
-    return {
-      root: [
-        classNames2.root,
-        theme.fonts.medium,
-        isNotHost && [
-          classNames2.rootNoHost,
-          {
-            position: "fixed",
-            zIndex: ZIndexes.Layer,
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 0,
-            visibility: "hidden"
-          }
-        ],
-        className
-      ],
-      content: [
-        classNames2.content,
-        {
-          visibility: "visible"
-        }
-      ]
-    };
-  };
-
-  // ../node_modules/@fluentui/react/lib/components/Layer/Layer.js
-  var Layer = styled(LayerBase, getStyles3, void 0, {
-    scope: "Layer",
-    fields: ["hostId", "theme", "styles"]
-  });
-
-  // ../node_modules/@fluentui/react/lib/components/Callout/Callout.js
-  var Callout = React25.forwardRef(function(_a5, forwardedRef) {
-    var layerProps = _a5.layerProps, doNotLayer = _a5.doNotLayer, rest = __rest(_a5, ["layerProps", "doNotLayer"]);
-    var content = React25.createElement(CalloutContent, __assign({}, rest, { doNotLayer, ref: forwardedRef }));
-    return doNotLayer ? content : React25.createElement(Layer, __assign({}, layerProps), content);
-  });
-  Callout.displayName = "Callout";
-
-  // ../node_modules/@fluentui/react/lib/components/Icon/Icon.base.js
-  var React28 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react/lib/components/Icon/Icon.types.js
-  var IconType;
-  (function(IconType2) {
-    IconType2[IconType2["default"] = 0] = "default";
-    IconType2[IconType2["image"] = 1] = "image";
-    IconType2[IconType2["Default"] = 1e5] = "Default";
-    IconType2[IconType2["Image"] = 100001] = "Image";
-  })(IconType || (IconType = {}));
-
-  // ../node_modules/@fluentui/react/lib/components/Image/Image.base.js
-  var React26 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react/lib/components/Image/Image.types.js
-  var ImageFit;
-  (function(ImageFit2) {
-    ImageFit2[ImageFit2["center"] = 0] = "center";
-    ImageFit2[ImageFit2["contain"] = 1] = "contain";
-    ImageFit2[ImageFit2["cover"] = 2] = "cover";
-    ImageFit2[ImageFit2["none"] = 3] = "none";
-    ImageFit2[ImageFit2["centerCover"] = 4] = "centerCover";
-    ImageFit2[ImageFit2["centerContain"] = 5] = "centerContain";
-  })(ImageFit || (ImageFit = {}));
-  var ImageCoverStyle;
-  (function(ImageCoverStyle2) {
-    ImageCoverStyle2[ImageCoverStyle2["landscape"] = 0] = "landscape";
-    ImageCoverStyle2[ImageCoverStyle2["portrait"] = 1] = "portrait";
-  })(ImageCoverStyle || (ImageCoverStyle = {}));
-  var ImageLoadState;
-  (function(ImageLoadState2) {
-    ImageLoadState2[ImageLoadState2["notLoaded"] = 0] = "notLoaded";
-    ImageLoadState2[ImageLoadState2["loaded"] = 1] = "loaded";
-    ImageLoadState2[ImageLoadState2["error"] = 2] = "error";
-    ImageLoadState2[ImageLoadState2["errorLoaded"] = 3] = "errorLoaded";
-  })(ImageLoadState || (ImageLoadState = {}));
-
-  // ../node_modules/@fluentui/react/lib/components/Image/Image.base.js
-  var getClassNames4 = classNamesFunction();
-  var SVG_REGEX = /\.svg$/i;
-  var KEY_PREFIX = "fabricImage";
-  function useLoadState(props, imageElement) {
-    var onLoadingStateChange = props.onLoadingStateChange, onLoad = props.onLoad, onError = props.onError, src = props.src;
-    var _a5 = React26.useState(ImageLoadState.notLoaded), loadState = _a5[0], setLoadState = _a5[1];
-    useIsomorphicLayoutEffect(function() {
-      setLoadState(ImageLoadState.notLoaded);
-    }, [src]);
-    React26.useEffect(function() {
-      if (loadState === ImageLoadState.notLoaded) {
-        var isLoaded = imageElement.current ? src && imageElement.current.naturalWidth > 0 && imageElement.current.naturalHeight > 0 || imageElement.current.complete && SVG_REGEX.test(src) : false;
-        if (isLoaded) {
-          setLoadState(ImageLoadState.loaded);
-        }
-      }
-    });
-    React26.useEffect(function() {
-      onLoadingStateChange === null || onLoadingStateChange === void 0 ? void 0 : onLoadingStateChange(loadState);
-    }, [loadState]);
-    var onImageLoaded = React26.useCallback(function(ev) {
-      onLoad === null || onLoad === void 0 ? void 0 : onLoad(ev);
-      if (src) {
-        setLoadState(ImageLoadState.loaded);
-      }
-    }, [src, onLoad]);
-    var onImageError = React26.useCallback(function(ev) {
-      onError === null || onError === void 0 ? void 0 : onError(ev);
-      setLoadState(ImageLoadState.error);
-    }, [onError]);
-    return [loadState, onImageLoaded, onImageError];
-  }
-  var ImageBase = React26.forwardRef(function(props, forwardedRef) {
-    var frameElement = React26.useRef();
-    var imageElement = React26.useRef();
-    var _a5 = useLoadState(props, imageElement), loadState = _a5[0], onImageLoaded = _a5[1], onImageError = _a5[2];
-    var imageProps = getNativeProps(props, imgProperties, [
-      "width",
-      "height"
-    ]);
-    var src = props.src, alt = props.alt, width = props.width, height = props.height, _b = props.shouldFadeIn, shouldFadeIn = _b === void 0 ? true : _b, shouldStartVisible = props.shouldStartVisible, className = props.className, imageFit = props.imageFit, role = props.role, maximizeFrame = props.maximizeFrame, styles2 = props.styles, theme = props.theme, loading = props.loading;
-    var coverStyle = useCoverStyle(props, loadState, imageElement, frameElement);
-    var classNames2 = getClassNames4(styles2, {
-      theme,
-      className,
-      width,
-      height,
-      maximizeFrame,
-      shouldFadeIn,
-      shouldStartVisible,
-      isLoaded: loadState === ImageLoadState.loaded || loadState === ImageLoadState.notLoaded && props.shouldStartVisible,
-      isLandscape: coverStyle === ImageCoverStyle.landscape,
-      isCenter: imageFit === ImageFit.center,
-      isCenterContain: imageFit === ImageFit.centerContain,
-      isCenterCover: imageFit === ImageFit.centerCover,
-      isContain: imageFit === ImageFit.contain,
-      isCover: imageFit === ImageFit.cover,
-      isNone: imageFit === ImageFit.none,
-      isError: loadState === ImageLoadState.error,
-      isNotImageFit: imageFit === void 0
-    });
-    return React26.createElement(
-      "div",
-      { className: classNames2.root, style: { width, height }, ref: frameElement },
-      React26.createElement("img", __assign({}, imageProps, { onLoad: onImageLoaded, onError: onImageError, key: KEY_PREFIX + props.src || "", className: classNames2.image, ref: useMergedRefs(imageElement, forwardedRef), src, alt, role, loading }))
-    );
-  });
-  ImageBase.displayName = "ImageBase";
-  function useCoverStyle(props, loadState, imageElement, frameElement) {
-    var previousLoadState = React26.useRef(loadState);
-    var coverStyle = React26.useRef();
-    if (coverStyle === void 0 || previousLoadState.current === ImageLoadState.notLoaded && loadState === ImageLoadState.loaded) {
-      coverStyle.current = computeCoverStyle(props, loadState, imageElement, frameElement);
-    }
-    previousLoadState.current = loadState;
-    return coverStyle.current;
-  }
-  function computeCoverStyle(props, loadState, imageElement, frameElement) {
-    var imageFit = props.imageFit, width = props.width, height = props.height;
-    if (props.coverStyle !== void 0) {
-      return props.coverStyle;
-    } else if (loadState === ImageLoadState.loaded && (imageFit === ImageFit.cover || imageFit === ImageFit.contain || imageFit === ImageFit.centerContain || imageFit === ImageFit.centerCover) && imageElement.current && frameElement.current) {
-      var desiredRatio = void 0;
-      if (typeof width === "number" && typeof height === "number" && imageFit !== ImageFit.centerContain && imageFit !== ImageFit.centerCover) {
-        desiredRatio = width / height;
-      } else {
-        desiredRatio = frameElement.current.clientWidth / frameElement.current.clientHeight;
-      }
-      var naturalRatio = imageElement.current.naturalWidth / imageElement.current.naturalHeight;
-      if (naturalRatio > desiredRatio) {
-        return ImageCoverStyle.landscape;
-      }
-    }
-    return ImageCoverStyle.portrait;
-  }
-
-  // ../node_modules/@fluentui/react/lib/components/Image/Image.styles.js
-  var GlobalClassNames4 = {
-    root: "ms-Image",
-    rootMaximizeFrame: "ms-Image--maximizeFrame",
-    image: "ms-Image-image",
-    imageCenter: "ms-Image-image--center",
-    imageContain: "ms-Image-image--contain",
-    imageCover: "ms-Image-image--cover",
-    imageCenterContain: "ms-Image-image--centerContain",
-    imageCenterCover: "ms-Image-image--centerCover",
-    imageNone: "ms-Image-image--none",
-    imageLandscape: "ms-Image-image--landscape",
-    imagePortrait: "ms-Image-image--portrait"
-  };
-  var getStyles4 = function(props) {
-    var className = props.className, width = props.width, height = props.height, maximizeFrame = props.maximizeFrame, isLoaded = props.isLoaded, shouldFadeIn = props.shouldFadeIn, shouldStartVisible = props.shouldStartVisible, isLandscape = props.isLandscape, isCenter = props.isCenter, isContain = props.isContain, isCover = props.isCover, isCenterContain = props.isCenterContain, isCenterCover = props.isCenterCover, isNone = props.isNone, isError = props.isError, isNotImageFit = props.isNotImageFit, theme = props.theme;
-    var classNames2 = getGlobalClassNames(GlobalClassNames4, theme);
-    var ImageFitStyles = {
-      position: "absolute",
-      left: "50% /* @noflip */",
-      top: "50%",
-      transform: "translate(-50%,-50%)"
-      // @todo test RTL renders transform: translate(50%,-50%);
-    };
-    var window2 = getWindow();
-    var supportsObjectFit = window2 !== void 0 && // eslint-disable-next-line @fluentui/max-len
-    // cast needed as vendor prefixed `msMaxTouchPoints` api is no longer part of TS lib declaration - introduced with TS 4.4
-    window2.navigator.msMaxTouchPoints === void 0;
-    var fallbackObjectFitStyles = isContain && isLandscape || isCover && !isLandscape ? { width: "100%", height: "auto" } : { width: "auto", height: "100%" };
-    return {
-      root: [
-        classNames2.root,
-        theme.fonts.medium,
-        {
-          overflow: "hidden"
-        },
-        maximizeFrame && [
-          classNames2.rootMaximizeFrame,
-          {
-            height: "100%",
-            width: "100%"
-          }
-        ],
-        isLoaded && shouldFadeIn && !shouldStartVisible && AnimationClassNames.fadeIn400,
-        (isCenter || isContain || isCover || isCenterContain || isCenterCover) && {
-          position: "relative"
-        },
-        className
-      ],
-      image: [
-        classNames2.image,
-        {
-          display: "block",
-          opacity: 0
-        },
-        isLoaded && [
-          "is-loaded",
-          {
-            opacity: 1
-          }
-        ],
-        isCenter && [classNames2.imageCenter, ImageFitStyles],
-        isContain && [
-          classNames2.imageContain,
-          supportsObjectFit && {
-            width: "100%",
-            height: "100%",
-            objectFit: "contain"
-          },
-          !supportsObjectFit && fallbackObjectFitStyles,
-          !supportsObjectFit && ImageFitStyles
-        ],
-        isCover && [
-          classNames2.imageCover,
-          supportsObjectFit && {
-            width: "100%",
-            height: "100%",
-            objectFit: "cover"
-          },
-          !supportsObjectFit && fallbackObjectFitStyles,
-          !supportsObjectFit && ImageFitStyles
-        ],
-        isCenterContain && [
-          classNames2.imageCenterContain,
-          isLandscape && {
-            maxWidth: "100%"
-          },
-          !isLandscape && {
-            maxHeight: "100%"
-          },
-          ImageFitStyles
-        ],
-        isCenterCover && [
-          classNames2.imageCenterCover,
-          isLandscape && {
-            maxHeight: "100%"
-          },
-          !isLandscape && {
-            maxWidth: "100%"
-          },
-          ImageFitStyles
-        ],
-        isNone && [
-          classNames2.imageNone,
-          {
-            width: "auto",
-            height: "auto"
-          }
-        ],
-        isNotImageFit && [
-          !!width && !height && {
-            height: "auto",
-            width: "100%"
-          },
-          !width && !!height && {
-            height: "100%",
-            width: "auto"
-          },
-          !!width && !!height && {
-            height: "100%",
-            width: "100%"
-          }
-        ],
-        isLandscape && classNames2.imageLandscape,
-        !isLandscape && classNames2.imagePortrait,
-        !isLoaded && "is-notLoaded",
-        shouldFadeIn && "is-fadeIn",
-        isError && "is-error"
-      ]
-    };
-  };
-
-  // ../node_modules/@fluentui/react/lib/components/Image/Image.js
-  var Image = styled(ImageBase, getStyles4, void 0, {
-    scope: "Image"
-  }, true);
-  Image.displayName = "Image";
-
-  // ../node_modules/@fluentui/react/lib/components/Icon/FontIcon.js
-  var React27 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react/lib/components/Icon/Icon.styles.js
-  var classNames = mergeStyleSets({
-    root: {
-      display: "inline-block"
-    },
-    placeholder: [
-      "ms-Icon-placeHolder",
-      {
-        width: "1em"
-      }
-    ],
-    image: [
-      "ms-Icon-imageContainer",
-      {
-        overflow: "hidden"
-      }
-    ]
-  });
-  var MS_ICON = "ms-Icon";
-  var getStyles5 = function(props) {
-    var className = props.className, iconClassName = props.iconClassName, isPlaceholder = props.isPlaceholder, isImage = props.isImage, styles2 = props.styles;
-    return {
-      root: [
-        isPlaceholder && classNames.placeholder,
-        classNames.root,
-        isImage && classNames.image,
-        iconClassName,
-        className,
-        styles2 && styles2.root,
-        // eslint-disable-next-line deprecation/deprecation
-        styles2 && styles2.imageContainer
-      ]
-    };
-  };
-
-  // ../node_modules/@fluentui/react/lib/components/Icon/FontIcon.js
-  var getIconContent = memoizeFunction(
-    function(iconName) {
-      var _a5 = getIcon(iconName) || {
-        subset: {},
-        code: void 0
-      }, code = _a5.code, subset = _a5.subset;
-      if (!code) {
-        return null;
-      }
-      return {
-        children: code,
-        iconClassName: subset.className,
-        fontFamily: subset.fontFace && subset.fontFace.fontFamily,
-        mergeImageProps: subset.mergeImageProps
-      };
-    },
-    void 0,
-    true
-    /*ignoreNullOrUndefinedResult */
-  );
-  var FontIcon = function(props) {
-    var iconName = props.iconName, className = props.className, _a5 = props.style, style = _a5 === void 0 ? {} : _a5;
-    var iconContent = getIconContent(iconName) || {};
-    var iconClassName = iconContent.iconClassName, children = iconContent.children, fontFamily = iconContent.fontFamily, mergeImageProps = iconContent.mergeImageProps;
-    var nativeProps = getNativeProps(props, htmlElementProperties);
-    var accessibleName = props["aria-label"] || props.title;
-    var containerProps = props["aria-label"] || props["aria-labelledby"] || props.title ? {
-      role: mergeImageProps ? void 0 : "img"
-    } : {
-      "aria-hidden": true
-    };
-    var finalChildren = children;
-    if (mergeImageProps) {
-      if (typeof children === "object" && typeof children.props === "object" && accessibleName) {
-        finalChildren = React27.cloneElement(children, { alt: accessibleName });
-      }
-    }
-    return React27.createElement("i", __assign({ "data-icon-name": iconName }, containerProps, nativeProps, mergeImageProps ? {
-      title: void 0,
-      "aria-label": void 0
-    } : {}, {
-      className: css(MS_ICON, classNames.root, iconClassName, !iconName && classNames.placeholder, className),
-      // Apply the font family this way to ensure it doesn't get overridden by Fabric Core ms-Icon styles
-      // https://github.com/microsoft/fluentui/issues/10449
-      style: __assign({ fontFamily }, style)
-    }), finalChildren);
-  };
-  var getFontIcon = memoizeFunction(function(iconName, className, ariaLabel) {
-    return FontIcon({ iconName, className, "aria-label": ariaLabel });
-  });
-
-  // ../node_modules/@fluentui/react/lib/components/Icon/Icon.base.js
-  var getClassNames5 = classNamesFunction({
-    // Icon is used a lot by other components.
-    // It's likely to see expected cases which pass different className to the Icon.
-    // Therefore setting a larger cache size.
-    cacheSize: 100
-  });
-  var IconBase = (
-    /** @class */
-    function(_super) {
-      __extends(IconBase2, _super);
-      function IconBase2(props) {
-        var _this = _super.call(this, props) || this;
-        _this._onImageLoadingStateChange = function(state) {
-          if (_this.props.imageProps && _this.props.imageProps.onLoadingStateChange) {
-            _this.props.imageProps.onLoadingStateChange(state);
-          }
-          if (state === ImageLoadState.error) {
-            _this.setState({ imageLoadError: true });
-          }
-        };
-        _this.state = {
-          imageLoadError: false
-        };
-        return _this;
-      }
-      IconBase2.prototype.render = function() {
-        var _a5 = this.props, children = _a5.children, className = _a5.className, styles2 = _a5.styles, iconName = _a5.iconName, imageErrorAs = _a5.imageErrorAs, theme = _a5.theme;
-        var isPlaceholder = typeof iconName === "string" && iconName.length === 0;
-        var isImage = (
-          // eslint-disable-next-line deprecation/deprecation
-          !!this.props.imageProps || this.props.iconType === IconType.image || this.props.iconType === IconType.Image
-        );
-        var iconContent = getIconContent(iconName) || {};
-        var iconClassName = iconContent.iconClassName, iconContentChildren = iconContent.children, mergeImageProps = iconContent.mergeImageProps;
-        var classNames2 = getClassNames5(styles2, {
-          theme,
-          className,
-          iconClassName,
-          isImage,
-          isPlaceholder
-        });
-        var RootType = isImage ? "span" : "i";
-        var nativeProps = getNativeProps(this.props, htmlElementProperties, [
-          "aria-label"
-        ]);
-        var imageLoadError = this.state.imageLoadError;
-        var imageProps = __assign(__assign({}, this.props.imageProps), { onLoadingStateChange: this._onImageLoadingStateChange });
-        var ImageType = imageLoadError && imageErrorAs || Image;
-        var ariaLabel = this.props["aria-label"] || this.props.ariaLabel;
-        var accessibleName = imageProps.alt || ariaLabel || this.props.title;
-        var hasName = !!(accessibleName || this.props["aria-labelledby"] || imageProps["aria-label"] || imageProps["aria-labelledby"]);
-        var containerProps = hasName ? {
-          role: isImage || mergeImageProps ? void 0 : "img",
-          "aria-label": isImage || mergeImageProps ? void 0 : accessibleName
-        } : {
-          "aria-hidden": true
-        };
-        var finalIconContentChildren = iconContentChildren;
-        if (mergeImageProps && iconContentChildren && typeof iconContentChildren === "object" && accessibleName) {
-          finalIconContentChildren = React28.cloneElement(iconContentChildren, {
-            alt: accessibleName
-          });
-        }
-        return React28.createElement(RootType, __assign({ "data-icon-name": iconName }, containerProps, nativeProps, mergeImageProps ? {
-          title: void 0,
-          "aria-label": void 0
-        } : {}, { className: classNames2.root }), isImage ? React28.createElement(ImageType, __assign({}, imageProps)) : children || finalIconContentChildren);
-      };
-      return IconBase2;
-    }(React28.Component)
-  );
-
-  // ../node_modules/@fluentui/react/lib/components/Icon/Icon.js
-  var Icon = styled(IconBase, getStyles5, void 0, {
-    scope: "Icon"
-  }, true);
-  Icon.displayName = "Icon";
-
-  // ../node_modules/@fluentui/react/lib/components/Icon/ImageIcon.js
-  var React29 = __toESM(require_react());
-  var ImageIcon = function(props) {
-    var className = props.className, imageProps = props.imageProps;
-    var nativeProps = getNativeProps(props, htmlElementProperties, [
-      "aria-label",
-      "aria-labelledby",
-      "title",
-      "aria-describedby"
-    ]);
-    var altText = imageProps.alt || props["aria-label"];
-    var hasName = altText || props["aria-labelledby"] || props.title || imageProps["aria-label"] || imageProps["aria-labelledby"] || imageProps.title;
-    var imageNameProps = {
-      "aria-labelledby": props["aria-labelledby"],
-      "aria-describedby": props["aria-describedby"],
-      title: props.title
-    };
-    var containerProps = hasName ? {} : {
-      "aria-hidden": true
-    };
-    return React29.createElement(
-      "div",
-      __assign({}, containerProps, nativeProps, { className: css(MS_ICON, classNames.root, classNames.image, className) }),
-      React29.createElement(Image, __assign({}, imageNameProps, imageProps, { alt: hasName ? altText : "" }))
-    );
-  };
-
-  // ../node_modules/@fluentui/react-focus/lib/components/FocusZone/FocusZone.js
-  var React30 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react-focus/lib/components/FocusZone/FocusZone.types.js
-  var FocusZoneTabbableElements = {
-    /** Tabbing is not allowed */
-    none: 0,
-    /** All tabbing action is allowed */
-    all: 1,
-    /** Tabbing is allowed only on input elements */
-    inputOnly: 2
-  };
-  var FocusZoneDirection;
-  (function(FocusZoneDirection2) {
-    FocusZoneDirection2[FocusZoneDirection2["vertical"] = 0] = "vertical";
-    FocusZoneDirection2[FocusZoneDirection2["horizontal"] = 1] = "horizontal";
-    FocusZoneDirection2[FocusZoneDirection2["bidirectional"] = 2] = "bidirectional";
-    FocusZoneDirection2[FocusZoneDirection2["domOrder"] = 3] = "domOrder";
-  })(FocusZoneDirection || (FocusZoneDirection = {}));
-
-  // ../node_modules/@fluentui/react-focus/lib/components/FocusZone/FocusZone.js
-  var IS_FOCUSABLE_ATTRIBUTE2 = "data-is-focusable";
-  var IS_ENTER_DISABLED_ATTRIBUTE = "data-disable-click-on-enter";
-  var FOCUSZONE_ID_ATTRIBUTE2 = "data-focuszone-id";
-  var TABINDEX = "tabindex";
-  var NO_VERTICAL_WRAP = "data-no-vertical-wrap";
-  var NO_HORIZONTAL_WRAP = "data-no-horizontal-wrap";
-  var LARGE_DISTANCE_FROM_CENTER = 999999999;
-  var LARGE_NEGATIVE_DISTANCE_FROM_CENTER = -999999999;
-  var focusZoneStyles;
-  var focusZoneClass = "ms-FocusZone";
-  function raiseClickFromKeyboardEvent(target, ev) {
-    var event;
-    if (typeof MouseEvent === "function") {
-      event = new MouseEvent("click", {
-        ctrlKey: ev === null || ev === void 0 ? void 0 : ev.ctrlKey,
-        metaKey: ev === null || ev === void 0 ? void 0 : ev.metaKey,
-        shiftKey: ev === null || ev === void 0 ? void 0 : ev.shiftKey,
-        altKey: ev === null || ev === void 0 ? void 0 : ev.altKey,
-        bubbles: ev === null || ev === void 0 ? void 0 : ev.bubbles,
-        cancelable: ev === null || ev === void 0 ? void 0 : ev.cancelable
-      });
-    } else {
-      event = document.createEvent("MouseEvents");
-      event.initMouseEvent(
-        "click",
-        ev ? ev.bubbles : false,
-        ev ? ev.cancelable : false,
-        window,
-        // not using getWindow() since this can only be run client side
-        0,
-        // detail
-        0,
-        // screen x
-        0,
-        // screen y
-        0,
-        // client x
-        0,
-        // client y
-        ev ? ev.ctrlKey : false,
-        ev ? ev.altKey : false,
-        ev ? ev.shiftKey : false,
-        ev ? ev.metaKey : false,
-        0,
-        // button
-        null
-      );
-    }
-    target.dispatchEvent(event);
-  }
-  function getRootClass() {
-    if (!focusZoneStyles) {
-      focusZoneStyles = mergeStyles({
-        selectors: {
-          ":focus": {
-            outline: "none"
-          }
-        }
-      }, focusZoneClass);
-    }
-    return focusZoneStyles;
-  }
-  var _allInstances = {};
-  var _outerZones = /* @__PURE__ */ new Set();
-  var ALLOWED_INPUT_TYPES = ["text", "number", "password", "email", "tel", "url", "search", "textarea"];
-  var ALLOW_VIRTUAL_ELEMENTS = false;
-  var FocusZone = (
-    /** @class */
-    function(_super) {
-      __extends(FocusZone2, _super);
-      function FocusZone2(props) {
-        var _this = this;
-        var _a5, _b, _c, _d;
-        _this = _super.call(this, props) || this;
-        _this._root = React30.createRef();
-        _this._mergedRef = createMergedRef();
-        _this._onFocus = function(ev) {
-          if (_this._portalContainsElement(ev.target)) {
-            return;
-          }
-          var _a6 = _this.props, onActiveElementChanged = _a6.onActiveElementChanged, doNotAllowFocusEventToPropagate = _a6.doNotAllowFocusEventToPropagate, stopFocusPropagation = _a6.stopFocusPropagation, onFocusNotification = _a6.onFocusNotification, onFocus = _a6.onFocus, shouldFocusInnerElementWhenReceivedFocus = _a6.shouldFocusInnerElementWhenReceivedFocus, defaultTabbableElement = _a6.defaultTabbableElement;
-          var isImmediateDescendant = _this._isImmediateDescendantOfZone(ev.target);
-          var newActiveElement;
-          if (isImmediateDescendant) {
-            newActiveElement = ev.target;
-          } else {
-            var parentElement = ev.target;
-            while (parentElement && parentElement !== _this._root.current) {
-              if (isElementTabbable(parentElement) && _this._isImmediateDescendantOfZone(parentElement)) {
-                newActiveElement = parentElement;
-                break;
-              }
-              parentElement = getParent(parentElement, ALLOW_VIRTUAL_ELEMENTS);
-            }
-          }
-          if (shouldFocusInnerElementWhenReceivedFocus && ev.target === _this._root.current) {
-            var maybeElementToFocus = defaultTabbableElement && typeof defaultTabbableElement === "function" && _this._root.current && defaultTabbableElement(_this._root.current);
-            if (maybeElementToFocus && isElementTabbable(maybeElementToFocus)) {
-              newActiveElement = maybeElementToFocus;
-              maybeElementToFocus.focus();
-            } else {
-              _this.focus(true);
-              if (_this._activeElement) {
-                newActiveElement = null;
-              }
-            }
-          }
-          var initialElementFocused = !_this._activeElement;
-          if (newActiveElement && newActiveElement !== _this._activeElement) {
-            if (isImmediateDescendant || initialElementFocused) {
-              _this._setFocusAlignment(newActiveElement, true, true);
-            }
-            _this._activeElement = newActiveElement;
-            if (initialElementFocused) {
-              _this._updateTabIndexes();
-            }
-          }
-          if (onActiveElementChanged) {
-            onActiveElementChanged(_this._activeElement, ev);
-          }
-          if (stopFocusPropagation || doNotAllowFocusEventToPropagate) {
-            ev.stopPropagation();
-          }
-          if (onFocus) {
-            onFocus(ev);
-          } else if (onFocusNotification) {
-            onFocusNotification();
-          }
-        };
-        _this._onBlur = function() {
-          _this._setParkedFocus(false);
-        };
-        _this._onMouseDown = function(ev) {
-          if (_this._portalContainsElement(ev.target)) {
-            return;
-          }
-          var disabled = _this.props.disabled;
-          if (disabled) {
-            return;
-          }
-          var target = ev.target;
-          var path = [];
-          while (target && target !== _this._root.current) {
-            path.push(target);
-            target = getParent(target, ALLOW_VIRTUAL_ELEMENTS);
-          }
-          while (path.length) {
-            target = path.pop();
-            if (target && isElementTabbable(target)) {
-              _this._setActiveElement(target, true);
-            }
-            if (isElementFocusZone(target)) {
-              break;
-            }
-          }
-        };
-        _this._onKeyDown = function(ev, theme) {
-          if (_this._portalContainsElement(ev.target)) {
-            return;
-          }
-          var _a6 = _this.props, direction = _a6.direction, disabled = _a6.disabled, isInnerZoneKeystroke = _a6.isInnerZoneKeystroke, pagingSupportDisabled = _a6.pagingSupportDisabled, shouldEnterInnerZone = _a6.shouldEnterInnerZone;
-          if (disabled) {
-            return;
-          }
-          if (_this.props.onKeyDown) {
-            _this.props.onKeyDown(ev);
-          }
-          if (ev.isDefaultPrevented()) {
-            return;
-          }
-          if (_this._getDocument().activeElement === _this._root.current && _this._isInnerZone) {
-            return;
-          }
-          if ((shouldEnterInnerZone && shouldEnterInnerZone(ev) || isInnerZoneKeystroke && isInnerZoneKeystroke(ev)) && _this._isImmediateDescendantOfZone(ev.target)) {
-            var innerZone = _this._getFirstInnerZone();
-            if (innerZone) {
-              if (!innerZone.focus(true)) {
-                return;
-              }
-            } else if (isElementFocusSubZone(ev.target)) {
-              if (!_this.focusElement(getNextElement(ev.target, ev.target.firstChild, true))) {
-                return;
-              }
-            } else {
-              return;
-            }
-          } else if (ev.altKey) {
-            return;
-          } else {
-            switch (ev.which) {
-              case KeyCodes.space:
-                if (_this._shouldRaiseClicksOnSpace && _this._tryInvokeClickForFocusable(ev.target, ev)) {
-                  break;
-                }
-                return;
-              case KeyCodes.left:
-                if (direction !== FocusZoneDirection.vertical) {
-                  _this._preventDefaultWhenHandled(ev);
-                  if (_this._moveFocusLeft(theme)) {
-                    break;
-                  }
-                }
-                return;
-              case KeyCodes.right:
-                if (direction !== FocusZoneDirection.vertical) {
-                  _this._preventDefaultWhenHandled(ev);
-                  if (_this._moveFocusRight(theme)) {
-                    break;
-                  }
-                }
-                return;
-              case KeyCodes.up:
-                if (direction !== FocusZoneDirection.horizontal) {
-                  _this._preventDefaultWhenHandled(ev);
-                  if (_this._moveFocusUp()) {
-                    break;
-                  }
-                }
-                return;
-              case KeyCodes.down:
-                if (direction !== FocusZoneDirection.horizontal) {
-                  _this._preventDefaultWhenHandled(ev);
-                  if (_this._moveFocusDown()) {
-                    break;
-                  }
-                }
-                return;
-              case KeyCodes.pageDown:
-                if (!pagingSupportDisabled && _this._moveFocusPaging(true)) {
-                  break;
-                }
-                return;
-              case KeyCodes.pageUp:
-                if (!pagingSupportDisabled && _this._moveFocusPaging(false)) {
-                  break;
-                }
-                return;
-              case KeyCodes.tab:
-                if (
-                  // eslint-disable-next-line deprecation/deprecation
-                  _this.props.allowTabKey || _this.props.handleTabKey === FocusZoneTabbableElements.all || _this.props.handleTabKey === FocusZoneTabbableElements.inputOnly && _this._isElementInput(ev.target)
-                ) {
-                  var focusChanged = false;
-                  _this._processingTabKey = true;
-                  if (direction === FocusZoneDirection.vertical || !_this._shouldWrapFocus(_this._activeElement, NO_HORIZONTAL_WRAP)) {
-                    focusChanged = ev.shiftKey ? _this._moveFocusUp() : _this._moveFocusDown();
-                  } else {
-                    var tabWithDirection = getRTL2(theme) ? !ev.shiftKey : ev.shiftKey;
-                    focusChanged = tabWithDirection ? _this._moveFocusLeft(theme) : _this._moveFocusRight(theme);
-                  }
-                  _this._processingTabKey = false;
-                  if (focusChanged) {
-                    break;
-                  } else if (_this.props.shouldResetActiveElementWhenTabFromZone) {
-                    _this._activeElement = null;
-                  }
-                }
-                return;
-              case KeyCodes.home:
-                if (_this._isContentEditableElement(ev.target) || _this._isElementInput(ev.target) && !_this._shouldInputLoseFocus(ev.target, false)) {
-                  return false;
-                }
-                var firstChild = _this._root.current && _this._root.current.firstChild;
-                if (_this._root.current && firstChild && _this.focusElement(getNextElement(_this._root.current, firstChild, true))) {
-                  break;
-                }
-                return;
-              case KeyCodes.end:
-                if (_this._isContentEditableElement(ev.target) || _this._isElementInput(ev.target) && !_this._shouldInputLoseFocus(ev.target, true)) {
-                  return false;
-                }
-                var lastChild = _this._root.current && _this._root.current.lastChild;
-                if (_this._root.current && _this.focusElement(getPreviousElement(_this._root.current, lastChild, true, true, true))) {
-                  break;
-                }
-                return;
-              case KeyCodes.enter:
-                if (_this._shouldRaiseClicksOnEnter && _this._tryInvokeClickForFocusable(ev.target, ev)) {
-                  break;
-                }
-                return;
-              default:
-                return;
-            }
-          }
-          ev.preventDefault();
-          ev.stopPropagation();
-        };
-        _this._getHorizontalDistanceFromCenter = function(isForward, activeRect, targetRect) {
-          var leftAlignment = _this._focusAlignment.left || _this._focusAlignment.x || 0;
-          var targetRectTop = Math.floor(targetRect.top);
-          var activeRectBottom = Math.floor(activeRect.bottom);
-          var targetRectBottom = Math.floor(targetRect.bottom);
-          var activeRectTop = Math.floor(activeRect.top);
-          var isValidCandidateOnpagingDown = isForward && targetRectTop > activeRectBottom;
-          var isValidCandidateOnpagingUp = !isForward && targetRectBottom < activeRectTop;
-          if (isValidCandidateOnpagingDown || isValidCandidateOnpagingUp) {
-            if (leftAlignment >= targetRect.left && leftAlignment <= targetRect.left + targetRect.width) {
-              return 0;
-            }
-            return Math.abs(targetRect.left + targetRect.width / 2 - leftAlignment);
-          }
-          if (!_this._shouldWrapFocus(_this._activeElement, NO_VERTICAL_WRAP)) {
-            return LARGE_NEGATIVE_DISTANCE_FROM_CENTER;
-          }
-          return LARGE_DISTANCE_FROM_CENTER;
-        };
-        initializeComponentRef(_this);
-        if (true) {
-          warnDeprecations("FocusZone", props, {
-            rootProps: void 0,
-            allowTabKey: "handleTabKey",
-            elementType: "as",
-            ariaDescribedBy: "aria-describedby",
-            ariaLabelledBy: "aria-labelledby"
-          });
-        }
-        _this._id = getId("FocusZone");
-        _this._focusAlignment = {
-          left: 0,
-          top: 0
-        };
-        _this._processingTabKey = false;
-        var shouldRaiseClicksFallback = (_b = (_a5 = props.shouldRaiseClicks) !== null && _a5 !== void 0 ? _a5 : FocusZone2.defaultProps.shouldRaiseClicks) !== null && _b !== void 0 ? _b : true;
-        _this._shouldRaiseClicksOnEnter = (_c = props.shouldRaiseClicksOnEnter) !== null && _c !== void 0 ? _c : shouldRaiseClicksFallback;
-        _this._shouldRaiseClicksOnSpace = (_d = props.shouldRaiseClicksOnSpace) !== null && _d !== void 0 ? _d : shouldRaiseClicksFallback;
-        return _this;
-      }
-      FocusZone2.getOuterZones = function() {
-        return _outerZones.size;
-      };
-      FocusZone2._onKeyDownCapture = function(ev) {
-        if (ev.which === KeyCodes.tab) {
-          _outerZones.forEach(function(zone) {
-            return zone._updateTabIndexes();
-          });
-        }
-      };
-      FocusZone2.prototype.componentDidMount = function() {
-        var root2 = this._root.current;
-        _allInstances[this._id] = this;
-        if (root2) {
-          var parentElement = getParent(root2, ALLOW_VIRTUAL_ELEMENTS);
-          while (parentElement && parentElement !== this._getDocument().body && parentElement.nodeType === 1) {
-            if (isElementFocusZone(parentElement)) {
-              this._isInnerZone = true;
-              break;
-            }
-            parentElement = getParent(parentElement, ALLOW_VIRTUAL_ELEMENTS);
-          }
-          if (!this._isInnerZone) {
-            _outerZones.add(this);
-            this._root.current && this._root.current.addEventListener("keydown", FocusZone2._onKeyDownCapture, true);
-          }
-          this._root.current && this._root.current.addEventListener("blur", this._onBlur, true);
-          this._updateTabIndexes();
-          if (this.props.defaultTabbableElement && typeof this.props.defaultTabbableElement === "string") {
-            this._activeElement = this._getDocument().querySelector(this.props.defaultTabbableElement);
-          } else if (this.props.defaultActiveElement) {
-            this._activeElement = this._getDocument().querySelector(this.props.defaultActiveElement);
-          }
-          if (this.props.shouldFocusOnMount) {
-            this.focus();
-          }
-        }
-      };
-      FocusZone2.prototype.componentDidUpdate = function() {
-        var root2 = this._root.current;
-        var doc = this._getDocument();
-        if (this._activeElement && !elementContains(this._root.current, this._activeElement, ALLOW_VIRTUAL_ELEMENTS) || this._defaultFocusElement && !elementContains(this._root.current, this._defaultFocusElement, ALLOW_VIRTUAL_ELEMENTS)) {
-          this._activeElement = null;
-          this._defaultFocusElement = null;
-          this._updateTabIndexes();
-        }
-        if (!this.props.preventFocusRestoration && doc && this._lastIndexPath && (doc.activeElement === doc.body || doc.activeElement === null || doc.activeElement === root2)) {
-          var elementToFocus = getFocusableByIndexPath(root2, this._lastIndexPath);
-          if (elementToFocus) {
-            this._setActiveElement(elementToFocus, true);
-            elementToFocus.focus();
-            this._setParkedFocus(false);
-          } else {
-            this._setParkedFocus(true);
-          }
-        }
-      };
-      FocusZone2.prototype.componentWillUnmount = function() {
-        delete _allInstances[this._id];
-        if (!this._isInnerZone) {
-          _outerZones.delete(this);
-          this._root.current && this._root.current.removeEventListener("keydown", FocusZone2._onKeyDownCapture, true);
-        }
-        if (this._root.current) {
-          this._root.current.removeEventListener("blur", this._onBlur, true);
-        }
-        this._activeElement = null;
-        this._defaultFocusElement = null;
-      };
-      FocusZone2.prototype.render = function() {
-        var _this = this;
-        var _a5 = this.props, tag = _a5.as, elementType = _a5.elementType, rootProps = _a5.rootProps, ariaDescribedBy = _a5.ariaDescribedBy, ariaLabelledBy = _a5.ariaLabelledBy, className = _a5.className;
-        var divProps = getNativeProps(this.props, htmlElementProperties);
-        var Tag2 = tag || elementType || "div";
-        this._evaluateFocusBeforeRender();
-        var theme = getTheme();
-        return React30.createElement(Tag2, __assign({ "aria-labelledby": ariaLabelledBy, "aria-describedby": ariaDescribedBy }, divProps, rootProps, {
-          // Once the getClassName correctly memoizes inputs this should
-          // be replaced so that className is passed to getRootClass and is included there so
-          // the class names will always be in the same order.
-          className: css(getRootClass(), className),
-          // eslint-disable-next-line deprecation/deprecation
-          ref: this._mergedRef(this.props.elementRef, this._root),
-          "data-focuszone-id": this._id,
-          // eslint-disable-next-line react/jsx-no-bind
-          onKeyDown: function(ev) {
-            return _this._onKeyDown(ev, theme);
-          },
-          onFocus: this._onFocus,
-          onMouseDownCapture: this._onMouseDown
-        }), this.props.children);
-      };
-      FocusZone2.prototype.focus = function(forceIntoFirstElement, bypassHiddenElements) {
-        if (forceIntoFirstElement === void 0) {
-          forceIntoFirstElement = false;
-        }
-        if (bypassHiddenElements === void 0) {
-          bypassHiddenElements = false;
-        }
-        if (this._root.current) {
-          if (!forceIntoFirstElement && this._root.current.getAttribute(IS_FOCUSABLE_ATTRIBUTE2) === "true" && this._isInnerZone) {
-            var ownerZoneElement = this._getOwnerZone(this._root.current);
-            if (ownerZoneElement !== this._root.current) {
-              var ownerZone = _allInstances[ownerZoneElement.getAttribute(FOCUSZONE_ID_ATTRIBUTE2)];
-              return !!ownerZone && ownerZone.focusElement(this._root.current);
-            }
-            return false;
-          } else if (!forceIntoFirstElement && this._activeElement && elementContains(this._root.current, this._activeElement) && isElementTabbable(this._activeElement) && (!bypassHiddenElements || isElementVisibleAndNotHidden(this._activeElement))) {
-            this._activeElement.focus();
-            return true;
-          } else {
-            var firstChild = this._root.current.firstChild;
-            return this.focusElement(getNextElement(this._root.current, firstChild, true, void 0, void 0, void 0, void 0, void 0, bypassHiddenElements));
-          }
-        }
-        return false;
-      };
-      FocusZone2.prototype.focusLast = function() {
-        if (this._root.current) {
-          var lastChild = this._root.current && this._root.current.lastChild;
-          return this.focusElement(getPreviousElement(this._root.current, lastChild, true, true, true));
-        }
-        return false;
-      };
-      FocusZone2.prototype.focusElement = function(element, forceAlignment) {
-        var _a5 = this.props, onBeforeFocus = _a5.onBeforeFocus, shouldReceiveFocus = _a5.shouldReceiveFocus;
-        if (shouldReceiveFocus && !shouldReceiveFocus(element) || onBeforeFocus && !onBeforeFocus(element)) {
-          return false;
-        }
-        if (element) {
-          this._setActiveElement(element, forceAlignment);
-          if (this._activeElement) {
-            this._activeElement.focus();
-          }
-          return true;
-        }
-        return false;
-      };
-      FocusZone2.prototype.setFocusAlignment = function(point) {
-        this._focusAlignment = point;
-      };
-      Object.defineProperty(FocusZone2.prototype, "defaultFocusElement", {
-        get: function() {
-          return this._defaultFocusElement;
-        },
-        enumerable: false,
-        configurable: true
-      });
-      Object.defineProperty(FocusZone2.prototype, "activeElement", {
-        get: function() {
-          return this._activeElement;
-        },
-        enumerable: false,
-        configurable: true
-      });
-      FocusZone2.prototype._evaluateFocusBeforeRender = function() {
-        var root2 = this._root.current;
-        var doc = this._getDocument();
-        if (doc) {
-          var focusedElement = doc.activeElement;
-          if (focusedElement !== root2) {
-            var shouldRestoreFocus = elementContains(root2, focusedElement, false);
-            this._lastIndexPath = shouldRestoreFocus ? getElementIndexPath(root2, focusedElement) : void 0;
-          }
-        }
-      };
-      FocusZone2.prototype._setParkedFocus = function(isParked) {
-        var root2 = this._root.current;
-        if (root2 && this._isParked !== isParked) {
-          this._isParked = isParked;
-          if (isParked) {
-            if (!this.props.allowFocusRoot) {
-              this._parkedTabIndex = root2.getAttribute("tabindex");
-              root2.setAttribute("tabindex", "-1");
-            }
-            root2.focus();
-          } else if (!this.props.allowFocusRoot) {
-            if (this._parkedTabIndex) {
-              root2.setAttribute("tabindex", this._parkedTabIndex);
-              this._parkedTabIndex = void 0;
-            } else {
-              root2.removeAttribute("tabindex");
-            }
-          }
-        }
-      };
-      FocusZone2.prototype._setActiveElement = function(element, forceAlignment) {
-        var previousActiveElement = this._activeElement;
-        this._activeElement = element;
-        if (previousActiveElement) {
-          if (isElementFocusZone(previousActiveElement)) {
-            this._updateTabIndexes(previousActiveElement);
-          }
-          previousActiveElement.tabIndex = -1;
-        }
-        if (this._activeElement) {
-          if (!this._focusAlignment || forceAlignment) {
-            this._setFocusAlignment(element, true, true);
-          }
-          this._activeElement.tabIndex = 0;
-        }
-      };
-      FocusZone2.prototype._preventDefaultWhenHandled = function(ev) {
-        this.props.preventDefaultWhenHandled && ev.preventDefault();
-      };
-      FocusZone2.prototype._tryInvokeClickForFocusable = function(targetElement, ev) {
-        var target = targetElement;
-        if (target === this._root.current) {
-          return false;
-        }
-        do {
-          if (target.tagName === "BUTTON" || target.tagName === "A" || target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.tagName === "SUMMARY") {
-            return false;
-          }
-          if (this._isImmediateDescendantOfZone(target) && target.getAttribute(IS_FOCUSABLE_ATTRIBUTE2) === "true" && target.getAttribute(IS_ENTER_DISABLED_ATTRIBUTE) !== "true") {
-            raiseClickFromKeyboardEvent(target, ev);
-            return true;
-          }
-          target = getParent(target, ALLOW_VIRTUAL_ELEMENTS);
-        } while (target !== this._root.current);
-        return false;
-      };
-      FocusZone2.prototype._getFirstInnerZone = function(rootElement) {
-        rootElement = rootElement || this._activeElement || this._root.current;
-        if (!rootElement) {
-          return null;
-        }
-        if (isElementFocusZone(rootElement)) {
-          return _allInstances[rootElement.getAttribute(FOCUSZONE_ID_ATTRIBUTE2)];
-        }
-        var child = rootElement.firstElementChild;
-        while (child) {
-          if (isElementFocusZone(child)) {
-            return _allInstances[child.getAttribute(FOCUSZONE_ID_ATTRIBUTE2)];
-          }
-          var match = this._getFirstInnerZone(child);
-          if (match) {
-            return match;
-          }
-          child = child.nextElementSibling;
-        }
-        return null;
-      };
-      FocusZone2.prototype._moveFocus = function(isForward, getDistanceFromCenter, ev, useDefaultWrap) {
-        if (useDefaultWrap === void 0) {
-          useDefaultWrap = true;
-        }
-        var element = this._activeElement;
-        var candidateDistance = -1;
-        var candidateElement = void 0;
-        var changedFocus = false;
-        var isBidirectional = this.props.direction === FocusZoneDirection.bidirectional;
-        if (!element || !this._root.current) {
-          return false;
-        }
-        if (this._isElementInput(element)) {
-          if (!this._shouldInputLoseFocus(element, isForward)) {
-            return false;
-          }
-        }
-        var activeRect = isBidirectional ? element.getBoundingClientRect() : null;
-        do {
-          element = isForward ? getNextElement(this._root.current, element) : getPreviousElement(this._root.current, element);
-          if (isBidirectional) {
-            if (element) {
-              var targetRect = element.getBoundingClientRect();
-              var elementDistance = getDistanceFromCenter(activeRect, targetRect);
-              if (elementDistance === -1 && candidateDistance === -1) {
-                candidateElement = element;
-                break;
-              }
-              if (elementDistance > -1 && (candidateDistance === -1 || elementDistance < candidateDistance)) {
-                candidateDistance = elementDistance;
-                candidateElement = element;
-              }
-              if (candidateDistance >= 0 && elementDistance < 0) {
-                break;
-              }
-            }
-          } else {
-            candidateElement = element;
-            break;
-          }
-        } while (element);
-        if (candidateElement && candidateElement !== this._activeElement) {
-          changedFocus = true;
-          this.focusElement(candidateElement);
-        } else if (this.props.isCircularNavigation && useDefaultWrap) {
-          if (isForward) {
-            return this.focusElement(getNextElement(this._root.current, this._root.current.firstElementChild, true));
-          } else {
-            return this.focusElement(getPreviousElement(this._root.current, this._root.current.lastElementChild, true, true, true));
-          }
-        }
-        return changedFocus;
-      };
-      FocusZone2.prototype._moveFocusDown = function() {
-        var _this = this;
-        var targetTop = -1;
-        var leftAlignment = this._focusAlignment.left || this._focusAlignment.x || 0;
-        if (
-          // eslint-disable-next-line deprecation/deprecation
-          this._moveFocus(true, function(activeRect, targetRect) {
-            var distance = -1;
-            var targetRectTop = Math.floor(targetRect.top);
-            var activeRectBottom = Math.floor(activeRect.bottom);
-            if (targetRectTop < activeRectBottom) {
-              if (!_this._shouldWrapFocus(_this._activeElement, NO_VERTICAL_WRAP)) {
-                return LARGE_NEGATIVE_DISTANCE_FROM_CENTER;
-              }
-              return LARGE_DISTANCE_FROM_CENTER;
-            }
-            if (targetTop === -1 && targetRectTop >= activeRectBottom || targetRectTop === targetTop) {
-              targetTop = targetRectTop;
-              if (leftAlignment >= targetRect.left && leftAlignment <= targetRect.left + targetRect.width) {
-                distance = 0;
-              } else {
-                distance = Math.abs(targetRect.left + targetRect.width / 2 - leftAlignment);
-              }
-            }
-            return distance;
-          })
-        ) {
-          this._setFocusAlignment(this._activeElement, false, true);
-          return true;
-        }
-        return false;
-      };
-      FocusZone2.prototype._moveFocusUp = function() {
-        var _this = this;
-        var targetTop = -1;
-        var leftAlignment = this._focusAlignment.left || this._focusAlignment.x || 0;
-        if (
-          // eslint-disable-next-line deprecation/deprecation
-          this._moveFocus(false, function(activeRect, targetRect) {
-            var distance = -1;
-            var targetRectBottom = Math.floor(targetRect.bottom);
-            var targetRectTop = Math.floor(targetRect.top);
-            var activeRectTop = Math.floor(activeRect.top);
-            if (targetRectBottom > activeRectTop) {
-              if (!_this._shouldWrapFocus(_this._activeElement, NO_VERTICAL_WRAP)) {
-                return LARGE_NEGATIVE_DISTANCE_FROM_CENTER;
-              }
-              return LARGE_DISTANCE_FROM_CENTER;
-            }
-            if (targetTop === -1 && targetRectBottom <= activeRectTop || targetRectTop === targetTop) {
-              targetTop = targetRectTop;
-              if (leftAlignment >= targetRect.left && leftAlignment <= targetRect.left + targetRect.width) {
-                distance = 0;
-              } else {
-                distance = Math.abs(targetRect.left + targetRect.width / 2 - leftAlignment);
-              }
-            }
-            return distance;
-          })
-        ) {
-          this._setFocusAlignment(this._activeElement, false, true);
-          return true;
-        }
-        return false;
-      };
-      FocusZone2.prototype._moveFocusLeft = function(theme) {
-        var _this = this;
-        var shouldWrap = this._shouldWrapFocus(this._activeElement, NO_HORIZONTAL_WRAP);
-        if (this._moveFocus(
-          getRTL2(theme),
-          // eslint-disable-next-line deprecation/deprecation
-          function(activeRect, targetRect) {
-            var distance = -1;
-            var topBottomComparison;
-            if (getRTL2(theme)) {
-              topBottomComparison = parseFloat(targetRect.top.toFixed(3)) < parseFloat(activeRect.bottom.toFixed(3));
-            } else {
-              topBottomComparison = parseFloat(targetRect.bottom.toFixed(3)) > parseFloat(activeRect.top.toFixed(3));
-            }
-            if (topBottomComparison && targetRect.right <= activeRect.right && _this.props.direction !== FocusZoneDirection.vertical) {
-              distance = activeRect.right - targetRect.right;
-            } else if (!shouldWrap) {
-              distance = LARGE_NEGATIVE_DISTANCE_FROM_CENTER;
-            }
-            return distance;
-          },
-          void 0,
-          shouldWrap
-        )) {
-          this._setFocusAlignment(this._activeElement, true, false);
-          return true;
-        }
-        return false;
-      };
-      FocusZone2.prototype._moveFocusRight = function(theme) {
-        var _this = this;
-        var shouldWrap = this._shouldWrapFocus(this._activeElement, NO_HORIZONTAL_WRAP);
-        if (this._moveFocus(
-          !getRTL2(theme),
-          // eslint-disable-next-line deprecation/deprecation
-          function(activeRect, targetRect) {
-            var distance = -1;
-            var topBottomComparison;
-            if (getRTL2(theme)) {
-              topBottomComparison = parseFloat(targetRect.bottom.toFixed(3)) > parseFloat(activeRect.top.toFixed(3));
-            } else {
-              topBottomComparison = parseFloat(targetRect.top.toFixed(3)) < parseFloat(activeRect.bottom.toFixed(3));
-            }
-            if (topBottomComparison && targetRect.left >= activeRect.left && _this.props.direction !== FocusZoneDirection.vertical) {
-              distance = targetRect.left - activeRect.left;
-            } else if (!shouldWrap) {
-              distance = LARGE_NEGATIVE_DISTANCE_FROM_CENTER;
-            }
-            return distance;
-          },
-          void 0,
-          shouldWrap
-        )) {
-          this._setFocusAlignment(this._activeElement, true, false);
-          return true;
-        }
-        return false;
-      };
-      FocusZone2.prototype._moveFocusPaging = function(isForward, useDefaultWrap) {
-        if (useDefaultWrap === void 0) {
-          useDefaultWrap = true;
-        }
-        var element = this._activeElement;
-        if (!element || !this._root.current) {
-          return false;
-        }
-        if (this._isElementInput(element)) {
-          if (!this._shouldInputLoseFocus(element, isForward)) {
-            return false;
-          }
-        }
-        var scrollableParent = findScrollableParent(element);
-        if (!scrollableParent) {
-          return false;
-        }
-        var candidateDistance = -1;
-        var candidateElement = void 0;
-        var targetTop = -1;
-        var targetBottom = -1;
-        var pagesize = scrollableParent.clientHeight;
-        var activeRect = element.getBoundingClientRect();
-        do {
-          element = isForward ? getNextElement(this._root.current, element) : getPreviousElement(this._root.current, element);
-          if (element) {
-            var targetRect = element.getBoundingClientRect();
-            var targetRectTop = Math.floor(targetRect.top);
-            var activeRectBottom = Math.floor(activeRect.bottom);
-            var targetRectBottom = Math.floor(targetRect.bottom);
-            var activeRectTop = Math.floor(activeRect.top);
-            var elementDistance = this._getHorizontalDistanceFromCenter(isForward, activeRect, targetRect);
-            var isElementPassedPageSizeOnPagingDown = isForward && targetRectTop > activeRectBottom + pagesize;
-            var isElementPassedPageSizeOnPagingUp = !isForward && targetRectBottom < activeRectTop - pagesize;
-            if (isElementPassedPageSizeOnPagingDown || isElementPassedPageSizeOnPagingUp) {
-              break;
-            }
-            if (elementDistance > -1) {
-              if (isForward && targetRectTop > targetTop) {
-                targetTop = targetRectTop;
-                candidateDistance = elementDistance;
-                candidateElement = element;
-              } else if (!isForward && targetRectBottom < targetBottom) {
-                targetBottom = targetRectBottom;
-                candidateDistance = elementDistance;
-                candidateElement = element;
-              } else if (candidateDistance === -1 || elementDistance <= candidateDistance) {
-                candidateDistance = elementDistance;
-                candidateElement = element;
-              }
-            }
-          }
-        } while (element);
-        var changedFocus = false;
-        if (candidateElement && candidateElement !== this._activeElement) {
-          changedFocus = true;
-          this.focusElement(candidateElement);
-          this._setFocusAlignment(candidateElement, false, true);
-        } else if (this.props.isCircularNavigation && useDefaultWrap) {
-          if (isForward) {
-            return this.focusElement(getNextElement(this._root.current, this._root.current.firstElementChild, true));
-          }
-          return this.focusElement(getPreviousElement(this._root.current, this._root.current.lastElementChild, true, true, true));
-        }
-        return changedFocus;
-      };
-      FocusZone2.prototype._setFocusAlignment = function(element, isHorizontal, isVertical) {
-        if (this.props.direction === FocusZoneDirection.bidirectional && (!this._focusAlignment || isHorizontal || isVertical)) {
-          var rect = element.getBoundingClientRect();
-          var left = rect.left + rect.width / 2;
-          var top_1 = rect.top + rect.height / 2;
-          if (!this._focusAlignment) {
-            this._focusAlignment = { left, top: top_1 };
-          }
-          if (isHorizontal) {
-            this._focusAlignment.left = left;
-          }
-          if (isVertical) {
-            this._focusAlignment.top = top_1;
-          }
-        }
-      };
-      FocusZone2.prototype._isImmediateDescendantOfZone = function(element) {
-        return this._getOwnerZone(element) === this._root.current;
-      };
-      FocusZone2.prototype._getOwnerZone = function(element) {
-        var parentElement = getParent(element, ALLOW_VIRTUAL_ELEMENTS);
-        while (parentElement && parentElement !== this._root.current && parentElement !== this._getDocument().body) {
-          if (isElementFocusZone(parentElement)) {
-            return parentElement;
-          }
-          parentElement = getParent(parentElement, ALLOW_VIRTUAL_ELEMENTS);
-        }
-        return parentElement;
-      };
-      FocusZone2.prototype._updateTabIndexes = function(element) {
-        if (!this._activeElement && this.props.defaultTabbableElement && typeof this.props.defaultTabbableElement === "function") {
-          this._activeElement = this.props.defaultTabbableElement(this._root.current);
-        }
-        if (!element && this._root.current) {
-          this._defaultFocusElement = null;
-          element = this._root.current;
-          if (this._activeElement && !elementContains(element, this._activeElement)) {
-            this._activeElement = null;
-          }
-        }
-        if (this._activeElement && !isElementTabbable(this._activeElement)) {
-          this._activeElement = null;
-        }
-        var childNodes = element && element.children;
-        for (var childIndex = 0; childNodes && childIndex < childNodes.length; childIndex++) {
-          var child = childNodes[childIndex];
-          if (!isElementFocusZone(child)) {
-            if (child.getAttribute && child.getAttribute(IS_FOCUSABLE_ATTRIBUTE2) === "false") {
-              child.setAttribute(TABINDEX, "-1");
-            }
-            if (isElementTabbable(child)) {
-              if (this.props.disabled) {
-                child.setAttribute(TABINDEX, "-1");
-              } else if (!this._isInnerZone && (!this._activeElement && !this._defaultFocusElement || this._activeElement === child)) {
-                this._defaultFocusElement = child;
-                if (child.getAttribute(TABINDEX) !== "0") {
-                  child.setAttribute(TABINDEX, "0");
-                }
-              } else if (child.getAttribute(TABINDEX) !== "-1") {
-                child.setAttribute(TABINDEX, "-1");
-              }
-            } else if (child.tagName === "svg" && child.getAttribute("focusable") !== "false") {
-              child.setAttribute("focusable", "false");
-            }
-          } else if (child.getAttribute(IS_FOCUSABLE_ATTRIBUTE2) === "true") {
-            if (!this._isInnerZone && (!this._activeElement && !this._defaultFocusElement || this._activeElement === child)) {
-              this._defaultFocusElement = child;
-              if (child.getAttribute(TABINDEX) !== "0") {
-                child.setAttribute(TABINDEX, "0");
-              }
-            } else if (child.getAttribute(TABINDEX) !== "-1") {
-              child.setAttribute(TABINDEX, "-1");
-            }
-          }
-          this._updateTabIndexes(child);
-        }
-      };
-      FocusZone2.prototype._isContentEditableElement = function(element) {
-        return element && element.getAttribute("contenteditable") === "true";
-      };
-      FocusZone2.prototype._isElementInput = function(element) {
-        if (element && element.tagName && (element.tagName.toLowerCase() === "input" || element.tagName.toLowerCase() === "textarea")) {
-          return true;
-        }
-        return false;
-      };
-      FocusZone2.prototype._shouldInputLoseFocus = function(element, isForward) {
-        if (!this._processingTabKey && element && element.type && ALLOWED_INPUT_TYPES.indexOf(element.type.toLowerCase()) > -1) {
-          var selectionStart = element.selectionStart;
-          var selectionEnd = element.selectionEnd;
-          var isRangeSelected = selectionStart !== selectionEnd;
-          var inputValue = element.value;
-          var isReadonly = element.readOnly;
-          if (isRangeSelected || selectionStart > 0 && !isForward && !isReadonly || selectionStart !== inputValue.length && isForward && !isReadonly || !!this.props.handleTabKey && !(this.props.shouldInputLoseFocusOnArrowKey && this.props.shouldInputLoseFocusOnArrowKey(element))) {
-            return false;
-          }
-        }
-        return true;
-      };
-      FocusZone2.prototype._shouldWrapFocus = function(element, noWrapDataAttribute) {
-        return this.props.checkForNoWrap ? shouldWrapFocus(element, noWrapDataAttribute) : true;
-      };
-      FocusZone2.prototype._portalContainsElement = function(element) {
-        return element && !!this._root.current && portalContainsElement(element, this._root.current);
-      };
-      FocusZone2.prototype._getDocument = function() {
-        return getDocument(this._root.current);
-      };
-      FocusZone2.defaultProps = {
-        isCircularNavigation: false,
-        direction: FocusZoneDirection.bidirectional,
-        shouldRaiseClicks: true
-      };
-      return FocusZone2;
-    }(React30.Component)
-  );
-
-  // ../node_modules/@fluentui/react/lib/components/Button/BaseButton.js
-  var React43 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenu.js
-  var React42 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenu.base.js
-  var React41 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenu.types.js
-  var ContextualMenuItemType;
-  (function(ContextualMenuItemType2) {
-    ContextualMenuItemType2[ContextualMenuItemType2["Normal"] = 0] = "Normal";
-    ContextualMenuItemType2[ContextualMenuItemType2["Divider"] = 1] = "Divider";
-    ContextualMenuItemType2[ContextualMenuItemType2["Header"] = 2] = "Header";
-    ContextualMenuItemType2[ContextualMenuItemType2["Section"] = 3] = "Section";
-  })(ContextualMenuItemType || (ContextualMenuItemType = {}));
-
-  // ../node_modules/@fluentui/react/lib/utilities/contextualMenu/contextualMenuUtility.js
-  function getIsChecked(item) {
-    if (item.canCheck) {
-      return !!(item.isChecked || item.checked);
-    }
-    if (typeof item.isChecked === "boolean") {
-      return item.isChecked;
-    }
-    if (typeof item.checked === "boolean") {
-      return item.checked;
-    }
-    return null;
-  }
-  function hasSubmenu(item) {
-    return !!(item.subMenuProps || item.items);
-  }
-  function isItemDisabled(item) {
-    return !!(item.isDisabled || item.disabled);
-  }
-  function getMenuItemAriaRole(item) {
-    var isChecked = getIsChecked(item);
-    var canCheck = isChecked !== null;
-    return canCheck ? "menuitemcheckbox" : "menuitem";
-  }
-
-  // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenuItem.base.js
-  var React31 = __toESM(require_react());
-  var defaultIconRenderer = function(props) {
-    var item = props.item, classNames2 = props.classNames;
-    var iconProps = item.iconProps;
-    return React31.createElement(Icon, __assign({}, iconProps, { className: classNames2.icon }));
-  };
-  var renderItemIcon = function(props) {
-    var item = props.item, hasIcons = props.hasIcons;
-    if (!hasIcons) {
-      return null;
-    }
-    if (item.onRenderIcon) {
-      return item.onRenderIcon(props, defaultIconRenderer);
-    }
-    return defaultIconRenderer(props);
-  };
-  var renderCheckMarkIcon = function(_a5) {
-    var onCheckmarkClick = _a5.onCheckmarkClick, item = _a5.item, classNames2 = _a5.classNames;
-    var isItemChecked = getIsChecked(item);
-    if (onCheckmarkClick) {
-      var onClick = function(e) {
-        return onCheckmarkClick(item, e);
-      };
-      return React31.createElement(Icon, {
-        iconName: item.canCheck !== false && isItemChecked ? "CheckMark" : "",
-        className: classNames2.checkmarkIcon,
-        // eslint-disable-next-line react/jsx-no-bind
-        onClick
-      });
-    }
-    return null;
-  };
-  var renderItemName = function(_a5) {
-    var item = _a5.item, classNames2 = _a5.classNames;
-    if (item.text || item.name) {
-      return React31.createElement("span", { className: classNames2.label }, item.text || item.name);
-    }
-    return null;
-  };
-  var renderSecondaryText = function(_a5) {
-    var item = _a5.item, classNames2 = _a5.classNames;
-    if (item.secondaryText) {
-      return React31.createElement("span", { className: classNames2.secondaryText }, item.secondaryText);
-    }
-    return null;
-  };
-  var renderSubMenuIcon = function(_a5) {
-    var item = _a5.item, classNames2 = _a5.classNames, theme = _a5.theme;
-    if (hasSubmenu(item)) {
-      return React31.createElement(Icon, __assign({ iconName: getRTL2(theme) ? "ChevronLeft" : "ChevronRight" }, item.submenuIconProps, { className: classNames2.subMenuIcon }));
-    }
-    return null;
-  };
-  var ContextualMenuItemBase = (
-    /** @class */
-    function(_super) {
-      __extends(ContextualMenuItemBase2, _super);
-      function ContextualMenuItemBase2(props) {
-        var _this = _super.call(this, props) || this;
-        _this.openSubMenu = function() {
-          var _a5 = _this.props, item = _a5.item, openSubMenu = _a5.openSubMenu, getSubmenuTarget = _a5.getSubmenuTarget;
-          if (getSubmenuTarget) {
-            var submenuTarget = getSubmenuTarget();
-            if (hasSubmenu(item) && openSubMenu && submenuTarget) {
-              openSubMenu(item, submenuTarget);
-            }
-          }
-        };
-        _this.dismissSubMenu = function() {
-          var _a5 = _this.props, item = _a5.item, dismissSubMenu = _a5.dismissSubMenu;
-          if (hasSubmenu(item) && dismissSubMenu) {
-            dismissSubMenu();
-          }
-        };
-        _this.dismissMenu = function(dismissAll) {
-          var dismissMenu = _this.props.dismissMenu;
-          if (dismissMenu) {
-            dismissMenu(void 0, dismissAll);
-          }
-        };
-        initializeComponentRef(_this);
-        return _this;
-      }
-      ContextualMenuItemBase2.prototype.render = function() {
-        var _a5 = this.props, item = _a5.item, classNames2 = _a5.classNames;
-        var renderContent = item.onRenderContent || this._renderLayout;
-        return React31.createElement("div", { className: item.split ? classNames2.linkContentMenu : classNames2.linkContent }, renderContent(this.props, {
-          renderCheckMarkIcon,
-          renderItemIcon,
-          renderItemName,
-          renderSecondaryText,
-          renderSubMenuIcon
-        }));
-      };
-      ContextualMenuItemBase2.prototype._renderLayout = function(props, defaultRenders) {
-        return React31.createElement(
-          React31.Fragment,
-          null,
-          defaultRenders.renderCheckMarkIcon(props),
-          defaultRenders.renderItemIcon(props),
-          defaultRenders.renderItemName(props),
-          defaultRenders.renderSecondaryText(props),
-          defaultRenders.renderSubMenuIcon(props)
-        );
-      };
-      return ContextualMenuItemBase2;
-    }(React31.Component)
-  );
-
-  // ../node_modules/@fluentui/react/lib/components/Divider/VerticalDivider.classNames.js
-  var getDividerClassNames = memoizeFunction(
-    // eslint-disable-next-line deprecation/deprecation
-    function(theme) {
-      return mergeStyleSets({
-        wrapper: {
-          display: "inline-flex",
-          height: "100%",
-          alignItems: "center"
-        },
-        divider: {
-          width: 1,
-          height: "100%",
-          backgroundColor: theme.palette.neutralTertiaryAlt
-        }
-      });
-    }
-  );
-
-  // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenu.cnstyles.js
-  var CONTEXTUAL_MENU_ITEM_HEIGHT = 36;
-  var MediumScreenSelector = getScreenSelector(0, ScreenWidthMaxMedium);
-  var getMenuItemStyles = memoizeFunction(function(theme) {
-    var _a5, _b, _c, _d, _e;
-    var semanticColors = theme.semanticColors, fonts = theme.fonts, palette = theme.palette;
-    var ContextualMenuItemBackgroundHoverColor = semanticColors.menuItemBackgroundHovered;
-    var ContextualMenuItemTextHoverColor = semanticColors.menuItemTextHovered;
-    var ContextualMenuItemBackgroundSelectedColor = semanticColors.menuItemBackgroundPressed;
-    var ContextualMenuItemDividerColor = semanticColors.bodyDivider;
-    var menuItemStyles = {
-      item: [
-        fonts.medium,
-        {
-          color: semanticColors.bodyText,
-          position: "relative",
-          boxSizing: "border-box"
-        }
-      ],
-      divider: {
-        display: "block",
-        height: "1px",
-        backgroundColor: ContextualMenuItemDividerColor,
-        position: "relative"
-      },
-      root: [
-        getFocusStyle(theme),
-        fonts.medium,
-        {
-          color: semanticColors.bodyText,
-          backgroundColor: "transparent",
-          border: "none",
-          width: "100%",
-          height: CONTEXTUAL_MENU_ITEM_HEIGHT,
-          lineHeight: CONTEXTUAL_MENU_ITEM_HEIGHT,
-          display: "block",
-          cursor: "pointer",
-          padding: "0px 8px 0 4px",
-          textAlign: "left"
-        }
-      ],
-      rootDisabled: {
-        color: semanticColors.disabledBodyText,
-        cursor: "default",
-        pointerEvents: "none",
-        selectors: (_a5 = {}, _a5[HighContrastSelector] = {
-          // ensure disabled text looks different than enabled
-          color: "GrayText",
-          opacity: 1
-        }, _a5)
-      },
-      rootHovered: {
-        backgroundColor: ContextualMenuItemBackgroundHoverColor,
-        color: ContextualMenuItemTextHoverColor,
-        selectors: {
-          ".ms-ContextualMenu-icon": {
-            color: palette.themeDarkAlt
-          },
-          ".ms-ContextualMenu-submenuIcon": {
-            color: palette.neutralPrimary
-          }
-        }
-      },
-      rootFocused: {
-        backgroundColor: palette.white
-      },
-      rootChecked: {
-        selectors: {
-          ".ms-ContextualMenu-checkmarkIcon": {
-            color: palette.neutralPrimary
-          }
-        }
-      },
-      rootPressed: {
-        backgroundColor: ContextualMenuItemBackgroundSelectedColor,
-        selectors: {
-          ".ms-ContextualMenu-icon": {
-            color: palette.themeDark
-          },
-          ".ms-ContextualMenu-submenuIcon": {
-            color: palette.neutralPrimary
-          }
-        }
-      },
-      rootExpanded: {
-        backgroundColor: ContextualMenuItemBackgroundSelectedColor,
-        color: semanticColors.bodyTextChecked,
-        selectors: (_b = {
-          ".ms-ContextualMenu-submenuIcon": (_c = {}, _c[HighContrastSelector] = {
-            // icons inside of anchor tags are not properly inheriting color in high contrast
-            color: "inherit"
-          }, _c)
-        }, _b[HighContrastSelector] = __assign({}, getHighContrastNoAdjustStyle()), _b)
-      },
-      linkContent: {
-        whiteSpace: "nowrap",
-        height: "inherit",
-        display: "flex",
-        alignItems: "center",
-        maxWidth: "100%"
-      },
-      anchorLink: {
-        padding: "0px 8px 0 4px",
-        textRendering: "auto",
-        color: "inherit",
-        letterSpacing: "normal",
-        wordSpacing: "normal",
-        textTransform: "none",
-        textIndent: "0px",
-        textShadow: "none",
-        textDecoration: "none",
-        boxSizing: "border-box"
-      },
-      label: {
-        margin: "0 4px",
-        verticalAlign: "middle",
-        display: "inline-block",
-        flexGrow: "1",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap",
-        overflow: "hidden"
-      },
-      secondaryText: {
-        color: theme.palette.neutralSecondary,
-        paddingLeft: "20px",
-        textAlign: "right"
-      },
-      icon: {
-        display: "inline-block",
-        minHeight: "1px",
-        maxHeight: CONTEXTUAL_MENU_ITEM_HEIGHT,
-        fontSize: IconFontSizes.medium,
-        width: IconFontSizes.medium,
-        margin: "0 4px",
-        verticalAlign: "middle",
-        flexShrink: "0",
-        selectors: (_d = {}, _d[MediumScreenSelector] = {
-          fontSize: IconFontSizes.large,
-          width: IconFontSizes.large
-        }, _d)
-      },
-      iconColor: {
-        color: semanticColors.menuIcon
-      },
-      iconDisabled: {
-        color: semanticColors.disabledBodyText
-      },
-      checkmarkIcon: {
-        color: semanticColors.bodySubtext
-      },
-      subMenuIcon: {
-        height: CONTEXTUAL_MENU_ITEM_HEIGHT,
-        lineHeight: CONTEXTUAL_MENU_ITEM_HEIGHT,
-        color: palette.neutralSecondary,
-        textAlign: "center",
-        display: "inline-block",
-        verticalAlign: "middle",
-        flexShrink: "0",
-        fontSize: IconFontSizes.small,
-        selectors: (_e = {
-          ":hover": {
-            color: palette.neutralPrimary
-          },
-          ":active": {
-            color: palette.neutralPrimary
-          }
-        }, _e[MediumScreenSelector] = {
-          fontSize: IconFontSizes.medium
-          // 16px
-        }, _e)
-      },
-      splitButtonFlexContainer: [
-        getFocusStyle(theme),
-        {
-          display: "flex",
-          height: CONTEXTUAL_MENU_ITEM_HEIGHT,
-          flexWrap: "nowrap",
-          justifyContent: "center",
-          alignItems: "flex-start"
-        }
-      ]
-    };
-    return concatStyleSets(menuItemStyles);
-  });
-
-  // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenu.classNames.js
-  var CONTEXTUAL_SPLIT_MENU_MINWIDTH = "28px";
-  var MediumScreenSelector2 = getScreenSelector(0, ScreenWidthMaxMedium);
-  var getSplitButtonVerticalDividerClassNames = memoizeFunction(
-    /* eslint-disable deprecation/deprecation */
-    function(theme) {
-      var _a5;
-      return mergeStyleSets(getDividerClassNames(theme), {
-        /* eslint-enable deprecation/deprecation */
-        wrapper: {
-          position: "absolute",
-          right: 28,
-          selectors: (_a5 = {}, _a5[MediumScreenSelector2] = {
-            right: 32
-            // fontSize of the icon increased from 12px to 16px
-          }, _a5)
-        },
-        divider: {
-          height: 16,
-          width: 1
-        }
-      });
-    }
-  );
-  var GlobalClassNames5 = {
-    item: "ms-ContextualMenu-item",
-    divider: "ms-ContextualMenu-divider",
-    root: "ms-ContextualMenu-link",
-    isChecked: "is-checked",
-    isExpanded: "is-expanded",
-    isDisabled: "is-disabled",
-    linkContent: "ms-ContextualMenu-linkContent",
-    linkContentMenu: "ms-ContextualMenu-linkContent",
-    icon: "ms-ContextualMenu-icon",
-    iconColor: "ms-ContextualMenu-iconColor",
-    checkmarkIcon: "ms-ContextualMenu-checkmarkIcon",
-    subMenuIcon: "ms-ContextualMenu-submenuIcon",
-    label: "ms-ContextualMenu-itemText",
-    secondaryText: "ms-ContextualMenu-secondaryText",
-    splitMenu: "ms-ContextualMenu-splitMenu",
-    screenReaderText: "ms-ContextualMenu-screenReaderText"
-  };
-  var getItemClassNames = memoizeFunction(function(theme, disabled, expanded, checked, isAnchorLink, knownIcon, itemClassName, dividerClassName, iconClassName, subMenuClassName, primaryDisabled, className) {
-    var _a5, _b, _c, _d;
-    var styles2 = getMenuItemStyles(theme);
-    var classNames2 = getGlobalClassNames(GlobalClassNames5, theme);
-    return mergeStyleSets({
-      item: [classNames2.item, styles2.item, itemClassName],
-      divider: [classNames2.divider, styles2.divider, dividerClassName],
-      root: [
-        classNames2.root,
-        styles2.root,
-        checked && [classNames2.isChecked, styles2.rootChecked],
-        isAnchorLink && styles2.anchorLink,
-        expanded && [classNames2.isExpanded, styles2.rootExpanded],
-        disabled && [classNames2.isDisabled, styles2.rootDisabled],
-        !disabled && !expanded && [
-          {
-            selectors: (_a5 = {
-              ":hover": styles2.rootHovered,
-              ":active": styles2.rootPressed
-            }, _a5[".".concat(IsFocusVisibleClassName, " &:focus, .").concat(IsFocusVisibleClassName, " &:focus:hover")] = styles2.rootFocused, _a5[".".concat(IsFocusVisibleClassName, " &:hover")] = { background: "inherit;" }, _a5)
-          }
-        ],
-        className
-      ],
-      splitPrimary: [
-        styles2.root,
-        {
-          width: "calc(100% - ".concat(CONTEXTUAL_SPLIT_MENU_MINWIDTH, ")")
-        },
-        checked && ["is-checked", styles2.rootChecked],
-        (disabled || primaryDisabled) && ["is-disabled", styles2.rootDisabled],
-        !(disabled || primaryDisabled) && !checked && [
-          {
-            selectors: (_b = {
-              ":hover": styles2.rootHovered
-            }, // when hovering over the splitPrimary also affect the splitMenu
-            _b[":hover ~ .".concat(classNames2.splitMenu)] = styles2.rootHovered, _b[":active"] = styles2.rootPressed, _b[".".concat(IsFocusVisibleClassName, " &:focus, .").concat(IsFocusVisibleClassName, " &:focus:hover")] = styles2.rootFocused, _b[".".concat(IsFocusVisibleClassName, " &:hover")] = { background: "inherit;" }, _b)
-          }
-        ]
-      ],
-      splitMenu: [
-        classNames2.splitMenu,
-        styles2.root,
-        {
-          flexBasis: "0",
-          padding: "0 8px",
-          minWidth: CONTEXTUAL_SPLIT_MENU_MINWIDTH
-        },
-        expanded && ["is-expanded", styles2.rootExpanded],
-        disabled && ["is-disabled", styles2.rootDisabled],
-        !disabled && !expanded && [
-          {
-            selectors: (_c = {
-              ":hover": styles2.rootHovered,
-              ":active": styles2.rootPressed
-            }, _c[".".concat(IsFocusVisibleClassName, " &:focus, .").concat(IsFocusVisibleClassName, " &:focus:hover")] = styles2.rootFocused, _c[".".concat(IsFocusVisibleClassName, " &:hover")] = { background: "inherit;" }, _c)
-          }
-        ]
-      ],
-      anchorLink: styles2.anchorLink,
-      linkContent: [classNames2.linkContent, styles2.linkContent],
-      linkContentMenu: [
-        classNames2.linkContentMenu,
-        styles2.linkContent,
-        {
-          justifyContent: "center"
-        }
-      ],
-      icon: [
-        classNames2.icon,
-        knownIcon && styles2.iconColor,
-        styles2.icon,
-        iconClassName,
-        disabled && [classNames2.isDisabled, styles2.iconDisabled]
-      ],
-      iconColor: styles2.iconColor,
-      checkmarkIcon: [classNames2.checkmarkIcon, knownIcon && styles2.checkmarkIcon, styles2.icon, iconClassName],
-      subMenuIcon: [
-        classNames2.subMenuIcon,
-        styles2.subMenuIcon,
-        subMenuClassName,
-        expanded && { color: theme.palette.neutralPrimary },
-        disabled && [styles2.iconDisabled]
-      ],
-      label: [classNames2.label, styles2.label],
-      secondaryText: [classNames2.secondaryText, styles2.secondaryText],
-      splitContainer: [
-        styles2.splitButtonFlexContainer,
-        !disabled && !checked && [
-          {
-            selectors: (_d = {}, _d[".".concat(IsFocusVisibleClassName, " &:focus, .").concat(IsFocusVisibleClassName, " &:focus:hover")] = styles2.rootFocused, _d)
-          }
-        ]
-      ],
-      screenReaderText: [
-        classNames2.screenReaderText,
-        styles2.screenReaderText,
-        hiddenContentStyle,
-        { visibility: "hidden" }
-      ]
-    });
-  });
-  var getItemStyles = function(props) {
-    var theme = props.theme, disabled = props.disabled, expanded = props.expanded, checked = props.checked, isAnchorLink = props.isAnchorLink, knownIcon = props.knownIcon, itemClassName = props.itemClassName, dividerClassName = props.dividerClassName, iconClassName = props.iconClassName, subMenuClassName = props.subMenuClassName, primaryDisabled = props.primaryDisabled, className = props.className;
-    return getItemClassNames(theme, disabled, expanded, checked, isAnchorLink, knownIcon, itemClassName, dividerClassName, iconClassName, subMenuClassName, primaryDisabled, className);
-  };
-
-  // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenuItem.js
-  var ContextualMenuItem = styled(ContextualMenuItemBase, getItemStyles, void 0, { scope: "ContextualMenuItem" });
-
-  // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenuItemWrapper/ContextualMenuAnchor.js
-  var React34 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenuItemWrapper/ContextualMenuItemWrapper.js
-  var React32 = __toESM(require_react());
-  var ContextualMenuItemWrapper = (
-    /** @class */
-    function(_super) {
-      __extends(ContextualMenuItemWrapper2, _super);
-      function ContextualMenuItemWrapper2(props) {
-        var _this = _super.call(this, props) || this;
-        _this._onItemMouseEnter = function(ev) {
-          var _a5 = _this.props, item = _a5.item, onItemMouseEnter = _a5.onItemMouseEnter;
-          if (onItemMouseEnter) {
-            onItemMouseEnter(item, ev, ev.currentTarget);
-          }
-        };
-        _this._onItemClick = function(ev) {
-          var _a5 = _this.props, item = _a5.item, onItemClickBase = _a5.onItemClickBase;
-          if (onItemClickBase) {
-            onItemClickBase(item, ev, ev.currentTarget);
-          }
-        };
-        _this._onItemMouseLeave = function(ev) {
-          var _a5 = _this.props, item = _a5.item, onItemMouseLeave = _a5.onItemMouseLeave;
-          if (onItemMouseLeave) {
-            onItemMouseLeave(item, ev);
-          }
-        };
-        _this._onItemKeyDown = function(ev) {
-          var _a5 = _this.props, item = _a5.item, onItemKeyDown = _a5.onItemKeyDown;
-          if (onItemKeyDown) {
-            onItemKeyDown(item, ev);
-          }
-        };
-        _this._onItemMouseMove = function(ev) {
-          var _a5 = _this.props, item = _a5.item, onItemMouseMove = _a5.onItemMouseMove;
-          if (onItemMouseMove) {
-            onItemMouseMove(item, ev, ev.currentTarget);
-          }
-        };
-        _this._getSubmenuTarget = function() {
-          return void 0;
-        };
-        initializeComponentRef(_this);
-        return _this;
-      }
-      ContextualMenuItemWrapper2.prototype.shouldComponentUpdate = function(newProps) {
-        return !shallowCompare(newProps, this.props);
-      };
-      return ContextualMenuItemWrapper2;
-    }(React32.Component)
-  );
-
-  // ../node_modules/@fluentui/react/lib/utilities/keytips/KeytipConstants.js
-  var KTP_PREFIX = "ktp";
-  var KTP_SEPARATOR = "-";
-  var KTP_FULL_PREFIX = KTP_PREFIX + KTP_SEPARATOR;
-  var DATAKTP_TARGET = "data-ktp-target";
-  var DATAKTP_EXECUTE_TARGET = "data-ktp-execute-target";
-  var KTP_LAYER_ID = "ktp-layer-id";
-  var KeytipEvents;
-  (function(KeytipEvents2) {
-    KeytipEvents2.KEYTIP_ADDED = "keytipAdded";
-    KeytipEvents2.KEYTIP_REMOVED = "keytipRemoved";
-    KeytipEvents2.KEYTIP_UPDATED = "keytipUpdated";
-    KeytipEvents2.PERSISTED_KEYTIP_ADDED = "persistedKeytipAdded";
-    KeytipEvents2.PERSISTED_KEYTIP_REMOVED = "persistedKeytipRemoved";
-    KeytipEvents2.PERSISTED_KEYTIP_EXECUTE = "persistedKeytipExecute";
-    KeytipEvents2.ENTER_KEYTIP_MODE = "enterKeytipMode";
-    KeytipEvents2.EXIT_KEYTIP_MODE = "exitKeytipMode";
-  })(KeytipEvents || (KeytipEvents = {}));
-
-  // ../node_modules/@fluentui/react/lib/utilities/keytips/KeytipManager.js
-  var KeytipManager = (
-    /** @class */
-    function() {
-      function KeytipManager2() {
-        this.keytips = {};
-        this.persistedKeytips = {};
-        this.sequenceMapping = {};
-        this.inKeytipMode = false;
-        this.shouldEnterKeytipMode = true;
-        this.delayUpdatingKeytipChange = false;
-      }
-      KeytipManager2.getInstance = function() {
-        return this._instance;
-      };
-      KeytipManager2.prototype.init = function(delayUpdatingKeytipChange) {
-        this.delayUpdatingKeytipChange = delayUpdatingKeytipChange;
-      };
-      KeytipManager2.prototype.register = function(keytipProps, persisted) {
-        if (persisted === void 0) {
-          persisted = false;
-        }
-        var props = keytipProps;
-        if (!persisted) {
-          props = this.addParentOverflow(keytipProps);
-          this.sequenceMapping[props.keySequences.toString()] = props;
-        }
-        var uniqueKeytip = this._getUniqueKtp(props);
-        persisted ? this.persistedKeytips[uniqueKeytip.uniqueID] = uniqueKeytip : this.keytips[uniqueKeytip.uniqueID] = uniqueKeytip;
-        if (this.inKeytipMode || !this.delayUpdatingKeytipChange) {
-          var event_1 = persisted ? KeytipEvents.PERSISTED_KEYTIP_ADDED : KeytipEvents.KEYTIP_ADDED;
-          EventGroup.raise(this, event_1, {
-            keytip: props,
-            uniqueID: uniqueKeytip.uniqueID
-          });
-        }
-        return uniqueKeytip.uniqueID;
-      };
-      KeytipManager2.prototype.update = function(keytipProps, uniqueID) {
-        var newKeytipProps = this.addParentOverflow(keytipProps);
-        var uniqueKeytip = this._getUniqueKtp(newKeytipProps, uniqueID);
-        var oldKeyTip = this.keytips[uniqueID];
-        if (oldKeyTip) {
-          uniqueKeytip.keytip.visible = oldKeyTip.keytip.visible;
-          this.keytips[uniqueID] = uniqueKeytip;
-          delete this.sequenceMapping[oldKeyTip.keytip.keySequences.toString()];
-          this.sequenceMapping[uniqueKeytip.keytip.keySequences.toString()] = uniqueKeytip.keytip;
-          if (this.inKeytipMode || !this.delayUpdatingKeytipChange) {
-            EventGroup.raise(this, KeytipEvents.KEYTIP_UPDATED, {
-              keytip: uniqueKeytip.keytip,
-              uniqueID: uniqueKeytip.uniqueID
-            });
-          }
-        }
-      };
-      KeytipManager2.prototype.unregister = function(keytipToRemove, uniqueID, persisted) {
-        if (persisted === void 0) {
-          persisted = false;
-        }
-        persisted ? delete this.persistedKeytips[uniqueID] : delete this.keytips[uniqueID];
-        !persisted && delete this.sequenceMapping[keytipToRemove.keySequences.toString()];
-        var event = persisted ? KeytipEvents.PERSISTED_KEYTIP_REMOVED : KeytipEvents.KEYTIP_REMOVED;
-        if (this.inKeytipMode || !this.delayUpdatingKeytipChange) {
-          EventGroup.raise(this, event, {
-            keytip: keytipToRemove,
-            uniqueID
-          });
-        }
-      };
-      KeytipManager2.prototype.enterKeytipMode = function() {
-        EventGroup.raise(this, KeytipEvents.ENTER_KEYTIP_MODE);
-      };
-      KeytipManager2.prototype.exitKeytipMode = function() {
-        EventGroup.raise(this, KeytipEvents.EXIT_KEYTIP_MODE);
-      };
-      KeytipManager2.prototype.getKeytips = function() {
-        var _this = this;
-        return Object.keys(this.keytips).map(function(key) {
-          return _this.keytips[key].keytip;
-        });
-      };
-      KeytipManager2.prototype.addParentOverflow = function(keytipProps) {
-        var fullSequence = __spreadArray([], keytipProps.keySequences, true);
-        fullSequence.pop();
-        if (fullSequence.length !== 0) {
-          var parentKeytip = this.sequenceMapping[fullSequence.toString()];
-          if (parentKeytip && parentKeytip.overflowSetSequence) {
-            return __assign(__assign({}, keytipProps), { overflowSetSequence: parentKeytip.overflowSetSequence });
-          }
-        }
-        return keytipProps;
-      };
-      KeytipManager2.prototype.menuExecute = function(overflowButtonSequences, keytipSequences) {
-        EventGroup.raise(this, KeytipEvents.PERSISTED_KEYTIP_EXECUTE, {
-          overflowButtonSequences,
-          keytipSequences
-        });
-      };
-      KeytipManager2.prototype._getUniqueKtp = function(keytipProps, uniqueID) {
-        if (uniqueID === void 0) {
-          uniqueID = getId();
-        }
-        return { keytip: __assign({}, keytipProps), uniqueID };
-      };
-      KeytipManager2._instance = new KeytipManager2();
-      return KeytipManager2;
-    }()
-  );
-
-  // ../node_modules/@fluentui/react/lib/utilities/keytips/KeytipUtils.js
-  function sequencesToID(keySequences) {
-    return keySequences.reduce(function(prevValue, keySequence) {
-      return prevValue + KTP_SEPARATOR + keySequence.split("").join(KTP_SEPARATOR);
-    }, KTP_PREFIX);
-  }
-  function mergeOverflows(keySequences, overflowKeySequences) {
-    var overflowSequenceLen = overflowKeySequences.length;
-    var overflowSequence = __spreadArray([], overflowKeySequences, true).pop();
-    var newKeySequences = __spreadArray([], keySequences, true);
-    return addElementAtIndex(newKeySequences, overflowSequenceLen - 1, overflowSequence);
-  }
-  function getAriaDescribedBy(keySequences) {
-    var describedby = " " + KTP_LAYER_ID;
-    if (!keySequences.length) {
-      return describedby;
-    }
-    return describedby + " " + sequencesToID(keySequences);
-  }
-
-  // ../node_modules/@fluentui/react/lib/components/KeytipData/useKeytipData.js
-  var React33 = __toESM(require_react());
-  function useKeytipData(options) {
-    var uniqueId = React33.useRef();
-    var keytipProps = options.keytipProps ? __assign({ disabled: options.disabled }, options.keytipProps) : void 0;
-    var keytipManager = useConst(KeytipManager.getInstance());
-    var prevOptions = usePrevious(options);
-    useIsomorphicLayoutEffect(function() {
-      if (uniqueId.current && keytipProps && ((prevOptions === null || prevOptions === void 0 ? void 0 : prevOptions.keytipProps) !== options.keytipProps || (prevOptions === null || prevOptions === void 0 ? void 0 : prevOptions.disabled) !== options.disabled)) {
-        keytipManager.update(keytipProps, uniqueId.current);
-      }
-    });
-    useIsomorphicLayoutEffect(function() {
-      if (keytipProps) {
-        uniqueId.current = keytipManager.register(keytipProps);
-      }
-      return function() {
-        keytipProps && keytipManager.unregister(keytipProps, uniqueId.current);
-      };
-    }, []);
-    var nativeKeytipProps = {
-      ariaDescribedBy: void 0,
-      keytipId: void 0
-    };
-    if (keytipProps) {
-      nativeKeytipProps = getKeytipData(keytipManager, keytipProps, options.ariaDescribedBy);
-    }
-    return nativeKeytipProps;
-  }
-  function getKeytipData(keytipManager, keytipProps, describedByPrepend) {
-    var newKeytipProps = keytipManager.addParentOverflow(keytipProps);
-    var ariaDescribedBy = mergeAriaAttributeValues(describedByPrepend, getAriaDescribedBy(newKeytipProps.keySequences));
-    var keySequences = __spreadArray([], newKeytipProps.keySequences, true);
-    if (newKeytipProps.overflowSetSequence) {
-      keySequences = mergeOverflows(keySequences, newKeytipProps.overflowSetSequence);
-    }
-    var keytipId = sequencesToID(keySequences);
-    return {
-      ariaDescribedBy,
-      keytipId
-    };
-  }
-
-  // ../node_modules/@fluentui/react/lib/components/KeytipData/KeytipData.js
-  var KeytipData = function(props) {
-    var _a5;
-    var children = props.children, keytipDataProps = __rest(props, ["children"]);
-    var _b = useKeytipData(keytipDataProps), keytipId = _b.keytipId, ariaDescribedBy = _b.ariaDescribedBy;
-    return children((_a5 = {}, _a5[DATAKTP_TARGET] = keytipId, _a5[DATAKTP_EXECUTE_TARGET] = keytipId, _a5["aria-describedby"] = ariaDescribedBy, _a5));
-  };
-
-  // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenuItemWrapper/ContextualMenuAnchor.js
-  var ContextualMenuAnchor = (
-    /** @class */
-    function(_super) {
-      __extends(ContextualMenuAnchor2, _super);
-      function ContextualMenuAnchor2() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this._anchor = React34.createRef();
-        _this._getMemoizedMenuButtonKeytipProps = memoizeFunction(function(keytipProps) {
-          return __assign(__assign({}, keytipProps), { hasMenu: true });
-        });
-        _this._getSubmenuTarget = function() {
-          return _this._anchor.current ? _this._anchor.current : void 0;
-        };
-        _this._onItemClick = function(ev) {
-          var _a5 = _this.props, item = _a5.item, onItemClick = _a5.onItemClick;
-          if (onItemClick) {
-            onItemClick(item, ev);
-          }
-        };
-        _this._renderAriaDescription = function(ariaDescription, className) {
-          return ariaDescription ? React34.createElement("span", { id: _this._ariaDescriptionId, className }, ariaDescription) : null;
-        };
-        return _this;
-      }
-      ContextualMenuAnchor2.prototype.render = function() {
-        var _this = this;
-        var _a5 = this.props, item = _a5.item, classNames2 = _a5.classNames, index = _a5.index, focusableElementIndex = _a5.focusableElementIndex, totalItemCount = _a5.totalItemCount, hasCheckmarks = _a5.hasCheckmarks, hasIcons = _a5.hasIcons, _b = _a5.contextualMenuItemAs, ChildrenRenderer = _b === void 0 ? ContextualMenuItem : _b, expandedMenuItemKey = _a5.expandedMenuItemKey, onItemClick = _a5.onItemClick, openSubMenu = _a5.openSubMenu, dismissSubMenu = _a5.dismissSubMenu, dismissMenu = _a5.dismissMenu;
-        var anchorRel = item.rel;
-        if (item.target && item.target.toLowerCase() === "_blank") {
-          anchorRel = anchorRel ? anchorRel : "nofollow noopener noreferrer";
-        }
-        var itemHasSubmenu = hasSubmenu(item);
-        var nativeProps = getNativeProps(item, anchorProperties);
-        var disabled = isItemDisabled(item);
-        var itemProps = item.itemProps, ariaDescription = item.ariaDescription;
-        var keytipProps = item.keytipProps;
-        if (keytipProps && itemHasSubmenu) {
-          keytipProps = this._getMemoizedMenuButtonKeytipProps(keytipProps);
-        }
-        if (ariaDescription) {
-          this._ariaDescriptionId = getId();
-        }
-        var ariaDescribedByIds = mergeAriaAttributeValues(item.ariaDescribedBy, ariaDescription ? this._ariaDescriptionId : void 0, nativeProps["aria-describedby"]);
-        var additionalItemProperties = {
-          "aria-describedby": ariaDescribedByIds
-        };
-        return React34.createElement(
-          "div",
-          null,
-          React34.createElement(KeytipData, { keytipProps: item.keytipProps, ariaDescribedBy: ariaDescribedByIds, disabled }, function(keytipAttributes) {
-            return React34.createElement(
-              "a",
-              __assign({}, additionalItemProperties, nativeProps, keytipAttributes, {
-                ref: _this._anchor,
-                href: item.href,
-                target: item.target,
-                rel: anchorRel,
-                className: classNames2.root,
-                role: "menuitem",
-                "aria-haspopup": itemHasSubmenu || void 0,
-                "aria-expanded": itemHasSubmenu ? item.key === expandedMenuItemKey : void 0,
-                "aria-posinset": focusableElementIndex + 1,
-                "aria-setsize": totalItemCount,
-                "aria-disabled": isItemDisabled(item),
-                // eslint-disable-next-line deprecation/deprecation
-                style: item.style,
-                onClick: _this._onItemClick,
-                onMouseEnter: _this._onItemMouseEnter,
-                onMouseLeave: _this._onItemMouseLeave,
-                onMouseMove: _this._onItemMouseMove,
-                onKeyDown: itemHasSubmenu ? _this._onItemKeyDown : void 0
-              }),
-              React34.createElement(ChildrenRenderer, __assign({ componentRef: item.componentRef, item, classNames: classNames2, index, onCheckmarkClick: hasCheckmarks && onItemClick ? onItemClick : void 0, hasIcons, openSubMenu, dismissSubMenu, dismissMenu, getSubmenuTarget: _this._getSubmenuTarget }, itemProps)),
-              _this._renderAriaDescription(ariaDescription, classNames2.screenReaderText)
-            );
-          })
-        );
-      };
-      return ContextualMenuAnchor2;
-    }(ContextualMenuItemWrapper)
-  );
-
-  // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenuItemWrapper/ContextualMenuButton.js
-  var React35 = __toESM(require_react());
-  var ContextualMenuButton = (
-    /** @class */
-    function(_super) {
-      __extends(ContextualMenuButton2, _super);
-      function ContextualMenuButton2() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this._btn = React35.createRef();
-        _this._getMemoizedMenuButtonKeytipProps = memoizeFunction(function(keytipProps) {
-          return __assign(__assign({}, keytipProps), { hasMenu: true });
-        });
-        _this._renderAriaDescription = function(ariaDescription, className) {
-          return ariaDescription ? React35.createElement("span", { id: _this._ariaDescriptionId, className }, ariaDescription) : null;
-        };
-        _this._getSubmenuTarget = function() {
-          return _this._btn.current ? _this._btn.current : void 0;
-        };
-        return _this;
-      }
-      ContextualMenuButton2.prototype.render = function() {
-        var _this = this;
-        var _a5 = this.props, item = _a5.item, classNames2 = _a5.classNames, index = _a5.index, focusableElementIndex = _a5.focusableElementIndex, totalItemCount = _a5.totalItemCount, hasCheckmarks = _a5.hasCheckmarks, hasIcons = _a5.hasIcons, _b = _a5.contextualMenuItemAs, ChildrenRenderer = _b === void 0 ? ContextualMenuItem : _b, expandedMenuItemKey = _a5.expandedMenuItemKey, onItemMouseDown2 = _a5.onItemMouseDown, onItemClick = _a5.onItemClick, openSubMenu = _a5.openSubMenu, dismissSubMenu = _a5.dismissSubMenu, dismissMenu = _a5.dismissMenu;
-        var isChecked = getIsChecked(item);
-        var canCheck = isChecked !== null;
-        var defaultRole = getMenuItemAriaRole(item);
-        var itemHasSubmenu = hasSubmenu(item);
-        var itemProps = item.itemProps, ariaLabel = item.ariaLabel, ariaDescription = item.ariaDescription;
-        var buttonNativeProperties = getNativeProps(item, buttonProperties);
-        delete buttonNativeProperties.disabled;
-        var itemRole = item.role || defaultRole;
-        if (ariaDescription) {
-          this._ariaDescriptionId = getId();
-        }
-        var ariaDescribedByIds = mergeAriaAttributeValues(item.ariaDescribedBy, ariaDescription ? this._ariaDescriptionId : void 0, buttonNativeProperties["aria-describedby"]);
-        var itemButtonProperties = {
-          className: classNames2.root,
-          onClick: this._onItemClick,
-          onKeyDown: itemHasSubmenu ? this._onItemKeyDown : void 0,
-          onMouseEnter: this._onItemMouseEnter,
-          onMouseLeave: this._onItemMouseLeave,
-          onMouseDown: function(ev) {
-            return onItemMouseDown2 ? onItemMouseDown2(item, ev) : void 0;
-          },
-          onMouseMove: this._onItemMouseMove,
-          href: item.href,
-          title: item.title,
-          "aria-label": ariaLabel,
-          "aria-describedby": ariaDescribedByIds,
-          "aria-haspopup": itemHasSubmenu || void 0,
-          "aria-expanded": itemHasSubmenu ? item.key === expandedMenuItemKey : void 0,
-          "aria-posinset": focusableElementIndex + 1,
-          "aria-setsize": totalItemCount,
-          "aria-disabled": isItemDisabled(item),
-          "aria-checked": (itemRole === "menuitemcheckbox" || itemRole === "menuitemradio") && canCheck ? !!isChecked : void 0,
-          "aria-selected": itemRole === "menuitem" && canCheck ? !!isChecked : void 0,
-          role: itemRole,
-          // eslint-disable-next-line deprecation/deprecation
-          style: item.style
-        };
-        var keytipProps = item.keytipProps;
-        if (keytipProps && itemHasSubmenu) {
-          keytipProps = this._getMemoizedMenuButtonKeytipProps(keytipProps);
-        }
-        return React35.createElement(KeytipData, { keytipProps, ariaDescribedBy: ariaDescribedByIds, disabled: isItemDisabled(item) }, function(keytipAttributes) {
-          return React35.createElement(
-            "button",
-            __assign({ ref: _this._btn }, buttonNativeProperties, itemButtonProperties, keytipAttributes),
-            React35.createElement(ChildrenRenderer, __assign({ componentRef: item.componentRef, item, classNames: classNames2, index, onCheckmarkClick: hasCheckmarks && onItemClick ? onItemClick : void 0, hasIcons, openSubMenu, dismissSubMenu, dismissMenu, getSubmenuTarget: _this._getSubmenuTarget }, itemProps)),
-            _this._renderAriaDescription(ariaDescription, classNames2.screenReaderText)
-          );
-        });
-      };
-      return ContextualMenuButton2;
-    }(ContextualMenuItemWrapper)
-  );
-
-  // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenuItemWrapper/ContextualMenuSplitButton.js
-  var React37 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react/lib/components/Divider/VerticalDivider.styles.js
-  var getStyles6 = function(props) {
-    var theme = props.theme, getClassNames10 = props.getClassNames, className = props.className;
-    if (!theme) {
-      throw new Error("Theme is undefined or null.");
-    }
-    if (getClassNames10) {
-      var names = getClassNames10(theme);
-      return {
-        wrapper: [names.wrapper],
-        divider: [names.divider]
-      };
-    }
-    return {
-      wrapper: [
-        {
-          display: "inline-flex",
-          height: "100%",
-          alignItems: "center"
-        },
-        className
-      ],
-      divider: [
-        {
-          width: 1,
-          height: "100%",
-          backgroundColor: theme.palette.neutralTertiaryAlt
-        }
-      ]
-    };
-  };
-
-  // ../node_modules/@fluentui/react/lib/components/Divider/VerticalDivider.base.js
-  var React36 = __toESM(require_react());
-  var getClassNames6 = classNamesFunction();
-  var VerticalDividerBase = React36.forwardRef(function(props, ref) {
-    var styles2 = props.styles, theme = props.theme, deprecatedGetClassNames = props.getClassNames, className = props.className;
-    var classNames2 = getClassNames6(styles2, { theme, getClassNames: deprecatedGetClassNames, className });
-    return React36.createElement(
-      "span",
-      { className: classNames2.wrapper, ref },
-      React36.createElement("span", { className: classNames2.divider })
-    );
-  });
-  VerticalDividerBase.displayName = "VerticalDividerBase";
-
-  // ../node_modules/@fluentui/react/lib/components/Divider/VerticalDivider.js
-  var VerticalDivider = styled(VerticalDividerBase, getStyles6, void 0, {
-    scope: "VerticalDivider"
-  });
-
-  // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenuItemWrapper/ContextualMenuSplitButton.js
-  var TouchIdleDelay = 500;
-  var ContextualMenuSplitButton = (
-    /** @class */
-    function(_super) {
-      __extends(ContextualMenuSplitButton2, _super);
-      function ContextualMenuSplitButton2(props) {
-        var _this = _super.call(this, props) || this;
-        _this._getMemoizedMenuButtonKeytipProps = memoizeFunction(function(keytipProps) {
-          return __assign(__assign({}, keytipProps), { hasMenu: true });
-        });
-        _this._onItemKeyDown = function(ev) {
-          var _a5 = _this.props, item = _a5.item, onItemKeyDown = _a5.onItemKeyDown;
-          if (ev.which === KeyCodes.enter) {
-            _this._executeItemClick(ev);
-            ev.preventDefault();
-            ev.stopPropagation();
-          } else if (onItemKeyDown) {
-            onItemKeyDown(item, ev);
-          }
-        };
-        _this._getSubmenuTarget = function() {
-          return _this._splitButton;
-        };
-        _this._renderAriaDescription = function(ariaDescription, className) {
-          return ariaDescription ? React37.createElement("span", { id: _this._ariaDescriptionId, className }, ariaDescription) : null;
-        };
-        _this._onItemMouseEnterPrimary = function(ev) {
-          var _a5 = _this.props, item = _a5.item, onItemMouseEnter = _a5.onItemMouseEnter;
-          if (onItemMouseEnter) {
-            onItemMouseEnter(__assign(__assign({}, item), { subMenuProps: void 0, items: void 0 }), ev, _this._splitButton);
-          }
-        };
-        _this._onItemMouseEnterIcon = function(ev) {
-          var _a5 = _this.props, item = _a5.item, onItemMouseEnter = _a5.onItemMouseEnter;
-          if (onItemMouseEnter) {
-            onItemMouseEnter(item, ev, _this._splitButton);
-          }
-        };
-        _this._onItemMouseMovePrimary = function(ev) {
-          var _a5 = _this.props, item = _a5.item, onItemMouseMove = _a5.onItemMouseMove;
-          if (onItemMouseMove) {
-            onItemMouseMove(__assign(__assign({}, item), { subMenuProps: void 0, items: void 0 }), ev, _this._splitButton);
-          }
-        };
-        _this._onItemMouseMoveIcon = function(ev) {
-          var _a5 = _this.props, item = _a5.item, onItemMouseMove = _a5.onItemMouseMove;
-          if (onItemMouseMove) {
-            onItemMouseMove(item, ev, _this._splitButton);
-          }
-        };
-        _this._onIconItemClick = function(ev) {
-          var _a5 = _this.props, item = _a5.item, onItemClickBase = _a5.onItemClickBase;
-          if (onItemClickBase) {
-            onItemClickBase(item, ev, _this._splitButton ? _this._splitButton : ev.currentTarget);
-          }
-        };
-        _this._executeItemClick = function(ev) {
-          var _a5 = _this.props, item = _a5.item, executeItemClick = _a5.executeItemClick, onItemClick = _a5.onItemClick;
-          if (item.disabled || item.isDisabled) {
-            return;
-          }
-          if (_this._processingTouch && !item.canCheck && onItemClick) {
-            return onItemClick(item, ev);
-          }
-          if (executeItemClick) {
-            executeItemClick(item, ev);
-          }
-        };
-        _this._onTouchStart = function(ev) {
-          if (_this._splitButton && !("onpointerdown" in _this._splitButton)) {
-            _this._handleTouchAndPointerEvent(ev);
-          }
-        };
-        _this._onPointerDown = function(ev) {
-          if (ev.pointerType === "touch") {
-            _this._handleTouchAndPointerEvent(ev);
-            ev.preventDefault();
-            ev.stopImmediatePropagation();
-          }
-        };
-        _this._async = new Async(_this);
-        _this._events = new EventGroup(_this);
-        _this._dismissLabelId = getId();
-        return _this;
-      }
-      ContextualMenuSplitButton2.prototype.componentDidMount = function() {
-        if (this._splitButton && "onpointerdown" in this._splitButton) {
-          this._events.on(this._splitButton, "pointerdown", this._onPointerDown, true);
-        }
-      };
-      ContextualMenuSplitButton2.prototype.componentWillUnmount = function() {
-        this._async.dispose();
-        this._events.dispose();
-      };
-      ContextualMenuSplitButton2.prototype.render = function() {
-        var _this = this;
-        var _a5;
-        var _b = this.props, item = _b.item, classNames2 = _b.classNames, index = _b.index, focusableElementIndex = _b.focusableElementIndex, totalItemCount = _b.totalItemCount, hasCheckmarks = _b.hasCheckmarks, hasIcons = _b.hasIcons, onItemMouseLeave = _b.onItemMouseLeave, expandedMenuItemKey = _b.expandedMenuItemKey;
-        var itemHasSubmenu = hasSubmenu(item);
-        var keytipProps = item.keytipProps;
-        if (keytipProps) {
-          keytipProps = this._getMemoizedMenuButtonKeytipProps(keytipProps);
-        }
-        var ariaDescription = item.ariaDescription;
-        if (ariaDescription) {
-          this._ariaDescriptionId = getId();
-        }
-        var ariaChecked = (_a5 = getIsChecked(item)) !== null && _a5 !== void 0 ? _a5 : void 0;
-        return React37.createElement(KeytipData, { keytipProps, disabled: isItemDisabled(item) }, function(keytipAttributes) {
-          return React37.createElement(
-            "div",
-            { "data-ktp-target": keytipAttributes["data-ktp-target"], ref: function(splitButton) {
-              return _this._splitButton = splitButton;
-            }, role: getMenuItemAriaRole(item), "aria-label": item.ariaLabel, className: classNames2.splitContainer, "aria-disabled": isItemDisabled(item), "aria-expanded": itemHasSubmenu ? item.key === expandedMenuItemKey : void 0, "aria-haspopup": true, "aria-describedby": mergeAriaAttributeValues(item.ariaDescribedBy, ariaDescription ? _this._ariaDescriptionId : void 0, keytipAttributes["aria-describedby"]), "aria-checked": ariaChecked, "aria-posinset": focusableElementIndex + 1, "aria-setsize": totalItemCount, onMouseEnter: _this._onItemMouseEnterPrimary, onMouseLeave: onItemMouseLeave ? onItemMouseLeave.bind(_this, __assign(__assign({}, item), { subMenuProps: null, items: null })) : void 0, onMouseMove: _this._onItemMouseMovePrimary, onKeyDown: _this._onItemKeyDown, onClick: _this._executeItemClick, onTouchStart: _this._onTouchStart, tabIndex: 0, "data-is-focusable": true, "aria-roledescription": item["aria-roledescription"] },
-            _this._renderSplitPrimaryButton(item, classNames2, index, hasCheckmarks, hasIcons),
-            _this._renderSplitDivider(item),
-            _this._renderSplitIconButton(item, classNames2, index, keytipAttributes),
-            _this._renderAriaDescription(ariaDescription, classNames2.screenReaderText)
-          );
-        });
-      };
-      ContextualMenuSplitButton2.prototype._renderSplitPrimaryButton = function(item, classNames2, index, hasCheckmarks, hasIcons) {
-        var _a5 = this.props, _b = _a5.contextualMenuItemAs, ChildrenRenderer = _b === void 0 ? ContextualMenuItem : _b, onItemClick = _a5.onItemClick;
-        var itemProps = {
-          key: item.key,
-          disabled: isItemDisabled(item) || item.primaryDisabled,
-          /* eslint-disable deprecation/deprecation */
-          name: item.name,
-          text: item.text || item.name,
-          secondaryText: item.secondaryText,
-          /* eslint-enable deprecation/deprecation */
-          className: classNames2.splitPrimary,
-          canCheck: item.canCheck,
-          isChecked: item.isChecked,
-          checked: item.checked,
-          iconProps: item.iconProps,
-          id: this._dismissLabelId,
-          onRenderIcon: item.onRenderIcon,
-          data: item.data,
-          "data-is-focusable": false
-        };
-        var itemComponentProps = item.itemProps;
-        return React37.createElement(
-          "button",
-          __assign({}, getNativeProps(itemProps, buttonProperties)),
-          React37.createElement(ChildrenRenderer, __assign({ "data-is-focusable": false, item: itemProps, classNames: classNames2, index, onCheckmarkClick: hasCheckmarks && onItemClick ? onItemClick : void 0, hasIcons }, itemComponentProps))
-        );
-      };
-      ContextualMenuSplitButton2.prototype._renderSplitDivider = function(item) {
-        var getDividerClassNames2 = item.getSplitButtonVerticalDividerClassNames || getSplitButtonVerticalDividerClassNames;
-        return React37.createElement(VerticalDivider, { getClassNames: getDividerClassNames2 });
-      };
-      ContextualMenuSplitButton2.prototype._renderSplitIconButton = function(item, classNames2, index, keytipAttributes) {
-        var _a5 = this.props, _b = _a5.contextualMenuItemAs, ChildrenRenderer = _b === void 0 ? ContextualMenuItem : _b, onItemMouseLeave = _a5.onItemMouseLeave, onItemMouseDown2 = _a5.onItemMouseDown, openSubMenu = _a5.openSubMenu, dismissSubMenu = _a5.dismissSubMenu, dismissMenu = _a5.dismissMenu;
-        var itemProps = {
-          onClick: this._onIconItemClick,
-          disabled: isItemDisabled(item),
-          className: classNames2.splitMenu,
-          subMenuProps: item.subMenuProps,
-          submenuIconProps: item.submenuIconProps,
-          split: true,
-          key: item.key,
-          "aria-labelledby": this._dismissLabelId
-        };
-        var buttonProps = __assign(__assign({}, getNativeProps(itemProps, buttonProperties)), {
-          onMouseEnter: this._onItemMouseEnterIcon,
-          onMouseLeave: onItemMouseLeave ? onItemMouseLeave.bind(this, item) : void 0,
-          onMouseDown: function(ev) {
-            return onItemMouseDown2 ? onItemMouseDown2(item, ev) : void 0;
-          },
-          onMouseMove: this._onItemMouseMoveIcon,
-          "data-is-focusable": false,
-          "data-ktp-execute-target": keytipAttributes["data-ktp-execute-target"],
-          "aria-haspopup": true
-        });
-        var itemComponentProps = item.itemProps;
-        return React37.createElement(
-          "button",
-          __assign({}, buttonProps),
-          React37.createElement(ChildrenRenderer, __assign({ componentRef: item.componentRef, item: itemProps, classNames: classNames2, index, hasIcons: false, openSubMenu, dismissSubMenu, dismissMenu, getSubmenuTarget: this._getSubmenuTarget }, itemComponentProps))
-        );
-      };
-      ContextualMenuSplitButton2.prototype._handleTouchAndPointerEvent = function(ev) {
-        var _this = this;
-        var onTap = this.props.onTap;
-        if (onTap) {
-          onTap(ev);
-        }
-        if (this._lastTouchTimeoutId) {
-          this._async.clearTimeout(this._lastTouchTimeoutId);
-          this._lastTouchTimeoutId = void 0;
-        }
-        this._processingTouch = true;
-        this._lastTouchTimeoutId = this._async.setTimeout(function() {
-          _this._processingTouch = false;
-          _this._lastTouchTimeoutId = void 0;
-        }, TouchIdleDelay);
-      };
-      return ContextualMenuSplitButton2;
-    }(ContextualMenuItemWrapper)
-  );
-
-  // ../node_modules/@fluentui/react/lib/utilities/hooks/useResponsiveMode.js
-  var React39 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react/lib/utilities/decorators/withResponsiveMode.js
-  var React38 = __toESM(require_react());
-  var ResponsiveMode;
-  (function(ResponsiveMode2) {
-    ResponsiveMode2[ResponsiveMode2["small"] = 0] = "small";
-    ResponsiveMode2[ResponsiveMode2["medium"] = 1] = "medium";
-    ResponsiveMode2[ResponsiveMode2["large"] = 2] = "large";
-    ResponsiveMode2[ResponsiveMode2["xLarge"] = 3] = "xLarge";
-    ResponsiveMode2[ResponsiveMode2["xxLarge"] = 4] = "xxLarge";
-    ResponsiveMode2[ResponsiveMode2["xxxLarge"] = 5] = "xxxLarge";
-    ResponsiveMode2[ResponsiveMode2["unknown"] = 999] = "unknown";
-  })(ResponsiveMode || (ResponsiveMode = {}));
-  var RESPONSIVE_MAX_CONSTRAINT = [479, 639, 1023, 1365, 1919, 99999999];
-  var _defaultMode;
-  var _lastMode;
-  function getInitialResponsiveMode() {
-    var _a5;
-    return (_a5 = _defaultMode !== null && _defaultMode !== void 0 ? _defaultMode : _lastMode) !== null && _a5 !== void 0 ? _a5 : ResponsiveMode.large;
-  }
-  function getWidthOfCurrentWindow(currentWindow) {
-    try {
-      return currentWindow.document.documentElement.clientWidth;
-    } catch (e) {
-      return currentWindow.innerWidth;
-    }
-  }
-  function getResponsiveMode(currentWindow) {
-    var responsiveMode = ResponsiveMode.small;
-    if (currentWindow) {
-      try {
-        while (getWidthOfCurrentWindow(currentWindow) > RESPONSIVE_MAX_CONSTRAINT[responsiveMode]) {
-          responsiveMode++;
-        }
-      } catch (e) {
-        responsiveMode = getInitialResponsiveMode();
-      }
-      _lastMode = responsiveMode;
-    } else {
-      if (_defaultMode !== void 0) {
-        responsiveMode = _defaultMode;
-      } else {
-        throw new Error("Content was rendered in a server environment without providing a default responsive mode. Call setResponsiveMode to define what the responsive mode is.");
-      }
-    }
-    return responsiveMode;
-  }
-
-  // ../node_modules/@fluentui/react/lib/utilities/hooks/useResponsiveMode.js
-  var useResponsiveMode = function(elementRef, overrideResponsiveMode) {
-    var _a5 = React39.useState(getInitialResponsiveMode()), lastResponsiveMode = _a5[0], setLastResponsiveMode = _a5[1];
-    var onResize = React39.useCallback(function() {
-      var newResponsiveMode = getResponsiveMode(getWindow(elementRef.current));
-      if (lastResponsiveMode !== newResponsiveMode) {
-        setLastResponsiveMode(newResponsiveMode);
-      }
-    }, [elementRef, lastResponsiveMode]);
-    var win = useWindow();
-    useOnEvent(win, "resize", onResize);
-    React39.useEffect(function() {
-      if (overrideResponsiveMode === void 0) {
-        onResize();
-      }
-    }, [overrideResponsiveMode]);
-    return overrideResponsiveMode !== null && overrideResponsiveMode !== void 0 ? overrideResponsiveMode : lastResponsiveMode;
-  };
-
-  // ../node_modules/@fluentui/react/lib/utilities/MenuContext/MenuContext.js
-  var React40 = __toESM(require_react());
-  var MenuContext = React40.createContext({});
-
-  // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenu.base.js
-  var getClassNames7 = classNamesFunction();
-  var getContextualMenuItemClassNames = classNamesFunction();
-  var DEFAULT_PROPS2 = {
-    items: [],
-    shouldFocusOnMount: true,
-    gapSpace: 0,
-    directionalHint: DirectionalHint.bottomAutoEdge,
-    beakWidth: 16
-  };
-  function getItemCount(items) {
-    var totalItemCount = 0;
-    for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
-      var item = items_1[_i];
-      if (item.itemType !== ContextualMenuItemType.Divider && item.itemType !== ContextualMenuItemType.Header) {
-        var itemCount = item.customOnRenderListLength ? item.customOnRenderListLength : 1;
-        totalItemCount += itemCount;
-      }
-    }
-    return totalItemCount;
-  }
-  function getSubmenuItems(item, options) {
-    var target = options === null || options === void 0 ? void 0 : options.target;
-    var items = item.subMenuProps ? item.subMenuProps.items : item.items;
-    if (items) {
-      var overrideItems = [];
-      for (var _i = 0, items_2 = items; _i < items_2.length; _i++) {
-        var subItem = items_2[_i];
-        if (subItem.preferMenuTargetAsEventTarget) {
-          var onClick = subItem.onClick, contextItem = __rest(subItem, ["onClick"]);
-          overrideItems.push(__assign(__assign({}, contextItem), { onClick: getOnClickWithOverrideTarget(onClick, target) }));
-        } else {
-          overrideItems.push(subItem);
-        }
-      }
-      return overrideItems;
-    }
-  }
-  function canAnyMenuItemsCheck(items) {
-    return items.some(function(item) {
-      if (item.canCheck) {
-        return true;
-      }
-      if (item.sectionProps && item.sectionProps.items.some(function(submenuItem) {
-        return submenuItem.canCheck === true;
-      })) {
-        return true;
-      }
-      return false;
-    });
-  }
-  var NavigationIdleDelay = 250;
-  var COMPONENT_NAME2 = "ContextualMenu";
-  var _getMenuItemStylesFunction = memoizeFunction(function() {
-    var styles2 = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-      styles2[_i] = arguments[_i];
-    }
-    return function(styleProps) {
-      return concatStyleSetsWithProps.apply(void 0, __spreadArray([styleProps, getItemStyles], styles2, false));
-    };
-  });
-  function useVisibility(props, targetWindow) {
-    var _a5 = props.hidden, hidden = _a5 === void 0 ? false : _a5, onMenuDismissed = props.onMenuDismissed, onMenuOpened = props.onMenuOpened;
-    var previousHidden = usePrevious(hidden);
-    var onMenuOpenedRef = React41.useRef(onMenuOpened);
-    var onMenuClosedRef = React41.useRef(onMenuDismissed);
-    var propsRef = React41.useRef(props);
-    onMenuOpenedRef.current = onMenuOpened;
-    onMenuClosedRef.current = onMenuDismissed;
-    propsRef.current = props;
-    React41.useEffect(function() {
-      var _a6, _b;
-      if (hidden && previousHidden === false) {
-        (_a6 = onMenuClosedRef.current) === null || _a6 === void 0 ? void 0 : _a6.call(onMenuClosedRef, propsRef.current);
-      } else if (!hidden && previousHidden !== false) {
-        (_b = onMenuOpenedRef.current) === null || _b === void 0 ? void 0 : _b.call(onMenuOpenedRef, propsRef.current);
-      }
-    }, [hidden, previousHidden]);
-    React41.useEffect(function() {
-      return function() {
-        var _a6;
-        return (_a6 = onMenuClosedRef.current) === null || _a6 === void 0 ? void 0 : _a6.call(onMenuClosedRef, propsRef.current);
-      };
-    }, []);
-  }
-  function useSubMenuState(_a5, dismiss) {
-    var hidden = _a5.hidden, items = _a5.items, theme = _a5.theme, className = _a5.className, id = _a5.id, menuTarget = _a5.target;
-    var _b = React41.useState(), expandedMenuItemKey = _b[0], setExpandedMenuItemKey = _b[1];
-    var _c = React41.useState(), submenuTarget = _c[0], setSubmenuTarget = _c[1];
-    var _d = React41.useState(), shouldFocusOnContainer = _d[0], setShouldFocusOnContainer = _d[1];
-    var subMenuId = useId(COMPONENT_NAME2, id);
-    var closeSubMenu = React41.useCallback(function() {
-      setShouldFocusOnContainer(void 0);
-      setExpandedMenuItemKey(void 0);
-      setSubmenuTarget(void 0);
-    }, []);
-    var openSubMenu = React41.useCallback(function(_a6, target, focusContainer) {
-      var submenuItemKey = _a6.key;
-      if (expandedMenuItemKey === submenuItemKey) {
-        return;
-      }
-      target.focus();
-      setShouldFocusOnContainer(focusContainer);
-      setExpandedMenuItemKey(submenuItemKey);
-      setSubmenuTarget(target);
-    }, [expandedMenuItemKey]);
-    React41.useEffect(function() {
-      if (hidden) {
-        closeSubMenu();
-      }
-    }, [hidden, closeSubMenu]);
-    var onSubMenuDismiss = useOnSubmenuDismiss(dismiss, closeSubMenu);
-    var getSubmenuProps = function() {
-      var item = findItemByKeyFromItems(expandedMenuItemKey, items);
-      var submenuProps = null;
-      if (item) {
-        submenuProps = {
-          items: getSubmenuItems(item, { target: menuTarget }),
-          target: submenuTarget,
-          onDismiss: onSubMenuDismiss,
-          isSubMenu: true,
-          id: subMenuId,
-          shouldFocusOnMount: true,
-          shouldFocusOnContainer,
-          directionalHint: getRTL2(theme) ? DirectionalHint.leftTopEdge : DirectionalHint.rightTopEdge,
-          className,
-          gapSpace: 0,
-          isBeakVisible: false
-        };
-        if (item.subMenuProps) {
-          assign(submenuProps, item.subMenuProps);
-        }
-        if (item.preferMenuTargetAsEventTarget) {
-          var onItemClick = item.onItemClick;
-          submenuProps.onItemClick = getOnClickWithOverrideTarget(onItemClick, menuTarget);
-        }
-      }
-      return submenuProps;
-    };
-    return [expandedMenuItemKey, openSubMenu, getSubmenuProps, onSubMenuDismiss];
-  }
-  function useShouldUpdateFocusOnMouseMove(_a5) {
-    var delayUpdateFocusOnHover = _a5.delayUpdateFocusOnHover, hidden = _a5.hidden;
-    var shouldUpdateFocusOnMouseEvent = React41.useRef(!delayUpdateFocusOnHover);
-    var gotMouseMove = React41.useRef(false);
-    React41.useEffect(function() {
-      shouldUpdateFocusOnMouseEvent.current = !delayUpdateFocusOnHover;
-      gotMouseMove.current = hidden ? false : !delayUpdateFocusOnHover && gotMouseMove.current;
-    }, [delayUpdateFocusOnHover, hidden]);
-    var onMenuFocusCapture = React41.useCallback(function() {
-      if (delayUpdateFocusOnHover) {
-        shouldUpdateFocusOnMouseEvent.current = false;
-      }
-    }, [delayUpdateFocusOnHover]);
-    return [shouldUpdateFocusOnMouseEvent, gotMouseMove, onMenuFocusCapture];
-  }
-  function usePreviousActiveElement(_a5, targetWindow, hostElement) {
-    var hidden = _a5.hidden, onRestoreFocus = _a5.onRestoreFocus;
-    var previousActiveElement = React41.useRef();
-    var tryFocusPreviousActiveElement = React41.useCallback(function(options) {
-      var _a6, _b;
-      if (onRestoreFocus) {
-        onRestoreFocus(options);
-      } else if (options === null || options === void 0 ? void 0 : options.documentContainsFocus) {
-        (_b = (_a6 = previousActiveElement.current) === null || _a6 === void 0 ? void 0 : _a6.focus) === null || _b === void 0 ? void 0 : _b.call(_a6);
-      }
-    }, [onRestoreFocus]);
-    useIsomorphicLayoutEffect(function() {
-      var _a6, _b;
-      if (!hidden) {
-        var newElement = targetWindow === null || targetWindow === void 0 ? void 0 : targetWindow.document.activeElement;
-        if (!((_a6 = hostElement.current) === null || _a6 === void 0 ? void 0 : _a6.contains(newElement)) && newElement.tagName !== "BODY") {
-          previousActiveElement.current = newElement;
-        }
-      } else if (previousActiveElement.current) {
-        tryFocusPreviousActiveElement({
-          originalElement: previousActiveElement.current,
-          containsFocus: true,
-          documentContainsFocus: ((_b = getDocument()) === null || _b === void 0 ? void 0 : _b.hasFocus()) || false
-        });
-        previousActiveElement.current = void 0;
-      }
-    }, [hidden, targetWindow === null || targetWindow === void 0 ? void 0 : targetWindow.document.activeElement, tryFocusPreviousActiveElement, hostElement]);
-    return [tryFocusPreviousActiveElement];
-  }
-  function useKeyHandlers(_a5, dismiss, hostElement, openSubMenu) {
-    var theme = _a5.theme, isSubMenu = _a5.isSubMenu, _b = _a5.focusZoneProps, _c = _b === void 0 ? {} : _b, checkForNoWrap = _c.checkForNoWrap, _d = _c.direction, focusZoneDirection = _d === void 0 ? FocusZoneDirection.vertical : _d;
-    var lastKeyDownWasAltOrMeta = React41.useRef();
-    var keyHandler = function(ev, shouldHandleKey, dismissAllMenus) {
-      var handled = false;
-      if (shouldHandleKey(ev)) {
-        dismiss(ev, dismissAllMenus);
-        ev.preventDefault();
-        ev.stopPropagation();
-        handled = true;
-      }
-      return handled;
-    };
-    var shouldCloseSubMenu = function(ev) {
-      var submenuCloseKey = getRTL2(theme) ? KeyCodes.right : KeyCodes.left;
-      if (ev.which !== submenuCloseKey || !isSubMenu) {
-        return false;
-      }
-      return !!(focusZoneDirection === FocusZoneDirection.vertical || checkForNoWrap && !shouldWrapFocus(ev.target, "data-no-horizontal-wrap"));
-    };
-    var shouldHandleKeyDown = function(ev) {
-      return (
-        // eslint-disable-next-line deprecation/deprecation
-        ev.which === KeyCodes.escape || shouldCloseSubMenu(ev) || // eslint-disable-next-line deprecation/deprecation
-        ev.which === KeyCodes.up && (ev.altKey || ev.metaKey)
-      );
-    };
-    var onKeyDown = function(ev) {
-      lastKeyDownWasAltOrMeta.current = isAltOrMeta(ev);
-      var dismissAllMenus = ev.which === KeyCodes.escape && (isMac() || isIOS());
-      return keyHandler(ev, shouldHandleKeyDown, dismissAllMenus);
-    };
-    var shouldHandleKeyUp = function(ev) {
-      var keyPressIsAltOrMetaAlone = lastKeyDownWasAltOrMeta.current && isAltOrMeta(ev);
-      lastKeyDownWasAltOrMeta.current = false;
-      return !!keyPressIsAltOrMetaAlone && !(isIOS() || isMac());
-    };
-    var onKeyUp = function(ev) {
-      return keyHandler(
-        ev,
-        shouldHandleKeyUp,
-        true
-        /* dismissAllMenus */
-      );
-    };
-    var onMenuKeyDown = function(ev) {
-      var handled = onKeyDown(ev);
-      if (handled || !hostElement.current) {
-        return;
-      }
-      var hasModifier = !!(ev.altKey || ev.metaKey);
-      var isUp = ev.which === KeyCodes.up;
-      var isDown = ev.which === KeyCodes.down;
-      if (!hasModifier && (isUp || isDown)) {
-        var elementToFocus = isUp ? getLastFocusable(hostElement.current, hostElement.current.lastChild, true) : getFirstFocusable(hostElement.current, hostElement.current.firstChild, true);
-        if (elementToFocus) {
-          elementToFocus.focus();
-          ev.preventDefault();
-          ev.stopPropagation();
-        }
-      }
-    };
-    var onItemKeyDown = function(item, ev) {
-      var openKey = getRTL2(theme) ? KeyCodes.left : KeyCodes.right;
-      if (!item.disabled && // eslint-disable-next-line deprecation/deprecation
-      (ev.which === openKey || ev.which === KeyCodes.enter || ev.which === KeyCodes.down && (ev.altKey || ev.metaKey))) {
-        openSubMenu(item, ev.currentTarget);
-        ev.preventDefault();
-      }
-    };
-    return [onKeyDown, onKeyUp, onMenuKeyDown, onItemKeyDown];
-  }
-  function useScrollHandler(asyncTracker) {
-    var isScrollIdle = React41.useRef(true);
-    var scrollIdleTimeoutId = React41.useRef();
-    var onScroll = function() {
-      if (!isScrollIdle.current && scrollIdleTimeoutId.current !== void 0) {
-        asyncTracker.clearTimeout(scrollIdleTimeoutId.current);
-        scrollIdleTimeoutId.current = void 0;
-      } else {
-        isScrollIdle.current = false;
-      }
-      scrollIdleTimeoutId.current = asyncTracker.setTimeout(function() {
-        isScrollIdle.current = true;
-      }, NavigationIdleDelay);
-    };
-    return [onScroll, isScrollIdle];
-  }
-  function useOnSubmenuDismiss(dismiss, closeSubMenu) {
-    var isMountedRef = React41.useRef(false);
-    React41.useEffect(function() {
-      isMountedRef.current = true;
-      return function() {
-        isMountedRef.current = false;
-      };
-    }, []);
-    var onSubMenuDismiss = function(ev, dismissAll) {
-      if (dismissAll) {
-        dismiss(ev, dismissAll);
-      } else if (isMountedRef.current) {
-        closeSubMenu();
-      }
-    };
-    return onSubMenuDismiss;
-  }
-  function useSubmenuEnterTimer(_a5, asyncTracker) {
-    var _b = _a5.subMenuHoverDelay, subMenuHoverDelay = _b === void 0 ? NavigationIdleDelay : _b;
-    var enterTimerRef = React41.useRef(void 0);
-    var cancelSubMenuTimer = function() {
-      if (enterTimerRef.current !== void 0) {
-        asyncTracker.clearTimeout(enterTimerRef.current);
-        enterTimerRef.current = void 0;
-      }
-    };
-    var startSubmenuTimer = function(onTimerExpired) {
-      enterTimerRef.current = asyncTracker.setTimeout(function() {
-        onTimerExpired();
-        cancelSubMenuTimer();
-      }, subMenuHoverDelay);
-    };
-    return [cancelSubMenuTimer, startSubmenuTimer, enterTimerRef];
-  }
-  function useMouseHandlers(props, isScrollIdle, subMenuEntryTimer, targetWindow, shouldUpdateFocusOnMouseEvent, gotMouseMove, expandedMenuItemKey, hostElement, startSubmenuTimer, cancelSubMenuTimer, openSubMenu, onSubMenuDismiss, dismiss) {
-    var menuTarget = props.target;
-    var onItemMouseEnterBase = function(item, ev, target) {
-      if (shouldUpdateFocusOnMouseEvent.current) {
-        gotMouseMove.current = true;
-      }
-      if (shouldIgnoreMouseEvent()) {
-        return;
-      }
-      updateFocusOnMouseEvent(item, ev, target);
-    };
-    var onItemMouseMoveBase = function(item, ev, target) {
-      var targetElement = ev.currentTarget;
-      if (shouldUpdateFocusOnMouseEvent.current) {
-        gotMouseMove.current = true;
-      } else {
-        return;
-      }
-      if (!isScrollIdle.current || subMenuEntryTimer.current !== void 0 || targetElement === (targetWindow === null || targetWindow === void 0 ? void 0 : targetWindow.document.activeElement)) {
-        return;
-      }
-      updateFocusOnMouseEvent(item, ev, target);
-    };
-    var shouldIgnoreMouseEvent = function() {
-      return !isScrollIdle.current || !gotMouseMove.current;
-    };
-    var onMouseItemLeave = function(item, ev) {
-      var _a5;
-      if (shouldIgnoreMouseEvent()) {
-        return;
-      }
-      cancelSubMenuTimer();
-      if (expandedMenuItemKey !== void 0) {
-        return;
-      }
-      if (hostElement.current.setActive) {
-        try {
-          hostElement.current.setActive();
-        } catch (e) {
-        }
-      } else {
-        (_a5 = hostElement.current) === null || _a5 === void 0 ? void 0 : _a5.focus();
-      }
-    };
-    var updateFocusOnMouseEvent = function(item, ev, target) {
-      var targetElement = target ? target : ev.currentTarget;
-      if (item.key === expandedMenuItemKey) {
-        return;
-      }
-      cancelSubMenuTimer();
-      if (expandedMenuItemKey === void 0) {
-        targetElement.focus();
-      }
-      if (hasSubmenu(item)) {
-        ev.stopPropagation();
-        startSubmenuTimer(function() {
-          targetElement.focus();
-          openSubMenu(item, targetElement, true);
-        });
-      } else {
-        startSubmenuTimer(function() {
-          onSubMenuDismiss(ev);
-          targetElement.focus();
-        });
-      }
-    };
-    var onItemClick = function(item, ev) {
-      onItemClickBase(item, ev, ev.currentTarget);
-    };
-    var onItemClickBase = function(item, ev, target) {
-      var items = getSubmenuItems(item, { target: menuTarget });
-      cancelSubMenuTimer();
-      if (!hasSubmenu(item) && (!items || !items.length)) {
-        executeItemClick(item, ev);
-      } else {
-        if (item.key !== expandedMenuItemKey) {
-          var shouldFocusOnContainer = typeof props.shouldFocusOnContainer === "boolean" ? props.shouldFocusOnContainer : ev.nativeEvent.pointerType === "mouse";
-          openSubMenu(item, target, shouldFocusOnContainer);
-        }
-      }
-      ev.stopPropagation();
-      ev.preventDefault();
-    };
-    var onAnchorClick = function(item, ev) {
-      executeItemClick(item, ev);
-      ev.stopPropagation();
-    };
-    var executeItemClick = function(item, ev) {
-      if (item.disabled || item.isDisabled) {
-        return;
-      }
-      if (item.preferMenuTargetAsEventTarget) {
-        overrideTarget(ev, menuTarget);
-      }
-      var shouldDismiss = false;
-      if (item.onClick) {
-        shouldDismiss = !!item.onClick(ev, item);
-      } else if (props.onItemClick) {
-        shouldDismiss = !!props.onItemClick(ev, item);
-      }
-      if (shouldDismiss || !ev.defaultPrevented) {
-        dismiss(ev, true);
-      }
-    };
-    return [
-      onItemMouseEnterBase,
-      onItemMouseMoveBase,
-      onMouseItemLeave,
-      onItemClick,
-      onAnchorClick,
-      executeItemClick,
-      onItemClickBase
-    ];
-  }
-  var ContextualMenuBase = React41.memo(React41.forwardRef(function(propsWithoutDefaults, forwardedRef) {
-    var _a5;
-    var _b = getPropsWithDefaults(DEFAULT_PROPS2, propsWithoutDefaults), ref = _b.ref, props = __rest(_b, ["ref"]);
-    var hostElement = React41.useRef(null);
-    var asyncTracker = useAsync();
-    var menuId = useId(COMPONENT_NAME2, props.id);
-    useWarnings({
-      name: COMPONENT_NAME2,
-      props,
-      deprecations: {
-        getMenuClassNames: "styles"
-      }
-    });
-    var dismiss = function(ev, dismissAll) {
-      var _a6;
-      return (_a6 = props.onDismiss) === null || _a6 === void 0 ? void 0 : _a6.call(props, ev, dismissAll);
-    };
-    var _c = useTarget(props.target, hostElement), targetRef = _c[0], targetWindow = _c[1];
-    var tryFocusPreviousActiveElement = usePreviousActiveElement(props, targetWindow, hostElement)[0];
-    var _d = useSubMenuState(props, dismiss), expandedMenuItemKey = _d[0], openSubMenu = _d[1], getSubmenuProps = _d[2], onSubMenuDismiss = _d[3];
-    var _e = useShouldUpdateFocusOnMouseMove(props), shouldUpdateFocusOnMouseEvent = _e[0], gotMouseMove = _e[1], onMenuFocusCapture = _e[2];
-    var _f = useScrollHandler(asyncTracker), onScroll = _f[0], isScrollIdle = _f[1];
-    var _g = useSubmenuEnterTimer(props, asyncTracker), cancelSubMenuTimer = _g[0], startSubmenuTimer = _g[1], subMenuEntryTimer = _g[2];
-    var responsiveMode = useResponsiveMode(hostElement, props.responsiveMode);
-    useVisibility(props, targetWindow);
-    var _h = useKeyHandlers(props, dismiss, hostElement, openSubMenu), onKeyDown = _h[0], onKeyUp = _h[1], onMenuKeyDown = _h[2], onItemKeyDown = _h[3];
-    var _j = useMouseHandlers(props, isScrollIdle, subMenuEntryTimer, targetWindow, shouldUpdateFocusOnMouseEvent, gotMouseMove, expandedMenuItemKey, hostElement, startSubmenuTimer, cancelSubMenuTimer, openSubMenu, onSubMenuDismiss, dismiss), onItemMouseEnterBase = _j[0], onItemMouseMoveBase = _j[1], onMouseItemLeave = _j[2], onItemClick = _j[3], onAnchorClick = _j[4], executeItemClick = _j[5], onItemClickBase = _j[6];
-    var onDefaultRenderMenuList = function(menuListProps, menuClassNames, defaultRender) {
-      var indexCorrection = 0;
-      var items2 = menuListProps.items, totalItemCount = menuListProps.totalItemCount, hasCheckmarks2 = menuListProps.hasCheckmarks, hasIcons2 = menuListProps.hasIcons;
-      return React41.createElement("ul", { className: menuClassNames.list, onKeyDown, onKeyUp, role: "presentation" }, items2.map(function(item, index) {
-        var menuItem = renderMenuItem(item, index, indexCorrection, totalItemCount, hasCheckmarks2, hasIcons2, menuClassNames);
-        if (item.itemType !== ContextualMenuItemType.Divider && item.itemType !== ContextualMenuItemType.Header) {
-          var indexIncrease = item.customOnRenderListLength ? item.customOnRenderListLength : 1;
-          indexCorrection += indexIncrease;
-        }
-        return menuItem;
-      }));
-    };
-    var renderFocusZone = function(children, adjustedFocusZoneProps2) {
-      var _a6 = props.focusZoneAs, ChildrenRenderer = _a6 === void 0 ? FocusZone : _a6;
-      return React41.createElement(ChildrenRenderer, __assign({}, adjustedFocusZoneProps2), children);
-    };
-    var renderMenuItem = function(item, index, focusableElementIndex, totalItemCount, hasCheckmarks2, hasIcons2, menuClassNames) {
-      var _a6;
-      var renderedItems = [];
-      var iconProps = item.iconProps || { iconName: "None" };
-      var getItemClassNames2 = item.getItemClassNames, itemProps = item.itemProps;
-      var styles3 = itemProps ? itemProps.styles : void 0;
-      var dividerClassName = item.itemType === ContextualMenuItemType.Divider ? item.className : void 0;
-      var subMenuIconClassName = item.submenuIconProps ? item.submenuIconProps.className : "";
-      var itemClassNames;
-      if (getItemClassNames2) {
-        itemClassNames = getItemClassNames2(props.theme, isItemDisabled(item), expandedMenuItemKey === item.key, !!getIsChecked(item), !!item.href, iconProps.iconName !== "None", item.className, dividerClassName, iconProps.className, subMenuIconClassName, item.primaryDisabled);
-      } else {
-        var itemStyleProps = {
-          theme: props.theme,
-          disabled: isItemDisabled(item),
-          expanded: expandedMenuItemKey === item.key,
-          checked: !!getIsChecked(item),
-          isAnchorLink: !!item.href,
-          knownIcon: iconProps.iconName !== "None",
-          itemClassName: item.className,
-          dividerClassName,
-          iconClassName: iconProps.className,
-          subMenuClassName: subMenuIconClassName,
-          primaryDisabled: item.primaryDisabled
-        };
-        itemClassNames = getContextualMenuItemClassNames(_getMenuItemStylesFunction((_a6 = menuClassNames.subComponentStyles) === null || _a6 === void 0 ? void 0 : _a6.menuItem, styles3), itemStyleProps);
-      }
-      if (item.text === "-" || item.name === "-") {
-        item.itemType = ContextualMenuItemType.Divider;
-      }
-      switch (item.itemType) {
-        case ContextualMenuItemType.Divider:
-          renderedItems.push(renderSeparator(index, itemClassNames));
-          break;
-        case ContextualMenuItemType.Header:
-          renderedItems.push(renderSeparator(index, itemClassNames));
-          var headerItem = renderHeaderMenuItem(item, itemClassNames, menuClassNames, index, hasCheckmarks2, hasIcons2);
-          renderedItems.push(renderListItem(headerItem, item.key || index, itemClassNames, item.title));
-          break;
-        case ContextualMenuItemType.Section:
-          renderedItems.push(renderSectionItem(item, itemClassNames, menuClassNames, index, hasCheckmarks2, hasIcons2));
-          break;
-        default:
-          var defaultRenderNormalItem = function() {
-            return renderNormalItem(item, itemClassNames, index, focusableElementIndex, totalItemCount, hasCheckmarks2, hasIcons2);
-          };
-          var menuItem = props.onRenderContextualMenuItem ? props.onRenderContextualMenuItem(item, defaultRenderNormalItem) : defaultRenderNormalItem();
-          renderedItems.push(renderListItem(menuItem, item.key || index, itemClassNames, item.title));
-          break;
-      }
-      return React41.createElement(React41.Fragment, { key: item.key }, renderedItems);
-    };
-    var defaultMenuItemRenderer = function(item, menuClassNames) {
-      var index = item.index, focusableElementIndex = item.focusableElementIndex, totalItemCount = item.totalItemCount, hasCheckmarks2 = item.hasCheckmarks, hasIcons2 = item.hasIcons;
-      return renderMenuItem(item, index, focusableElementIndex, totalItemCount, hasCheckmarks2, hasIcons2, menuClassNames);
-    };
-    var renderSectionItem = function(sectionItem, itemClassNames, menuClassNames, index, hasCheckmarks2, hasIcons2) {
-      var sectionProps = sectionItem.sectionProps;
-      if (!sectionProps) {
-        return;
-      }
-      var headerItem;
-      var groupProps;
-      if (sectionProps.title) {
-        var headerContextualMenuItem = void 0;
-        var ariaLabelledby = "";
-        if (typeof sectionProps.title === "string") {
-          var id_1 = menuId + sectionProps.title.replace(/\s/g, "");
-          headerContextualMenuItem = {
-            key: "section-".concat(sectionProps.title, "-title"),
-            itemType: ContextualMenuItemType.Header,
-            text: sectionProps.title,
-            id: id_1
-          };
-          ariaLabelledby = id_1;
-        } else {
-          var id_2 = sectionProps.title.id || menuId + sectionProps.title.key.replace(/\s/g, "");
-          headerContextualMenuItem = __assign(__assign({}, sectionProps.title), { id: id_2 });
-          ariaLabelledby = id_2;
-        }
-        if (headerContextualMenuItem) {
-          groupProps = {
-            role: "group",
-            "aria-labelledby": ariaLabelledby
-          };
-          headerItem = renderHeaderMenuItem(headerContextualMenuItem, itemClassNames, menuClassNames, index, hasCheckmarks2, hasIcons2);
-        }
-      }
-      if (sectionProps.items && sectionProps.items.length > 0) {
-        var correctedIndex_1 = 0;
-        return React41.createElement(
-          "li",
-          { role: "presentation", key: sectionProps.key || sectionItem.key || "section-".concat(index) },
-          React41.createElement(
-            "div",
-            __assign({}, groupProps),
-            React41.createElement(
-              "ul",
-              { className: menuClassNames.list, role: "presentation" },
-              sectionProps.topDivider && renderSeparator(index, itemClassNames, true, true),
-              headerItem && renderListItem(headerItem, sectionItem.key || index, itemClassNames, sectionItem.title),
-              sectionProps.items.map(function(contextualMenuItem, itemsIndex) {
-                var menuItem = renderMenuItem(contextualMenuItem, itemsIndex, correctedIndex_1, getItemCount(sectionProps.items), hasCheckmarks2, hasIcons2, menuClassNames);
-                if (contextualMenuItem.itemType !== ContextualMenuItemType.Divider && contextualMenuItem.itemType !== ContextualMenuItemType.Header) {
-                  var indexIncrease = contextualMenuItem.customOnRenderListLength ? contextualMenuItem.customOnRenderListLength : 1;
-                  correctedIndex_1 += indexIncrease;
-                }
-                return menuItem;
-              }),
-              sectionProps.bottomDivider && renderSeparator(index, itemClassNames, false, true)
-            )
-          )
-        );
-      }
-    };
-    var renderListItem = function(content, key, classNames3, title2) {
-      return React41.createElement("li", { role: "presentation", title: title2, key, className: classNames3.item }, content);
-    };
-    var renderSeparator = function(index, classNames3, top, fromSection) {
-      if (fromSection || index > 0) {
-        return React41.createElement("li", { role: "separator", key: "separator-" + index + (top === void 0 ? "" : top ? "-top" : "-bottom"), className: classNames3.divider, "aria-hidden": "true" });
-      }
-      return null;
-    };
-    var renderNormalItem = function(item, classNames3, index, focusableElementIndex, totalItemCount, hasCheckmarks2, hasIcons2) {
-      if (item.onRender) {
-        return item.onRender(__assign({ "aria-posinset": focusableElementIndex + 1, "aria-setsize": totalItemCount }, item), dismiss);
-      }
-      var contextualMenuItemAs = props.contextualMenuItemAs;
-      var commonProps = {
-        item,
-        classNames: classNames3,
-        index,
-        focusableElementIndex,
-        totalItemCount,
-        hasCheckmarks: hasCheckmarks2,
-        hasIcons: hasIcons2,
-        contextualMenuItemAs,
-        onItemMouseEnter: onItemMouseEnterBase,
-        onItemMouseLeave: onMouseItemLeave,
-        onItemMouseMove: onItemMouseMoveBase,
-        onItemMouseDown,
-        executeItemClick,
-        onItemKeyDown,
-        expandedMenuItemKey,
-        openSubMenu,
-        dismissSubMenu: onSubMenuDismiss,
-        dismissMenu: dismiss
-      };
-      if (item.href) {
-        return React41.createElement(ContextualMenuAnchor, __assign({}, commonProps, { onItemClick: onAnchorClick }));
-      }
-      if (item.split && hasSubmenu(item)) {
-        return React41.createElement(ContextualMenuSplitButton, __assign({}, commonProps, { onItemClick, onItemClickBase, onTap: cancelSubMenuTimer }));
-      }
-      return React41.createElement(ContextualMenuButton, __assign({}, commonProps, { onItemClick, onItemClickBase }));
-    };
-    var renderHeaderMenuItem = function(item, itemClassNames, menuClassNames, index, hasCheckmarks2, hasIcons2) {
-      var _a6 = props.contextualMenuItemAs, ChildrenRenderer = _a6 === void 0 ? ContextualMenuItem : _a6;
-      var itemProps = item.itemProps, id2 = item.id;
-      var divHtmlProperties = itemProps && getNativeProps(itemProps, divProperties);
-      return (
-        // eslint-disable-next-line deprecation/deprecation
-        React41.createElement(
-          "div",
-          __assign({ id: id2, className: menuClassNames.header }, divHtmlProperties, { style: item.style }),
-          React41.createElement(ChildrenRenderer, __assign({ item, classNames: itemClassNames, index, onCheckmarkClick: hasCheckmarks2 ? onItemClick : void 0, hasIcons: hasIcons2 }, itemProps))
-        )
-      );
-    };
-    var isBeakVisible = props.isBeakVisible;
-    var items = props.items, labelElementId = props.labelElementId, id = props.id, className = props.className, beakWidth = props.beakWidth, directionalHint = props.directionalHint, directionalHintForRTL = props.directionalHintForRTL, alignTargetEdge = props.alignTargetEdge, gapSpace = props.gapSpace, coverTarget = props.coverTarget, ariaLabel = props.ariaLabel, doNotLayer = props.doNotLayer, target = props.target, bounds = props.bounds, useTargetWidth = props.useTargetWidth, useTargetAsMinWidth = props.useTargetAsMinWidth, directionalHintFixed = props.directionalHintFixed, shouldFocusOnMount = props.shouldFocusOnMount, shouldFocusOnContainer = props.shouldFocusOnContainer, title = props.title, styles2 = props.styles, theme = props.theme, calloutProps = props.calloutProps, _k = props.onRenderSubMenu, onRenderSubMenu2 = _k === void 0 ? onDefaultRenderSubMenu : _k, _l = props.onRenderMenuList, onRenderMenuList = _l === void 0 ? function(menuListProps, defaultRender) {
-      return onDefaultRenderMenuList(menuListProps, classNames2, defaultRender);
-    } : _l, focusZoneProps = props.focusZoneProps, getMenuClassNames = props.getMenuClassNames;
-    var classNames2 = getMenuClassNames ? getMenuClassNames(theme, className) : getClassNames7(styles2, {
-      theme,
-      className
-    });
-    var hasIcons = itemsHaveIcons(items);
-    function itemsHaveIcons(contextualMenuItems) {
-      for (var _i = 0, contextualMenuItems_1 = contextualMenuItems; _i < contextualMenuItems_1.length; _i++) {
-        var item = contextualMenuItems_1[_i];
-        if (item.iconProps) {
-          return true;
-        }
-        if (item.itemType === ContextualMenuItemType.Section && item.sectionProps && itemsHaveIcons(item.sectionProps.items)) {
-          return true;
-        }
-      }
-      return false;
-    }
-    var adjustedFocusZoneProps = __assign(__assign({ direction: FocusZoneDirection.vertical, handleTabKey: FocusZoneTabbableElements.all, isCircularNavigation: true }, focusZoneProps), { className: css(classNames2.root, (_a5 = props.focusZoneProps) === null || _a5 === void 0 ? void 0 : _a5.className) });
-    var hasCheckmarks = canAnyMenuItemsCheck(items);
-    var submenuProps = expandedMenuItemKey && props.hidden !== true ? getSubmenuProps() : null;
-    isBeakVisible = isBeakVisible === void 0 ? responsiveMode <= ResponsiveMode.medium : isBeakVisible;
-    var contextMenuStyle;
-    var targetAsHtmlElement = targetRef.current;
-    if ((useTargetWidth || useTargetAsMinWidth) && targetAsHtmlElement && targetAsHtmlElement.offsetWidth) {
-      var targetBoundingRect = targetAsHtmlElement.getBoundingClientRect();
-      var targetWidth = targetBoundingRect.width - 2;
-      if (useTargetWidth) {
-        contextMenuStyle = {
-          width: targetWidth
-        };
-      } else if (useTargetAsMinWidth) {
-        contextMenuStyle = {
-          minWidth: targetWidth
-        };
-      }
-    }
-    if (items && items.length > 0) {
-      var totalItemCount_1 = getItemCount(items);
-      var calloutStyles_1 = classNames2.subComponentStyles ? classNames2.subComponentStyles.callout : void 0;
-      return React41.createElement(MenuContext.Consumer, null, function(menuContext) {
-        return React41.createElement(
-          Callout,
-          __assign({ styles: calloutStyles_1, onRestoreFocus: tryFocusPreviousActiveElement }, calloutProps, { target: target || menuContext.target, isBeakVisible, beakWidth, directionalHint, directionalHintForRTL, gapSpace, coverTarget, doNotLayer, className: css("ms-ContextualMenu-Callout", calloutProps && calloutProps.className), setInitialFocus: shouldFocusOnMount, onDismiss: props.onDismiss || menuContext.onDismiss, onScroll, bounds, directionalHintFixed, alignTargetEdge, hidden: props.hidden || menuContext.hidden, ref: forwardedRef }),
-          React41.createElement(
-            "div",
-            { style: contextMenuStyle, ref: hostElement, id, className: classNames2.container, tabIndex: shouldFocusOnContainer ? 0 : -1, onKeyDown: onMenuKeyDown, onKeyUp, onFocusCapture: onMenuFocusCapture, "aria-label": ariaLabel, "aria-labelledby": labelElementId, role: "menu" },
-            title && React41.createElement(
-              "div",
-              { className: classNames2.title },
-              " ",
-              title,
-              " "
-            ),
-            items && items.length ? renderFocusZone(onRenderMenuList({
-              ariaLabel,
-              items,
-              totalItemCount: totalItemCount_1,
-              hasCheckmarks,
-              hasIcons,
-              defaultMenuItemRenderer: function(item) {
-                return defaultMenuItemRenderer(item, classNames2);
-              },
-              labelElementId
-            }, function(menuListProps, defaultRender) {
-              return onDefaultRenderMenuList(menuListProps, classNames2, defaultRender);
-            }), adjustedFocusZoneProps) : null,
-            submenuProps && onRenderSubMenu2(submenuProps, onDefaultRenderSubMenu)
-          ),
-          React41.createElement(FocusRects, null)
-        );
-      });
-    } else {
-      return null;
-    }
-  }), function(prevProps, newProps) {
-    if (!newProps.shouldUpdateWhenHidden && prevProps.hidden && newProps.hidden) {
-      return true;
-    }
-    return shallowCompare(prevProps, newProps);
-  });
-  ContextualMenuBase.displayName = "ContextualMenuBase";
-  function isAltOrMeta(ev) {
-    return ev.which === KeyCodes.alt || ev.key === "Meta";
-  }
-  function onItemMouseDown(item, ev) {
-    var _a5;
-    (_a5 = item.onMouseDown) === null || _a5 === void 0 ? void 0 : _a5.call(item, item, ev);
-  }
-  function onDefaultRenderSubMenu(subMenuProps, defaultRender) {
-    throw Error("ContextualMenuBase: onRenderSubMenu callback is null or undefined. Please ensure to set `onRenderSubMenu` property either manually or with `styled` helper.");
-  }
-  function findItemByKeyFromItems(key, items) {
-    for (var _i = 0, items_3 = items; _i < items_3.length; _i++) {
-      var item = items_3[_i];
-      if (item.itemType === ContextualMenuItemType.Section && item.sectionProps) {
-        var match = findItemByKeyFromItems(key, item.sectionProps.items);
-        if (match) {
-          return match;
-        }
-      } else if (item.key && item.key === key) {
-        return item;
-      }
-    }
-  }
-  function getOnClickWithOverrideTarget(onClick, target) {
-    return onClick ? function(ev, item) {
-      overrideTarget(ev, target);
-      return onClick(ev, item);
-    } : onClick;
-  }
-  function overrideTarget(ev, target) {
-    if (ev && target) {
-      ev.persist();
-      if (target instanceof Event) {
-        ev.target = target.target;
-      } else if (target instanceof Element) {
-        ev.target = target;
-      }
-    }
-  }
-
-  // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenu.styles.js
-  var GlobalClassNames6 = {
-    root: "ms-ContextualMenu",
-    container: "ms-ContextualMenu-container",
-    list: "ms-ContextualMenu-list",
-    header: "ms-ContextualMenu-header",
-    title: "ms-ContextualMenu-title",
-    isopen: "is-open"
-  };
-  var getStyles7 = function(props) {
-    var className = props.className, theme = props.theme;
-    var classNames2 = getGlobalClassNames(GlobalClassNames6, theme);
-    var fonts = theme.fonts, semanticColors = theme.semanticColors, effects = theme.effects;
-    return {
-      root: [
-        theme.fonts.medium,
-        classNames2.root,
-        classNames2.isopen,
-        {
-          backgroundColor: semanticColors.menuBackground,
-          minWidth: "180px"
-        },
-        className
-      ],
-      container: [
-        classNames2.container,
-        {
-          selectors: {
-            ":focus": { outline: 0 }
-          }
-        }
-      ],
-      list: [
-        classNames2.list,
-        classNames2.isopen,
-        {
-          listStyleType: "none",
-          margin: "0",
-          padding: "0"
-        }
-      ],
-      header: [
-        classNames2.header,
-        fonts.small,
-        {
-          fontWeight: FontWeights.semibold,
-          color: semanticColors.menuHeader,
-          background: "none",
-          backgroundColor: "transparent",
-          border: "none",
-          height: CONTEXTUAL_MENU_ITEM_HEIGHT,
-          lineHeight: CONTEXTUAL_MENU_ITEM_HEIGHT,
-          cursor: "default",
-          padding: "0px 6px",
-          userSelect: "none",
-          textAlign: "left"
-        }
-      ],
-      title: [
-        classNames2.title,
-        {
-          fontSize: fonts.mediumPlus.fontSize,
-          paddingRight: "14px",
-          paddingLeft: "14px",
-          paddingBottom: "5px",
-          paddingTop: "5px",
-          backgroundColor: semanticColors.menuItemBackgroundPressed
-        }
-      ],
-      subComponentStyles: {
-        callout: {
-          root: {
-            boxShadow: effects.elevation8
-          }
-        },
-        menuItem: {}
-      }
-    };
-  };
-
-  // ../node_modules/@fluentui/react/lib/components/ContextualMenu/ContextualMenu.js
-  function onRenderSubMenu(subMenuProps) {
-    return React42.createElement(LocalContextualMenu, __assign({}, subMenuProps));
-  }
-  var LocalContextualMenu = styled(ContextualMenuBase, getStyles7, function(props) {
-    return {
-      onRenderSubMenu: props.onRenderSubMenu ? composeRenderFunction(props.onRenderSubMenu, onRenderSubMenu) : onRenderSubMenu
-    };
-  }, { scope: "ContextualMenu" });
-  var ContextualMenu = LocalContextualMenu;
-  ContextualMenu.displayName = "ContextualMenu";
-
-  // ../node_modules/@fluentui/react/lib/components/Button/BaseButton.classNames.js
-  var ButtonGlobalClassNames = {
-    msButton: "ms-Button",
-    msButtonHasMenu: "ms-Button--hasMenu",
-    msButtonIcon: "ms-Button-icon",
-    msButtonMenuIcon: "ms-Button-menuIcon",
-    msButtonLabel: "ms-Button-label",
-    msButtonDescription: "ms-Button-description",
-    msButtonScreenReaderText: "ms-Button-screenReaderText",
-    msButtonFlexContainer: "ms-Button-flexContainer",
-    msButtonTextContainer: "ms-Button-textContainer"
-  };
-  var getBaseButtonClassNames = memoizeFunction(function(theme, styles2, className, variantClassName, iconClassName, menuIconClassName, disabled, hasMenu, checked, expanded, isSplit) {
-    var _a5, _b;
-    var classNames2 = getGlobalClassNames(ButtonGlobalClassNames, theme || {});
-    var isExpanded = expanded && !isSplit;
-    return mergeStyleSets({
-      root: [
-        classNames2.msButton,
-        styles2.root,
-        variantClassName,
-        checked && ["is-checked", styles2.rootChecked],
-        isExpanded && [
-          "is-expanded",
-          styles2.rootExpanded,
-          {
-            selectors: (_a5 = {}, _a5[":hover .".concat(classNames2.msButtonIcon)] = styles2.iconExpandedHovered, // menuIcon falls back to rootExpandedHovered to support original behavior
-            _a5[":hover .".concat(classNames2.msButtonMenuIcon)] = styles2.menuIconExpandedHovered || styles2.rootExpandedHovered, _a5[":hover"] = styles2.rootExpandedHovered, _a5)
-          }
-        ],
-        hasMenu && [ButtonGlobalClassNames.msButtonHasMenu, styles2.rootHasMenu],
-        disabled && ["is-disabled", styles2.rootDisabled],
-        !disabled && !isExpanded && !checked && {
-          selectors: (_b = {
-            ":hover": styles2.rootHovered
-          }, _b[":hover .".concat(classNames2.msButtonLabel)] = styles2.labelHovered, _b[":hover .".concat(classNames2.msButtonIcon)] = styles2.iconHovered, _b[":hover .".concat(classNames2.msButtonDescription)] = styles2.descriptionHovered, _b[":hover .".concat(classNames2.msButtonMenuIcon)] = styles2.menuIconHovered, _b[":focus"] = styles2.rootFocused, _b[":active"] = styles2.rootPressed, _b[":active .".concat(classNames2.msButtonIcon)] = styles2.iconPressed, _b[":active .".concat(classNames2.msButtonDescription)] = styles2.descriptionPressed, _b[":active .".concat(classNames2.msButtonMenuIcon)] = styles2.menuIconPressed, _b)
-        },
-        disabled && checked && [styles2.rootCheckedDisabled],
-        !disabled && checked && {
-          selectors: {
-            ":hover": styles2.rootCheckedHovered,
-            ":active": styles2.rootCheckedPressed
-          }
-        },
-        className
-      ],
-      flexContainer: [classNames2.msButtonFlexContainer, styles2.flexContainer],
-      textContainer: [classNames2.msButtonTextContainer, styles2.textContainer],
-      icon: [
-        classNames2.msButtonIcon,
-        iconClassName,
-        styles2.icon,
-        isExpanded && styles2.iconExpanded,
-        checked && styles2.iconChecked,
-        disabled && styles2.iconDisabled
-      ],
-      label: [classNames2.msButtonLabel, styles2.label, checked && styles2.labelChecked, disabled && styles2.labelDisabled],
-      menuIcon: [
-        classNames2.msButtonMenuIcon,
-        menuIconClassName,
-        styles2.menuIcon,
-        checked && styles2.menuIconChecked,
-        disabled && !isSplit && styles2.menuIconDisabled,
-        !disabled && !isExpanded && !checked && {
-          selectors: {
-            ":hover": styles2.menuIconHovered,
-            ":active": styles2.menuIconPressed
-          }
-        },
-        isExpanded && ["is-expanded", styles2.menuIconExpanded]
-      ],
-      description: [
-        classNames2.msButtonDescription,
-        styles2.description,
-        checked && styles2.descriptionChecked,
-        disabled && styles2.descriptionDisabled
-      ],
-      screenReaderText: [classNames2.msButtonScreenReaderText, styles2.screenReaderText]
-    });
-  });
-
-  // ../node_modules/@fluentui/react/lib/components/Button/SplitButton/SplitButton.classNames.js
-  var getSplitButtonClassNames = memoizeFunction(function(styles2, disabled, expanded, checked, primaryDisabled) {
-    return {
-      root: mergeStyles(styles2.splitButtonMenuButton, expanded && [styles2.splitButtonMenuButtonExpanded], disabled && [styles2.splitButtonMenuButtonDisabled], checked && !disabled && [styles2.splitButtonMenuButtonChecked], primaryDisabled && !disabled && [
-        {
-          selectors: {
-            ":focus": styles2.splitButtonMenuFocused
-          }
-        }
-      ]),
-      splitButtonContainer: mergeStyles(styles2.splitButtonContainer, !disabled && checked && [
-        styles2.splitButtonContainerChecked,
-        {
-          selectors: {
-            ":hover": styles2.splitButtonContainerCheckedHovered
-          }
-        }
-      ], !disabled && !checked && [
-        {
-          selectors: {
-            ":hover": styles2.splitButtonContainerHovered,
-            ":focus": styles2.splitButtonContainerFocused
-          }
-        }
-      ], disabled && styles2.splitButtonContainerDisabled),
-      icon: mergeStyles(styles2.splitButtonMenuIcon, disabled && styles2.splitButtonMenuIconDisabled, !disabled && primaryDisabled && styles2.splitButtonMenuIcon),
-      flexContainer: mergeStyles(styles2.splitButtonFlexContainer),
-      divider: mergeStyles(styles2.splitButtonDivider, (primaryDisabled || disabled) && styles2.splitButtonDividerDisabled)
-    };
-  });
-
-  // ../node_modules/@fluentui/react/lib/components/Button/BaseButton.js
-  var TouchIdleDelay2 = 500;
-  var COMPONENT_NAME3 = "BaseButton";
-  var BaseButton = (
-    /** @class */
-    function(_super) {
-      __extends(BaseButton2, _super);
-      function BaseButton2(props) {
-        var _this = _super.call(this, props) || this;
-        _this._buttonElement = React43.createRef();
-        _this._splitButtonContainer = React43.createRef();
-        _this._mergedRef = createMergedRef();
-        _this._renderedVisibleMenu = false;
-        _this._getMemoizedMenuButtonKeytipProps = memoizeFunction(function(keytipProps) {
-          return __assign(__assign({}, keytipProps), { hasMenu: true });
-        });
-        _this._onRenderIcon = function(buttonProps, defaultRender) {
-          var iconProps = _this.props.iconProps;
-          if (iconProps && (iconProps.iconName !== void 0 || iconProps.imageProps)) {
-            var className = iconProps.className, imageProps = iconProps.imageProps, rest = __rest(iconProps, ["className", "imageProps"]);
-            if (iconProps.styles) {
-              return React43.createElement(Icon, __assign({ className: css(_this._classNames.icon, className), imageProps }, rest));
-            }
-            if (iconProps.iconName) {
-              return React43.createElement(FontIcon, __assign({ className: css(_this._classNames.icon, className) }, rest));
-            }
-            if (imageProps) {
-              return React43.createElement(ImageIcon, __assign({ className: css(_this._classNames.icon, className), imageProps }, rest));
-            }
-          }
-          return null;
-        };
-        _this._onRenderTextContents = function() {
-          var _a5 = _this.props, text = _a5.text, children = _a5.children, _b = _a5.secondaryText, secondaryText = _b === void 0 ? _this.props.description : _b, _c = _a5.onRenderText, onRenderText = _c === void 0 ? _this._onRenderText : _c, _d = _a5.onRenderDescription, onRenderDescription = _d === void 0 ? _this._onRenderDescription : _d;
-          if (text || typeof children === "string" || secondaryText) {
-            return React43.createElement(
-              "span",
-              { className: _this._classNames.textContainer },
-              onRenderText(_this.props, _this._onRenderText),
-              onRenderDescription(_this.props, _this._onRenderDescription)
-            );
-          }
-          return [onRenderText(_this.props, _this._onRenderText), onRenderDescription(_this.props, _this._onRenderDescription)];
-        };
-        _this._onRenderText = function() {
-          var text = _this.props.text;
-          var children = _this.props.children;
-          if (text === void 0 && typeof children === "string") {
-            text = children;
-          }
-          if (_this._hasText()) {
-            return React43.createElement("span", { key: _this._labelId, className: _this._classNames.label, id: _this._labelId }, text);
-          }
-          return null;
-        };
-        _this._onRenderChildren = function() {
-          var children = _this.props.children;
-          if (typeof children === "string") {
-            return null;
-          }
-          return children;
-        };
-        _this._onRenderDescription = function(props2) {
-          var _a5 = props2.secondaryText, secondaryText = _a5 === void 0 ? _this.props.description : _a5;
-          return secondaryText ? React43.createElement("span", { key: _this._descriptionId, className: _this._classNames.description, id: _this._descriptionId }, secondaryText) : null;
-        };
-        _this._onRenderAriaDescription = function() {
-          var ariaDescription = _this.props.ariaDescription;
-          return ariaDescription ? React43.createElement("span", { className: _this._classNames.screenReaderText, id: _this._ariaDescriptionId }, ariaDescription) : null;
-        };
-        _this._onRenderMenuIcon = function(props2) {
-          var menuIconProps = _this.props.menuIconProps;
-          return React43.createElement(FontIcon, __assign({ iconName: "ChevronDown" }, menuIconProps, { className: _this._classNames.menuIcon }));
-        };
-        _this._onRenderMenu = function(menuProps) {
-          var MenuType = _this.props.menuAs ? composeComponentAs(_this.props.menuAs, ContextualMenu) : ContextualMenu;
-          return React43.createElement(MenuType, __assign({}, menuProps));
-        };
-        _this._onDismissMenu = function(ev) {
-          var menuProps = _this.props.menuProps;
-          if (menuProps && menuProps.onDismiss) {
-            menuProps.onDismiss(ev);
-          }
-          if (!ev || !ev.defaultPrevented) {
-            _this._dismissMenu();
-          }
-        };
-        _this._dismissMenu = function() {
-          _this._menuShouldFocusOnMount = void 0;
-          _this._menuShouldFocusOnContainer = void 0;
-          _this.setState({ menuHidden: true });
-        };
-        _this._openMenu = function(shouldFocusOnContainer, shouldFocusOnMount) {
-          if (shouldFocusOnMount === void 0) {
-            shouldFocusOnMount = true;
-          }
-          if (_this.props.menuProps) {
-            _this._menuShouldFocusOnContainer = shouldFocusOnContainer;
-            _this._menuShouldFocusOnMount = shouldFocusOnMount;
-            _this._renderedVisibleMenu = true;
-            _this.setState({ menuHidden: false });
-          }
-        };
-        _this._onToggleMenu = function(shouldFocusOnContainer) {
-          var shouldFocusOnMount = true;
-          if (_this.props.menuProps && _this.props.menuProps.shouldFocusOnMount === false) {
-            shouldFocusOnMount = false;
-          }
-          _this.state.menuHidden ? _this._openMenu(shouldFocusOnContainer, shouldFocusOnMount) : _this._dismissMenu();
-        };
-        _this._onSplitContainerFocusCapture = function(ev) {
-          var container = _this._splitButtonContainer.current;
-          if (!container || ev.target && portalContainsElement(ev.target, container)) {
-            return;
-          }
-          container.focus();
-        };
-        _this._onSplitButtonPrimaryClick = function(ev) {
-          if (!_this.state.menuHidden) {
-            _this._dismissMenu();
-          }
-          var singleTouchTarget = _this._processingTouch && !_this.props.toggle;
-          if (!singleTouchTarget && _this.props.onClick) {
-            _this.props.onClick(ev);
-          } else if (singleTouchTarget) {
-            _this._onMenuClick(ev);
-          }
-        };
-        _this._onKeyDown = function(ev) {
-          if (_this.props.disabled && (ev.which === KeyCodes.enter || ev.which === KeyCodes.space)) {
-            ev.preventDefault();
-            ev.stopPropagation();
-          } else if (!_this.props.disabled) {
-            if (_this.props.menuProps) {
-              _this._onMenuKeyDown(ev);
-            } else if (_this.props.onKeyDown !== void 0) {
-              _this.props.onKeyDown(ev);
-            }
-          }
-        };
-        _this._onKeyUp = function(ev) {
-          if (!_this.props.disabled && _this.props.onKeyUp !== void 0) {
-            _this.props.onKeyUp(ev);
-          }
-        };
-        _this._onKeyPress = function(ev) {
-          if (!_this.props.disabled && _this.props.onKeyPress !== void 0) {
-            _this.props.onKeyPress(ev);
-          }
-        };
-        _this._onMouseUp = function(ev) {
-          if (!_this.props.disabled && _this.props.onMouseUp !== void 0) {
-            _this.props.onMouseUp(ev);
-          }
-        };
-        _this._onMouseDown = function(ev) {
-          if (!_this.props.disabled && _this.props.onMouseDown !== void 0) {
-            _this.props.onMouseDown(ev);
-          }
-        };
-        _this._onClick = function(ev) {
-          if (!_this.props.disabled) {
-            if (_this.props.menuProps) {
-              _this._onMenuClick(ev);
-            } else if (_this.props.onClick !== void 0) {
-              _this.props.onClick(ev);
-            }
-          }
-        };
-        _this._onSplitButtonContainerKeyDown = function(ev) {
-          if (ev.which === KeyCodes.enter || ev.which === KeyCodes.space) {
-            if (_this._buttonElement.current) {
-              _this._buttonElement.current.click();
-              ev.preventDefault();
-              ev.stopPropagation();
-            }
-          } else {
-            _this._onMenuKeyDown(ev);
-          }
-        };
-        _this._onMenuKeyDown = function(ev) {
-          var _a5;
-          if (_this.props.disabled) {
-            return;
-          }
-          if (_this.props.onKeyDown) {
-            _this.props.onKeyDown(ev);
-          }
-          var isUp = ev.which === KeyCodes.up;
-          var isDown = ev.which === KeyCodes.down;
-          if (!ev.defaultPrevented && _this._isValidMenuOpenKey(ev)) {
-            var onMenuClick = _this.props.onMenuClick;
-            if (onMenuClick) {
-              onMenuClick(ev, _this.props);
-            }
-            _this._onToggleMenu(false);
-            ev.preventDefault();
-            ev.stopPropagation();
-          }
-          if (ev.which === KeyCodes.enter || ev.which === KeyCodes.space) {
-            setFocusVisibility(true, ev.target, (_a5 = _this.context) === null || _a5 === void 0 ? void 0 : _a5.registeredProviders);
-          }
-          if (!(ev.altKey || ev.metaKey) && (isUp || isDown)) {
-            if (!_this.state.menuHidden && _this.props.menuProps) {
-              var currentShouldFocusOnMount = _this._menuShouldFocusOnMount !== void 0 ? _this._menuShouldFocusOnMount : _this.props.menuProps.shouldFocusOnMount;
-              if (!currentShouldFocusOnMount) {
-                ev.preventDefault();
-                ev.stopPropagation();
-                _this._menuShouldFocusOnMount = true;
-                _this.forceUpdate();
-              }
-            }
-          }
-        };
-        _this._onTouchStart = function() {
-          if (_this._isSplitButton && _this._splitButtonContainer.current && !("onpointerdown" in _this._splitButtonContainer.current)) {
-            _this._handleTouchAndPointerEvent();
-          }
-        };
-        _this._onMenuClick = function(ev) {
-          var _a5 = _this.props, onMenuClick = _a5.onMenuClick, menuProps = _a5.menuProps;
-          if (onMenuClick) {
-            onMenuClick(ev, _this.props);
-          }
-          var shouldFocusOnContainer = typeof (menuProps === null || menuProps === void 0 ? void 0 : menuProps.shouldFocusOnContainer) === "boolean" ? menuProps.shouldFocusOnContainer : ev.nativeEvent.pointerType === "mouse";
-          if (!ev.defaultPrevented) {
-            _this._onToggleMenu(shouldFocusOnContainer);
-            ev.preventDefault();
-            ev.stopPropagation();
-          }
-        };
-        initializeComponentRef(_this);
-        _this._async = new Async(_this);
-        _this._events = new EventGroup(_this);
-        warnConditionallyRequiredProps(COMPONENT_NAME3, props, ["menuProps", "onClick"], "split", _this.props.split);
-        warnDeprecations(COMPONENT_NAME3, props, {
-          rootProps: void 0,
-          description: "secondaryText",
-          toggled: "checked"
-        });
-        _this._labelId = getId();
-        _this._descriptionId = getId();
-        _this._ariaDescriptionId = getId();
-        _this.state = {
-          menuHidden: true
-        };
-        return _this;
-      }
-      Object.defineProperty(BaseButton2.prototype, "_isSplitButton", {
-        get: function() {
-          return !!this.props.menuProps && !!this.props.onClick && this.props.split === true;
-        },
-        enumerable: false,
-        configurable: true
-      });
-      BaseButton2.prototype.render = function() {
-        var _a5;
-        var _b = this.props, ariaDescription = _b.ariaDescription, ariaLabel = _b.ariaLabel, ariaHidden = _b.ariaHidden, className = _b.className, disabled = _b.disabled, allowDisabledFocus = _b.allowDisabledFocus, primaryDisabled = _b.primaryDisabled, _c = _b.secondaryText, secondaryText = _c === void 0 ? this.props.description : _c, href = _b.href, iconProps = _b.iconProps, menuIconProps = _b.menuIconProps, styles2 = _b.styles, checked = _b.checked, variantClassName = _b.variantClassName, theme = _b.theme, toggle = _b.toggle, getClassNames10 = _b.getClassNames, role = _b.role;
-        var menuHidden = this.state.menuHidden;
-        var isPrimaryButtonDisabled = disabled || primaryDisabled;
-        this._classNames = getClassNames10 ? getClassNames10(theme, className, variantClassName, iconProps && iconProps.className, menuIconProps && menuIconProps.className, isPrimaryButtonDisabled, checked, !menuHidden, !!this.props.menuProps, this.props.split, !!allowDisabledFocus) : getBaseButtonClassNames(theme, styles2, className, variantClassName, iconProps && iconProps.className, menuIconProps && menuIconProps.className, isPrimaryButtonDisabled, !!this.props.menuProps, checked, !menuHidden, this.props.split);
-        var _d = this, _ariaDescriptionId = _d._ariaDescriptionId, _labelId = _d._labelId, _descriptionId = _d._descriptionId;
-        var renderAsAnchor = !isPrimaryButtonDisabled && !!href;
-        var tag = renderAsAnchor ? "a" : "button";
-        var nativeProps = getNativeProps(
-          // eslint-disable-next-line deprecation/deprecation
-          assign(renderAsAnchor ? {} : { type: "button" }, this.props.rootProps, this.props),
-          renderAsAnchor ? anchorProperties : buttonProperties,
-          [
-            "disabled"
-            // let disabled buttons be focused and styled as disabled.
-          ]
-        );
-        var resolvedAriaLabel = ariaLabel || nativeProps["aria-label"];
-        var ariaDescribedBy = void 0;
-        if (ariaDescription) {
-          ariaDescribedBy = _ariaDescriptionId;
-        } else if (secondaryText && this.props.onRenderDescription !== nullRender) {
-          ariaDescribedBy = _descriptionId;
-        } else if (nativeProps["aria-describedby"]) {
-          ariaDescribedBy = nativeProps["aria-describedby"];
-        }
-        var ariaLabelledBy = void 0;
-        if (nativeProps["aria-labelledby"]) {
-          ariaLabelledBy = nativeProps["aria-labelledby"];
-        } else if (ariaDescribedBy && !resolvedAriaLabel) {
-          ariaLabelledBy = this._hasText() ? _labelId : void 0;
-        }
-        var dataIsFocusable = this.props["data-is-focusable"] === false || disabled && !allowDisabledFocus || this._isSplitButton ? false : true;
-        var isCheckboxTypeRole = role === "menuitemcheckbox" || role === "checkbox";
-        var checkedOrPressedValue = isCheckboxTypeRole ? !!checked : toggle === true ? !!checked : void 0;
-        var buttonProps = assign(nativeProps, (_a5 = {
-          className: this._classNames.root,
-          // eslint-disable-next-line deprecation/deprecation
-          ref: this._mergedRef(this.props.elementRef, this._buttonElement),
-          disabled: isPrimaryButtonDisabled && !allowDisabledFocus,
-          onKeyDown: this._onKeyDown,
-          onKeyPress: this._onKeyPress,
-          onKeyUp: this._onKeyUp,
-          onMouseDown: this._onMouseDown,
-          onMouseUp: this._onMouseUp,
-          onClick: this._onClick,
-          "aria-label": resolvedAriaLabel,
-          "aria-labelledby": ariaLabelledBy,
-          "aria-describedby": ariaDescribedBy,
-          "aria-disabled": isPrimaryButtonDisabled,
-          "data-is-focusable": dataIsFocusable
-        }, // aria-pressed attribute should only be present for toggle buttons
-        // aria-checked attribute should only be present for toggle buttons with checkbox type role
-        _a5[isCheckboxTypeRole ? "aria-checked" : "aria-pressed"] = checkedOrPressedValue, _a5));
-        if (ariaHidden) {
-          buttonProps["aria-hidden"] = true;
-        }
-        if (this._isSplitButton) {
-          return this._onRenderSplitButtonContent(tag, buttonProps);
-        } else if (this.props.menuProps) {
-          var _e = this.props.menuProps.id, id = _e === void 0 ? "".concat(this._labelId, "-menu") : _e;
-          assign(buttonProps, {
-            "aria-expanded": !menuHidden,
-            "aria-controls": !menuHidden ? id : null,
-            "aria-haspopup": true
-          });
-        }
-        return this._onRenderContent(tag, buttonProps);
-      };
-      BaseButton2.prototype.componentDidMount = function() {
-        if (this._isSplitButton && this._splitButtonContainer.current) {
-          if ("onpointerdown" in this._splitButtonContainer.current) {
-            this._events.on(this._splitButtonContainer.current, "pointerdown", this._onPointerDown, true);
-          }
-          if ("onpointerup" in this._splitButtonContainer.current && this.props.onPointerUp) {
-            this._events.on(this._splitButtonContainer.current, "pointerup", this.props.onPointerUp, true);
-          }
-        }
-      };
-      BaseButton2.prototype.componentDidUpdate = function(prevProps, prevState) {
-        if (this.props.onAfterMenuDismiss && !prevState.menuHidden && this.state.menuHidden) {
-          this.props.onAfterMenuDismiss();
-        }
-      };
-      BaseButton2.prototype.componentWillUnmount = function() {
-        this._async.dispose();
-        this._events.dispose();
-      };
-      BaseButton2.prototype.focus = function() {
-        var _a5, _b;
-        if (this._isSplitButton && this._splitButtonContainer.current) {
-          setFocusVisibility(true, void 0, (_a5 = this.context) === null || _a5 === void 0 ? void 0 : _a5.registeredProviders);
-          this._splitButtonContainer.current.focus();
-        } else if (this._buttonElement.current) {
-          setFocusVisibility(true, void 0, (_b = this.context) === null || _b === void 0 ? void 0 : _b.registeredProviders);
-          this._buttonElement.current.focus();
-        }
-      };
-      BaseButton2.prototype.dismissMenu = function() {
-        this._dismissMenu();
-      };
-      BaseButton2.prototype.openMenu = function(shouldFocusOnContainer, shouldFocusOnMount) {
-        this._openMenu(shouldFocusOnContainer, shouldFocusOnMount);
-      };
-      BaseButton2.prototype._onRenderContent = function(tag, buttonProps) {
-        var _this = this;
-        var props = this.props;
-        var Tag2 = tag;
-        var menuIconProps = props.menuIconProps, menuProps = props.menuProps, _a5 = props.onRenderIcon, onRenderIcon = _a5 === void 0 ? this._onRenderIcon : _a5, _b = props.onRenderAriaDescription, onRenderAriaDescription = _b === void 0 ? this._onRenderAriaDescription : _b, _c = props.onRenderChildren, onRenderChildren = _c === void 0 ? this._onRenderChildren : _c, _d = props.onRenderMenu, onRenderMenu = _d === void 0 ? this._onRenderMenu : _d, _e = props.onRenderMenuIcon, onRenderMenuIcon = _e === void 0 ? this._onRenderMenuIcon : _e, disabled = props.disabled;
-        var keytipProps = props.keytipProps;
-        if (keytipProps && menuProps) {
-          keytipProps = this._getMemoizedMenuButtonKeytipProps(keytipProps);
-        }
-        var Button3 = function(keytipAttributes) {
-          return React43.createElement(
-            Tag2,
-            __assign({}, buttonProps, keytipAttributes),
-            React43.createElement(
-              "span",
-              { className: _this._classNames.flexContainer, "data-automationid": "splitbuttonprimary" },
-              onRenderIcon(props, _this._onRenderIcon),
-              _this._onRenderTextContents(),
-              onRenderAriaDescription(props, _this._onRenderAriaDescription),
-              onRenderChildren(props, _this._onRenderChildren),
-              !_this._isSplitButton && (menuProps || menuIconProps || _this.props.onRenderMenuIcon) && onRenderMenuIcon(_this.props, _this._onRenderMenuIcon),
-              menuProps && !menuProps.doNotLayer && _this._shouldRenderMenu() && onRenderMenu(_this._getMenuProps(menuProps), _this._onRenderMenu)
-            )
-          );
-        };
-        var Content2 = keytipProps ? (
-          // If we're making a split button, we won't put the keytip here
-          React43.createElement(KeytipData, { keytipProps: !this._isSplitButton ? keytipProps : void 0, ariaDescribedBy: buttonProps["aria-describedby"], disabled }, function(keytipAttributes) {
-            return Button3(keytipAttributes);
-          })
-        ) : Button3();
-        if (menuProps && menuProps.doNotLayer) {
-          return React43.createElement(
-            React43.Fragment,
-            null,
-            Content2,
-            this._shouldRenderMenu() && onRenderMenu(this._getMenuProps(menuProps), this._onRenderMenu)
-          );
-        }
-        return React43.createElement(
-          React43.Fragment,
-          null,
-          Content2,
-          React43.createElement(FocusRects, null)
-        );
-      };
-      BaseButton2.prototype._shouldRenderMenu = function() {
-        var menuHidden = this.state.menuHidden;
-        var _a5 = this.props, persistMenu = _a5.persistMenu, renderPersistedMenuHiddenOnMount = _a5.renderPersistedMenuHiddenOnMount;
-        if (!menuHidden) {
-          return true;
-        } else if (persistMenu && (this._renderedVisibleMenu || renderPersistedMenuHiddenOnMount)) {
-          return true;
-        }
-        return false;
-      };
-      BaseButton2.prototype._hasText = function() {
-        return this.props.text !== null && (this.props.text !== void 0 || typeof this.props.children === "string");
-      };
-      BaseButton2.prototype._getMenuProps = function(menuProps) {
-        var persistMenu = this.props.persistMenu;
-        var menuHidden = this.state.menuHidden;
-        if (!menuProps.ariaLabel && !menuProps.labelElementId && this._hasText()) {
-          menuProps = __assign(__assign({}, menuProps), { labelElementId: this._labelId });
-        }
-        return __assign(__assign({ id: this._labelId + "-menu", directionalHint: DirectionalHint.bottomLeftEdge }, menuProps), { shouldFocusOnContainer: this._menuShouldFocusOnContainer, shouldFocusOnMount: this._menuShouldFocusOnMount, hidden: persistMenu ? menuHidden : void 0, className: css("ms-BaseButton-menuhost", menuProps.className), target: this._isSplitButton ? this._splitButtonContainer.current : this._buttonElement.current, onDismiss: this._onDismissMenu });
-      };
-      BaseButton2.prototype._onRenderSplitButtonContent = function(tag, buttonProps) {
-        var _this = this;
-        var _a5 = this.props, _b = _a5.styles, styles2 = _b === void 0 ? {} : _b, disabled = _a5.disabled, allowDisabledFocus = _a5.allowDisabledFocus, checked = _a5.checked, getSplitButtonClassNames2 = _a5.getSplitButtonClassNames, primaryDisabled = _a5.primaryDisabled, menuProps = _a5.menuProps, toggle = _a5.toggle, role = _a5.role, primaryActionButtonProps = _a5.primaryActionButtonProps;
-        var keytipProps = this.props.keytipProps;
-        var menuHidden = this.state.menuHidden;
-        var classNames2 = getSplitButtonClassNames2 ? getSplitButtonClassNames2(!!disabled, !menuHidden, !!checked, !!allowDisabledFocus) : styles2 && getSplitButtonClassNames(styles2, !!disabled, !menuHidden, !!checked, !!primaryDisabled);
-        assign(buttonProps, {
-          onClick: void 0,
-          onPointerDown: void 0,
-          onPointerUp: void 0,
-          tabIndex: -1,
-          "data-is-focusable": false
-        });
-        if (keytipProps && menuProps) {
-          keytipProps = this._getMemoizedMenuButtonKeytipProps(keytipProps);
-        }
-        var containerProps = getNativeProps(buttonProps, [], ["disabled"]);
-        if (primaryActionButtonProps) {
-          assign(buttonProps, primaryActionButtonProps);
-        }
-        var SplitButton2 = function(keytipAttributes) {
-          return React43.createElement(
-            "div",
-            __assign({}, containerProps, { "data-ktp-target": keytipAttributes ? keytipAttributes["data-ktp-target"] : void 0, role: role ? role : "button", "aria-disabled": disabled, "aria-haspopup": true, "aria-expanded": !menuHidden, "aria-pressed": toggle ? !!checked : void 0, "aria-describedby": mergeAriaAttributeValues(buttonProps["aria-describedby"], keytipAttributes ? keytipAttributes["aria-describedby"] : void 0), className: classNames2 && classNames2.splitButtonContainer, onKeyDown: _this._onSplitButtonContainerKeyDown, onTouchStart: _this._onTouchStart, ref: _this._splitButtonContainer, "data-is-focusable": true, onClick: !disabled && !primaryDisabled ? _this._onSplitButtonPrimaryClick : void 0, tabIndex: !disabled && !primaryDisabled || allowDisabledFocus ? 0 : void 0, "aria-roledescription": buttonProps["aria-roledescription"], onFocusCapture: _this._onSplitContainerFocusCapture }),
-            React43.createElement(
-              "span",
-              { style: { display: "flex", width: "100%" } },
-              _this._onRenderContent(tag, buttonProps),
-              _this._onRenderSplitButtonMenuButton(classNames2, keytipAttributes),
-              _this._onRenderSplitButtonDivider(classNames2)
-            )
-          );
-        };
-        return keytipProps ? React43.createElement(KeytipData, { keytipProps, disabled }, function(keytipAttributes) {
-          return SplitButton2(keytipAttributes);
-        }) : SplitButton2();
-      };
-      BaseButton2.prototype._onRenderSplitButtonDivider = function(classNames2) {
-        if (classNames2 && classNames2.divider) {
-          var onClick = function(ev) {
-            ev.stopPropagation();
-          };
-          return React43.createElement("span", { className: classNames2.divider, "aria-hidden": true, onClick });
-        }
-        return null;
-      };
-      BaseButton2.prototype._onRenderSplitButtonMenuButton = function(classNames2, keytipAttributes) {
-        var _a5 = this.props, allowDisabledFocus = _a5.allowDisabledFocus, checked = _a5.checked, disabled = _a5.disabled, splitButtonMenuProps = _a5.splitButtonMenuProps, splitButtonAriaLabel = _a5.splitButtonAriaLabel, primaryDisabled = _a5.primaryDisabled;
-        var menuHidden = this.state.menuHidden;
-        var menuIconProps = this.props.menuIconProps;
-        if (menuIconProps === void 0) {
-          menuIconProps = {
-            iconName: "ChevronDown"
-          };
-        }
-        var splitButtonProps = __assign(__assign({}, splitButtonMenuProps), { styles: classNames2, checked, disabled, allowDisabledFocus, onClick: this._onMenuClick, menuProps: void 0, iconProps: __assign(__assign({}, menuIconProps), { className: this._classNames.menuIcon }), ariaLabel: splitButtonAriaLabel, "aria-haspopup": true, "aria-expanded": !menuHidden, "data-is-focusable": false });
-        return React43.createElement(BaseButton2, __assign({}, splitButtonProps, { "data-ktp-execute-target": keytipAttributes ? keytipAttributes["data-ktp-execute-target"] : keytipAttributes, onMouseDown: this._onMouseDown, tabIndex: primaryDisabled && !allowDisabledFocus ? 0 : -1 }));
-      };
-      BaseButton2.prototype._onPointerDown = function(ev) {
-        var onPointerDown = this.props.onPointerDown;
-        if (onPointerDown) {
-          onPointerDown(ev);
-        }
-        if (ev.pointerType === "touch") {
-          this._handleTouchAndPointerEvent();
-          ev.preventDefault();
-          ev.stopImmediatePropagation();
-        }
-      };
-      BaseButton2.prototype._handleTouchAndPointerEvent = function() {
-        var _this = this;
-        if (this._lastTouchTimeoutId !== void 0) {
-          this._async.clearTimeout(this._lastTouchTimeoutId);
-          this._lastTouchTimeoutId = void 0;
-        }
-        this._processingTouch = true;
-        this._lastTouchTimeoutId = this._async.setTimeout(function() {
-          _this._processingTouch = false;
-          _this._lastTouchTimeoutId = void 0;
-          if (_this.state.menuHidden) {
-            _this.focus();
-          }
-        }, TouchIdleDelay2);
-      };
-      BaseButton2.prototype._isValidMenuOpenKey = function(ev) {
-        if (this.props.menuTriggerKeyCode) {
-          return ev.which === this.props.menuTriggerKeyCode;
-        } else if (this.props.menuProps) {
-          return ev.which === KeyCodes.down && (ev.altKey || ev.metaKey);
-        }
-        return false;
-      };
-      BaseButton2.defaultProps = {
-        baseClassName: "ms-Button",
-        styles: {},
-        split: false
-      };
-      BaseButton2.contextType = FocusRectsContext;
-      return BaseButton2;
-    }(React43.Component)
-  );
-
-  // ../node_modules/@fluentui/react/lib/components/Button/DefaultButton/DefaultButton.js
-  var React44 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react/lib/components/Button/BaseButton.styles.js
-  var noOutline = {
-    outline: 0
-  };
-  var iconStyle = function(fontSize) {
-    return {
-      fontSize,
-      margin: "0 4px",
-      height: "16px",
-      lineHeight: "16px",
-      textAlign: "center",
-      flexShrink: 0
-    };
-  };
-  var getStyles8 = memoizeFunction(function(theme) {
-    var _a5, _b;
-    var semanticColors = theme.semanticColors, effects = theme.effects, fonts = theme.fonts;
-    var border = semanticColors.buttonBorder;
-    var disabledBackground = semanticColors.disabledBackground;
-    var disabledText = semanticColors.disabledText;
-    var buttonHighContrastFocus = {
-      left: -2,
-      top: -2,
-      bottom: -2,
-      right: -2,
-      outlineColor: "ButtonText"
-    };
-    return {
-      root: [
-        getFocusStyle(theme, { inset: 1, highContrastStyle: buttonHighContrastFocus, borderColor: "transparent" }),
-        theme.fonts.medium,
-        {
-          border: "1px solid " + border,
-          borderRadius: effects.roundedCorner2,
-          boxSizing: "border-box",
-          cursor: "pointer",
-          display: "inline-block",
-          padding: "0 16px",
-          textDecoration: "none",
-          textAlign: "center",
-          userSelect: "none",
-          selectors: {
-            // IE11 workaround for preventing shift of child elements of a button when active.
-            ":active > span": {
-              position: "relative",
-              left: 0,
-              top: 0
-            }
-          }
-        }
-      ],
-      rootDisabled: [
-        getFocusStyle(theme, { inset: 1, highContrastStyle: buttonHighContrastFocus, borderColor: "transparent" }),
-        {
-          backgroundColor: disabledBackground,
-          borderColor: disabledBackground,
-          color: disabledText,
-          cursor: "default",
-          selectors: {
-            ":hover": noOutline,
-            ":focus": noOutline
-          }
-        }
-      ],
-      iconDisabled: {
-        color: disabledText,
-        selectors: (_a5 = {}, _a5[HighContrastSelector] = {
-          color: "GrayText"
-        }, _a5)
-      },
-      menuIconDisabled: {
-        color: disabledText,
-        selectors: (_b = {}, _b[HighContrastSelector] = {
-          color: "GrayText"
-        }, _b)
-      },
-      flexContainer: {
-        display: "flex",
-        height: "100%",
-        flexWrap: "nowrap",
-        justifyContent: "center",
-        alignItems: "center"
-      },
-      description: {
-        display: "block"
-      },
-      textContainer: {
-        flexGrow: 1,
-        display: "block"
-      },
-      icon: iconStyle(fonts.mediumPlus.fontSize),
-      menuIcon: iconStyle(fonts.small.fontSize),
-      label: {
-        margin: "0 4px",
-        lineHeight: "100%",
-        display: "block"
-      },
-      screenReaderText: hiddenContentStyle
-    };
-  });
-
-  // ../node_modules/@fluentui/react/lib/components/Button/SplitButton/SplitButton.styles.js
-  var getStyles9 = memoizeFunction(function(theme, customStyles) {
-    var _a5, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
-    var effects = theme.effects, palette = theme.palette, semanticColors = theme.semanticColors;
-    var buttonHighContrastFocus = {
-      left: -2,
-      top: -2,
-      bottom: -2,
-      right: -2,
-      border: "none"
-    };
-    var splitButtonDividerBaseStyles2 = {
-      position: "absolute",
-      width: 1,
-      right: 31,
-      top: 8,
-      bottom: 8
-    };
-    var splitButtonStyles = {
-      splitButtonContainer: [
-        getFocusStyle(theme, { highContrastStyle: buttonHighContrastFocus, inset: 2, pointerEvents: "none" }),
-        {
-          display: "inline-flex",
-          selectors: {
-            ".ms-Button--default": {
-              borderTopRightRadius: "0",
-              borderBottomRightRadius: "0",
-              borderRight: "none",
-              flexGrow: "1"
-            },
-            ".ms-Button--primary": {
-              borderTopRightRadius: "0",
-              borderBottomRightRadius: "0",
-              border: "none",
-              flexGrow: "1",
-              selectors: (_a5 = {}, _a5[HighContrastSelector] = __assign({ color: "WindowText", backgroundColor: "Window", border: "1px solid WindowText", borderRightWidth: "0" }, getHighContrastNoAdjustStyle()), _a5[":hover"] = {
-                border: "none"
-              }, _a5[":active"] = {
-                border: "none"
-              }, _a5)
-            },
-            ".ms-Button--primary + .ms-Button": {
-              border: "none",
-              selectors: (_b = {}, _b[HighContrastSelector] = {
-                border: "1px solid WindowText",
-                borderLeftWidth: "0"
-              }, _b)
-            }
-          }
-        }
-      ],
-      splitButtonContainerHovered: {
-        selectors: {
-          ".ms-Button--primary": {
-            selectors: (_c = {}, _c[HighContrastSelector] = {
-              color: "Window",
-              backgroundColor: "Highlight"
-            }, _c)
-          },
-          ".ms-Button.is-disabled": {
-            color: semanticColors.buttonTextDisabled,
-            selectors: (_d = {}, _d[HighContrastSelector] = {
-              color: "GrayText",
-              borderColor: "GrayText",
-              backgroundColor: "Window"
-            }, _d)
-          }
-        }
-      },
-      splitButtonContainerChecked: {
-        selectors: {
-          ".ms-Button--primary": {
-            selectors: (_e = {}, _e[HighContrastSelector] = __assign({ color: "Window", backgroundColor: "WindowText" }, getHighContrastNoAdjustStyle()), _e)
-          }
-        }
-      },
-      splitButtonContainerCheckedHovered: {
-        selectors: {
-          ".ms-Button--primary": {
-            selectors: (_f = {}, _f[HighContrastSelector] = __assign({ color: "Window", backgroundColor: "WindowText" }, getHighContrastNoAdjustStyle()), _f)
-          }
-        }
-      },
-      splitButtonContainerFocused: {
-        outline: "none!important"
-      },
-      splitButtonMenuButton: (_g = {
-        padding: 6,
-        height: "auto",
-        boxSizing: "border-box",
-        borderRadius: 0,
-        borderTopRightRadius: effects.roundedCorner2,
-        borderBottomRightRadius: effects.roundedCorner2,
-        border: "1px solid ".concat(palette.neutralSecondaryAlt),
-        borderLeft: "none",
-        outline: "transparent",
-        userSelect: "none",
-        display: "inline-block",
-        textDecoration: "none",
-        textAlign: "center",
-        cursor: "pointer",
-        verticalAlign: "top",
-        width: 32,
-        marginLeft: -1,
-        marginTop: 0,
-        marginRight: 0,
-        marginBottom: 0
-      }, _g[HighContrastSelector] = {
-        ".ms-Button-menuIcon": {
-          color: "WindowText"
-        }
-      }, _g),
-      splitButtonDivider: __assign(__assign({}, splitButtonDividerBaseStyles2), { selectors: (_h = {}, _h[HighContrastSelector] = {
-        backgroundColor: "WindowText"
-      }, _h) }),
-      splitButtonDividerDisabled: __assign(__assign({}, splitButtonDividerBaseStyles2), { selectors: (_j = {}, _j[HighContrastSelector] = {
-        backgroundColor: "GrayText"
-      }, _j) }),
-      splitButtonMenuButtonDisabled: {
-        pointerEvents: "none",
-        border: "none",
-        selectors: (_k = {
-          ":hover": {
-            cursor: "default"
-          },
-          ".ms-Button--primary": {
-            selectors: (_l = {}, _l[HighContrastSelector] = {
-              color: "GrayText",
-              borderColor: "GrayText",
-              backgroundColor: "Window"
-            }, _l)
-          },
-          ".ms-Button-menuIcon": {
-            selectors: (_m = {}, _m[HighContrastSelector] = {
-              color: "GrayText"
-            }, _m)
-          }
-        }, _k[HighContrastSelector] = {
-          color: "GrayText",
-          border: "1px solid GrayText",
-          backgroundColor: "Window"
-        }, _k)
-      },
-      splitButtonFlexContainer: {
-        display: "flex",
-        height: "100%",
-        flexWrap: "nowrap",
-        justifyContent: "center",
-        alignItems: "center"
-      },
-      splitButtonContainerDisabled: {
-        outline: "none",
-        border: "none",
-        selectors: (_o = {}, _o[HighContrastSelector] = __assign({ color: "GrayText", borderColor: "GrayText", backgroundColor: "Window" }, getHighContrastNoAdjustStyle()), _o)
-      },
-      splitButtonMenuFocused: __assign({}, getFocusStyle(theme, { highContrastStyle: buttonHighContrastFocus, inset: 2 }))
-    };
-    return concatStyleSets(splitButtonStyles, customStyles);
-  });
-
-  // ../node_modules/@fluentui/react/lib/components/Button/ButtonThemes.js
-  var splitButtonDividerBaseStyles = function() {
-    return {
-      position: "absolute",
-      width: 1,
-      right: 31,
-      top: 8,
-      bottom: 8
-    };
-  };
-  function standardStyles(theme) {
-    var _a5, _b, _c, _d, _e;
-    var s = theme.semanticColors, p = theme.palette;
-    var buttonBackground = s.buttonBackground;
-    var buttonBackgroundPressed = s.buttonBackgroundPressed;
-    var buttonBackgroundHovered = s.buttonBackgroundHovered;
-    var buttonBackgroundDisabled = s.buttonBackgroundDisabled;
-    var buttonText = s.buttonText;
-    var buttonTextHovered = s.buttonTextHovered;
-    var buttonTextDisabled = s.buttonTextDisabled;
-    var buttonTextChecked = s.buttonTextChecked;
-    var buttonTextCheckedHovered = s.buttonTextCheckedHovered;
-    return {
-      root: {
-        backgroundColor: buttonBackground,
-        color: buttonText
-      },
-      rootHovered: {
-        backgroundColor: buttonBackgroundHovered,
-        color: buttonTextHovered,
-        selectors: (_a5 = {}, _a5[HighContrastSelector] = {
-          borderColor: "Highlight",
-          color: "Highlight"
-        }, _a5)
-      },
-      rootPressed: {
-        backgroundColor: buttonBackgroundPressed,
-        color: buttonTextChecked
-      },
-      rootExpanded: {
-        backgroundColor: buttonBackgroundPressed,
-        color: buttonTextChecked
-      },
-      rootChecked: {
-        backgroundColor: buttonBackgroundPressed,
-        color: buttonTextChecked
-      },
-      rootCheckedHovered: {
-        backgroundColor: buttonBackgroundPressed,
-        color: buttonTextCheckedHovered
-      },
-      rootDisabled: {
-        color: buttonTextDisabled,
-        backgroundColor: buttonBackgroundDisabled,
-        selectors: (_b = {}, _b[HighContrastSelector] = {
-          color: "GrayText",
-          borderColor: "GrayText",
-          backgroundColor: "Window"
-        }, _b)
-      },
-      // Split button styles
-      splitButtonContainer: {
-        selectors: (_c = {}, _c[HighContrastSelector] = {
-          border: "none"
-        }, _c)
-      },
-      splitButtonMenuButton: {
-        color: p.white,
-        backgroundColor: "transparent",
-        selectors: {
-          ":hover": {
-            backgroundColor: p.neutralLight,
-            selectors: (_d = {}, _d[HighContrastSelector] = {
-              color: "Highlight"
-            }, _d)
-          }
-        }
-      },
-      splitButtonMenuButtonDisabled: {
-        backgroundColor: s.buttonBackgroundDisabled,
-        selectors: {
-          ":hover": {
-            backgroundColor: s.buttonBackgroundDisabled
-          }
-        }
-      },
-      splitButtonDivider: __assign(__assign({}, splitButtonDividerBaseStyles()), { backgroundColor: p.neutralTertiaryAlt, selectors: (_e = {}, _e[HighContrastSelector] = {
-        backgroundColor: "WindowText"
-      }, _e) }),
-      splitButtonDividerDisabled: {
-        backgroundColor: theme.palette.neutralTertiaryAlt
-      },
-      splitButtonMenuButtonChecked: {
-        backgroundColor: p.neutralQuaternaryAlt,
-        selectors: {
-          ":hover": {
-            backgroundColor: p.neutralQuaternaryAlt
-          }
-        }
-      },
-      splitButtonMenuButtonExpanded: {
-        backgroundColor: p.neutralQuaternaryAlt,
-        selectors: {
-          ":hover": {
-            backgroundColor: p.neutralQuaternaryAlt
-          }
-        }
-      },
-      splitButtonMenuIcon: {
-        color: s.buttonText
-      },
-      splitButtonMenuIconDisabled: {
-        color: s.buttonTextDisabled
-      }
-    };
-  }
-  function primaryStyles(theme) {
-    var _a5, _b, _c, _d, _e, _f, _g, _h, _j;
-    var p = theme.palette, s = theme.semanticColors;
-    return {
-      root: {
-        backgroundColor: s.primaryButtonBackground,
-        border: "1px solid ".concat(s.primaryButtonBackground),
-        color: s.primaryButtonText,
-        selectors: (_a5 = {}, _a5[HighContrastSelector] = __assign({ color: "Window", backgroundColor: "WindowText", borderColor: "WindowText" }, getHighContrastNoAdjustStyle()), _a5[".".concat(IsFocusVisibleClassName, " &:focus")] = {
-          selectors: {
-            ":after": {
-              border: "none",
-              outlineColor: p.white
-            }
-          }
-        }, _a5)
-      },
-      rootHovered: {
-        backgroundColor: s.primaryButtonBackgroundHovered,
-        border: "1px solid ".concat(s.primaryButtonBackgroundHovered),
-        color: s.primaryButtonTextHovered,
-        selectors: (_b = {}, _b[HighContrastSelector] = {
-          color: "Window",
-          backgroundColor: "Highlight",
-          borderColor: "Highlight"
-        }, _b)
-      },
-      rootPressed: {
-        backgroundColor: s.primaryButtonBackgroundPressed,
-        border: "1px solid ".concat(s.primaryButtonBackgroundPressed),
-        color: s.primaryButtonTextPressed,
-        selectors: (_c = {}, _c[HighContrastSelector] = __assign({ color: "Window", backgroundColor: "WindowText", borderColor: "WindowText" }, getHighContrastNoAdjustStyle()), _c)
-      },
-      rootExpanded: {
-        backgroundColor: s.primaryButtonBackgroundPressed,
-        color: s.primaryButtonTextPressed
-      },
-      rootChecked: {
-        backgroundColor: s.primaryButtonBackgroundPressed,
-        color: s.primaryButtonTextPressed
-      },
-      rootCheckedHovered: {
-        backgroundColor: s.primaryButtonBackgroundPressed,
-        color: s.primaryButtonTextPressed
-      },
-      rootDisabled: {
-        color: s.primaryButtonTextDisabled,
-        backgroundColor: s.primaryButtonBackgroundDisabled,
-        selectors: (_d = {}, _d[HighContrastSelector] = {
-          color: "GrayText",
-          borderColor: "GrayText",
-          backgroundColor: "Window"
-        }, _d)
-      },
-      // Split button styles
-      splitButtonContainer: {
-        selectors: (_e = {}, _e[HighContrastSelector] = {
-          border: "none"
-        }, _e)
-      },
-      splitButtonDivider: __assign(__assign({}, splitButtonDividerBaseStyles()), { backgroundColor: p.white, selectors: (_f = {}, _f[HighContrastSelector] = {
-        backgroundColor: "Window"
-      }, _f) }),
-      splitButtonMenuButton: {
-        backgroundColor: s.primaryButtonBackground,
-        color: s.primaryButtonText,
-        selectors: (_g = {}, _g[HighContrastSelector] = {
-          backgroundColor: "Canvas"
-        }, _g[":hover"] = {
-          backgroundColor: s.primaryButtonBackgroundHovered,
-          selectors: (_h = {}, _h[HighContrastSelector] = {
-            color: "Highlight"
-          }, _h)
-        }, _g)
-      },
-      splitButtonMenuButtonDisabled: {
-        backgroundColor: s.primaryButtonBackgroundDisabled,
-        selectors: {
-          ":hover": {
-            backgroundColor: s.primaryButtonBackgroundDisabled
-          }
-        }
-      },
-      splitButtonMenuButtonChecked: {
-        backgroundColor: s.primaryButtonBackgroundPressed,
-        selectors: {
-          ":hover": {
-            backgroundColor: s.primaryButtonBackgroundPressed
-          }
-        }
-      },
-      splitButtonMenuButtonExpanded: {
-        backgroundColor: s.primaryButtonBackgroundPressed,
-        selectors: {
-          ":hover": {
-            backgroundColor: s.primaryButtonBackgroundPressed
-          }
-        }
-      },
-      splitButtonMenuIcon: {
-        color: s.primaryButtonText
-      },
-      splitButtonMenuIconDisabled: {
-        color: p.neutralTertiary,
-        selectors: (_j = {}, _j[HighContrastSelector] = {
-          color: "GrayText"
-        }, _j)
-      }
-    };
-  }
-
-  // ../node_modules/@fluentui/react/lib/components/Button/DefaultButton/DefaultButton.styles.js
-  var DEFAULT_BUTTON_HEIGHT = "32px";
-  var DEFAULT_BUTTON_MIN_WIDTH = "80px";
-  var getStyles10 = memoizeFunction(function(theme, customStyles, primary) {
-    var baseButtonStyles = getStyles8(theme);
-    var splitButtonStyles = getStyles9(theme);
-    var defaultButtonStyles = {
-      root: {
-        minWidth: DEFAULT_BUTTON_MIN_WIDTH,
-        height: DEFAULT_BUTTON_HEIGHT
-      },
-      label: {
-        fontWeight: FontWeights.semibold
-      }
-    };
-    return concatStyleSets(baseButtonStyles, defaultButtonStyles, primary ? primaryStyles(theme) : standardStyles(theme), splitButtonStyles, customStyles);
-  });
-
-  // ../node_modules/@fluentui/react/lib/components/Button/DefaultButton/DefaultButton.js
-  var DefaultButton = (
-    /** @class */
-    function(_super) {
-      __extends(DefaultButton2, _super);
-      function DefaultButton2() {
-        return _super !== null && _super.apply(this, arguments) || this;
-      }
-      DefaultButton2.prototype.render = function() {
-        var _a5 = this.props, _b = _a5.primary, primary = _b === void 0 ? false : _b, styles2 = _a5.styles, theme = _a5.theme;
-        return React44.createElement(BaseButton, __assign({}, this.props, { variantClassName: primary ? "ms-Button--primary" : "ms-Button--default", styles: getStyles10(theme, styles2, primary), onRenderDescription: nullRender }));
-      };
-      DefaultButton2 = __decorate([
-        customizable("DefaultButton", ["theme", "styles"], true)
-      ], DefaultButton2);
-      return DefaultButton2;
-    }(React44.Component)
-  );
-
-  // ../node_modules/@fluentui/react/lib/components/Button/PrimaryButton/PrimaryButton.js
-  var React45 = __toESM(require_react());
-  var PrimaryButton = (
-    /** @class */
-    function(_super) {
-      __extends(PrimaryButton2, _super);
-      function PrimaryButton2() {
-        return _super !== null && _super.apply(this, arguments) || this;
-      }
-      PrimaryButton2.prototype.render = function() {
-        return React45.createElement(DefaultButton, __assign({}, this.props, { primary: true, onRenderDescription: nullRender }));
-      };
-      PrimaryButton2 = __decorate([
-        customizable("PrimaryButton", ["theme", "styles"], true)
-      ], PrimaryButton2);
-      return PrimaryButton2;
-    }(React45.Component)
-  );
-
-  // ../node_modules/@fluentui/react/lib/components/Label/Label.base.js
-  var React46 = __toESM(require_react());
-  var getClassNames8 = classNamesFunction({
-    // Label is used a lot by other components.
-    // It's likely to see expected cases which pass different className to the Label.
-    // Therefore setting a larger cache size.
-    cacheSize: 100
-  });
-  var LabelBase = (
-    /** @class */
-    function(_super) {
-      __extends(LabelBase2, _super);
-      function LabelBase2() {
-        return _super !== null && _super.apply(this, arguments) || this;
-      }
-      LabelBase2.prototype.render = function() {
-        var _a5 = this.props, _b = _a5.as, RootType = _b === void 0 ? "label" : _b, children = _a5.children, className = _a5.className, disabled = _a5.disabled, styles2 = _a5.styles, required = _a5.required, theme = _a5.theme;
-        var classNames2 = getClassNames8(styles2, {
-          className,
-          disabled,
-          required,
-          theme
-        });
-        return React46.createElement(RootType, __assign({}, getNativeProps(this.props, divProperties), { className: classNames2.root }), children);
-      };
-      return LabelBase2;
-    }(React46.Component)
-  );
-
-  // ../node_modules/@fluentui/react/lib/components/Label/Label.styles.js
-  var getStyles11 = function(props) {
-    var _a5;
-    var theme = props.theme, className = props.className, disabled = props.disabled, required = props.required;
-    var semanticColors = theme.semanticColors;
-    var labelFontWeight = FontWeights.semibold;
-    var labelColor = semanticColors.bodyText;
-    var labelDisabledColor = semanticColors.disabledBodyText;
-    var labelRequiredStarColor = semanticColors.errorText;
-    return {
-      root: [
-        "ms-Label",
-        theme.fonts.medium,
-        {
-          fontWeight: labelFontWeight,
-          color: labelColor,
-          boxSizing: "border-box",
-          boxShadow: "none",
-          margin: 0,
-          display: "block",
-          padding: "5px 0",
-          wordWrap: "break-word",
-          overflowWrap: "break-word"
-        },
-        disabled && {
-          color: labelDisabledColor,
-          selectors: (_a5 = {}, _a5[HighContrastSelector] = __assign({ color: "GrayText" }, getHighContrastNoAdjustStyle()), _a5)
-        },
-        required && {
-          selectors: {
-            "::after": {
-              content: "' *'",
-              color: labelRequiredStarColor,
-              paddingRight: 12
-            }
-          }
-        },
-        className
-      ]
-    };
-  };
-
-  // ../node_modules/@fluentui/react/lib/components/Label/Label.js
-  var Label = styled(LabelBase, getStyles11, void 0, {
-    scope: "Label"
-  });
-
-  // ../node_modules/@fluentui/react/lib/components/TextField/TextField.base.js
-  var React47 = __toESM(require_react());
-  var getClassNames9 = classNamesFunction();
-  var DEFAULT_STATE_VALUE = "";
-  var COMPONENT_NAME4 = "TextField";
-  var REVEAL_ICON_NAME = "RedEye";
-  var HIDE_ICON_NAME = "Hide";
-  var TextFieldBase = (
-    /** @class */
-    function(_super) {
-      __extends(TextFieldBase2, _super);
-      function TextFieldBase2(props) {
-        var _this = _super.call(this, props) || this;
-        _this._textElement = React47.createRef();
-        _this._onFocus = function(ev) {
-          if (_this.props.onFocus) {
-            _this.props.onFocus(ev);
-          }
-          _this.setState({ isFocused: true }, function() {
-            if (_this.props.validateOnFocusIn) {
-              _this._validate(_this.value);
-            }
-          });
-        };
-        _this._onBlur = function(ev) {
-          if (_this.props.onBlur) {
-            _this.props.onBlur(ev);
-          }
-          _this.setState({ isFocused: false }, function() {
-            if (_this.props.validateOnFocusOut) {
-              _this._validate(_this.value);
-            }
-          });
-        };
-        _this._onRenderLabel = function(props2) {
-          var label = props2.label, required = props2.required;
-          var labelStyles = _this._classNames.subComponentStyles ? _this._classNames.subComponentStyles.label : void 0;
-          if (label) {
-            return React47.createElement(Label, { required, htmlFor: _this._id, styles: labelStyles, disabled: props2.disabled, id: _this._labelId }, props2.label);
-          }
-          return null;
-        };
-        _this._onRenderDescription = function(props2) {
-          if (props2.description) {
-            return React47.createElement("span", { className: _this._classNames.description }, props2.description);
-          }
-          return null;
-        };
-        _this._onRevealButtonClick = function(event) {
-          _this.setState(function(prevState) {
-            return { isRevealingPassword: !prevState.isRevealingPassword };
-          });
-        };
-        _this._onInputChange = function(event) {
-          var _a6, _b;
-          var element = event.target;
-          var value = element.value;
-          var previousValue = _getValue(_this.props, _this.state) || "";
-          if (value === void 0 || value === _this._lastChangeValue || value === previousValue) {
-            _this._lastChangeValue = void 0;
-            return;
-          }
-          _this._lastChangeValue = value;
-          (_b = (_a6 = _this.props).onChange) === null || _b === void 0 ? void 0 : _b.call(_a6, event, value);
-          if (!_this._isControlled) {
-            _this.setState({ uncontrolledValue: value });
-          }
-        };
-        initializeComponentRef(_this);
-        _this._async = new Async(_this);
-        if (true) {
-          warnMutuallyExclusive(COMPONENT_NAME4, props, {
-            errorMessage: "onGetErrorMessage"
-          });
-        }
-        _this._fallbackId = getId(COMPONENT_NAME4);
-        _this._descriptionId = getId(COMPONENT_NAME4 + "Description");
-        _this._labelId = getId(COMPONENT_NAME4 + "Label");
-        _this._prefixId = getId(COMPONENT_NAME4 + "Prefix");
-        _this._suffixId = getId(COMPONENT_NAME4 + "Suffix");
-        _this._warnControlledUsage();
-        var _a5 = props.defaultValue, defaultValue = _a5 === void 0 ? DEFAULT_STATE_VALUE : _a5;
-        if (typeof defaultValue === "number") {
-          defaultValue = String(defaultValue);
-        }
-        _this.state = {
-          uncontrolledValue: _this._isControlled ? void 0 : defaultValue,
-          isFocused: false,
-          errorMessage: ""
-        };
-        _this._delayedValidate = _this._async.debounce(_this._validate, _this.props.deferredValidationTime);
-        _this._lastValidation = 0;
-        return _this;
-      }
-      Object.defineProperty(TextFieldBase2.prototype, "value", {
-        /**
-         * Gets the current value of the text field.
-         */
-        get: function() {
-          return _getValue(this.props, this.state);
-        },
-        enumerable: false,
-        configurable: true
-      });
-      TextFieldBase2.prototype.componentDidMount = function() {
-        this._adjustInputHeight();
-        if (this.props.validateOnLoad) {
-          this._validate(this.value);
-        }
-      };
-      TextFieldBase2.prototype.componentWillUnmount = function() {
-        this._async.dispose();
-      };
-      TextFieldBase2.prototype.getSnapshotBeforeUpdate = function(prevProps, prevState) {
-        return {
-          selection: [this.selectionStart, this.selectionEnd]
-        };
-      };
-      TextFieldBase2.prototype.componentDidUpdate = function(prevProps, prevState, snapshot) {
-        var props = this.props;
-        var _a5 = (snapshot || {}).selection, selection = _a5 === void 0 ? [null, null] : _a5;
-        var start = selection[0], end = selection[1];
-        if (!!prevProps.multiline !== !!props.multiline && prevState.isFocused) {
-          this.focus();
-          if (start !== null && end !== null && start >= 0 && end >= 0) {
-            this.setSelectionRange(start, end);
-          }
-        }
-        if (prevProps.value !== props.value) {
-          this._lastChangeValue = void 0;
-        }
-        var prevValue = _getValue(prevProps, prevState);
-        var value = this.value;
-        if (prevValue !== value) {
-          this._warnControlledUsage(prevProps);
-          if (this.state.errorMessage && !props.errorMessage) {
-            this.setState({ errorMessage: "" });
-          }
-          this._adjustInputHeight();
-          if (_shouldValidateAllChanges(props)) {
-            this._delayedValidate(value);
-          }
-        }
-      };
-      TextFieldBase2.prototype.render = function() {
-        var _a5 = this.props, borderless = _a5.borderless, className = _a5.className, disabled = _a5.disabled, invalid = _a5.invalid, iconProps = _a5.iconProps, inputClassName = _a5.inputClassName, label = _a5.label, multiline = _a5.multiline, required = _a5.required, underlined = _a5.underlined, prefix = _a5.prefix, resizable = _a5.resizable, suffix = _a5.suffix, theme = _a5.theme, styles2 = _a5.styles, autoAdjustHeight = _a5.autoAdjustHeight, canRevealPassword = _a5.canRevealPassword, revealPasswordAriaLabel = _a5.revealPasswordAriaLabel, type = _a5.type, _b = _a5.onRenderPrefix, onRenderPrefix = _b === void 0 ? this._onRenderPrefix : _b, _c = _a5.onRenderSuffix, onRenderSuffix = _c === void 0 ? this._onRenderSuffix : _c, _d = _a5.onRenderLabel, onRenderLabel = _d === void 0 ? this._onRenderLabel : _d, _e = _a5.onRenderDescription, onRenderDescription = _e === void 0 ? this._onRenderDescription : _e;
-        var _f = this.state, isFocused = _f.isFocused, isRevealingPassword = _f.isRevealingPassword;
-        var errorMessage = this._errorMessage;
-        var isInvalid = typeof invalid === "boolean" ? invalid : !!errorMessage;
-        var hasRevealButton = !!canRevealPassword && type === "password" && _browserNeedsRevealButton();
-        var classNames2 = this._classNames = getClassNames9(styles2, {
-          theme,
-          className,
-          disabled,
-          focused: isFocused,
-          required,
-          multiline,
-          hasLabel: !!label,
-          hasErrorMessage: isInvalid,
-          borderless,
-          resizable,
-          hasIcon: !!iconProps,
-          underlined,
-          inputClassName,
-          autoAdjustHeight,
-          hasRevealButton
-        });
-        return (
-          // eslint-disable-next-line deprecation/deprecation
-          React47.createElement(
-            "div",
-            { ref: this.props.elementRef, className: classNames2.root },
-            React47.createElement(
-              "div",
-              { className: classNames2.wrapper },
-              onRenderLabel(this.props, this._onRenderLabel),
-              React47.createElement(
-                "div",
-                { className: classNames2.fieldGroup },
-                (prefix !== void 0 || this.props.onRenderPrefix) && React47.createElement("div", { className: classNames2.prefix, id: this._prefixId }, onRenderPrefix(this.props, this._onRenderPrefix)),
-                multiline ? this._renderTextArea() : this._renderInput(),
-                iconProps && React47.createElement(Icon, __assign({ className: classNames2.icon }, iconProps)),
-                hasRevealButton && // Explicitly set type="button" since the default button type within a form is "submit"
-                React47.createElement(
-                  "button",
-                  { "aria-label": revealPasswordAriaLabel, className: classNames2.revealButton, onClick: this._onRevealButtonClick, "aria-pressed": !!isRevealingPassword, type: "button" },
-                  React47.createElement(
-                    "span",
-                    { className: classNames2.revealSpan },
-                    React47.createElement(Icon, { className: classNames2.revealIcon, iconName: isRevealingPassword ? HIDE_ICON_NAME : REVEAL_ICON_NAME })
-                  )
-                ),
-                (suffix !== void 0 || this.props.onRenderSuffix) && React47.createElement("div", { className: classNames2.suffix, id: this._suffixId }, onRenderSuffix(this.props, this._onRenderSuffix))
-              )
-            ),
-            this._isDescriptionAvailable && React47.createElement(
-              "span",
-              { id: this._descriptionId },
-              onRenderDescription(this.props, this._onRenderDescription),
-              errorMessage && React47.createElement(
-                "div",
-                { role: "alert" },
-                React47.createElement(DelayedRender, null, this._renderErrorMessage())
-              )
-            )
-          )
-        );
-      };
-      TextFieldBase2.prototype.focus = function() {
-        if (this._textElement.current) {
-          this._textElement.current.focus();
-        }
-      };
-      TextFieldBase2.prototype.blur = function() {
-        if (this._textElement.current) {
-          this._textElement.current.blur();
-        }
-      };
-      TextFieldBase2.prototype.select = function() {
-        if (this._textElement.current) {
-          this._textElement.current.select();
-        }
-      };
-      TextFieldBase2.prototype.setSelectionStart = function(value) {
-        if (this._textElement.current) {
-          this._textElement.current.selectionStart = value;
-        }
-      };
-      TextFieldBase2.prototype.setSelectionEnd = function(value) {
-        if (this._textElement.current) {
-          this._textElement.current.selectionEnd = value;
-        }
-      };
-      Object.defineProperty(TextFieldBase2.prototype, "selectionStart", {
-        /**
-         * Gets the selection start of the text field
-         */
-        get: function() {
-          return this._textElement.current ? this._textElement.current.selectionStart : -1;
-        },
-        enumerable: false,
-        configurable: true
-      });
-      Object.defineProperty(TextFieldBase2.prototype, "selectionEnd", {
-        /**
-         * Gets the selection end of the text field
-         */
-        get: function() {
-          return this._textElement.current ? this._textElement.current.selectionEnd : -1;
-        },
-        enumerable: false,
-        configurable: true
-      });
-      TextFieldBase2.prototype.setSelectionRange = function(start, end) {
-        if (this._textElement.current) {
-          this._textElement.current.setSelectionRange(start, end);
-        }
-      };
-      TextFieldBase2.prototype._warnControlledUsage = function(prevProps) {
-        warnControlledUsage({
-          componentId: this._id,
-          componentName: COMPONENT_NAME4,
-          props: this.props,
-          oldProps: prevProps,
-          valueProp: "value",
-          defaultValueProp: "defaultValue",
-          onChangeProp: "onChange",
-          readOnlyProp: "readOnly"
-        });
-        if (this.props.value === null && !this._hasWarnedNullValue) {
-          this._hasWarnedNullValue = true;
-          warn("Warning: 'value' prop on '".concat(COMPONENT_NAME4, "' should not be null. Consider using an ") + "empty string to clear the component or undefined to indicate an uncontrolled component.");
-        }
-      };
-      Object.defineProperty(TextFieldBase2.prototype, "_id", {
-        /** Returns `props.id` if available, or a fallback if not. */
-        get: function() {
-          return this.props.id || this._fallbackId;
-        },
-        enumerable: false,
-        configurable: true
-      });
-      Object.defineProperty(TextFieldBase2.prototype, "_isControlled", {
-        get: function() {
-          return isControlled(this.props, "value");
-        },
-        enumerable: false,
-        configurable: true
-      });
-      TextFieldBase2.prototype._onRenderPrefix = function(props) {
-        var prefix = props.prefix;
-        return React47.createElement("span", { style: { paddingBottom: "1px" } }, prefix);
-      };
-      TextFieldBase2.prototype._onRenderSuffix = function(props) {
-        var suffix = props.suffix;
-        return React47.createElement("span", { style: { paddingBottom: "1px" } }, suffix);
-      };
-      Object.defineProperty(TextFieldBase2.prototype, "_errorMessage", {
-        /**
-         * Current error message from either `props.errorMessage` or the result of `props.onGetErrorMessage`.
-         *
-         * - If there is no validation error or we have not validated the input value, errorMessage is an empty string.
-         * - If we have done the validation and there is validation error, errorMessage is the validation error message.
-         */
-        get: function() {
-          var _a5 = this.props.errorMessage, errorMessage = _a5 === void 0 ? this.state.errorMessage : _a5;
-          return errorMessage || "";
-        },
-        enumerable: false,
-        configurable: true
-      });
-      TextFieldBase2.prototype._renderErrorMessage = function() {
-        var errorMessage = this._errorMessage;
-        return errorMessage ? typeof errorMessage === "string" ? React47.createElement(
-          "p",
-          { className: this._classNames.errorMessage },
-          React47.createElement("span", { "data-automation-id": "error-message" }, errorMessage)
-        ) : React47.createElement("div", { className: this._classNames.errorMessage, "data-automation-id": "error-message" }, errorMessage) : null;
-      };
-      Object.defineProperty(TextFieldBase2.prototype, "_isDescriptionAvailable", {
-        /**
-         * If a custom description render function is supplied then treat description as always available.
-         * Otherwise defer to the presence of description or error message text.
-         */
-        get: function() {
-          var props = this.props;
-          return !!(props.onRenderDescription || props.description || this._errorMessage);
-        },
-        enumerable: false,
-        configurable: true
-      });
-      TextFieldBase2.prototype._renderTextArea = function() {
-        var _a5 = this.props.invalid, invalid = _a5 === void 0 ? !!this._errorMessage : _a5;
-        var textAreaProps = getNativeProps(this.props, textAreaProperties, ["defaultValue"]);
-        var ariaLabelledBy = this.props["aria-labelledby"] || (this.props.label ? this._labelId : void 0);
-        return React47.createElement("textarea", __assign({ id: this._id }, textAreaProps, { ref: this._textElement, value: this.value || "", onInput: this._onInputChange, onChange: this._onInputChange, className: this._classNames.field, "aria-labelledby": ariaLabelledBy, "aria-describedby": this._isDescriptionAvailable ? this._descriptionId : this.props["aria-describedby"], "aria-invalid": invalid, "aria-label": this.props.ariaLabel, readOnly: this.props.readOnly, onFocus: this._onFocus, onBlur: this._onBlur }));
-      };
-      TextFieldBase2.prototype._renderInput = function() {
-        var _a5 = this.props, ariaLabel = _a5.ariaLabel, _b = _a5.invalid, invalid = _b === void 0 ? !!this._errorMessage : _b, onRenderPrefix = _a5.onRenderPrefix, onRenderSuffix = _a5.onRenderSuffix, prefix = _a5.prefix, suffix = _a5.suffix, _c = _a5.type, type = _c === void 0 ? "text" : _c, label = _a5.label;
-        var labelIds = [];
-        label && labelIds.push(this._labelId);
-        (prefix !== void 0 || onRenderPrefix) && labelIds.push(this._prefixId);
-        (suffix !== void 0 || onRenderSuffix) && labelIds.push(this._suffixId);
-        var inputProps = __assign(__assign({ type: this.state.isRevealingPassword ? "text" : type, id: this._id }, getNativeProps(this.props, inputProperties, ["defaultValue", "type"])), { "aria-labelledby": this.props["aria-labelledby"] || (labelIds.length > 0 ? labelIds.join(" ") : void 0), ref: this._textElement, value: this.value || "", onInput: this._onInputChange, onChange: this._onInputChange, className: this._classNames.field, "aria-label": ariaLabel, "aria-describedby": this._isDescriptionAvailable ? this._descriptionId : this.props["aria-describedby"], "aria-invalid": invalid, onFocus: this._onFocus, onBlur: this._onBlur });
-        var defaultRender = function(updatedInputProps) {
-          return React47.createElement("input", __assign({}, updatedInputProps));
-        };
-        var onRenderInput = this.props.onRenderInput || defaultRender;
-        return onRenderInput(inputProps, defaultRender);
-      };
-      TextFieldBase2.prototype._validate = function(value) {
-        var _this = this;
-        if (this._latestValidateValue === value && _shouldValidateAllChanges(this.props)) {
-          return;
-        }
-        this._latestValidateValue = value;
-        var onGetErrorMessage = this.props.onGetErrorMessage;
-        var result = onGetErrorMessage && onGetErrorMessage(value || "");
-        if (result !== void 0) {
-          if (typeof result === "string" || !("then" in result)) {
-            this.setState({ errorMessage: result });
-            this._notifyAfterValidate(value, result);
-          } else {
-            var currentValidation_1 = ++this._lastValidation;
-            result.then(function(errorMessage) {
-              if (currentValidation_1 === _this._lastValidation) {
-                _this.setState({ errorMessage });
-              }
-              _this._notifyAfterValidate(value, errorMessage);
-            });
-          }
-        } else {
-          this._notifyAfterValidate(value, "");
-        }
-      };
-      TextFieldBase2.prototype._notifyAfterValidate = function(value, errorMessage) {
-        if (value === this.value && this.props.onNotifyValidationResult) {
-          this.props.onNotifyValidationResult(errorMessage, value);
-        }
-      };
-      TextFieldBase2.prototype._adjustInputHeight = function() {
-        if (this._textElement.current && this.props.autoAdjustHeight && this.props.multiline) {
-          var textField = this._textElement.current;
-          textField.style.height = "";
-          textField.style.height = textField.scrollHeight + "px";
-        }
-      };
-      TextFieldBase2.defaultProps = {
-        resizable: true,
-        deferredValidationTime: 200,
-        validateOnLoad: true
-      };
-      return TextFieldBase2;
-    }(React47.Component)
-  );
-  function _getValue(props, state) {
-    var _a5 = props.value, value = _a5 === void 0 ? state.uncontrolledValue : _a5;
-    if (typeof value === "number") {
-      return String(value);
-    }
-    return value;
-  }
-  function _shouldValidateAllChanges(props) {
-    return !(props.validateOnFocusIn || props.validateOnFocusOut);
-  }
-  var __browserNeedsRevealButton;
-  function _browserNeedsRevealButton() {
-    if (typeof __browserNeedsRevealButton !== "boolean") {
-      var win = getWindow();
-      if (win === null || win === void 0 ? void 0 : win.navigator) {
-        var isEdge = /Edg/.test(win.navigator.userAgent || "");
-        __browserNeedsRevealButton = !(isIE11() || isEdge);
-      } else {
-        __browserNeedsRevealButton = true;
-      }
-    }
-    return __browserNeedsRevealButton;
-  }
-
-  // ../node_modules/@fluentui/react/lib/components/TextField/TextField.styles.js
-  var globalClassNames = {
-    root: "ms-TextField",
-    description: "ms-TextField-description",
-    errorMessage: "ms-TextField-errorMessage",
-    field: "ms-TextField-field",
-    fieldGroup: "ms-TextField-fieldGroup",
-    prefix: "ms-TextField-prefix",
-    suffix: "ms-TextField-suffix",
-    wrapper: "ms-TextField-wrapper",
-    revealButton: "ms-TextField-reveal",
-    multiline: "ms-TextField--multiline",
-    borderless: "ms-TextField--borderless",
-    underlined: "ms-TextField--underlined",
-    unresizable: "ms-TextField--unresizable",
-    required: "is-required",
-    disabled: "is-disabled",
-    active: "is-active"
-  };
-  function getLabelStyles(props) {
-    var underlined = props.underlined, disabled = props.disabled, focused = props.focused, theme = props.theme;
-    var palette = theme.palette, fonts = theme.fonts;
-    return function() {
-      var _a5;
-      return {
-        root: [
-          underlined && disabled && {
-            color: palette.neutralTertiary
-          },
-          underlined && {
-            fontSize: fonts.medium.fontSize,
-            marginRight: 8,
-            paddingLeft: 12,
-            paddingRight: 0,
-            lineHeight: "22px",
-            height: 32
-          },
-          underlined && focused && {
-            selectors: (_a5 = {}, _a5[HighContrastSelector] = {
-              height: 31
-              // -1px to prevent jumpiness in HC with the increased border-width to 2px
-            }, _a5)
-          }
-        ]
-      };
-    };
-  }
-  function getStyles12(props) {
-    var _a5, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
-    var theme = props.theme, className = props.className, disabled = props.disabled, focused = props.focused, required = props.required, multiline = props.multiline, hasLabel = props.hasLabel, borderless = props.borderless, underlined = props.underlined, hasIcon = props.hasIcon, resizable = props.resizable, hasErrorMessage = props.hasErrorMessage, inputClassName = props.inputClassName, autoAdjustHeight = props.autoAdjustHeight, hasRevealButton = props.hasRevealButton;
-    var semanticColors = theme.semanticColors, effects = theme.effects, fonts = theme.fonts;
-    var classNames2 = getGlobalClassNames(globalClassNames, theme);
-    var fieldPrefixSuffix = {
-      // Suffix/Prefix are not editable so the disabled slot perfectly fits.
-      background: semanticColors.disabledBackground,
-      color: !disabled ? semanticColors.inputPlaceholderText : semanticColors.disabledText,
-      display: "flex",
-      alignItems: "center",
-      padding: "0 10px",
-      lineHeight: 1,
-      whiteSpace: "nowrap",
-      flexShrink: 0,
-      selectors: (_a5 = {}, _a5[HighContrastSelector] = {
-        background: "Window",
-        color: disabled ? "GrayText" : "WindowText"
-      }, _a5)
-    };
-    var placeholderStyles = [
-      {
-        color: semanticColors.inputPlaceholderText,
-        opacity: 1,
-        selectors: (_b = {}, _b[HighContrastSelector] = {
-          color: "GrayText"
-        }, _b)
-      }
-    ];
-    var disabledPlaceholderStyles = {
-      color: semanticColors.disabledText,
-      selectors: (_c = {}, _c[HighContrastSelector] = {
-        color: "GrayText"
-      }, _c)
-    };
-    return {
-      root: [
-        classNames2.root,
-        fonts.medium,
-        required && classNames2.required,
-        disabled && classNames2.disabled,
-        focused && classNames2.active,
-        multiline && classNames2.multiline,
-        borderless && classNames2.borderless,
-        underlined && classNames2.underlined,
-        normalize2,
-        {
-          position: "relative"
-        },
-        className
-      ],
-      wrapper: [
-        classNames2.wrapper,
-        underlined && [
-          {
-            display: "flex",
-            borderBottom: "1px solid ".concat(!hasErrorMessage ? semanticColors.inputBorder : semanticColors.errorText),
-            width: "100%"
-          },
-          disabled && {
-            borderBottomColor: semanticColors.disabledBackground,
-            selectors: (_d = {}, _d[HighContrastSelector] = __assign({ borderColor: "GrayText" }, getHighContrastNoAdjustStyle()), _d)
-          },
-          !disabled && {
-            selectors: {
-              ":hover": {
-                borderBottomColor: !hasErrorMessage ? semanticColors.inputBorderHovered : semanticColors.errorText,
-                selectors: (_e = {}, _e[HighContrastSelector] = __assign({ borderBottomColor: "Highlight" }, getHighContrastNoAdjustStyle()), _e)
-              }
-            }
-          },
-          focused && [
-            {
-              position: "relative"
-            },
-            getInputFocusStyle(!hasErrorMessage ? semanticColors.inputFocusBorderAlt : semanticColors.errorText, 0, "borderBottom")
-          ]
-        ]
-      ],
-      fieldGroup: [
-        classNames2.fieldGroup,
-        normalize2,
-        {
-          border: "1px solid ".concat(semanticColors.inputBorder),
-          borderRadius: effects.roundedCorner2,
-          background: semanticColors.inputBackground,
-          cursor: "text",
-          height: 32,
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "stretch",
-          position: "relative"
-        },
-        multiline && {
-          minHeight: "60px",
-          height: "auto",
-          display: "flex"
-        },
-        !focused && !disabled && {
-          selectors: {
-            ":hover": {
-              borderColor: semanticColors.inputBorderHovered,
-              selectors: (_f = {}, _f[HighContrastSelector] = __assign({ borderColor: "Highlight" }, getHighContrastNoAdjustStyle()), _f)
-            }
-          }
-        },
-        focused && !underlined && getInputFocusStyle(!hasErrorMessage ? semanticColors.inputFocusBorderAlt : semanticColors.errorText, effects.roundedCorner2),
-        disabled && {
-          borderColor: semanticColors.disabledBackground,
-          selectors: (_g = {}, _g[HighContrastSelector] = __assign({ borderColor: "GrayText" }, getHighContrastNoAdjustStyle()), _g),
-          cursor: "default"
-        },
-        borderless && {
-          border: "none"
-        },
-        borderless && focused && {
-          border: "none",
-          selectors: {
-            ":after": {
-              border: "none"
-            }
-          }
-        },
-        underlined && {
-          flex: "1 1 0px",
-          border: "none",
-          textAlign: "left"
-        },
-        underlined && disabled && {
-          backgroundColor: "transparent"
-        },
-        hasErrorMessage && !underlined && {
-          borderColor: semanticColors.errorText,
-          selectors: {
-            "&:hover": {
-              borderColor: semanticColors.errorText
-            }
-          }
-        },
-        !hasLabel && required && {
-          selectors: (_h = {
-            ":before": {
-              content: "'*'",
-              color: semanticColors.errorText,
-              position: "absolute",
-              top: -5,
-              right: -10
-            }
-          }, _h[HighContrastSelector] = {
-            selectors: {
-              ":before": {
-                color: "WindowText",
-                right: -14
-                // moving the * 4 pixel to right to alleviate border clipping in HC mode.
-              }
-            }
-          }, _h)
-        }
-      ],
-      field: [
-        fonts.medium,
-        classNames2.field,
-        normalize2,
-        {
-          borderRadius: 0,
-          border: "none",
-          background: "none",
-          backgroundColor: "transparent",
-          color: semanticColors.inputText,
-          padding: "0 8px",
-          width: "100%",
-          minWidth: 0,
-          textOverflow: "ellipsis",
-          outline: 0,
-          selectors: (_j = {
-            "&:active, &:focus, &:hover": { outline: 0 },
-            "::-ms-clear": {
-              display: "none"
-            }
-          }, _j[HighContrastSelector] = {
-            background: "Window",
-            color: disabled ? "GrayText" : "WindowText"
-          }, _j)
-        },
-        getPlaceholderStyles(placeholderStyles),
-        multiline && !resizable && [
-          classNames2.unresizable,
-          {
-            resize: "none"
-          }
-        ],
-        multiline && {
-          minHeight: "inherit",
-          lineHeight: 17,
-          flexGrow: 1,
-          paddingTop: 6,
-          paddingBottom: 6,
-          overflow: "auto",
-          width: "100%"
-        },
-        multiline && autoAdjustHeight && {
-          overflow: "hidden"
-        },
-        hasIcon && !hasRevealButton && {
-          paddingRight: 24
-        },
-        multiline && hasIcon && {
-          paddingRight: 40
-        },
-        disabled && [
-          {
-            backgroundColor: semanticColors.disabledBackground,
-            color: semanticColors.disabledText,
-            borderColor: semanticColors.disabledBackground
-          },
-          getPlaceholderStyles(disabledPlaceholderStyles)
-        ],
-        underlined && {
-          textAlign: "left"
-        },
-        focused && !borderless && {
-          selectors: (_k = {}, _k[HighContrastSelector] = {
-            paddingLeft: 11,
-            paddingRight: 11
-          }, _k)
-        },
-        focused && multiline && !borderless && {
-          selectors: (_l = {}, _l[HighContrastSelector] = {
-            paddingTop: 4
-            // take into consideration the 2px increased border-width (not when borderless).
-          }, _l)
-        },
-        inputClassName
-      ],
-      icon: [
-        multiline && {
-          paddingRight: 24,
-          alignItems: "flex-end"
-        },
-        {
-          pointerEvents: "none",
-          position: "absolute",
-          bottom: 6,
-          right: 8,
-          top: "auto",
-          fontSize: IconFontSizes.medium,
-          lineHeight: 18
-        },
-        disabled && {
-          color: semanticColors.disabledText
-        }
-      ],
-      description: [
-        classNames2.description,
-        {
-          color: semanticColors.bodySubtext,
-          fontSize: fonts.xSmall.fontSize
-        }
-      ],
-      errorMessage: [
-        classNames2.errorMessage,
-        AnimationClassNames.slideDownIn20,
-        fonts.small,
-        {
-          color: semanticColors.errorText,
-          margin: 0,
-          paddingTop: 5,
-          display: "flex",
-          alignItems: "center"
-        }
-      ],
-      prefix: [classNames2.prefix, fieldPrefixSuffix],
-      suffix: [classNames2.suffix, fieldPrefixSuffix],
-      revealButton: [
-        classNames2.revealButton,
-        "ms-Button",
-        "ms-Button--icon",
-        getFocusStyle(theme, { inset: 1 }),
-        {
-          height: 30,
-          width: 32,
-          border: "none",
-          padding: "0px 4px",
-          backgroundColor: "transparent",
-          color: semanticColors.link,
-          selectors: {
-            ":hover": {
-              outline: 0,
-              color: semanticColors.primaryButtonBackgroundHovered,
-              backgroundColor: semanticColors.buttonBackgroundHovered,
-              selectors: (_m = {}, _m[HighContrastSelector] = {
-                borderColor: "Highlight",
-                color: "Highlight"
-              }, _m)
-            },
-            ":focus": { outline: 0 }
-          }
-        },
-        hasIcon && {
-          marginRight: 28
-        }
-      ],
-      revealSpan: {
-        display: "flex",
-        height: "100%",
-        alignItems: "center"
-      },
-      revealIcon: {
-        margin: "0px 4px",
-        pointerEvents: "none",
-        bottom: 6,
-        right: 8,
-        top: "auto",
-        fontSize: IconFontSizes.medium,
-        lineHeight: 18
-      },
-      subComponentStyles: {
-        label: getLabelStyles(props)
-      }
-    };
-  }
-
-  // ../node_modules/@fluentui/react/lib/components/TextField/TextField.js
-  var TextField = styled(TextFieldBase, getStyles12, void 0, {
-    scope: "TextField"
-  });
-
   // ../node_modules/@fluentui/foundation-legacy/lib/createComponent.js
-  var React49 = __toESM(require_react());
+  var React3 = __toESM(require_react());
 
   // ../node_modules/@fluentui/foundation-legacy/lib/slots.js
-  var React48 = __toESM(require_react());
+  var React2 = __toESM(require_react());
 
   // ../node_modules/@fluentui/foundation-legacy/lib/utilities.js
   var assign2 = __assign;
@@ -39732,22 +29192,22 @@
     }
     var slotType = type;
     if (slotType.isSlot) {
-      children = React48.Children.toArray(children);
+      children = React2.Children.toArray(children);
       if (children.length === 0) {
         return slotType(props);
       }
       return slotType(__assign(__assign({}, props), { children }));
     } else {
-      return React48.createElement.apply(React48, __spreadArray([type, props], children, false));
+      return React2.createElement.apply(React2, __spreadArray([type, props], children, false));
     }
   }
   function createFactory(DefaultComponent, options) {
     if (options === void 0) {
       options = {};
     }
-    var _a5 = options.defaultProp, defaultProp = _a5 === void 0 ? "children" : _a5;
+    var _a2 = options.defaultProp, defaultProp = _a2 === void 0 ? "children" : _a2;
     var result = function(componentProps, userProps, userSlotOptions, defaultStyles, theme) {
-      if (React48.isValidElement(userProps)) {
+      if (React2.isValidElement(userProps)) {
         return userProps;
       }
       var flattenedUserProps = _translateShorthand(defaultProp, userProps);
@@ -39755,13 +29215,13 @@
       if (userSlotOptions) {
         if (userSlotOptions.component) {
           var UserComponent = userSlotOptions.component;
-          return React48.createElement(UserComponent, __assign({}, finalProps));
+          return React2.createElement(UserComponent, __assign({}, finalProps));
         }
         if (userSlotOptions.render) {
           return userSlotOptions.render(finalProps, DefaultComponent);
         }
       }
-      return React48.createElement(DefaultComponent, __assign({}, finalProps));
+      return React2.createElement(DefaultComponent, __assign({}, finalProps));
     };
     return result;
   }
@@ -39803,10 +29263,10 @@
     return result;
   }
   function _translateShorthand(defaultProp, slotProps) {
-    var _a5;
+    var _a2;
     var transformedProps;
     if (typeof slotProps === "string" || typeof slotProps === "number" || typeof slotProps === "boolean") {
-      transformedProps = (_a5 = {}, _a5[defaultProp] = slotProps, _a5);
+      transformedProps = (_a2 = {}, _a2[defaultProp] = slotProps, _a2);
     } else {
       transformedProps = slotProps;
     }
@@ -39818,13 +29278,13 @@
       allProps[_i - 2] = arguments[_i];
     }
     var finalProps = {};
-    var classNames2 = [];
-    for (var _a5 = 0, allProps_1 = allProps; _a5 < allProps_1.length; _a5++) {
-      var props = allProps_1[_a5];
-      classNames2.push(props && props.className);
+    var classNames = [];
+    for (var _a2 = 0, allProps_1 = allProps; _a2 < allProps_1.length; _a2++) {
+      var props = allProps_1[_a2];
+      classNames.push(props && props.className);
       assign2(finalProps, props);
     }
-    finalProps.className = mergeCss([defaultStyles, classNames2], { rtl: getRTL2(theme) });
+    finalProps.className = mergeCss([defaultStyles, classNames], { rtl: getRTL2(theme) });
     return finalProps;
   }
   function _renderSlot(ComponentType, componentProps, userProps, slotOptions, defaultStyles, theme) {
@@ -39840,10 +29300,10 @@
     if (options === void 0) {
       options = {};
     }
-    var _a5 = options.factoryOptions, factoryOptions = _a5 === void 0 ? {} : _a5;
+    var _a2 = options.factoryOptions, factoryOptions = _a2 === void 0 ? {} : _a2;
     var defaultProp = factoryOptions.defaultProp;
     var ResultComponent = function(componentProps) {
-      var settings = _getCustomizations(options.displayName, React49.useContext(CustomizerContext), options.fields);
+      var settings = _getCustomizations(options.displayName, React3.useContext(CustomizerContext), options.fields);
       var stateReducer = options.state;
       if (stateReducer) {
         componentProps = __assign(__assign({}, componentProps), stateReducer(componentProps));
@@ -39876,8 +29336,8 @@
       allTokens[_i - 2] = arguments[_i];
     }
     var tokens = {};
-    for (var _a5 = 0, allTokens_1 = allTokens; _a5 < allTokens_1.length; _a5++) {
-      var currentTokens = allTokens_1[_a5];
+    for (var _a2 = 0, allTokens_1 = allTokens; _a2 < allTokens_1.length; _a2++) {
+      var currentTokens = allTokens_1[_a2];
       if (currentTokens) {
         currentTokens = typeof currentTokens === "function" ? currentTokens(props, theme) : currentTokens;
         if (Array.isArray(currentTokens)) {
@@ -39889,12 +29349,12 @@
     return tokens;
   }
   function _getCustomizations(displayName, context, fields) {
-    var DefaultFields2 = ["theme", "styles", "tokens"];
-    return Customizations.getSettings(fields || DefaultFields2, displayName, context.customizations);
+    var DefaultFields = ["theme", "styles", "tokens"];
+    return Customizations.getSettings(fields || DefaultFields, displayName, context.customizations);
   }
 
   // ../node_modules/@fluentui/react/lib/components/Stack/StackItem/StackItem.styles.js
-  var GlobalClassNames7 = {
+  var GlobalClassNames = {
     root: "ms-StackItem"
   };
   var alignMap = {
@@ -39902,12 +29362,12 @@
     end: "flex-end"
   };
   var StackItemStyles = function(props, theme, tokens) {
-    var grow = props.grow, shrink = props.shrink, disableShrink = props.disableShrink, align = props.align, verticalFill = props.verticalFill, order = props.order, className = props.className, _a5 = props.basis, basis = _a5 === void 0 ? "auto" : _a5;
-    var classNames2 = getGlobalClassNames(GlobalClassNames7, theme);
+    var grow = props.grow, shrink = props.shrink, disableShrink = props.disableShrink, align = props.align, verticalFill = props.verticalFill, order = props.order, className = props.className, _a2 = props.basis, basis = _a2 === void 0 ? "auto" : _a2;
+    var classNames = getGlobalClassNames(GlobalClassNames, theme);
     return {
       root: [
         theme.fonts.medium,
-        classNames2.root,
+        classNames.root,
         {
           flexBasis: basis,
           margin: tokens.margin,
@@ -39955,7 +29415,7 @@
   });
 
   // ../node_modules/@fluentui/react/lib/components/Stack/Stack.js
-  var React50 = __toESM(require_react());
+  var React4 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react/lib/components/Stack/StackUtils.js
   var _getThemedSpacing = function(space, theme) {
@@ -40042,15 +29502,15 @@
     start: "flex-start",
     end: "flex-end"
   };
-  var GlobalClassNames8 = {
+  var GlobalClassNames2 = {
     root: "ms-Stack",
     inner: "ms-Stack-inner",
     child: "ms-Stack-child"
   };
   var styles = function(props, theme, tokens) {
-    var _a5, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+    var _a2, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
     var className = props.className, disableShrink = props.disableShrink, enableScopedSelectors = props.enableScopedSelectors, grow = props.grow, horizontal = props.horizontal, horizontalAlign = props.horizontalAlign, reversed = props.reversed, verticalAlign = props.verticalAlign, verticalFill = props.verticalFill, wrap = props.wrap;
-    var classNames2 = getGlobalClassNames(GlobalClassNames8, theme);
+    var classNames = getGlobalClassNames(GlobalClassNames2, theme);
     var childrenGap = tokens && tokens.childrenGap ? tokens.childrenGap : props.gap;
     var maxHeight = tokens && tokens.maxHeight ? tokens.maxHeight : props.maxHeight;
     var maxWidth = tokens && tokens.maxWidth ? tokens.maxWidth : props.maxWidth;
@@ -40061,15 +29521,15 @@
     var childStyles = {
       textOverflow: "ellipsis"
     };
-    var childSelector = "> " + (enableScopedSelectors ? "." + GlobalClassNames8.child : "*");
-    var disableShrinkStyles = (_a5 = {}, // flexShrink styles are applied by the StackItem
-    _a5["".concat(childSelector, ":not(.").concat(GlobalClassNames7.root, ")")] = {
+    var childSelector = "> " + (enableScopedSelectors ? "." + GlobalClassNames2.child : "*");
+    var disableShrinkStyles = (_a2 = {}, // flexShrink styles are applied by the StackItem
+    _a2["".concat(childSelector, ":not(.").concat(GlobalClassNames.root, ")")] = {
       flexShrink: 0
-    }, _a5);
+    }, _a2);
     if (wrap) {
       return {
         root: [
-          classNames2.root,
+          classNames.root,
           {
             flexWrap: "wrap",
             maxWidth,
@@ -40091,7 +29551,7 @@
           }
         ],
         inner: [
-          classNames2.inner,
+          classNames.inner,
           (_d = {
             display: "flex",
             flexWrap: "wrap",
@@ -40127,7 +29587,7 @@
     }
     return {
       root: [
-        classNames2.root,
+        classNames.root,
         (_j = {
           display: "flex",
           flexDirection: horizontal ? reversed ? "row-reverse" : "row" : reversed ? "column-reverse" : "column",
@@ -40164,7 +29624,7 @@
 
   // ../node_modules/@fluentui/react/lib/components/Stack/Stack.js
   var StackView = function(props) {
-    var _a5 = props.as, RootType = _a5 === void 0 ? "div" : _a5, _b = props.disableShrink, disableShrink = _b === void 0 ? false : _b, _c = props.doNotRenderFalsyValues, doNotRenderFalsyValues = _c === void 0 ? false : _c, _d = props.enableScopedSelectors, enableScopedSelectors = _d === void 0 ? false : _d, wrap = props.wrap, rest = __rest(props, ["as", "disableShrink", "doNotRenderFalsyValues", "enableScopedSelectors", "wrap"]);
+    var _a2 = props.as, RootType = _a2 === void 0 ? "div" : _a2, _b = props.disableShrink, disableShrink = _b === void 0 ? false : _b, _c = props.doNotRenderFalsyValues, doNotRenderFalsyValues = _c === void 0 ? false : _c, _d = props.enableScopedSelectors, enableScopedSelectors = _d === void 0 ? false : _d, wrap = props.wrap, rest = __rest(props, ["as", "disableShrink", "doNotRenderFalsyValues", "enableScopedSelectors", "wrap"]);
     warnDeprecations("Stack", props, {
       gap: "tokens.childrenGap",
       maxHeight: "tokens.maxHeight",
@@ -40190,14 +29650,14 @@
     }
     return withSlots(Slots.root, __assign({}, nativeProps), stackChildren);
   };
-  function _processStackChildren(children, _a5) {
-    var disableShrink = _a5.disableShrink, enableScopedSelectors = _a5.enableScopedSelectors, doNotRenderFalsyValues = _a5.doNotRenderFalsyValues;
-    var childrenArray = React50.Children.toArray(children);
-    childrenArray = React50.Children.map(childrenArray, function(child) {
-      if (!child || !React50.isValidElement(child)) {
+  function _processStackChildren(children, _a2) {
+    var disableShrink = _a2.disableShrink, enableScopedSelectors = _a2.enableScopedSelectors, doNotRenderFalsyValues = _a2.doNotRenderFalsyValues;
+    var childrenArray = React4.Children.toArray(children);
+    childrenArray = React4.Children.map(childrenArray, function(child) {
+      if (!child || !React4.isValidElement(child)) {
         return doNotRenderFalsyValues ? null : child;
       }
-      if (child.type === React50.Fragment) {
+      if (child.type === React4.Fragment) {
         return child.props.children ? _processStackChildren(child.props.children, { disableShrink, enableScopedSelectors, doNotRenderFalsyValues }) : null;
       }
       var childAsReactElement = child;
@@ -40206,7 +29666,7 @@
         defaultItemProps = { shrink: !disableShrink };
       }
       var childClassName = childAsReactElement.props.className;
-      return React50.cloneElement(childAsReactElement, __assign(__assign(__assign(__assign({}, defaultItemProps), childAsReactElement.props), childClassName && { className: childClassName }), enableScopedSelectors && { className: css(GlobalClassNames8.child, childClassName) }));
+      return React4.cloneElement(childAsReactElement, __assign(__assign(__assign(__assign({}, defaultItemProps), childAsReactElement.props), childClassName && { className: childClassName }), enableScopedSelectors && { className: css(GlobalClassNames2.child, childClassName) }));
     });
     return childrenArray;
   }
@@ -40536,9 +29996,9 @@ Source string: ${className}`);
 
   // ../node_modules/@griffel/core/devtools/isDevToolsEnabled.esm.js
   var isDevToolsEnabled = /* @__PURE__ */ (() => {
-    var _a5;
+    var _a2;
     try {
-      return Boolean(typeof window !== "undefined" && ((_a5 = window.sessionStorage) === null || _a5 === void 0 ? void 0 : _a5.getItem("__GRIFFEL_DEVTOOLS__")));
+      return Boolean(typeof window !== "undefined" && ((_a2 = window.sessionStorage) === null || _a2 === void 0 ? void 0 : _a2.getItem("__GRIFFEL_DEVTOOLS__")));
     } catch (e) {
       return false;
     }
@@ -40624,13 +30084,13 @@ Source string: ${className}`);
     const stylesheetKey = isMediaBucket ? bucketName + metadata["m"] : bucketName;
     if (!renderer.stylesheets[stylesheetKey]) {
       const tag = targetDocument && targetDocument.createElement("style");
-      const stylesheet3 = createIsomorphicStyleSheet(tag, bucketName, {
+      const stylesheet = createIsomorphicStyleSheet(tag, bucketName, {
         ...renderer.styleElementAttributes,
         ...isMediaBucket && {
           media: metadata["m"]
         }
       });
-      renderer.stylesheets[stylesheetKey] = stylesheet3;
+      renderer.stylesheets[stylesheetKey] = stylesheet;
       if (targetDocument && tag) {
         targetDocument.head.insertBefore(tag, findInsertionPoint(targetDocument, insertionPoint, bucketName, renderer, metadata));
       }
@@ -40867,11 +30327,11 @@ Source string: ${className}`);
   }
 
   // ../node_modules/@griffel/react/useInsertionEffect.esm.js
-  var React51 = __toESM(require_react());
+  var React5 = __toESM(require_react());
   var useInsertionEffect2 = (
     // @ts-expect-error Hack to make sure that `useInsertionEffect` will not cause bundling issues in older React versions
     // eslint-disable-next-line no-useless-concat
-    React51["useInsertionEffect"] ? React51["useInsertionEffect"] : void 0
+    React5["useInsertionEffect"] ? React5["useInsertionEffect"] : void 0
   );
 
   // ../node_modules/@griffel/react/insertionFactory.esm.js
@@ -40892,26 +30352,26 @@ Source string: ${className}`);
   };
 
   // ../node_modules/@griffel/react/RendererContext.esm.js
-  var React52 = __toESM(require_react());
-  var RendererContext = /* @__PURE__ */ React52.createContext(/* @__PURE__ */ createDOMRenderer());
+  var React6 = __toESM(require_react());
+  var RendererContext = /* @__PURE__ */ React6.createContext(/* @__PURE__ */ createDOMRenderer());
   function useRenderer() {
-    return React52.useContext(RendererContext);
+    return React6.useContext(RendererContext);
   }
 
   // ../node_modules/@griffel/react/TextDirectionContext.esm.js
-  var React53 = __toESM(require_react());
-  var TextDirectionContext = /* @__PURE__ */ React53.createContext("ltr");
+  var React7 = __toESM(require_react());
+  var TextDirectionContext = /* @__PURE__ */ React7.createContext("ltr");
   function useTextDirection() {
-    return React53.useContext(TextDirectionContext);
+    return React7.useContext(TextDirectionContext);
   }
 
   // ../node_modules/@griffel/react/__styles.esm.js
   function __styles2(classesMapBySlot, cssRules2) {
-    const getStyles13 = __styles(classesMapBySlot, cssRules2, insertionFactory2);
+    const getStyles = __styles(classesMapBySlot, cssRules2, insertionFactory2);
     return function useClasses() {
       const dir = useTextDirection();
       const renderer = useRenderer();
-      return getStyles13({
+      return getStyles({
         dir,
         renderer
       });
@@ -40920,11 +30380,11 @@ Source string: ${className}`);
 
   // ../node_modules/@griffel/react/__resetStyles.esm.js
   function __resetStyles2(ltrClassName, rtlClassName, cssRules2) {
-    const getStyles13 = __resetStyles(ltrClassName, rtlClassName, cssRules2, insertionFactory2);
+    const getStyles = __resetStyles(ltrClassName, rtlClassName, cssRules2, insertionFactory2);
     return function useClasses() {
       const dir = useTextDirection();
       const renderer = useRenderer();
-      return getStyles13({
+      return getStyles({
         dir,
         renderer
       });
@@ -40936,7 +30396,7 @@ Source string: ${className}`);
   var Runtime = ReactRuntime;
 
   // ../node_modules/@fluentui/react-jsx-runtime/lib/jsx/createJSX.js
-  var React62 = __toESM(require_react());
+  var React14 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-utilities/lib/compose/slot.js
   var slot_exports = {};
@@ -40945,7 +30405,7 @@ Source string: ${className}`);
     optional: () => optional,
     resolveShorthand: () => resolveShorthand
   });
-  var React54 = __toESM(require_react());
+  var React8 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-utilities/lib/compose/constants.js
   var SLOT_RENDER_FUNCTION_SYMBOL = Symbol("fui.slotRenderFunction");
@@ -40975,7 +30435,7 @@ Source string: ${className}`);
   }
   function resolveShorthand(value) {
     if (typeof value === "string" || typeof value === "number" || Array.isArray(value) || // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    React54.isValidElement(value)) {
+    React8.isValidElement(value)) {
       return {
         children: value
       };
@@ -41008,7 +30468,7 @@ Slot shorthands can be strings, numbers, arrays or JSX elements`);
   };
 
   // ../node_modules/@fluentui/react-utilities/lib/compose/assertSlots.js
-  var React55 = __toESM(require_react());
+  var React9 = __toESM(require_react());
   function assertSlots(state) {
     if (true) {
       const typedState = state;
@@ -41044,80 +30504,24 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
     window.document.createElement);
   }
 
-  // ../node_modules/@fluentui/react-utilities/lib/hooks/useControllableState.js
-  var React56 = __toESM(require_react());
-  function isFactoryDispatch(newState) {
-    return typeof newState === "function";
-  }
-  var useControllableState = (options) => {
-    const [internalState, setInternalState] = React56.useState(() => {
-      if (options.defaultState === void 0) {
-        return options.initialState;
-      }
-      return isInitializer(options.defaultState) ? options.defaultState() : options.defaultState;
-    });
-    const stateValueRef = React56.useRef(options.state);
-    React56.useEffect(() => {
-      stateValueRef.current = options.state;
-    }, [
-      options.state
-    ]);
-    const setControlledState = React56.useCallback((newState) => {
-      if (isFactoryDispatch(newState)) {
-        newState(stateValueRef.current);
-      }
-    }, []);
-    return useIsControlled(options.state) ? [
-      options.state,
-      setControlledState
-    ] : [
-      internalState,
-      setInternalState
-    ];
-  };
-  function isInitializer(value) {
-    return typeof value === "function";
-  }
-  var useIsControlled = (controlledValue) => {
-    const [isControlled2] = React56.useState(() => controlledValue !== void 0);
-    if (true) {
-      React56.useEffect(() => {
-        if (isControlled2 !== (controlledValue !== void 0)) {
-          const error = new Error();
-          const controlWarning = isControlled2 ? "a controlled value to be uncontrolled" : "an uncontrolled value to be controlled";
-          const undefinedWarning = isControlled2 ? "defined to an undefined" : "undefined to a defined";
-          console.error(`@fluentui/react-utilities [${useControllableState.name}]:
-A component is changing ${controlWarning}. This is likely caused by the value changing from ${undefinedWarning} value, which should not happen.
-Decide between using a controlled or uncontrolled input element for the lifetime of the component.
-More info: https://reactjs.org/link/controlled-components
-${error.stack}`);
-        }
-      }, [
-        isControlled2,
-        controlledValue
-      ]);
-    }
-    return isControlled2;
-  };
-
   // ../node_modules/@fluentui/react-utilities/lib/hooks/useEventCallback.js
-  var React58 = __toESM(require_react());
+  var React11 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-utilities/lib/hooks/useIsomorphicLayoutEffect.js
-  var React57 = __toESM(require_react());
-  var useIsomorphicLayoutEffect2 = canUseDOM3() ? React57.useLayoutEffect : React57.useEffect;
+  var React10 = __toESM(require_react());
+  var useIsomorphicLayoutEffect = canUseDOM3() ? React10.useLayoutEffect : React10.useEffect;
 
   // ../node_modules/@fluentui/react-utilities/lib/hooks/useEventCallback.js
   var useEventCallback = (fn) => {
-    const callbackRef = React58.useRef(() => {
+    const callbackRef = React11.useRef(() => {
       throw new Error("Cannot call an event handler while rendering");
     });
-    useIsomorphicLayoutEffect2(() => {
+    useIsomorphicLayoutEffect(() => {
       callbackRef.current = fn;
     }, [
       fn
     ]);
-    return React58.useCallback((...args) => {
+    return React11.useCallback((...args) => {
       const callback = callbackRef.current;
       return callback(...args);
     }, [
@@ -41125,30 +30529,8 @@ ${error.stack}`);
     ]);
   };
 
-  // ../node_modules/@fluentui/react-utilities/lib/hooks/useMergedRefs.js
-  var React59 = __toESM(require_react());
-  function useMergedRefs2(...refs) {
-    const mergedCallback = React59.useCallback(
-      (value) => {
-        mergedCallback.current = value;
-        for (const ref of refs) {
-          if (typeof ref === "function") {
-            ref(value);
-          } else if (ref) {
-            ref.current = value;
-          }
-        }
-      },
-      // eslint-disable-next-line react-hooks/exhaustive-deps -- already exhaustive
-      [
-        ...refs
-      ]
-    );
-    return mergedCallback;
-  }
-
   // ../node_modules/@fluentui/react-utilities/lib/utils/getNativeElementProps.js
-  var React60 = __toESM(require_react());
+  var React12 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-utilities/lib/utils/properties.js
   var toObjectMap2 = (...items) => {
@@ -41473,23 +30855,6 @@ ${error.stack}`);
     return getNativeProps2(props, allowedPropNames, excludedPropNames);
   }
 
-  // ../node_modules/@fluentui/react-utilities/lib/utils/mergeCallbacks.js
-  function mergeCallbacks(callback1, callback2) {
-    return (...args) => {
-      var _callback1, _callback2;
-      (_callback1 = callback1) === null || _callback1 === void 0 ? void 0 : _callback1(...args);
-      (_callback2 = callback2) === null || _callback2 === void 0 ? void 0 : _callback2(...args);
-    };
-  }
-
-  // ../node_modules/@fluentui/react-utilities/lib/utils/isHTMLElement.js
-  function isHTMLElement(element, options) {
-    var _typedElement_ownerDocument, _typedElement, _options;
-    const typedElement = element;
-    var _options_constructorName;
-    return Boolean(((_typedElement = typedElement) === null || _typedElement === void 0 ? void 0 : (_typedElement_ownerDocument = _typedElement.ownerDocument) === null || _typedElement_ownerDocument === void 0 ? void 0 : _typedElement_ownerDocument.defaultView) && typedElement instanceof typedElement.ownerDocument.defaultView[(_options_constructorName = (_options = options) === null || _options === void 0 ? void 0 : _options.constructorName) !== null && _options_constructorName !== void 0 ? _options_constructorName : "HTMLElement"]);
-  }
-
   // ../node_modules/@fluentui/react-jsx-runtime/lib/utils/getMetadataFromSlotComponent.js
   function getMetadataFromSlotComponent(type) {
     const { as, [SLOT_ELEMENT_TYPE_SYMBOL]: baseElementType, [SLOT_RENDER_FUNCTION_SYMBOL]: renderFunction, ...propsWithoutMetadata } = type;
@@ -41506,7 +30871,7 @@ ${error.stack}`);
   }
 
   // ../node_modules/@fluentui/react-jsx-runtime/lib/utils/createCompatSlotComponent.js
-  var React61 = __toESM(require_react());
+  var React13 = __toESM(require_react());
   function createCompatSlotComponent(type, props) {
     return {
       ...props,
@@ -41523,7 +30888,7 @@ ${error.stack}`);
         ...overrideProps
       };
       if (renderFunction) {
-        return runtime(React62.Fragment, {
+        return runtime(React14.Fragment, {
           children: renderFunction(elementType, props)
         }, key, source, self);
       }
@@ -41541,4102 +30906,28 @@ ${error.stack}`);
   };
 
   // ../node_modules/@fluentui/react-jsx-runtime/lib/jsx-runtime.js
-  var import_react2 = __toESM(require_react());
+  var import_react = __toESM(require_react());
   var jsx = createJSX(Runtime.jsx);
   var jsxs = createJSX(Runtime.jsxs);
 
-  // ../node_modules/@fluentui/react-shared-contexts/lib/ProviderContext/ProviderContext.js
-  var React63 = __toESM(require_react());
-  var ProviderContext = React63.createContext(void 0);
-  var providerContextDefaultValue = {
-    targetDocument: typeof document === "object" ? document : void 0,
-    dir: "ltr"
-  };
-  var Provider = ProviderContext.Provider;
-  function useFluent() {
-    var _React_useContext3;
-    return (_React_useContext3 = React63.useContext(ProviderContext)) !== null && _React_useContext3 !== void 0 ? _React_useContext3 : providerContextDefaultValue;
-  }
-
   // ../node_modules/@fluentui/react-shared-contexts/lib/CustomStyleHooksContext/CustomStyleHooksContext.js
-  var React64 = __toESM(require_react());
-  var CustomStyleHooksContext = React64.createContext(void 0);
+  var React15 = __toESM(require_react());
+  var CustomStyleHooksContext = React15.createContext(void 0);
   var noop = () => {
   };
   var CustomStyleHooksProvider = CustomStyleHooksContext.Provider;
   var useCustomStyleHook = (hook) => {
-    var _React_useContext3;
+    var _React_useContext2;
     var _React_useContext_hook;
-    return (_React_useContext_hook = (_React_useContext3 = React64.useContext(CustomStyleHooksContext)) === null || _React_useContext3 === void 0 ? void 0 : _React_useContext3[hook]) !== null && _React_useContext_hook !== void 0 ? _React_useContext_hook : noop;
+    return (_React_useContext_hook = (_React_useContext2 = React15.useContext(CustomStyleHooksContext)) === null || _React_useContext2 === void 0 ? void 0 : _React_useContext2[hook]) !== null && _React_useContext_hook !== void 0 ? _React_useContext_hook : noop;
   };
-
-  // ../node_modules/keyborg/dist/keyborg.esm.js
-  var _canUseWeakRef = typeof WeakRef !== "undefined";
-  var WeakRefInstance = class {
-    constructor(instance) {
-      if (_canUseWeakRef && typeof instance === "object") {
-        this._weakRef = new WeakRef(instance);
-      } else {
-        this._instance = instance;
-      }
-    }
-    /**
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakRef/deref}
-     */
-    deref() {
-      var _a5, _b, _c;
-      let instance;
-      if (this._weakRef) {
-        instance = (_a5 = this._weakRef) === null || _a5 === void 0 ? void 0 : _a5.deref();
-        if (!instance) {
-          delete this._weakRef;
-        }
-      } else {
-        instance = this._instance;
-        if ((_c = (_b = instance) === null || _b === void 0 ? void 0 : _b.isDisposed) === null || _c === void 0 ? void 0 : _c.call(_b)) {
-          delete this._instance;
-        }
-      }
-      return instance;
-    }
-  };
-  var KEYBORG_FOCUSIN = "keyborg:focusin";
-  function canOverrideNativeFocus(win) {
-    const HTMLElement2 = win.HTMLElement;
-    const origFocus = HTMLElement2.prototype.focus;
-    let isCustomFocusCalled = false;
-    HTMLElement2.prototype.focus = function focus() {
-      isCustomFocusCalled = true;
-    };
-    const btn = win.document.createElement("button");
-    btn.focus();
-    HTMLElement2.prototype.focus = origFocus;
-    return isCustomFocusCalled;
-  }
-  var _canOverrideNativeFocus = false;
-  function nativeFocus(element) {
-    const focus = element.focus;
-    if (focus.__keyborgNativeFocus) {
-      focus.__keyborgNativeFocus.call(element);
-    } else {
-      element.focus();
-    }
-  }
-  function setupFocusEvent(win) {
-    const kwin = win;
-    if (!_canOverrideNativeFocus) {
-      _canOverrideNativeFocus = canOverrideNativeFocus(kwin);
-    }
-    const origFocus = kwin.HTMLElement.prototype.focus;
-    if (origFocus.__keyborgNativeFocus) {
-      return;
-    }
-    kwin.HTMLElement.prototype.focus = focus;
-    const data = kwin.__keyborgData = {
-      focusInHandler: (e) => {
-        var _a5;
-        const target = e.target;
-        if (!target) {
-          return;
-        }
-        const event = document.createEvent("HTMLEvents");
-        event.initEvent(KEYBORG_FOCUSIN, true, true);
-        const details = {
-          relatedTarget: e.relatedTarget || void 0
-        };
-        if (_canOverrideNativeFocus || data.lastFocusedProgrammatically) {
-          details.isFocusedProgrammatically = target === ((_a5 = data.lastFocusedProgrammatically) === null || _a5 === void 0 ? void 0 : _a5.deref());
-          data.lastFocusedProgrammatically = void 0;
-        }
-        event.details = details;
-        target.dispatchEvent(event);
-      }
-    };
-    kwin.document.addEventListener("focusin", kwin.__keyborgData.focusInHandler, true);
-    function focus() {
-      const keyborgNativeFocusEvent = kwin.__keyborgData;
-      if (keyborgNativeFocusEvent) {
-        keyborgNativeFocusEvent.lastFocusedProgrammatically = new WeakRefInstance(this);
-      }
-      return origFocus.apply(this, arguments);
-    }
-    focus.__keyborgNativeFocus = origFocus;
-  }
-  function disposeFocusEvent(win) {
-    const kwin = win;
-    const proto = kwin.HTMLElement.prototype;
-    const origFocus = proto.focus.__keyborgNativeFocus;
-    const keyborgNativeFocusEvent = kwin.__keyborgData;
-    if (keyborgNativeFocusEvent) {
-      kwin.document.removeEventListener("focusin", keyborgNativeFocusEvent.focusInHandler, true);
-      delete kwin.__keyborgData;
-    }
-    if (origFocus) {
-      proto.focus = origFocus;
-    }
-  }
-  var _dismissTimeout = 500;
-  var _lastId = 0;
-  var KeyborgState = class {
-    constructor() {
-      this.__keyborgCoreRefs = {};
-      this._isNavigatingWithKeyboard = false;
-    }
-    add(keyborg) {
-      const id = keyborg.id;
-      if (!(id in this.__keyborgCoreRefs)) {
-        this.__keyborgCoreRefs[id] = new WeakRefInstance(keyborg);
-      }
-    }
-    remove(id) {
-      delete this.__keyborgCoreRefs[id];
-      if (Object.keys(this.__keyborgCoreRefs).length === 0) {
-        this._isNavigatingWithKeyboard = false;
-      }
-    }
-    setVal(isNavigatingWithKeyboard) {
-      if (this._isNavigatingWithKeyboard === isNavigatingWithKeyboard) {
-        return;
-      }
-      this._isNavigatingWithKeyboard = isNavigatingWithKeyboard;
-      for (const id of Object.keys(this.__keyborgCoreRefs)) {
-        const ref = this.__keyborgCoreRefs[id];
-        const keyborg = ref.deref();
-        if (keyborg) {
-          keyborg.update(isNavigatingWithKeyboard);
-        } else {
-          this.remove(id);
-        }
-      }
-    }
-    getVal() {
-      return this._isNavigatingWithKeyboard;
-    }
-  };
-  var _state = /* @__PURE__ */ new KeyborgState();
-  var KeyborgCore = class {
-    constructor(win, props) {
-      this._isMouseUsed = false;
-      this._onFocusIn = (e) => {
-        if (this._isMouseUsed) {
-          this._isMouseUsed = false;
-          return;
-        }
-        if (_state.getVal()) {
-          return;
-        }
-        const details = e.details;
-        if (!details.relatedTarget) {
-          return;
-        }
-        if (details.isFocusedProgrammatically || details.isFocusedProgrammatically === void 0) {
-          return;
-        }
-        _state.setVal(true);
-      };
-      this._onMouseDown = (e) => {
-        if (e.buttons === 0 || e.clientX === 0 && e.clientY === 0 && e.screenX === 0 && e.screenY === 0) {
-          return;
-        }
-        this._isMouseUsed = true;
-        _state.setVal(false);
-      };
-      this._onKeyDown = (e) => {
-        var _a5;
-        const isNavigatingWithKeyboard = _state.getVal();
-        const keyCode = e.keyCode;
-        const triggerKeys = this._triggerKeys;
-        if (!isNavigatingWithKeyboard && (!triggerKeys || triggerKeys.has(keyCode))) {
-          _state.setVal(true);
-        } else if (isNavigatingWithKeyboard && ((_a5 = this._dismissKeys) === null || _a5 === void 0 ? void 0 : _a5.has(keyCode))) {
-          this._scheduleDismiss();
-        }
-      };
-      this.id = "c" + ++_lastId;
-      this._win = win;
-      const doc = win.document;
-      if (props) {
-        const triggerKeys = props.triggerKeys;
-        const dismissKeys = props.dismissKeys;
-        if (triggerKeys === null || triggerKeys === void 0 ? void 0 : triggerKeys.length) {
-          this._triggerKeys = new Set(triggerKeys);
-        }
-        if (dismissKeys === null || dismissKeys === void 0 ? void 0 : dismissKeys.length) {
-          this._dismissKeys = new Set(dismissKeys);
-        }
-      }
-      doc.addEventListener(KEYBORG_FOCUSIN, this._onFocusIn, true);
-      doc.addEventListener("mousedown", this._onMouseDown, true);
-      win.addEventListener("keydown", this._onKeyDown, true);
-      setupFocusEvent(win);
-      _state.add(this);
-    }
-    dispose() {
-      const win = this._win;
-      if (win) {
-        if (this._dismissTimer) {
-          win.clearTimeout(this._dismissTimer);
-          this._dismissTimer = void 0;
-        }
-        disposeFocusEvent(win);
-        const doc = win.document;
-        doc.removeEventListener(KEYBORG_FOCUSIN, this._onFocusIn, true);
-        doc.removeEventListener("mousedown", this._onMouseDown, true);
-        win.removeEventListener("keydown", this._onKeyDown, true);
-        delete this._win;
-        _state.remove(this.id);
-      }
-    }
-    isDisposed() {
-      return !!this._win;
-    }
-    /**
-     * Updates all keyborg instances with the keyboard navigation state
-     */
-    update(isNavigatingWithKeyboard) {
-      var _a5, _b;
-      const keyborgs = (_b = (_a5 = this._win) === null || _a5 === void 0 ? void 0 : _a5.__keyborg) === null || _b === void 0 ? void 0 : _b.refs;
-      if (keyborgs) {
-        for (const id of Object.keys(keyborgs)) {
-          Keyborg.update(keyborgs[id], isNavigatingWithKeyboard);
-        }
-      }
-    }
-    _scheduleDismiss() {
-      const win = this._win;
-      if (win) {
-        if (this._dismissTimer) {
-          win.clearTimeout(this._dismissTimer);
-          this._dismissTimer = void 0;
-        }
-        const was = win.document.activeElement;
-        this._dismissTimer = win.setTimeout(() => {
-          this._dismissTimer = void 0;
-          const cur = win.document.activeElement;
-          if (was && cur && was === cur) {
-            _state.setVal(false);
-          }
-        }, _dismissTimeout);
-      }
-    }
-  };
-  var Keyborg = class _Keyborg {
-    constructor(win, props) {
-      this._cb = [];
-      this._id = "k" + ++_lastId;
-      this._win = win;
-      const current = win.__keyborg;
-      if (current) {
-        this._core = current.core;
-        current.refs[this._id] = this;
-      } else {
-        this._core = new KeyborgCore(win, props);
-        win.__keyborg = {
-          core: this._core,
-          refs: {
-            [this._id]: this
-          }
-        };
-      }
-    }
-    static create(win, props) {
-      return new _Keyborg(win, props);
-    }
-    static dispose(instance) {
-      instance.dispose();
-    }
-    /**
-     * Updates all subscribed callbacks with the keyboard navigation state
-     */
-    static update(instance, isNavigatingWithKeyboard) {
-      instance._cb.forEach((callback) => callback(isNavigatingWithKeyboard));
-    }
-    dispose() {
-      var _a5;
-      const current = (_a5 = this._win) === null || _a5 === void 0 ? void 0 : _a5.__keyborg;
-      if (current === null || current === void 0 ? void 0 : current.refs[this._id]) {
-        delete current.refs[this._id];
-        if (Object.keys(current.refs).length === 0) {
-          current.core.dispose();
-          delete this._win.__keyborg;
-        }
-      } else if (true) {
-        console.error("Keyborg instance " + this._id + " is being disposed incorrectly.");
-      }
-      this._cb = [];
-      delete this._core;
-      delete this._win;
-    }
-    /**
-     * @returns Whether the user is navigating with keyboard
-     */
-    isNavigatingWithKeyboard() {
-      return _state.getVal();
-    }
-    /**
-     * @param callback - Called when the keyboard navigation state changes
-     */
-    subscribe(callback) {
-      this._cb.push(callback);
-    }
-    /**
-     * @param callback - Registered with subscribe
-     */
-    unsubscribe(callback) {
-      const index = this._cb.indexOf(callback);
-      if (index >= 0) {
-        this._cb.splice(index, 1);
-      }
-    }
-    /**
-     * Manually set the keyboard navigtion state
-     */
-    setVal(isNavigatingWithKeyboard) {
-      _state.setVal(isNavigatingWithKeyboard);
-    }
-  };
-  function createKeyborg(win, props) {
-    return Keyborg.create(win, props);
-  }
-  function disposeKeyborg(instance) {
-    Keyborg.dispose(instance);
-  }
-
-  // ../node_modules/tabster/dist/tabster.esm.js
-  var TabsterAttributeName = "data-tabster";
-  var TabsterDummyInputAttributeName = "data-tabster-dummy";
-  var DeloserEventName = "tabster:deloser";
-  var ModalizerActiveEventName = "tabster:modalizer:active";
-  var ModalizerInactiveEventName = "tabster:modalizer:inactive";
-  var ModalizerFocusInEventName = "tabster:modalizer:focusin";
-  var ModalizerFocusOutEventName = "tabster:modalizer:focusout";
-  var ModalizerBeforeFocusOutEventName = "tabster:modalizer:beforefocusout";
-  var MoverEventName = "tabster:mover";
-  var FocusInEventName = "tabster:focusin";
-  var FocusOutEventName = "tabster:focusout";
-  var ObservedElementAccesibilities = {
-    Any: 0,
-    Accessible: 1,
-    Focusable: 2
-  };
-  var RestoreFocusOrders = {
-    History: 0,
-    DeloserDefault: 1,
-    RootDefault: 2,
-    DeloserFirst: 3,
-    RootFirst: 4
-  };
-  var Visibilities = {
-    Invisible: 0,
-    PartiallyVisible: 1,
-    Visible: 2
-  };
-  var RestorerTypes = {
-    Source: 0,
-    Target: 1
-  };
-  var MoverDirections = {
-    Both: 0,
-    Vertical: 1,
-    Horizontal: 2,
-    Grid: 3,
-    GridLinear: 4
-  };
-  var GroupperTabbabilities = {
-    Unlimited: 0,
-    Limited: 1,
-    LimitedTrapFocus: 2
-  };
-  var SysDummyInputsPositions = {
-    Auto: 0,
-    Inside: 1,
-    Outside: 2
-  };
-  var Types = /* @__PURE__ */ Object.freeze({
-    __proto__: null,
-    TabsterAttributeName,
-    TabsterDummyInputAttributeName,
-    DeloserEventName,
-    ModalizerActiveEventName,
-    ModalizerInactiveEventName,
-    ModalizerFocusInEventName,
-    ModalizerFocusOutEventName,
-    ModalizerBeforeFocusOutEventName,
-    MoverEventName,
-    FocusInEventName,
-    FocusOutEventName,
-    ObservedElementAccesibilities,
-    RestoreFocusOrders,
-    Visibilities,
-    RestorerTypes,
-    MoverDirections,
-    GroupperTabbabilities,
-    SysDummyInputsPositions
-  });
-  function getTabsterOnElement(tabster, element) {
-    var _a5;
-    return (_a5 = tabster.storageEntry(element)) === null || _a5 === void 0 ? void 0 : _a5.tabster;
-  }
-  function updateTabsterByAttribute(tabster, element, dispose) {
-    var _a5, _b;
-    const newAttrValue = dispose || tabster._noop ? void 0 : element.getAttribute(TabsterAttributeName);
-    let entry = tabster.storageEntry(element);
-    let newAttr;
-    if (newAttrValue) {
-      if (newAttrValue !== ((_a5 = entry === null || entry === void 0 ? void 0 : entry.attr) === null || _a5 === void 0 ? void 0 : _a5.string)) {
-        try {
-          const newValue = JSON.parse(newAttrValue);
-          if (typeof newValue !== "object") {
-            throw new Error(`Value is not a JSON object, got '${newAttrValue}'.`);
-          }
-          newAttr = {
-            string: newAttrValue,
-            object: newValue
-          };
-        } catch (e) {
-          if (true) {
-            console.error(`data-tabster attribute error: ${e}`, element);
-          }
-        }
-      } else {
-        return;
-      }
-    } else if (!entry) {
-      return;
-    }
-    if (!entry) {
-      entry = tabster.storageEntry(element, true);
-    }
-    if (!entry.tabster) {
-      entry.tabster = {};
-    }
-    const tabsterOnElement = entry.tabster || {};
-    const oldTabsterProps = ((_b = entry.attr) === null || _b === void 0 ? void 0 : _b.object) || {};
-    const newTabsterProps = (newAttr === null || newAttr === void 0 ? void 0 : newAttr.object) || {};
-    for (const key of Object.keys(oldTabsterProps)) {
-      if (!newTabsterProps[key]) {
-        if (key === "root") {
-          const root2 = tabsterOnElement[key];
-          if (root2) {
-            tabster.root.onRoot(root2, true);
-          }
-        }
-        switch (key) {
-          case "deloser":
-          case "root":
-          case "groupper":
-          case "modalizer":
-          case "restorer":
-          case "mover":
-            const part = tabsterOnElement[key];
-            if (part) {
-              part.dispose();
-              delete tabsterOnElement[key];
-            }
-            break;
-          case "observed":
-            delete tabsterOnElement[key];
-            if (tabster.observedElement) {
-              tabster.observedElement.onObservedElementUpdate(element);
-            }
-            break;
-          case "focusable":
-          case "outline":
-          case "uncontrolled":
-          case "sys":
-            delete tabsterOnElement[key];
-            break;
-        }
-      }
-    }
-    for (const key of Object.keys(newTabsterProps)) {
-      const sys = newTabsterProps.sys;
-      switch (key) {
-        case "deloser":
-          if (tabsterOnElement.deloser) {
-            tabsterOnElement.deloser.setProps(newTabsterProps.deloser);
-          } else {
-            if (tabster.deloser) {
-              tabsterOnElement.deloser = tabster.deloser.createDeloser(element, newTabsterProps.deloser);
-            } else if (true) {
-              console.error("Deloser API used before initialization, please call `getDeloser()`");
-            }
-          }
-          break;
-        case "root":
-          if (tabsterOnElement.root) {
-            tabsterOnElement.root.setProps(newTabsterProps.root);
-          } else {
-            tabsterOnElement.root = tabster.root.createRoot(element, newTabsterProps.root, sys);
-          }
-          tabster.root.onRoot(tabsterOnElement.root);
-          break;
-        case "modalizer":
-          if (tabsterOnElement.modalizer) {
-            tabsterOnElement.modalizer.setProps(newTabsterProps.modalizer);
-          } else {
-            if (tabster.modalizer) {
-              tabsterOnElement.modalizer = tabster.modalizer.createModalizer(element, newTabsterProps.modalizer, sys);
-            } else if (true) {
-              console.error("Modalizer API used before initialization, please call `getModalizer()`");
-            }
-          }
-          break;
-        case "restorer":
-          if (tabsterOnElement.restorer) {
-            tabsterOnElement.restorer.setProps(newTabsterProps.restorer);
-          } else {
-            if (tabster.restorer) {
-              if (newTabsterProps.restorer) {
-                tabsterOnElement.restorer = tabster.restorer.createRestorer(element, newTabsterProps.restorer);
-              }
-            } else if (true) {
-              console.error("Restorer API used before initialization, please call `getRestorer()`");
-            }
-          }
-          break;
-        case "focusable":
-          tabsterOnElement.focusable = newTabsterProps.focusable;
-          break;
-        case "groupper":
-          if (tabsterOnElement.groupper) {
-            tabsterOnElement.groupper.setProps(newTabsterProps.groupper);
-          } else {
-            if (tabster.groupper) {
-              tabsterOnElement.groupper = tabster.groupper.createGroupper(element, newTabsterProps.groupper, sys);
-            } else if (true) {
-              console.error("Groupper API used before initialization, please call `getGroupper()`");
-            }
-          }
-          break;
-        case "mover":
-          if (tabsterOnElement.mover) {
-            tabsterOnElement.mover.setProps(newTabsterProps.mover);
-          } else {
-            if (tabster.mover) {
-              tabsterOnElement.mover = tabster.mover.createMover(element, newTabsterProps.mover, sys);
-            } else if (true) {
-              console.error("Mover API used before initialization, please call `getMover()`");
-            }
-          }
-          break;
-        case "observed":
-          if (tabster.observedElement) {
-            tabsterOnElement.observed = newTabsterProps.observed;
-            tabster.observedElement.onObservedElementUpdate(element);
-          } else if (true) {
-            console.error("ObservedElement API used before initialization, please call `getObservedElement()`");
-          }
-          break;
-        case "uncontrolled":
-          tabsterOnElement.uncontrolled = newTabsterProps.uncontrolled;
-          break;
-        case "outline":
-          if (tabster.outline) {
-            tabsterOnElement.outline = newTabsterProps.outline;
-          } else if (true) {
-            console.error("Outline API used before initialization, please call `getOutline()`");
-          }
-          break;
-        case "sys":
-          tabsterOnElement.sys = newTabsterProps.sys;
-          break;
-        default:
-          console.error(`Unknown key '${key}' in data-tabster attribute value.`);
-      }
-    }
-    if (newAttr) {
-      entry.attr = newAttr;
-    } else {
-      if (Object.keys(tabsterOnElement).length === 0) {
-        delete entry.tabster;
-        delete entry.attr;
-      }
-      tabster.storageEntry(element, false);
-    }
-  }
-  function createEventTarget(getWindow2) {
-    const global2 = getWindow2();
-    try {
-      if (global2.EventTarget) {
-        return new global2.EventTarget();
-      }
-    } catch (error) {
-      if (!(error instanceof TypeError)) {
-        throw error;
-      }
-    }
-    return global2.document.createElement("div");
-  }
-  var _isBrokenIE11;
-  var _DOMRect = typeof DOMRect !== "undefined" ? DOMRect : class {
-    constructor(x, y, width, height) {
-      this.left = x || 0;
-      this.top = y || 0;
-      this.right = (x || 0) + (width || 0);
-      this.bottom = (y || 0) + (height || 0);
-    }
-  };
-  var _uidCounter = 0;
-  try {
-    document.createTreeWalker(document, NodeFilter.SHOW_ELEMENT);
-    _isBrokenIE11 = false;
-  } catch (e) {
-    _isBrokenIE11 = true;
-  }
-  var _updateDummyInputsTimeout = 100;
-  function getInstanceContext(getWindow2) {
-    const win = getWindow2();
-    let ctx = win.__tabsterInstanceContext;
-    if (!ctx) {
-      ctx = {
-        elementByUId: {},
-        basics: {
-          Promise: win.Promise || void 0,
-          WeakRef: win.WeakRef || void 0
-        },
-        containerBoundingRectCache: {},
-        lastContainerBoundingRectCacheId: 0,
-        fakeWeakRefs: [],
-        fakeWeakRefsStarted: false
-      };
-      win.__tabsterInstanceContext = ctx;
-    }
-    return ctx;
-  }
-  function disposeInstanceContext(win) {
-    const ctx = win.__tabsterInstanceContext;
-    if (ctx) {
-      ctx.elementByUId = {};
-      delete ctx.WeakRef;
-      ctx.containerBoundingRectCache = {};
-      if (ctx.containerBoundingRectCacheTimer) {
-        win.clearTimeout(ctx.containerBoundingRectCacheTimer);
-      }
-      if (ctx.fakeWeakRefsTimer) {
-        win.clearTimeout(ctx.fakeWeakRefsTimer);
-      }
-      ctx.fakeWeakRefs = [];
-      delete win.__tabsterInstanceContext;
-    }
-  }
-  function createWeakMap(win) {
-    const ctx = win.__tabsterInstanceContext;
-    return new ((ctx === null || ctx === void 0 ? void 0 : ctx.basics.WeakMap) || WeakMap)();
-  }
-  var FakeWeakRef = class {
-    constructor(target) {
-      this._target = target;
-    }
-    deref() {
-      return this._target;
-    }
-    static cleanup(fwr, forceRemove) {
-      if (!fwr._target) {
-        return true;
-      }
-      if (forceRemove || !documentContains(fwr._target.ownerDocument, fwr._target)) {
-        delete fwr._target;
-        return true;
-      }
-      return false;
-    }
-  };
-  var WeakHTMLElement = class {
-    constructor(getWindow2, element, data) {
-      const context = getInstanceContext(getWindow2);
-      let ref;
-      if (context.WeakRef) {
-        ref = new context.WeakRef(element);
-      } else {
-        ref = new FakeWeakRef(element);
-        context.fakeWeakRefs.push(ref);
-      }
-      this._ref = ref;
-      this._data = data;
-    }
-    get() {
-      const ref = this._ref;
-      let element;
-      if (ref) {
-        element = ref.deref();
-        if (!element) {
-          delete this._ref;
-        }
-      }
-      return element;
-    }
-    getData() {
-      return this._data;
-    }
-  };
-  function cleanupFakeWeakRefs(getWindow2, forceRemove) {
-    const context = getInstanceContext(getWindow2);
-    context.fakeWeakRefs = context.fakeWeakRefs.filter((e) => !FakeWeakRef.cleanup(e, forceRemove));
-  }
-  function startFakeWeakRefsCleanup(getWindow2) {
-    const context = getInstanceContext(getWindow2);
-    if (!context.fakeWeakRefsStarted) {
-      context.fakeWeakRefsStarted = true;
-      context.WeakRef = getWeakRef(context);
-    }
-    if (!context.fakeWeakRefsTimer) {
-      context.fakeWeakRefsTimer = getWindow2().setTimeout(() => {
-        context.fakeWeakRefsTimer = void 0;
-        cleanupFakeWeakRefs(getWindow2);
-        startFakeWeakRefsCleanup(getWindow2);
-      }, 2 * 60 * 1e3);
-    }
-  }
-  function stopFakeWeakRefsCleanupAndClearStorage(getWindow2) {
-    const context = getInstanceContext(getWindow2);
-    context.fakeWeakRefsStarted = false;
-    if (context.fakeWeakRefsTimer) {
-      getWindow2().clearTimeout(context.fakeWeakRefsTimer);
-      context.fakeWeakRefsTimer = void 0;
-      context.fakeWeakRefs = [];
-    }
-  }
-  function createElementTreeWalker(doc, root2, acceptNode) {
-    if (root2.nodeType !== Node.ELEMENT_NODE) {
-      return void 0;
-    }
-    const filter2 = _isBrokenIE11 ? acceptNode : {
-      acceptNode
-    };
-    return doc.createTreeWalker(
-      root2,
-      NodeFilter.SHOW_ELEMENT,
-      filter2,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore: We still don't want to completely break IE11, so, entityReferenceExpansion argument is not optional.
-      false
-      /* Last argument is not optional for IE11! */
-    );
-  }
-  function getBoundingRect(getWindow2, element) {
-    let cacheId = element.__tabsterCacheId;
-    const context = getInstanceContext(getWindow2);
-    const cached = cacheId ? context.containerBoundingRectCache[cacheId] : void 0;
-    if (cached) {
-      return cached.rect;
-    }
-    const scrollingElement = element.ownerDocument && element.ownerDocument.documentElement;
-    if (!scrollingElement) {
-      return new _DOMRect();
-    }
-    let left = 0;
-    let top = 0;
-    let right = scrollingElement.clientWidth;
-    let bottom = scrollingElement.clientHeight;
-    if (element !== scrollingElement) {
-      const r = element.getBoundingClientRect();
-      left = Math.max(left, r.left);
-      top = Math.max(top, r.top);
-      right = Math.min(right, r.right);
-      bottom = Math.min(bottom, r.bottom);
-    }
-    const rect = new _DOMRect(left < right ? left : -1, top < bottom ? top : -1, left < right ? right - left : 0, top < bottom ? bottom - top : 0);
-    if (!cacheId) {
-      cacheId = "r-" + ++context.lastContainerBoundingRectCacheId;
-      element.__tabsterCacheId = cacheId;
-    }
-    context.containerBoundingRectCache[cacheId] = {
-      rect,
-      element
-    };
-    if (!context.containerBoundingRectCacheTimer) {
-      context.containerBoundingRectCacheTimer = window.setTimeout(() => {
-        context.containerBoundingRectCacheTimer = void 0;
-        for (const cId of Object.keys(context.containerBoundingRectCache)) {
-          delete context.containerBoundingRectCache[cId].element.__tabsterCacheId;
-        }
-        context.containerBoundingRectCache = {};
-      }, 50);
-    }
-    return rect;
-  }
-  function isElementVerticallyVisibleInContainer(getWindow2, element, tolerance) {
-    const container = getScrollableContainer(element);
-    if (!container) {
-      return false;
-    }
-    const containerRect = getBoundingRect(getWindow2, container);
-    const elementRect = element.getBoundingClientRect();
-    const intersectionTolerance = elementRect.height * (1 - tolerance);
-    const topIntersection = Math.max(0, containerRect.top - elementRect.top);
-    const bottomIntersection = Math.max(0, elementRect.bottom - containerRect.bottom);
-    const totalIntersection = topIntersection + bottomIntersection;
-    return totalIntersection === 0 || totalIntersection <= intersectionTolerance;
-  }
-  function scrollIntoView(getWindow2, element, alignToTop) {
-    const container = getScrollableContainer(element);
-    if (container) {
-      const containerRect = getBoundingRect(getWindow2, container);
-      const elementRect = element.getBoundingClientRect();
-      if (alignToTop) {
-        container.scrollTop += elementRect.top - containerRect.top;
-      } else {
-        container.scrollTop += elementRect.bottom - containerRect.bottom;
-      }
-    }
-  }
-  function getScrollableContainer(element) {
-    const doc = element.ownerDocument;
-    if (doc) {
-      for (let el = element.parentElement; el; el = el.parentElement) {
-        if (el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight) {
-          return el;
-        }
-      }
-      return doc.documentElement;
-    }
-    return null;
-  }
-  function makeFocusIgnored(element) {
-    element.__shouldIgnoreFocus = true;
-  }
-  function shouldIgnoreFocus(element) {
-    return !!element.__shouldIgnoreFocus;
-  }
-  function getUId(wnd) {
-    const rnd = new Uint32Array(4);
-    if (wnd.crypto && wnd.crypto.getRandomValues) {
-      wnd.crypto.getRandomValues(rnd);
-    } else if (wnd.msCrypto && wnd.msCrypto.getRandomValues) {
-      wnd.msCrypto.getRandomValues(rnd);
-    } else {
-      for (let i = 0; i < rnd.length; i++) {
-        rnd[i] = 4294967295 * Math.random();
-      }
-    }
-    const srnd = [];
-    for (let i = 0; i < rnd.length; i++) {
-      srnd.push(rnd[i].toString(36));
-    }
-    srnd.push("|");
-    srnd.push((++_uidCounter).toString(36));
-    srnd.push("|");
-    srnd.push(Date.now().toString(36));
-    return srnd.join("");
-  }
-  function getElementUId(getWindow2, element) {
-    const context = getInstanceContext(getWindow2);
-    let uid = element.__tabsterElementUID;
-    if (!uid) {
-      uid = element.__tabsterElementUID = getUId(getWindow2());
-    }
-    if (!context.elementByUId[uid] && documentContains(element.ownerDocument, element)) {
-      context.elementByUId[uid] = new WeakHTMLElement(getWindow2, element);
-    }
-    return uid;
-  }
-  function clearElementCache(getWindow2, parent) {
-    const context = getInstanceContext(getWindow2);
-    for (const key of Object.keys(context.elementByUId)) {
-      const wel = context.elementByUId[key];
-      const el = wel && wel.get();
-      if (el && parent) {
-        if (!parent.contains(el)) {
-          continue;
-        }
-      }
-      delete context.elementByUId[key];
-    }
-  }
-  function documentContains(doc, element) {
-    var _a5;
-    return !!((_a5 = doc === null || doc === void 0 ? void 0 : doc.body) === null || _a5 === void 0 ? void 0 : _a5.contains(element));
-  }
-  function matchesSelector(element, selector) {
-    const matches = element.matches || element.matchesSelector || element.msMatchesSelector || element.webkitMatchesSelector;
-    return matches && matches.call(element, selector);
-  }
-  function getPromise(getWindow2) {
-    const context = getInstanceContext(getWindow2);
-    if (context.basics.Promise) {
-      return context.basics.Promise;
-    }
-    throw new Error("No Promise defined.");
-  }
-  function getWeakRef(context) {
-    return context.basics.WeakRef;
-  }
-  var _lastTabsterPartId = 0;
-  var TabsterPart = class {
-    constructor(tabster, element, props) {
-      const getWindow2 = tabster.getWindow;
-      this._tabster = tabster;
-      this._element = new WeakHTMLElement(getWindow2, element);
-      this._props = {
-        ...props
-      };
-      this.id = "i" + ++_lastTabsterPartId;
-    }
-    getElement() {
-      return this._element.get();
-    }
-    getProps() {
-      return this._props;
-    }
-    setProps(props) {
-      this._props = {
-        ...props
-      };
-    }
-  };
-  var DummyInput = class {
-    constructor(getWindow2, isOutside, props, element) {
-      var _a5;
-      this._focusIn = (e) => {
-        const input2 = this.input;
-        if (this.onFocusIn && input2) {
-          const relatedTarget = DummyInputManager.getLastPhantomFrom() || e.relatedTarget;
-          this.onFocusIn(this, this._isBackward(true, input2, relatedTarget), relatedTarget);
-        }
-      };
-      this._focusOut = (e) => {
-        this.useDefaultAction = false;
-        const input2 = this.input;
-        if (this.onFocusOut && input2) {
-          const relatedTarget = e.relatedTarget;
-          this.onFocusOut(this, this._isBackward(false, input2, relatedTarget), relatedTarget);
-        }
-      };
-      const win = getWindow2();
-      const input = win.document.createElement("i");
-      input.tabIndex = 0;
-      input.setAttribute("role", "none");
-      input.setAttribute(TabsterDummyInputAttributeName, "");
-      input.setAttribute("aria-hidden", "true");
-      const style = input.style;
-      style.position = "fixed";
-      style.width = style.height = "1px";
-      style.opacity = "0.001";
-      style.zIndex = "-1";
-      style.setProperty("content-visibility", "hidden");
-      makeFocusIgnored(input);
-      this.input = input;
-      this.isFirst = props.isFirst;
-      this.isOutside = isOutside;
-      this._isPhantom = (_a5 = props.isPhantom) !== null && _a5 !== void 0 ? _a5 : false;
-      input.addEventListener("focusin", this._focusIn);
-      input.addEventListener("focusout", this._focusOut);
-      input.__tabsterDummyContainer = element;
-      if (this._isPhantom) {
-        this._disposeTimer = win.setTimeout(() => {
-          delete this._disposeTimer;
-          this.dispose();
-        }, 0);
-        this._clearDisposeTimeout = () => {
-          if (this._disposeTimer) {
-            win.clearTimeout(this._disposeTimer);
-            delete this._disposeTimer;
-          }
-          delete this._clearDisposeTimeout;
-        };
-      }
-    }
-    dispose() {
-      var _a5;
-      if (this._clearDisposeTimeout) {
-        this._clearDisposeTimeout();
-      }
-      const input = this.input;
-      if (!input) {
-        return;
-      }
-      delete this.onFocusIn;
-      delete this.onFocusOut;
-      delete this.input;
-      input.removeEventListener("focusin", this._focusIn);
-      input.removeEventListener("focusout", this._focusOut);
-      delete input.__tabsterDummyContainer;
-      (_a5 = input.parentElement) === null || _a5 === void 0 ? void 0 : _a5.removeChild(input);
-    }
-    setTopLeft(top, left) {
-      var _a5;
-      const style = (_a5 = this.input) === null || _a5 === void 0 ? void 0 : _a5.style;
-      if (style) {
-        style.top = `${top}px`;
-        style.left = `${left}px`;
-      }
-    }
-    _isBackward(isIn, current, previous) {
-      return isIn && !previous ? !this.isFirst : !!(previous && current.compareDocumentPosition(previous) & Node.DOCUMENT_POSITION_FOLLOWING);
-    }
-  };
-  var DummyInputManagerPriorities = {
-    Root: 1,
-    Modalizer: 2,
-    Mover: 3,
-    Groupper: 4
-  };
-  var DummyInputManager = class _DummyInputManager {
-    constructor(tabster, element, priority, sys, outsideByDefault, callForDefaultAction) {
-      this._element = element;
-      this._instance = new DummyInputManagerCore(tabster, element, this, priority, sys, outsideByDefault, callForDefaultAction);
-      this.moveOut = (backwards) => {
-        var _a5;
-        (_a5 = this._instance) === null || _a5 === void 0 ? void 0 : _a5.moveOut(backwards);
-      };
-      this.moveOutWithDefaultAction = (backwards) => {
-        var _a5;
-        (_a5 = this._instance) === null || _a5 === void 0 ? void 0 : _a5.moveOutWithDefaultAction(backwards);
-      };
-    }
-    _setHandlers(onFocusIn, onFocusOut) {
-      this._onFocusIn = onFocusIn;
-      this._onFocusOut = onFocusOut;
-    }
-    getHandler(isIn) {
-      return isIn ? this._onFocusIn : this._onFocusOut;
-    }
-    setTabbable(tabbable) {
-      var _a5;
-      (_a5 = this._instance) === null || _a5 === void 0 ? void 0 : _a5.setTabbable(this, tabbable);
-    }
-    dispose() {
-      if (this._instance) {
-        this._instance.dispose(this);
-        delete this._instance;
-      }
-      delete this._onFocusIn;
-      delete this._onFocusOut;
-    }
-    static getLastPhantomFrom() {
-      const ret = _DummyInputManager._lastPhantomFrom;
-      delete _DummyInputManager._lastPhantomFrom;
-      return ret;
-    }
-    static moveWithPhantomDummy(tabster, element, moveOutside, isBackward) {
-      const dummy = new DummyInput(tabster.getWindow, true, {
-        isPhantom: true,
-        isFirst: true
-      });
-      const input = dummy.input;
-      if (input) {
-        const parent = element.parentElement;
-        if (parent) {
-          let insertBefore = moveOutside && !isBackward || !moveOutside && isBackward ? element.nextElementSibling : element;
-          if (insertBefore) {
-            if (isBackward) {
-              const beforeBefore = insertBefore.previousElementSibling;
-              if (beforeBefore && beforeBefore.__tabsterDummyContainer) {
-                insertBefore = beforeBefore;
-              }
-            } else if (insertBefore.__tabsterDummyContainer) {
-              insertBefore = insertBefore.nextElementSibling;
-            }
-          }
-          parent.insertBefore(input, insertBefore);
-          _DummyInputManager._lastPhantomFrom = element;
-          tabster.getWindow().setTimeout(() => {
-            delete _DummyInputManager._lastPhantomFrom;
-          }, 0);
-          nativeFocus(input);
-        }
-      }
-    }
-  };
-  function setDummyInputDebugValue(dummy, wrappers) {
-    var _a5;
-    const what = {
-      1: "Root",
-      2: "Modalizer",
-      3: "Mover",
-      4: "Groupper"
-    };
-    (_a5 = dummy.input) === null || _a5 === void 0 ? void 0 : _a5.setAttribute(TabsterDummyInputAttributeName, [`isFirst=${dummy.isFirst}`, `isOutside=${dummy.isOutside}`, ...wrappers.map((w) => `(${what[w.priority]}, tabbable=${w.tabbable})`)].join(", "));
-  }
-  var DummyInputObserver = class {
-    constructor(win) {
-      this._updateQueue = /* @__PURE__ */ new Set();
-      this._lastUpdateQueueTime = 0;
-      this._changedParents = /* @__PURE__ */ new WeakSet();
-      this._dummies = /* @__PURE__ */ new Map();
-      this._domChanged = (parent) => {
-        var _a5;
-        if (this._changedParents.has(parent)) {
-          return;
-        }
-        this._changedParents.add(parent);
-        if (this._updateDummyInputsTimer) {
-          return;
-        }
-        this._updateDummyInputsTimer = (_a5 = this._win) === null || _a5 === void 0 ? void 0 : _a5.call(this).setTimeout(() => {
-          delete this._updateDummyInputsTimer;
-          for (const [dummy, callback] of this._dummies) {
-            const dummyParent = dummy.parentElement;
-            if (!dummyParent || this._changedParents.has(dummyParent)) {
-              callback();
-            }
-          }
-          this._changedParents = /* @__PURE__ */ new WeakSet();
-        }, _updateDummyInputsTimeout);
-      };
-      this._win = win;
-    }
-    add(dummy, callback) {
-      this._dummies.set(dummy, callback);
-      this.domChanged = this._domChanged;
-    }
-    remove(dummy) {
-      const dummyInputElements = this._dummies;
-      dummyInputElements.delete(dummy);
-      if (dummyInputElements.size === 0) {
-        delete this.domChanged;
-      }
-    }
-    dispose() {
-      var _a5;
-      const win = (_a5 = this._win) === null || _a5 === void 0 ? void 0 : _a5.call(this);
-      if (this._updateTimer) {
-        win === null || win === void 0 ? void 0 : win.clearTimeout(this._updateTimer);
-        delete this._updateTimer;
-      }
-      if (this._updateDummyInputsTimer) {
-        win === null || win === void 0 ? void 0 : win.clearTimeout(this._updateDummyInputsTimer);
-        delete this._updateDummyInputsTimer;
-      }
-      this._changedParents = /* @__PURE__ */ new WeakSet();
-      this._dummies.clear();
-      delete this._win;
-    }
-    updatePositions(compute) {
-      if (!this._win) {
-        return;
-      }
-      this._updateQueue.add(compute);
-      this._lastUpdateQueueTime = Date.now();
-      this._scheduledUpdatePositions();
-    }
-    _scheduledUpdatePositions() {
-      var _a5;
-      if (this._updateTimer) {
-        return;
-      }
-      this._updateTimer = (_a5 = this._win) === null || _a5 === void 0 ? void 0 : _a5.call(this).setTimeout(() => {
-        delete this._updateTimer;
-        if (this._lastUpdateQueueTime + _updateDummyInputsTimeout <= Date.now()) {
-          const scrollTopLeftCache = /* @__PURE__ */ new Map();
-          const setTopLeftCallbacks = [];
-          for (const compute of this._updateQueue) {
-            setTopLeftCallbacks.push(compute(scrollTopLeftCache));
-          }
-          this._updateQueue.clear();
-          for (const setTopLeft of setTopLeftCallbacks) {
-            setTopLeft();
-          }
-          scrollTopLeftCache.clear();
-        } else {
-          this._scheduledUpdatePositions();
-        }
-      }, _updateDummyInputsTimeout);
-    }
-  };
-  var DummyInputManagerCore = class {
-    constructor(tabster, element, manager, priority, sys, outsideByDefault, callForDefaultAction) {
-      this._wrappers = [];
-      this._isOutside = false;
-      this._transformElements = /* @__PURE__ */ new Set();
-      this._onFocusIn = (dummyInput, isBackward, relatedTarget) => {
-        this._onFocus(true, dummyInput, isBackward, relatedTarget);
-      };
-      this._onFocusOut = (dummyInput, isBackward, relatedTarget) => {
-        this._onFocus(false, dummyInput, isBackward, relatedTarget);
-      };
-      this.moveOut = (backwards) => {
-        var _a5;
-        const first = this._firstDummy;
-        const last = this._lastDummy;
-        if (first && last) {
-          this._ensurePosition();
-          const firstInput = first.input;
-          const lastInput = last.input;
-          const element2 = (_a5 = this._element) === null || _a5 === void 0 ? void 0 : _a5.get();
-          if (firstInput && lastInput && element2) {
-            let toFocus;
-            if (backwards) {
-              firstInput.tabIndex = 0;
-              toFocus = firstInput;
-            } else {
-              lastInput.tabIndex = 0;
-              toFocus = lastInput;
-            }
-            if (toFocus) {
-              nativeFocus(toFocus);
-            }
-          }
-        }
-      };
-      this.moveOutWithDefaultAction = (backwards) => {
-        var _a5;
-        const first = this._firstDummy;
-        const last = this._lastDummy;
-        if (first && last) {
-          this._ensurePosition();
-          const firstInput = first.input;
-          const lastInput = last.input;
-          const element2 = (_a5 = this._element) === null || _a5 === void 0 ? void 0 : _a5.get();
-          if (firstInput && lastInput && element2) {
-            let toFocus;
-            if (backwards) {
-              if (!first.isOutside && this._tabster.focusable.isFocusable(element2, true, true, true)) {
-                toFocus = element2;
-              } else {
-                first.useDefaultAction = true;
-                firstInput.tabIndex = 0;
-                toFocus = firstInput;
-              }
-            } else {
-              last.useDefaultAction = true;
-              lastInput.tabIndex = 0;
-              toFocus = lastInput;
-            }
-            if (toFocus) {
-              nativeFocus(toFocus);
-            }
-          }
-        }
-      };
-      this.setTabbable = (manager2, tabbable) => {
-        var _a5, _b;
-        for (const w of this._wrappers) {
-          if (w.manager === manager2) {
-            w.tabbable = tabbable;
-            break;
-          }
-        }
-        const wrapper = this._getCurrent();
-        if (wrapper) {
-          const tabIndex = wrapper.tabbable ? 0 : -1;
-          let input = (_a5 = this._firstDummy) === null || _a5 === void 0 ? void 0 : _a5.input;
-          if (input) {
-            input.tabIndex = tabIndex;
-          }
-          input = (_b = this._lastDummy) === null || _b === void 0 ? void 0 : _b.input;
-          if (input) {
-            input.tabIndex = tabIndex;
-          }
-        }
-        if (true) {
-          this._firstDummy && setDummyInputDebugValue(this._firstDummy, this._wrappers);
-          this._lastDummy && setDummyInputDebugValue(this._lastDummy, this._wrappers);
-        }
-      };
-      this._addDummyInputs = () => {
-        if (this._addTimer) {
-          return;
-        }
-        this._addTimer = this._getWindow().setTimeout(() => {
-          delete this._addTimer;
-          this._ensurePosition();
-          if (true) {
-            this._firstDummy && setDummyInputDebugValue(this._firstDummy, this._wrappers);
-            this._lastDummy && setDummyInputDebugValue(this._lastDummy, this._wrappers);
-          }
-          this._addTransformOffsets();
-        }, 0);
-      };
-      this._addTransformOffsets = () => {
-        this._tabster._dummyObserver.updatePositions(this._computeTransformOffsets);
-      };
-      this._computeTransformOffsets = (scrollTopLeftCache) => {
-        var _a5, _b;
-        const from = ((_a5 = this._firstDummy) === null || _a5 === void 0 ? void 0 : _a5.input) || ((_b = this._lastDummy) === null || _b === void 0 ? void 0 : _b.input);
-        const transformElements = this._transformElements;
-        const newTransformElements = /* @__PURE__ */ new Set();
-        let scrollTop = 0;
-        let scrollLeft = 0;
-        const win = this._getWindow();
-        for (let element2 = from; element2 && element2.nodeType === Node.ELEMENT_NODE; element2 = element2.parentElement) {
-          let scrollTopLeft = scrollTopLeftCache.get(element2);
-          if (scrollTopLeft === void 0) {
-            const transform = win.getComputedStyle(element2).transform;
-            if (transform && transform !== "none") {
-              scrollTopLeft = {
-                scrollTop: element2.scrollTop,
-                scrollLeft: element2.scrollLeft
-              };
-            }
-            scrollTopLeftCache.set(element2, scrollTopLeft || null);
-          }
-          if (scrollTopLeft) {
-            newTransformElements.add(element2);
-            if (!transformElements.has(element2)) {
-              element2.addEventListener("scroll", this._addTransformOffsets);
-            }
-            scrollTop += scrollTopLeft.scrollTop;
-            scrollLeft += scrollTopLeft.scrollLeft;
-          }
-        }
-        for (const el2 of transformElements) {
-          if (!newTransformElements.has(el2)) {
-            el2.removeEventListener("scroll", this._addTransformOffsets);
-          }
-        }
-        this._transformElements = newTransformElements;
-        return () => {
-          var _a6, _b2;
-          (_a6 = this._firstDummy) === null || _a6 === void 0 ? void 0 : _a6.setTopLeft(scrollTop, scrollLeft);
-          (_b2 = this._lastDummy) === null || _b2 === void 0 ? void 0 : _b2.setTopLeft(scrollTop, scrollLeft);
-        };
-      };
-      const el = element.get();
-      if (!el) {
-        throw new Error("No element");
-      }
-      this._tabster = tabster;
-      this._getWindow = tabster.getWindow;
-      this._callForDefaultAction = callForDefaultAction;
-      const instance = el.__tabsterDummy;
-      (instance || this)._wrappers.push({
-        manager,
-        priority,
-        tabbable: true
-      });
-      if (instance) {
-        if (true) {
-          this._firstDummy && setDummyInputDebugValue(this._firstDummy, instance._wrappers);
-          this._lastDummy && setDummyInputDebugValue(this._lastDummy, instance._wrappers);
-        }
-        return instance;
-      }
-      el.__tabsterDummy = this;
-      const forcedDummyPosition = sys === null || sys === void 0 ? void 0 : sys.dummyInputsPosition;
-      const tagName = el.tagName;
-      this._isOutside = !forcedDummyPosition ? (outsideByDefault || tagName === "UL" || tagName === "OL" || tagName === "TABLE") && !(tagName === "LI" || tagName === "TD" || tagName === "TH") : forcedDummyPosition === SysDummyInputsPositions.Outside;
-      this._firstDummy = new DummyInput(this._getWindow, this._isOutside, {
-        isFirst: true
-      }, element);
-      this._lastDummy = new DummyInput(this._getWindow, this._isOutside, {
-        isFirst: false
-      }, element);
-      const dummyElement = this._firstDummy.input;
-      dummyElement && tabster._dummyObserver.add(dummyElement, this._addDummyInputs);
-      this._firstDummy.onFocusIn = this._onFocusIn;
-      this._firstDummy.onFocusOut = this._onFocusOut;
-      this._lastDummy.onFocusIn = this._onFocusIn;
-      this._lastDummy.onFocusOut = this._onFocusOut;
-      this._element = element;
-      this._addDummyInputs();
-    }
-    dispose(manager, force) {
-      var _a5, _b, _c, _d;
-      const wrappers = this._wrappers = this._wrappers.filter((w) => w.manager !== manager && !force);
-      if (true) {
-        this._firstDummy && setDummyInputDebugValue(this._firstDummy, wrappers);
-        this._lastDummy && setDummyInputDebugValue(this._lastDummy, wrappers);
-      }
-      if (wrappers.length === 0) {
-        delete ((_a5 = this._element) === null || _a5 === void 0 ? void 0 : _a5.get()).__tabsterDummy;
-        for (const el of this._transformElements) {
-          el.removeEventListener("scroll", this._addTransformOffsets);
-        }
-        this._transformElements.clear();
-        const win = this._getWindow();
-        if (this._addTimer) {
-          win.clearTimeout(this._addTimer);
-          delete this._addTimer;
-        }
-        const dummyElement = (_b = this._firstDummy) === null || _b === void 0 ? void 0 : _b.input;
-        dummyElement && this._tabster._dummyObserver.remove(dummyElement);
-        (_c = this._firstDummy) === null || _c === void 0 ? void 0 : _c.dispose();
-        (_d = this._lastDummy) === null || _d === void 0 ? void 0 : _d.dispose();
-      }
-    }
-    _onFocus(isIn, dummyInput, isBackward, relatedTarget) {
-      var _a5;
-      const wrapper = this._getCurrent();
-      if (wrapper && (!dummyInput.useDefaultAction || this._callForDefaultAction)) {
-        (_a5 = wrapper.manager.getHandler(isIn)) === null || _a5 === void 0 ? void 0 : _a5(dummyInput, isBackward, relatedTarget);
-      }
-    }
-    _getCurrent() {
-      this._wrappers.sort((a, b) => {
-        if (a.tabbable !== b.tabbable) {
-          return a.tabbable ? -1 : 1;
-        }
-        return a.priority - b.priority;
-      });
-      return this._wrappers[0];
-    }
-    _ensurePosition() {
-      var _a5, _b, _c;
-      const element = (_a5 = this._element) === null || _a5 === void 0 ? void 0 : _a5.get();
-      const firstDummyInput = (_b = this._firstDummy) === null || _b === void 0 ? void 0 : _b.input;
-      const lastDummyInput = (_c = this._lastDummy) === null || _c === void 0 ? void 0 : _c.input;
-      if (!element || !firstDummyInput || !lastDummyInput) {
-        return;
-      }
-      if (this._isOutside) {
-        const elementParent = element.parentElement;
-        if (elementParent) {
-          const nextSibling = element.nextElementSibling;
-          if (nextSibling !== lastDummyInput) {
-            elementParent.insertBefore(lastDummyInput, nextSibling);
-          }
-          if (element.previousElementSibling !== firstDummyInput) {
-            elementParent.insertBefore(firstDummyInput, element);
-          }
-        }
-      } else {
-        if (element.lastElementChild !== lastDummyInput) {
-          element.appendChild(lastDummyInput);
-        }
-        const firstElementChild = element.firstElementChild;
-        if (firstElementChild && firstElementChild !== firstDummyInput) {
-          element.insertBefore(firstDummyInput, firstElementChild);
-        }
-      }
-    }
-  };
-  function getLastChild(container) {
-    let lastChild = null;
-    for (let i = container.lastElementChild; i; i = i.lastElementChild) {
-      lastChild = i;
-    }
-    return lastChild || void 0;
-  }
-  function triggerEvent(target, name, details) {
-    const event = document.createEvent("HTMLEvents");
-    event.initEvent(name, true, true);
-    event.details = details;
-    target.dispatchEvent(event);
-    return !event.defaultPrevented;
-  }
-  function getTabsterAttribute(props, plain) {
-    const attr = JSON.stringify(props);
-    if (plain === true) {
-      return attr;
-    }
-    return {
-      [TabsterAttributeName]: attr
-    };
-  }
-  function mergeTabsterProps(props, newProps) {
-    for (const key of Object.keys(newProps)) {
-      const value = newProps[key];
-      if (value) {
-        props[key] = value;
-      } else {
-        delete props[key];
-      }
-    }
-  }
-  function setTabsterAttribute(element, newProps, update) {
-    let props;
-    if (update) {
-      const attr = element.getAttribute(TabsterAttributeName);
-      if (attr) {
-        try {
-          props = JSON.parse(attr);
-        } catch (e) {
-          if (true) {
-            console.error(`data-tabster attribute error: ${e}`, element);
-          }
-        }
-      }
-    }
-    if (!props) {
-      props = {};
-    }
-    mergeTabsterProps(props, newProps);
-    if (Object.keys(props).length > 0) {
-      element.setAttribute(TabsterAttributeName, getTabsterAttribute(props, true));
-    } else {
-      element.removeAttribute(TabsterAttributeName);
-    }
-  }
-  function _setInformativeStyle$3(weakElement, remove, id) {
-    if (true) {
-      const element = weakElement.get();
-      if (element) {
-        if (remove) {
-          element.style.removeProperty("--tabster-root");
-        } else {
-          element.style.setProperty("--tabster-root", id + ",");
-        }
-      }
-    }
-  }
-  var RootDummyManager = class extends DummyInputManager {
-    constructor(tabster, element, setFocused, sys) {
-      super(tabster, element, DummyInputManagerPriorities.Root, sys, void 0, true);
-      this._onDummyInputFocus = (dummyInput) => {
-        var _a5;
-        if (dummyInput.useDefaultAction) {
-          this._setFocused(false, true);
-        } else {
-          this._tabster.keyboardNavigation.setNavigatingWithKeyboard(true);
-          const element2 = this._element.get();
-          if (element2) {
-            this._setFocused(true, true);
-            const toFocus = this._tabster.focusedElement.getFirstOrLastTabbable(dummyInput.isFirst, {
-              container: element2,
-              ignoreAccessibility: true
-            });
-            if (toFocus) {
-              nativeFocus(toFocus);
-              return;
-            }
-          }
-          (_a5 = dummyInput.input) === null || _a5 === void 0 ? void 0 : _a5.blur();
-        }
-      };
-      this._setHandlers(this._onDummyInputFocus);
-      this._tabster = tabster;
-      this._setFocused = setFocused;
-    }
-  };
-  var Root = class extends TabsterPart {
-    constructor(tabster, element, onDispose, props, sys) {
-      super(tabster, element, props);
-      this._isFocused = false;
-      this._setFocused = (hasFocused, fromAdjacent) => {
-        if (this._setFocusedTimer) {
-          this._tabster.getWindow().clearTimeout(this._setFocusedTimer);
-          delete this._setFocusedTimer;
-        }
-        if (this._isFocused === hasFocused) {
-          return;
-        }
-        const element2 = this._element.get();
-        if (element2) {
-          if (hasFocused) {
-            this._isFocused = true;
-            triggerEvent(this._tabster.root.eventTarget, "focus", {
-              element: element2,
-              fromAdjacent
-            });
-          } else {
-            this._setFocusedTimer = this._tabster.getWindow().setTimeout(() => {
-              delete this._setFocusedTimer;
-              this._isFocused = false;
-              triggerEvent(this._tabster.root.eventTarget, "blur", {
-                element: element2,
-                fromAdjacent
-              });
-            }, 0);
-          }
-        }
-      };
-      this._onFocus = (e) => {
-        var _a5;
-        const win2 = this._tabster.getWindow();
-        if (this._setTabbableTimer) {
-          win2.clearTimeout(this._setTabbableTimer);
-          delete this._setTabbableTimer;
-        }
-        if (e) {
-          const ctx = RootAPI.getTabsterContext(this._tabster, e);
-          if (ctx) {
-            this._setFocused(ctx.root.getElement() === this._element.get());
-          }
-          if (!ctx || ctx.uncontrolled || this._tabster.rootDummyInputs) {
-            (_a5 = this._dummyManager) === null || _a5 === void 0 ? void 0 : _a5.setTabbable(false);
-            return;
-          }
-        } else {
-          this._setFocused(false);
-        }
-        this._setTabbableTimer = win2.setTimeout(() => {
-          var _a6;
-          delete this._setTabbableTimer;
-          (_a6 = this._dummyManager) === null || _a6 === void 0 ? void 0 : _a6.setTabbable(true);
-        }, 0);
-      };
-      this._onDispose = onDispose;
-      const win = tabster.getWindow;
-      this.uid = getElementUId(win, element);
-      this._sys = sys;
-      if (tabster.controlTab || tabster.rootDummyInputs) {
-        this.addDummyInputs();
-      }
-      tabster.focusedElement.subscribe(this._onFocus);
-      this._add();
-    }
-    addDummyInputs() {
-      if (!this._dummyManager) {
-        this._dummyManager = new RootDummyManager(this._tabster, this._element, this._setFocused, this._sys);
-      }
-    }
-    dispose() {
-      var _a5;
-      this._onDispose(this);
-      const win = this._tabster.getWindow();
-      if (this._setFocusedTimer) {
-        win.clearTimeout(this._setFocusedTimer);
-        delete this._setFocusedTimer;
-      }
-      if (this._setTabbableTimer) {
-        win.clearTimeout(this._setTabbableTimer);
-        delete this._setTabbableTimer;
-      }
-      (_a5 = this._dummyManager) === null || _a5 === void 0 ? void 0 : _a5.dispose();
-      this._remove();
-    }
-    moveOutWithDefaultAction(isBackward) {
-      const dummyManager = this._dummyManager;
-      if (dummyManager) {
-        dummyManager.moveOutWithDefaultAction(isBackward);
-      } else {
-        const el = this.getElement();
-        if (el) {
-          RootDummyManager.moveWithPhantomDummy(this._tabster, el, true, isBackward);
-        }
-      }
-    }
-    _add() {
-      if (true) {
-        _setInformativeStyle$3(this._element, false, this.uid);
-      }
-    }
-    _remove() {
-      if (true) {
-        _setInformativeStyle$3(this._element, true);
-      }
-    }
-  };
-  var RootAPI = class {
-    constructor(tabster, autoRoot) {
-      this._autoRootWaiting = false;
-      this._roots = {};
-      this._forceDummy = false;
-      this.rootById = {};
-      this._autoRootCreate = () => {
-        var _a5;
-        const doc = this._win().document;
-        const body = doc.body;
-        if (body) {
-          this._autoRootUnwait(doc);
-          const props = this._autoRoot;
-          if (props) {
-            setTabsterAttribute(body, {
-              root: props
-            }, true);
-            updateTabsterByAttribute(this._tabster, body);
-            return (_a5 = getTabsterOnElement(this._tabster, body)) === null || _a5 === void 0 ? void 0 : _a5.root;
-          }
-        } else if (!this._autoRootWaiting) {
-          this._autoRootWaiting = true;
-          doc.addEventListener("readystatechange", this._autoRootCreate);
-        }
-        return void 0;
-      };
-      this._onRootDispose = (root2) => {
-        delete this._roots[root2.id];
-      };
-      this._tabster = tabster;
-      this._win = tabster.getWindow;
-      this._autoRoot = autoRoot;
-      this.eventTarget = createEventTarget(this._win);
-      tabster.queueInit(() => {
-        if (this._autoRoot) {
-          this._autoRootCreate();
-        }
-      });
-    }
-    _autoRootUnwait(doc) {
-      doc.removeEventListener("readystatechange", this._autoRootCreate);
-      this._autoRootWaiting = false;
-    }
-    dispose() {
-      const win = this._win();
-      this._autoRootUnwait(win.document);
-      delete this._autoRoot;
-      Object.keys(this._roots).forEach((rootId) => {
-        if (this._roots[rootId]) {
-          this._roots[rootId].dispose();
-          delete this._roots[rootId];
-        }
-      });
-      this.rootById = {};
-    }
-    createRoot(element, props, sys) {
-      if (true)
-        ;
-      const newRoot = new Root(this._tabster, element, this._onRootDispose, props, sys);
-      this._roots[newRoot.id] = newRoot;
-      if (this._forceDummy) {
-        newRoot.addDummyInputs();
-      }
-      return newRoot;
-    }
-    addDummyInputs() {
-      this._forceDummy = true;
-      const roots = this._roots;
-      for (const id of Object.keys(roots)) {
-        roots[id].addDummyInputs();
-      }
-    }
-    static getRootByUId(getWindow2, id) {
-      const tabster = getWindow2().__tabsterInstance;
-      return tabster && tabster.root.rootById[id];
-    }
-    /**
-     * Fetches the tabster context for an element walking up its ancestors
-     *
-     * @param tabster Tabster instance
-     * @param element The element the tabster context should represent
-     * @param options Additional options
-     * @returns undefined if the element is not a child of a tabster root, otherwise all applicable tabster behaviours and configurations
-     */
-    static getTabsterContext(tabster, element, options) {
-      if (options === void 0) {
-        options = {};
-      }
-      var _a5, _b, _c, _d;
-      if (!element.ownerDocument) {
-        return void 0;
-      }
-      tabster.drainInitQueue();
-      const checkRtl = options.checkRtl;
-      let root2;
-      let modalizer;
-      let groupper;
-      let mover;
-      let isExcludedFromMover = false;
-      let isGroupperFirst;
-      let modalizerInGroupper;
-      let isRtl;
-      let uncontrolled;
-      let curElement = options.referenceElement || element;
-      const ignoreKeydown = {};
-      while (curElement && (!root2 || checkRtl)) {
-        const tabsterOnElement = getTabsterOnElement(tabster, curElement);
-        if (checkRtl && isRtl === void 0) {
-          const dir = curElement.dir;
-          if (dir) {
-            isRtl = dir.toLowerCase() === "rtl";
-          }
-        }
-        if (!tabsterOnElement) {
-          curElement = curElement.parentElement;
-          continue;
-        }
-        const tagName = curElement.tagName;
-        if (tabsterOnElement.uncontrolled || tagName === "IFRAME" || tagName === "WEBVIEW") {
-          uncontrolled = curElement;
-        }
-        if (!mover && ((_a5 = tabsterOnElement.focusable) === null || _a5 === void 0 ? void 0 : _a5.excludeFromMover) && !groupper) {
-          isExcludedFromMover = true;
-        }
-        const curModalizer = tabsterOnElement.modalizer;
-        const curGroupper = tabsterOnElement.groupper;
-        const curMover = tabsterOnElement.mover;
-        if (!modalizer && curModalizer) {
-          modalizer = curModalizer;
-        }
-        if (!groupper && curGroupper && (!modalizer || curModalizer)) {
-          if (modalizer) {
-            if (!curGroupper.isActive() && curGroupper.getProps().tabbability && modalizer.userId !== ((_b = tabster.modalizer) === null || _b === void 0 ? void 0 : _b.activeId)) {
-              modalizer = void 0;
-              groupper = curGroupper;
-            }
-            modalizerInGroupper = curGroupper;
-          } else {
-            groupper = curGroupper;
-          }
-        }
-        if (!mover && curMover && (!modalizer || curModalizer) && (!curGroupper || curElement !== element)) {
-          mover = curMover;
-          isGroupperFirst = !!groupper && groupper !== curGroupper;
-        }
-        if (tabsterOnElement.root) {
-          root2 = tabsterOnElement.root;
-        }
-        if ((_c = tabsterOnElement.focusable) === null || _c === void 0 ? void 0 : _c.ignoreKeydown) {
-          Object.assign(ignoreKeydown, tabsterOnElement.focusable.ignoreKeydown);
-        }
-        curElement = curElement.parentElement;
-      }
-      if (!root2) {
-        const rootAPI = tabster.root;
-        const autoRoot = rootAPI._autoRoot;
-        if (autoRoot) {
-          if ((_d = element.ownerDocument) === null || _d === void 0 ? void 0 : _d.body) {
-            root2 = rootAPI._autoRootCreate();
-          }
-        }
-      }
-      if (groupper && !mover) {
-        isGroupperFirst = true;
-      }
-      if (!root2) {
-        if (modalizer || groupper || mover) {
-          console.error("Tabster Root is required for Mover, Groupper and Modalizer to work.");
-        }
-      }
-      const shouldIgnoreKeydown = (event) => !!ignoreKeydown[event.key];
-      return root2 ? {
-        root: root2,
-        modalizer,
-        groupper,
-        mover,
-        isGroupperFirst,
-        modalizerInGroupper,
-        isRtl: checkRtl ? !!isRtl : void 0,
-        uncontrolled,
-        isExcludedFromMover,
-        ignoreKeydown: shouldIgnoreKeydown
-      } : void 0;
-    }
-    static getRoot(tabster, element) {
-      var _a5;
-      for (let el = element; el; el = el.parentElement) {
-        const root2 = (_a5 = getTabsterOnElement(tabster, el)) === null || _a5 === void 0 ? void 0 : _a5.root;
-        if (root2) {
-          return root2;
-        }
-      }
-      return void 0;
-    }
-    onRoot(root2, removed) {
-      if (removed) {
-        delete this.rootById[root2.uid];
-      } else {
-        this.rootById[root2.uid] = root2;
-      }
-    }
-  };
-  var Subscribable = class {
-    constructor() {
-      this._callbacks = [];
-    }
-    dispose() {
-      this._callbacks = [];
-      delete this._val;
-    }
-    subscribe(callback) {
-      const callbacks = this._callbacks;
-      const index = callbacks.indexOf(callback);
-      if (index < 0) {
-        callbacks.push(callback);
-      }
-    }
-    subscribeFirst(callback) {
-      const callbacks = this._callbacks;
-      const index = callbacks.indexOf(callback);
-      if (index >= 0) {
-        callbacks.splice(index, 1);
-      }
-      callbacks.unshift(callback);
-    }
-    unsubscribe(callback) {
-      const index = this._callbacks.indexOf(callback);
-      if (index >= 0) {
-        this._callbacks.splice(index, 1);
-      }
-    }
-    setVal(val, details) {
-      if (this._val === val) {
-        return;
-      }
-      this._val = val;
-      this._callCallbacks(val, details);
-    }
-    getVal() {
-      return this._val;
-    }
-    trigger(val, details) {
-      this._callCallbacks(val, details);
-    }
-    _callCallbacks(val, details) {
-      this._callbacks.forEach((callback) => callback(val, details));
-    }
-  };
-  var _focusableSelector = /* @__PURE__ */ ["a[href]", "button:not([disabled])", "input:not([disabled])", "select:not([disabled])", "textarea:not([disabled])", "*[tabindex]", "*[contenteditable]"].join(", ");
-  var FocusableAPI = class {
-    constructor(tabster) {
-      this._tabster = tabster;
-    }
-    dispose() {
-    }
-    getProps(element) {
-      const tabsterOnElement = getTabsterOnElement(this._tabster, element);
-      return tabsterOnElement && tabsterOnElement.focusable || {};
-    }
-    isFocusable(el, includeProgrammaticallyFocusable, noVisibleCheck, noAccessibleCheck) {
-      if (matchesSelector(el, _focusableSelector) && (includeProgrammaticallyFocusable || el.tabIndex !== -1)) {
-        return (noVisibleCheck || this.isVisible(el)) && (noAccessibleCheck || this.isAccessible(el));
-      }
-      return false;
-    }
-    isVisible(el) {
-      if (!el.ownerDocument || el.nodeType !== Node.ELEMENT_NODE) {
-        return false;
-      }
-      if (el.offsetParent === null && el.ownerDocument.body !== el) {
-        return false;
-      }
-      const win = el.ownerDocument.defaultView;
-      if (!win) {
-        return false;
-      }
-      const rect = el.ownerDocument.body.getBoundingClientRect();
-      if (rect.width === 0 && rect.height === 0) {
-        return false;
-      }
-      const computedStyle = win.getComputedStyle(el);
-      if (computedStyle.visibility === "hidden") {
-        return false;
-      }
-      return true;
-    }
-    isAccessible(el) {
-      var _a5;
-      for (let e = el; e; e = e.parentElement) {
-        const tabsterOnElement = getTabsterOnElement(this._tabster, e);
-        if (this._isHidden(e)) {
-          return false;
-        }
-        const ignoreDisabled = (_a5 = tabsterOnElement === null || tabsterOnElement === void 0 ? void 0 : tabsterOnElement.focusable) === null || _a5 === void 0 ? void 0 : _a5.ignoreAriaDisabled;
-        if (!ignoreDisabled && this._isDisabled(e)) {
-          return false;
-        }
-      }
-      return true;
-    }
-    _isDisabled(el) {
-      return el.hasAttribute("disabled");
-    }
-    _isHidden(el) {
-      var _a5;
-      const attrVal = el.getAttribute("aria-hidden");
-      if (attrVal && attrVal.toLowerCase() === "true") {
-        if (!((_a5 = this._tabster.modalizer) === null || _a5 === void 0 ? void 0 : _a5.isAugmented(el))) {
-          return true;
-        }
-      }
-      return false;
-    }
-    findFirst(options) {
-      return this.findElement({
-        ...options
-      });
-    }
-    findLast(options) {
-      return this.findElement({
-        isBackward: true,
-        ...options
-      });
-    }
-    findNext(options, out) {
-      return this.findElement({
-        ...options
-      }, out);
-    }
-    findPrev(options, out) {
-      return this.findElement({
-        ...options,
-        isBackward: true
-      }, out);
-    }
-    findDefault(options) {
-      return this.findElement({
-        ...options,
-        acceptCondition: (el) => this._tabster.focusable.isFocusable(el, options.includeProgrammaticallyFocusable) && !!this.getProps(el).isDefault
-      }) || null;
-    }
-    findAll(options) {
-      return this._findElements(true, options) || [];
-    }
-    findElement(options, out) {
-      const found = this._findElements(false, options, out);
-      return found ? found[0] : found;
-    }
-    _findElements(findAll, options, out) {
-      var _a5, _b, _c;
-      const {
-        container,
-        currentElement = null,
-        includeProgrammaticallyFocusable,
-        useActiveModalizer,
-        ignoreUncontrolled,
-        ignoreAccessibility,
-        modalizerId,
-        isBackward,
-        onUncontrolled,
-        onElement
-      } = options;
-      if (!out) {
-        out = {};
-      }
-      const elements = [];
-      let {
-        acceptCondition
-      } = options;
-      if (!container) {
-        return null;
-      }
-      if (!acceptCondition) {
-        acceptCondition = (el) => this._tabster.focusable.isFocusable(el, includeProgrammaticallyFocusable, false, ignoreAccessibility);
-      }
-      const acceptElementState = {
-        container,
-        modalizerUserId: modalizerId === void 0 && useActiveModalizer ? (_a5 = this._tabster.modalizer) === null || _a5 === void 0 ? void 0 : _a5.activeId : modalizerId || ((_c = (_b = RootAPI.getTabsterContext(this._tabster, container)) === null || _b === void 0 ? void 0 : _b.modalizer) === null || _c === void 0 ? void 0 : _c.userId),
-        from: currentElement || container,
-        isBackward,
-        acceptCondition,
-        includeProgrammaticallyFocusable,
-        ignoreUncontrolled,
-        ignoreAccessibility,
-        cachedGrouppers: {}
-      };
-      const walker = createElementTreeWalker(container.ownerDocument, container, (node) => this._acceptElement(node, acceptElementState));
-      if (!walker) {
-        return null;
-      }
-      const prepareForNextElement = (shouldContinueIfNotFound) => {
-        const foundElement2 = acceptElementState.foundElement;
-        if (foundElement2) {
-          elements.push(foundElement2);
-        }
-        if (findAll) {
-          if (foundElement2) {
-            acceptElementState.found = false;
-            delete acceptElementState.foundElement;
-            delete acceptElementState.fromCtx;
-            acceptElementState.from = foundElement2;
-            if (onElement && !onElement(foundElement2)) {
-              return false;
-            }
-          }
-          return !!(foundElement2 || shouldContinueIfNotFound);
-        } else {
-          return !!(shouldContinueIfNotFound && !foundElement2);
-        }
-      };
-      if (!currentElement) {
-        out.outOfDOMOrder = true;
-      }
-      if (currentElement) {
-        walker.currentNode = currentElement;
-      } else if (isBackward) {
-        const lastChild = getLastChild(container);
-        if (!lastChild) {
-          return null;
-        }
-        if (this._acceptElement(lastChild, acceptElementState) === NodeFilter.FILTER_ACCEPT && !prepareForNextElement(true)) {
-          if (acceptElementState.skippedFocusable) {
-            out.outOfDOMOrder = true;
-          }
-          return elements;
-        }
-        walker.currentNode = lastChild;
-      }
-      let foundElement;
-      do {
-        foundElement = (isBackward ? walker.previousNode() : walker.nextNode()) || void 0;
-      } while (prepareForNextElement());
-      if (!findAll) {
-        const nextUncontrolled = acceptElementState.nextUncontrolled;
-        if (nextUncontrolled) {
-          if (onUncontrolled) {
-            onUncontrolled(nextUncontrolled);
-          }
-          if (foundElement) {
-            return void 0;
-          } else {
-            return null;
-          }
-        }
-      }
-      if (acceptElementState.skippedFocusable) {
-        out.outOfDOMOrder = true;
-      }
-      return elements.length ? elements : null;
-    }
-    _acceptElement(element, state) {
-      var _a5, _b, _c, _d, _e;
-      if (state.found) {
-        return NodeFilter.FILTER_ACCEPT;
-      }
-      const container = state.container;
-      if (element === container) {
-        return NodeFilter.FILTER_SKIP;
-      }
-      if (!container.contains(element)) {
-        return NodeFilter.FILTER_REJECT;
-      }
-      if (element.__tabsterDummyContainer) {
-        return NodeFilter.FILTER_REJECT;
-      }
-      let lastToIgnore = state.lastToIgnore;
-      if (lastToIgnore) {
-        if (lastToIgnore.contains(element)) {
-          return NodeFilter.FILTER_REJECT;
-        } else {
-          lastToIgnore = state.lastToIgnore = void 0;
-        }
-      }
-      const ctx = state.currentCtx = RootAPI.getTabsterContext(this._tabster, element);
-      if (!ctx) {
-        return NodeFilter.FILTER_SKIP;
-      }
-      if (state.ignoreUncontrolled) {
-        if (shouldIgnoreFocus(element)) {
-          return NodeFilter.FILTER_SKIP;
-        }
-      } else if (ctx.uncontrolled && !state.nextUncontrolled && this._tabster.focusable.isFocusable(element, void 0, true, true)) {
-        if (!ctx.groupper && !ctx.mover) {
-          if (((_a5 = ctx.modalizer) === null || _a5 === void 0 ? void 0 : _a5.userId) === ((_b = this._tabster.modalizer) === null || _b === void 0 ? void 0 : _b.activeId)) {
-            if (this.isVisible(ctx.uncontrolled)) {
-              state.nextUncontrolled = ctx.uncontrolled;
-            }
-            state.skippedFocusable = true;
-            return NodeFilter.FILTER_REJECT;
-          }
-        }
-      }
-      if (element.tagName === "IFRAME" || element.tagName === "WEBVIEW") {
-        if (((_c = ctx.modalizer) === null || _c === void 0 ? void 0 : _c.userId) === ((_d = this._tabster.modalizer) === null || _d === void 0 ? void 0 : _d.activeId)) {
-          state.found = true;
-          state.lastToIgnore = state.foundElement = element;
-          return NodeFilter.FILTER_ACCEPT;
-        } else {
-          return NodeFilter.FILTER_REJECT;
-        }
-      }
-      if (!state.ignoreAccessibility && !this.isAccessible(element)) {
-        if (this.isFocusable(element, false, true, true)) {
-          state.skippedFocusable = true;
-        }
-        return NodeFilter.FILTER_REJECT;
-      }
-      let result;
-      let fromCtx = state.fromCtx;
-      if (!fromCtx) {
-        fromCtx = state.fromCtx = RootAPI.getTabsterContext(this._tabster, state.from);
-      }
-      const fromMover = fromCtx === null || fromCtx === void 0 ? void 0 : fromCtx.mover;
-      let groupper = ctx.groupper;
-      let mover = ctx.mover;
-      result = (_e = this._tabster.modalizer) === null || _e === void 0 ? void 0 : _e.acceptElement(element, state);
-      if (result !== void 0) {
-        state.skippedFocusable = true;
-      }
-      if (result === void 0 && (groupper || mover || fromMover)) {
-        const groupperElement = groupper === null || groupper === void 0 ? void 0 : groupper.getElement();
-        const fromMoverElement = fromMover === null || fromMover === void 0 ? void 0 : fromMover.getElement();
-        let moverElement = mover === null || mover === void 0 ? void 0 : mover.getElement();
-        if (moverElement && (fromMoverElement === null || fromMoverElement === void 0 ? void 0 : fromMoverElement.contains(moverElement)) && container.contains(fromMoverElement) && (!groupperElement || !mover || fromMoverElement.contains(groupperElement))) {
-          mover = fromMover;
-          moverElement = fromMoverElement;
-        }
-        if (groupperElement && (groupperElement === container || !container.contains(groupperElement))) {
-          groupper = void 0;
-        }
-        if (moverElement && !container.contains(moverElement)) {
-          mover = void 0;
-        }
-        if (groupper && mover) {
-          if (moverElement && groupperElement && !groupperElement.contains(moverElement)) {
-            mover = void 0;
-          } else {
-            groupper = void 0;
-          }
-        }
-        if (groupper) {
-          result = groupper.acceptElement(element, state);
-        }
-        if (mover) {
-          result = mover.acceptElement(element, state);
-        }
-      }
-      if (result === void 0) {
-        result = state.acceptCondition(element) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
-        if (result === NodeFilter.FILTER_SKIP && this.isFocusable(element, false, true, true)) {
-          state.skippedFocusable = true;
-        }
-      }
-      if (result === NodeFilter.FILTER_ACCEPT && !state.found) {
-        state.found = true;
-        state.foundElement = element;
-      }
-      return result;
-    }
-  };
-  var Keys = {
-    Tab: 9,
-    Enter: 13,
-    Esc: 27,
-    Space: 32,
-    PageUp: 33,
-    PageDown: 34,
-    End: 35,
-    Home: 36,
-    Left: 37,
-    Up: 38,
-    Right: 39,
-    Down: 40
-  };
-  var FocusedElementState = class _FocusedElementState extends Subscribable {
-    constructor(tabster, getWindow2) {
-      super();
-      this._init = () => {
-        const win = this._win();
-        const doc = win.document;
-        doc.addEventListener(KEYBORG_FOCUSIN, this._onFocusIn, true);
-        doc.addEventListener("focusout", this._onFocusOut, true);
-        win.addEventListener("keydown", this._onKeyDown, true);
-        const activeElement = doc.activeElement;
-        if (activeElement && activeElement !== doc.body) {
-          this._setFocusedElement(activeElement);
-        }
-        this.subscribe(this._onChanged);
-      };
-      this._onFocusIn = (e) => {
-        this._setFocusedElement(e.target, e.details.relatedTarget, e.details.isFocusedProgrammatically);
-      };
-      this._onFocusOut = (e) => {
-        this._setFocusedElement(void 0, e.relatedTarget);
-      };
-      this._validateFocusedElement = (element) => {
-      };
-      this._onKeyDown = (e) => {
-        var _a5, _b;
-        if (e.keyCode !== Keys.Tab || e.ctrlKey) {
-          return;
-        }
-        const currentElement = this.getVal();
-        if (!currentElement || !currentElement.ownerDocument || currentElement.contentEditable === "true") {
-          return;
-        }
-        const tabster2 = this._tabster;
-        const controlTab = tabster2.controlTab;
-        const ctx = RootAPI.getTabsterContext(tabster2, currentElement);
-        if (!ctx || ctx.ignoreKeydown(e)) {
-          return;
-        }
-        const isBackward = e.shiftKey;
-        const next = _FocusedElementState.findNextTabbable(tabster2, ctx, void 0, currentElement, void 0, isBackward, void 0, true);
-        let nextElement;
-        if (next) {
-          let uncontrolled = next.uncontrolled;
-          if (uncontrolled) {
-            const isGroupperFirst = ctx.isGroupperFirst;
-            let moveOutside = false;
-            if (isGroupperFirst !== void 0) {
-              const groupper = (_a5 = ctx.groupper) === null || _a5 === void 0 ? void 0 : _a5.getElement();
-              const mover = (_b = ctx.mover) === null || _b === void 0 ? void 0 : _b.getElement();
-              let moveFrom;
-              if (isGroupperFirst && groupper && uncontrolled.contains(groupper)) {
-                moveFrom = groupper;
-              } else if (!isGroupperFirst && mover && uncontrolled.contains(mover)) {
-                moveFrom = mover;
-              }
-              if (moveFrom) {
-                uncontrolled = moveFrom;
-                moveOutside = true;
-              }
-            }
-            if (uncontrolled && ctx.uncontrolled !== uncontrolled) {
-              DummyInputManager.moveWithPhantomDummy(this._tabster, uncontrolled, moveOutside, isBackward);
-            }
-            return;
-          }
-          nextElement = next.element;
-        }
-        if (nextElement) {
-          if (nextElement.tagName === "IFRAME") {
-            DummyInputManager.moveWithPhantomDummy(this._tabster, nextElement, false, isBackward);
-            return;
-          }
-          if (controlTab || (next === null || next === void 0 ? void 0 : next.outOfDOMOrder)) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            nativeFocus(nextElement);
-          }
-        } else {
-          ctx.root.moveOutWithDefaultAction(isBackward);
-        }
-      };
-      this._onChanged = (element, details) => {
-        var _a5, _b;
-        if (element) {
-          triggerEvent(element, FocusInEventName, details);
-        } else {
-          const last = (_a5 = this._lastVal) === null || _a5 === void 0 ? void 0 : _a5.get();
-          if (last) {
-            const d = {
-              ...details
-            };
-            const lastCtx = RootAPI.getTabsterContext(this._tabster, last);
-            const modalizerId = (_b = lastCtx === null || lastCtx === void 0 ? void 0 : lastCtx.modalizer) === null || _b === void 0 ? void 0 : _b.userId;
-            if (modalizerId) {
-              d.modalizerId = modalizerId;
-            }
-            triggerEvent(last, FocusOutEventName, d);
-          }
-        }
-      };
-      this._tabster = tabster;
-      this._win = getWindow2;
-      tabster.queueInit(this._init);
-    }
-    dispose() {
-      super.dispose();
-      const win = this._win();
-      win.document.removeEventListener(KEYBORG_FOCUSIN, this._onFocusIn, true);
-      win.document.removeEventListener("focusout", this._onFocusOut, true);
-      win.removeEventListener("keydown", this._onKeyDown, true);
-      this.unsubscribe(this._onChanged);
-      delete _FocusedElementState._lastResetElement;
-      delete this._nextVal;
-      delete this._lastVal;
-    }
-    static forgetMemorized(instance, parent) {
-      var _a5, _b;
-      let wel = _FocusedElementState._lastResetElement;
-      let el = wel && wel.get();
-      if (el && parent.contains(el)) {
-        delete _FocusedElementState._lastResetElement;
-      }
-      el = (_b = (_a5 = instance._nextVal) === null || _a5 === void 0 ? void 0 : _a5.element) === null || _b === void 0 ? void 0 : _b.get();
-      if (el && parent.contains(el)) {
-        delete instance._nextVal;
-      }
-      wel = instance._lastVal;
-      el = wel && wel.get();
-      if (el && parent.contains(el)) {
-        delete instance._lastVal;
-      }
-    }
-    getFocusedElement() {
-      return this.getVal();
-    }
-    getLastFocusedElement() {
-      var _a5;
-      let el = (_a5 = this._lastVal) === null || _a5 === void 0 ? void 0 : _a5.get();
-      if (!el || el && !documentContains(el.ownerDocument, el)) {
-        this._lastVal = el = void 0;
-      }
-      return el;
-    }
-    focus(element, noFocusedProgrammaticallyFlag, noAccessibleCheck) {
-      if (!this._tabster.focusable.isFocusable(element, noFocusedProgrammaticallyFlag, false, noAccessibleCheck)) {
-        return false;
-      }
-      element.focus();
-      return true;
-    }
-    focusDefault(container) {
-      const el = this._tabster.focusable.findDefault({
-        container
-      });
-      if (el) {
-        this._tabster.focusedElement.focus(el);
-        return true;
-      }
-      return false;
-    }
-    getFirstOrLastTabbable(isFirst, props) {
-      const tabsterFocusable = this._tabster.focusable;
-      const {
-        container,
-        ignoreAccessibility
-      } = props;
-      let uncontrolled;
-      let toFocus;
-      if (container) {
-        const ctx = RootAPI.getTabsterContext(this._tabster, container);
-        if (ctx) {
-          let next = _FocusedElementState.findNextTabbable(this._tabster, ctx, container, void 0, void 0, !isFirst, void 0, ignoreAccessibility);
-          if (next) {
-            toFocus = next.element;
-            uncontrolled = next.uncontrolled;
-            while (!toFocus && uncontrolled) {
-              if (tabsterFocusable.isFocusable(uncontrolled, false, true, true)) {
-                toFocus = uncontrolled;
-              } else {
-                toFocus = tabsterFocusable[isFirst ? "findFirst" : "findLast"]({
-                  container: uncontrolled,
-                  ignoreUncontrolled: true,
-                  ignoreAccessibility,
-                  useActiveModalizer: true
-                });
-              }
-              if (!toFocus) {
-                next = _FocusedElementState.findNextTabbable(this._tabster, ctx, uncontrolled, void 0, void 0, !isFirst, void 0, ignoreAccessibility);
-                if (next) {
-                  toFocus = next.element;
-                  uncontrolled = next.uncontrolled;
-                }
-              }
-            }
-          }
-        }
-      }
-      if (toFocus && !(container === null || container === void 0 ? void 0 : container.contains(toFocus))) {
-        toFocus = void 0;
-      }
-      return toFocus || void 0;
-    }
-    _focusFirstOrLast(isFirst, props) {
-      const toFocus = this.getFirstOrLastTabbable(isFirst, props);
-      if (toFocus) {
-        this.focus(toFocus, false, true);
-        return true;
-      }
-      return false;
-    }
-    focusFirst(props) {
-      return this._focusFirstOrLast(true, props);
-    }
-    focusLast(props) {
-      return this._focusFirstOrLast(false, props);
-    }
-    resetFocus(container) {
-      if (!this._tabster.focusable.isVisible(container)) {
-        return false;
-      }
-      if (!this._tabster.focusable.isFocusable(container, true, true, true)) {
-        const prevTabIndex = container.getAttribute("tabindex");
-        const prevAriaHidden = container.getAttribute("aria-hidden");
-        container.tabIndex = -1;
-        container.setAttribute("aria-hidden", "true");
-        _FocusedElementState._lastResetElement = new WeakHTMLElement(this._win, container);
-        this.focus(container, true, true);
-        this._setOrRemoveAttribute(container, "tabindex", prevTabIndex);
-        this._setOrRemoveAttribute(container, "aria-hidden", prevAriaHidden);
-      } else {
-        this.focus(container);
-      }
-      return true;
-    }
-    _setOrRemoveAttribute(element, name, value) {
-      if (value === null) {
-        element.removeAttribute(name);
-      } else {
-        element.setAttribute(name, value);
-      }
-    }
-    _setFocusedElement(element, relatedTarget, isFocusedProgrammatically) {
-      var _a5, _b;
-      if (this._tabster._noop) {
-        return;
-      }
-      const details = {
-        relatedTarget
-      };
-      if (element) {
-        const lastResetElement = (_a5 = _FocusedElementState._lastResetElement) === null || _a5 === void 0 ? void 0 : _a5.get();
-        _FocusedElementState._lastResetElement = void 0;
-        if (lastResetElement === element || shouldIgnoreFocus(element)) {
-          return;
-        }
-        details.isFocusedProgrammatically = isFocusedProgrammatically;
-        const ctx = RootAPI.getTabsterContext(this._tabster, element);
-        const modalizerId = (_b = ctx === null || ctx === void 0 ? void 0 : ctx.modalizer) === null || _b === void 0 ? void 0 : _b.userId;
-        if (modalizerId) {
-          details.modalizerId = modalizerId;
-        }
-      }
-      const nextVal = this._nextVal = {
-        element: element ? new WeakHTMLElement(this._win, element) : void 0,
-        details
-      };
-      if (element && element !== this._val) {
-        this._validateFocusedElement(element);
-      }
-      if (this._nextVal === nextVal) {
-        this.setVal(element, details);
-      }
-      this._nextVal = void 0;
-    }
-    setVal(val, details) {
-      super.setVal(val, details);
-      if (val) {
-        this._lastVal = new WeakHTMLElement(this._win, val);
-      }
-    }
-    static findNextTabbable(tabster, ctx, container, currentElement, referenceElement, isBackward, ignoreUncontrolled, ignoreAccessibility) {
-      const actualContainer = container || ctx.root.getElement();
-      if (!actualContainer) {
-        return null;
-      }
-      let next = null;
-      const isTabbingTimer = _FocusedElementState._isTabbingTimer;
-      const win = tabster.getWindow();
-      if (isTabbingTimer) {
-        win.clearTimeout(isTabbingTimer);
-      }
-      _FocusedElementState.isTabbing = true;
-      _FocusedElementState._isTabbingTimer = win.setTimeout(() => {
-        delete _FocusedElementState._isTabbingTimer;
-        _FocusedElementState.isTabbing = false;
-      }, 0);
-      const modalizer = ctx.modalizer;
-      const groupper = ctx.groupper;
-      const mover = ctx.mover;
-      const callFindNext = (what) => {
-        var _a5;
-        next = what.findNextTabbable(currentElement, referenceElement, isBackward, ignoreUncontrolled, ignoreAccessibility);
-        if (currentElement && !(next === null || next === void 0 ? void 0 : next.element) && !(next === null || next === void 0 ? void 0 : next.uncontrolled)) {
-          const parentElement = what !== modalizer && ((_a5 = what.getElement()) === null || _a5 === void 0 ? void 0 : _a5.parentElement);
-          if (parentElement) {
-            const parentCtx = RootAPI.getTabsterContext(tabster, currentElement, {
-              referenceElement: parentElement
-            });
-            if (parentCtx) {
-              const currentScopeElement = what.getElement();
-              const newCurrent = isBackward ? currentScopeElement : currentScopeElement && getLastChild(currentScopeElement) || currentScopeElement;
-              if (newCurrent) {
-                next = _FocusedElementState.findNextTabbable(tabster, parentCtx, container, newCurrent, parentElement, isBackward, ignoreUncontrolled, ignoreAccessibility);
-                if (next) {
-                  next.outOfDOMOrder = true;
-                }
-              }
-            }
-          }
-        }
-      };
-      if (groupper && mover) {
-        callFindNext(ctx.isGroupperFirst ? groupper : mover);
-      } else if (groupper) {
-        callFindNext(groupper);
-      } else if (mover) {
-        callFindNext(mover);
-      } else if (modalizer) {
-        callFindNext(modalizer);
-      } else {
-        let uncontrolled;
-        const onUncontrolled = (el) => {
-          uncontrolled = el;
-        };
-        const findProps = {
-          container: actualContainer,
-          currentElement,
-          referenceElement,
-          onUncontrolled,
-          ignoreUncontrolled,
-          ignoreAccessibility,
-          useActiveModalizer: true
-        };
-        const findPropsOut = {};
-        const nextElement = tabster.focusable[isBackward ? "findPrev" : "findNext"](findProps, findPropsOut);
-        next = {
-          element: uncontrolled ? void 0 : nextElement,
-          uncontrolled,
-          outOfDOMOrder: findPropsOut.outOfDOMOrder
-        };
-      }
-      return next;
-    }
-  };
-  FocusedElementState.isTabbing = false;
-  var KeyboardNavigationState = class extends Subscribable {
-    constructor(getWindow2) {
-      super();
-      this._onChange = (isNavigatingWithKeyboard) => {
-        this.setVal(isNavigatingWithKeyboard, void 0);
-      };
-      this._keyborg = createKeyborg(getWindow2());
-      this._keyborg.subscribe(this._onChange);
-    }
-    dispose() {
-      super.dispose();
-      if (this._keyborg) {
-        this._keyborg.unsubscribe(this._onChange);
-        disposeKeyborg(this._keyborg);
-        delete this._keyborg;
-      }
-    }
-    setNavigatingWithKeyboard(isNavigatingWithKeyboard) {
-      var _a5;
-      (_a5 = this._keyborg) === null || _a5 === void 0 ? void 0 : _a5.setVal(isNavigatingWithKeyboard);
-    }
-    isNavigatingWithKeyboard() {
-      var _a5;
-      return !!((_a5 = this._keyborg) === null || _a5 === void 0 ? void 0 : _a5.isNavigatingWithKeyboard());
-    }
-  };
-  var _inputSelector = /* @__PURE__ */ ["input", "textarea", "*[contenteditable]"].join(", ");
-  var MoverDummyManager = class extends DummyInputManager {
-    constructor(element, tabster, getMemorized, sys) {
-      super(tabster, element, DummyInputManagerPriorities.Mover, sys);
-      this._onFocusDummyInput = (dummyInput) => {
-        var _a5, _b;
-        const container = this._element.get();
-        const input = dummyInput.input;
-        if (container && input) {
-          const ctx = RootAPI.getTabsterContext(this._tabster, container);
-          let toFocus;
-          if (ctx) {
-            toFocus = (_a5 = FocusedElementState.findNextTabbable(this._tabster, ctx, void 0, input, void 0, !dummyInput.isFirst, true)) === null || _a5 === void 0 ? void 0 : _a5.element;
-          }
-          const memorized = (_b = this._getMemorized()) === null || _b === void 0 ? void 0 : _b.get();
-          if (memorized) {
-            toFocus = memorized;
-          }
-          if (toFocus) {
-            nativeFocus(toFocus);
-          }
-        }
-      };
-      this._tabster = tabster;
-      this._getMemorized = getMemorized;
-      this._setHandlers(this._onFocusDummyInput);
-    }
-  };
-  var _moverUpdateAdd = 1;
-  var _moverUpdateAttr = 2;
-  var _moverUpdateRemove = 3;
-  var Mover = class extends TabsterPart {
-    constructor(tabster, element, onDispose, props, sys) {
-      var _a5;
-      super(tabster, element, props);
-      this._visible = {};
-      this._onIntersection = (entries) => {
-        for (const entry of entries) {
-          const el = entry.target;
-          const id = getElementUId(this._win, el);
-          let newVisibility;
-          let fullyVisible = this._fullyVisible;
-          if (entry.intersectionRatio >= 0.25) {
-            newVisibility = entry.intersectionRatio >= 0.75 ? Visibilities.Visible : Visibilities.PartiallyVisible;
-            if (newVisibility === Visibilities.Visible) {
-              fullyVisible = id;
-            }
-          } else {
-            newVisibility = Visibilities.Invisible;
-          }
-          if (this._visible[id] !== newVisibility) {
-            if (newVisibility === void 0) {
-              delete this._visible[id];
-              if (fullyVisible === id) {
-                delete this._fullyVisible;
-              }
-            } else {
-              this._visible[id] = newVisibility;
-              this._fullyVisible = fullyVisible;
-            }
-            const state = this.getState(el);
-            if (state) {
-              triggerEvent(el, MoverEventName, state);
-            }
-          }
-        }
-      };
-      this._win = tabster.getWindow;
-      this.visibilityTolerance = (_a5 = props.visibilityTolerance) !== null && _a5 !== void 0 ? _a5 : 0.8;
-      if (this._props.trackState || this._props.visibilityAware) {
-        this._intersectionObserver = new IntersectionObserver(this._onIntersection, {
-          threshold: [0, 0.25, 0.5, 0.75, 1]
-        });
-        this._observeState();
-      }
-      this._onDispose = onDispose;
-      const getMemorized = () => props.memorizeCurrent ? this._current : void 0;
-      if (!tabster.controlTab) {
-        this.dummyManager = new MoverDummyManager(this._element, tabster, getMemorized, sys);
-      }
-    }
-    dispose() {
-      var _a5;
-      this._onDispose(this);
-      if (this._intersectionObserver) {
-        this._intersectionObserver.disconnect();
-        delete this._intersectionObserver;
-      }
-      delete this._current;
-      delete this._fullyVisible;
-      delete this._allElements;
-      delete this._updateQueue;
-      if (this._unobserve) {
-        this._unobserve();
-        delete this._unobserve;
-      }
-      const win = this._win();
-      if (this._setCurrentTimer) {
-        win.clearTimeout(this._setCurrentTimer);
-        delete this._setCurrentTimer;
-      }
-      if (this._updateTimer) {
-        win.clearTimeout(this._updateTimer);
-        delete this._updateTimer;
-      }
-      (_a5 = this.dummyManager) === null || _a5 === void 0 ? void 0 : _a5.dispose();
-    }
-    setCurrent(element) {
-      if (element) {
-        this._current = new WeakHTMLElement(this._win, element);
-      } else {
-        this._current = void 0;
-      }
-      if ((this._props.trackState || this._props.visibilityAware) && !this._setCurrentTimer) {
-        this._setCurrentTimer = this._win().setTimeout(() => {
-          var _a5;
-          delete this._setCurrentTimer;
-          const changed = [];
-          if (this._current !== this._prevCurrent) {
-            changed.push(this._current);
-            changed.push(this._prevCurrent);
-            this._prevCurrent = this._current;
-          }
-          for (const weak of changed) {
-            const el = weak === null || weak === void 0 ? void 0 : weak.get();
-            if (el && ((_a5 = this._allElements) === null || _a5 === void 0 ? void 0 : _a5.get(el)) === this) {
-              const props = this._props;
-              if (el && (props.visibilityAware !== void 0 || props.trackState)) {
-                const state = this.getState(el);
-                if (state) {
-                  triggerEvent(el, MoverEventName, state);
-                }
-              }
-            }
-          }
-        });
-      }
-    }
-    getCurrent() {
-      var _a5;
-      return ((_a5 = this._current) === null || _a5 === void 0 ? void 0 : _a5.get()) || null;
-    }
-    findNextTabbable(currentElement, referenceElement, isBackward, ignoreUncontrolled, ignoreAccessibility) {
-      var _a5;
-      const container = this.getElement();
-      const currentIsDummy = container && ((_a5 = currentElement === null || currentElement === void 0 ? void 0 : currentElement.__tabsterDummyContainer) === null || _a5 === void 0 ? void 0 : _a5.get()) === container;
-      if (!container) {
-        return null;
-      }
-      const tabster = this._tabster;
-      let next = null;
-      let uncontrolled;
-      let outOfDOMOrder = false;
-      const onUncontrolled = (el) => {
-        uncontrolled = el;
-      };
-      if (this._props.tabbable || currentIsDummy || currentElement && !container.contains(currentElement)) {
-        const findProps = {
-          currentElement,
-          referenceElement,
-          container,
-          onUncontrolled,
-          ignoreUncontrolled,
-          ignoreAccessibility,
-          useActiveModalizer: true
-        };
-        const findPropsOut = {};
-        next = tabster.focusable[isBackward ? "findPrev" : "findNext"](findProps, findPropsOut);
-        outOfDOMOrder = !!findPropsOut.outOfDOMOrder;
-      }
-      return {
-        element: next,
-        uncontrolled,
-        outOfDOMOrder
-      };
-    }
-    acceptElement(element, state) {
-      var _a5, _b, _c;
-      if (!FocusedElementState.isTabbing) {
-        return ((_a5 = state.currentCtx) === null || _a5 === void 0 ? void 0 : _a5.isExcludedFromMover) ? NodeFilter.FILTER_REJECT : void 0;
-      }
-      const {
-        memorizeCurrent,
-        visibilityAware,
-        hasDefault = true
-      } = this._props;
-      const moverElement = this.getElement();
-      if (moverElement && (memorizeCurrent || visibilityAware || hasDefault) && (!moverElement.contains(state.from) || ((_b = state.from.__tabsterDummyContainer) === null || _b === void 0 ? void 0 : _b.get()) === moverElement)) {
-        let found;
-        if (memorizeCurrent) {
-          const current = (_c = this._current) === null || _c === void 0 ? void 0 : _c.get();
-          if (current && state.acceptCondition(current)) {
-            found = current;
-          }
-        }
-        if (!found && hasDefault) {
-          found = this._tabster.focusable.findDefault({
-            container: moverElement,
-            ignoreUncontrolled: true,
-            useActiveModalizer: true
-          });
-        }
-        if (!found && visibilityAware) {
-          found = this._tabster.focusable.findElement({
-            container: moverElement,
-            ignoreUncontrolled: true,
-            useActiveModalizer: true,
-            isBackward: state.isBackward,
-            acceptCondition: (el) => {
-              var _a6;
-              const id = getElementUId(this._win, el);
-              const visibility = this._visible[id];
-              return moverElement !== el && !!((_a6 = this._allElements) === null || _a6 === void 0 ? void 0 : _a6.get(el)) && state.acceptCondition(el) && (visibility === Visibilities.Visible || visibility === Visibilities.PartiallyVisible && (visibilityAware === Visibilities.PartiallyVisible || !this._fullyVisible));
-            }
-          });
-        }
-        if (found) {
-          state.found = true;
-          state.foundElement = found;
-          state.lastToIgnore = moverElement;
-          state.skippedFocusable = true;
-          return NodeFilter.FILTER_ACCEPT;
-        }
-      }
-      return void 0;
-    }
-    _observeState() {
-      const element = this.getElement();
-      if (this._unobserve || !element || typeof MutationObserver === "undefined") {
-        return;
-      }
-      const win = this._win();
-      const allElements = this._allElements = /* @__PURE__ */ new WeakMap();
-      const tabsterFocusable = this._tabster.focusable;
-      let updateQueue = this._updateQueue = [];
-      const observer = new MutationObserver((mutations) => {
-        for (const mutation of mutations) {
-          const target = mutation.target;
-          const removed = mutation.removedNodes;
-          const added = mutation.addedNodes;
-          if (mutation.type === "attributes") {
-            if (mutation.attributeName === "tabindex") {
-              updateQueue.push({
-                element: target,
-                type: _moverUpdateAttr
-              });
-            }
-          } else {
-            for (let i = 0; i < removed.length; i++) {
-              updateQueue.push({
-                element: removed[i],
-                type: _moverUpdateRemove
-              });
-            }
-            for (let i = 0; i < added.length; i++) {
-              updateQueue.push({
-                element: added[i],
-                type: _moverUpdateAdd
-              });
-            }
-          }
-        }
-        requestUpdate();
-      });
-      const setElement = (element2, remove) => {
-        var _a5, _b;
-        const current = allElements.get(element2);
-        if (current && remove) {
-          (_a5 = this._intersectionObserver) === null || _a5 === void 0 ? void 0 : _a5.unobserve(element2);
-          allElements.delete(element2);
-        }
-        if (!current && !remove) {
-          allElements.set(element2, this);
-          (_b = this._intersectionObserver) === null || _b === void 0 ? void 0 : _b.observe(element2);
-        }
-      };
-      const updateElement = (element2) => {
-        const isFocusable = tabsterFocusable.isFocusable(element2);
-        const current = allElements.get(element2);
-        if (current) {
-          if (!isFocusable) {
-            setElement(element2, true);
-          }
-        } else {
-          if (isFocusable) {
-            setElement(element2);
-          }
-        }
-      };
-      const addNewElements = (element2) => {
-        const {
-          mover
-        } = getMoverGroupper(element2);
-        if (mover && mover !== this) {
-          if (mover.getElement() === element2 && tabsterFocusable.isFocusable(element2)) {
-            setElement(element2);
-          } else {
-            return;
-          }
-        }
-        const walker = createElementTreeWalker(win.document, element2, (node) => {
-          const {
-            mover: mover2,
-            groupper
-          } = getMoverGroupper(node);
-          if (mover2 && mover2 !== this) {
-            return NodeFilter.FILTER_REJECT;
-          }
-          const groupperFirstFocusable = groupper === null || groupper === void 0 ? void 0 : groupper.getFirst(true);
-          if (groupper && groupper.getElement() !== node && groupperFirstFocusable && groupperFirstFocusable !== node) {
-            return NodeFilter.FILTER_REJECT;
-          }
-          if (tabsterFocusable.isFocusable(node)) {
-            setElement(node);
-          }
-          return NodeFilter.FILTER_SKIP;
-        });
-        if (walker) {
-          walker.currentNode = element2;
-          while (walker.nextNode()) {
-          }
-        }
-      };
-      const removeWalk = (element2) => {
-        const current = allElements.get(element2);
-        if (current) {
-          setElement(element2, true);
-        }
-        for (let el = element2.firstElementChild; el; el = el.nextElementSibling) {
-          removeWalk(el);
-        }
-      };
-      const requestUpdate = () => {
-        if (!this._updateTimer && updateQueue.length) {
-          this._updateTimer = win.setTimeout(() => {
-            delete this._updateTimer;
-            for (const {
-              element: element2,
-              type
-            } of updateQueue) {
-              switch (type) {
-                case _moverUpdateAttr:
-                  updateElement(element2);
-                  break;
-                case _moverUpdateAdd:
-                  addNewElements(element2);
-                  break;
-                case _moverUpdateRemove:
-                  removeWalk(element2);
-                  break;
-              }
-            }
-            updateQueue = this._updateQueue = [];
-          }, 0);
-        }
-      };
-      const getMoverGroupper = (element2) => {
-        const ret = {};
-        for (let el = element2; el; el = el.parentElement) {
-          const toe = getTabsterOnElement(this._tabster, el);
-          if (toe) {
-            if (toe.groupper && !ret.groupper) {
-              ret.groupper = toe.groupper;
-            }
-            if (toe.mover) {
-              ret.mover = toe.mover;
-              break;
-            }
-          }
-        }
-        return ret;
-      };
-      updateQueue.push({
-        element,
-        type: _moverUpdateAdd
-      });
-      requestUpdate();
-      observer.observe(element, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ["tabindex"]
-      });
-      this._unobserve = () => {
-        observer.disconnect();
-      };
-    }
-    getState(element) {
-      const id = getElementUId(this._win, element);
-      if (id in this._visible) {
-        const visibility = this._visible[id] || Visibilities.Invisible;
-        const isCurrent = this._current ? this._current.get() === element : void 0;
-        return {
-          isCurrent,
-          visibility
-        };
-      }
-      return void 0;
-    }
-  };
-  function getDistance(ax1, ay1, ax2, ay2, bx1, by1, bx2, by2) {
-    const xDistance = ax2 < bx1 ? bx1 - ax2 : bx2 < ax1 ? ax1 - bx2 : 0;
-    const yDistance = ay2 < by1 ? by1 - ay2 : by2 < ay1 ? ay1 - by2 : 0;
-    return xDistance === 0 ? yDistance : yDistance === 0 ? xDistance : Math.sqrt(xDistance * xDistance + yDistance * yDistance);
-  }
-  var MoverAPI = class {
-    constructor(tabster, getWindow2) {
-      this._init = () => {
-        const win = this._win();
-        win.addEventListener("keydown", this._onKeyDown, true);
-        this._tabster.focusedElement.subscribe(this._onFocus);
-      };
-      this._onMoverDispose = (mover) => {
-        delete this._movers[mover.id];
-      };
-      this._onFocus = (e) => {
-        var _a5;
-        for (let el = e; el; el = el.parentElement) {
-          const mover = (_a5 = getTabsterOnElement(this._tabster, el)) === null || _a5 === void 0 ? void 0 : _a5.mover;
-          if (mover) {
-            mover.setCurrent(e);
-            break;
-          }
-        }
-      };
-      this._onKeyDown = async (event) => {
-        var _a5, _b, _c, _d;
-        if (this._ignoredInputTimer) {
-          this._win().clearTimeout(this._ignoredInputTimer);
-          delete this._ignoredInputTimer;
-        }
-        (_a5 = this._ignoredInputResolve) === null || _a5 === void 0 ? void 0 : _a5.call(this, false);
-        let keyCode = event.keyCode;
-        if (event.ctrlKey || event.altKey || event.shiftKey || event.metaKey) {
-          return;
-        }
-        switch (keyCode) {
-          case Keys.Down:
-          case Keys.Right:
-          case Keys.Up:
-          case Keys.Left:
-          case Keys.PageDown:
-          case Keys.PageUp:
-          case Keys.Home:
-          case Keys.End:
-            break;
-          default:
-            return;
-        }
-        const tabster2 = this._tabster;
-        const focused = tabster2.focusedElement.getFocusedElement();
-        if (!focused || await this._isIgnoredInput(focused, keyCode)) {
-          return;
-        }
-        const ctx = RootAPI.getTabsterContext(tabster2, focused, {
-          checkRtl: true
-        });
-        if (!ctx || !ctx.mover || ctx.isExcludedFromMover || ctx.ignoreKeydown(event)) {
-          return;
-        }
-        const mover = ctx.mover;
-        const container = mover.getElement();
-        if (ctx.isGroupperFirst) {
-          const groupper = ctx.groupper;
-          if (groupper && !groupper.isActive(true)) {
-            for (let el = (_b = groupper.getElement()) === null || _b === void 0 ? void 0 : _b.parentElement; el && el !== container; el = el.parentElement) {
-              if ((_d = (_c = getTabsterOnElement(tabster2, el)) === null || _c === void 0 ? void 0 : _c.groupper) === null || _d === void 0 ? void 0 : _d.isActive(true)) {
-                return;
-              }
-            }
-          } else {
-            return;
-          }
-        }
-        if (!container) {
-          return;
-        }
-        const focusable = tabster2.focusable;
-        const moverProps = mover.getProps();
-        const direction = moverProps.direction || MoverDirections.Both;
-        const isBoth = direction === MoverDirections.Both;
-        const isVertical = isBoth || direction === MoverDirections.Vertical;
-        const isHorizontal = isBoth || direction === MoverDirections.Horizontal;
-        const isGridLinear = direction === MoverDirections.GridLinear;
-        const isGrid = isGridLinear || direction === MoverDirections.Grid;
-        const isCyclic = moverProps.cyclic;
-        let next;
-        let focusedElementRect;
-        let focusedElementX1 = 0;
-        let focusedElementX2 = 0;
-        if (isGrid) {
-          focusedElementRect = focused.getBoundingClientRect();
-          focusedElementX1 = Math.ceil(focusedElementRect.left);
-          focusedElementX2 = Math.floor(focusedElementRect.right);
-        }
-        if (ctx.isRtl) {
-          if (keyCode === Keys.Right) {
-            keyCode = Keys.Left;
-          } else if (keyCode === Keys.Left) {
-            keyCode = Keys.Right;
-          }
-        }
-        if (keyCode === Keys.Down && isVertical || keyCode === Keys.Right && (isHorizontal || isGrid)) {
-          next = focusable.findNext({
-            currentElement: focused,
-            container,
-            useActiveModalizer: true
-          });
-          if (next && isGrid) {
-            const nextElementX1 = Math.ceil(next.getBoundingClientRect().left);
-            if (!isGridLinear && focusedElementX2 > nextElementX1) {
-              next = void 0;
-            }
-          } else if (!next && isCyclic) {
-            next = focusable.findFirst({
-              container,
-              ignoreUncontrolled: true,
-              useActiveModalizer: true
-            });
-          }
-        } else if (keyCode === Keys.Up && isVertical || keyCode === Keys.Left && (isHorizontal || isGrid)) {
-          next = focusable.findPrev({
-            currentElement: focused,
-            container,
-            useActiveModalizer: true
-          });
-          if (next && isGrid) {
-            const nextElementX2 = Math.floor(next.getBoundingClientRect().right);
-            if (!isGridLinear && nextElementX2 > focusedElementX1) {
-              next = void 0;
-            }
-          } else if (!next && isCyclic) {
-            next = focusable.findLast({
-              container,
-              ignoreUncontrolled: true,
-              useActiveModalizer: true
-            });
-          }
-        } else if (keyCode === Keys.Home) {
-          if (isGrid) {
-            focusable.findElement({
-              container,
-              currentElement: focused,
-              ignoreUncontrolled: true,
-              useActiveModalizer: true,
-              isBackward: true,
-              acceptCondition: (el) => {
-                var _a6;
-                if (!focusable.isFocusable(el)) {
-                  return false;
-                }
-                const nextElementX1 = Math.ceil((_a6 = el.getBoundingClientRect().left) !== null && _a6 !== void 0 ? _a6 : 0);
-                if (el !== focused && focusedElementX1 <= nextElementX1) {
-                  return true;
-                }
-                next = el;
-                return false;
-              }
-            });
-          } else {
-            next = focusable.findFirst({
-              container,
-              ignoreUncontrolled: true,
-              useActiveModalizer: true
-            });
-          }
-        } else if (keyCode === Keys.End) {
-          if (isGrid) {
-            focusable.findElement({
-              container,
-              currentElement: focused,
-              ignoreUncontrolled: true,
-              useActiveModalizer: true,
-              acceptCondition: (el) => {
-                var _a6;
-                if (!focusable.isFocusable(el)) {
-                  return false;
-                }
-                const nextElementX1 = Math.ceil((_a6 = el.getBoundingClientRect().left) !== null && _a6 !== void 0 ? _a6 : 0);
-                if (el !== focused && focusedElementX1 >= nextElementX1) {
-                  return true;
-                }
-                next = el;
-                return false;
-              }
-            });
-          } else {
-            next = focusable.findLast({
-              container,
-              ignoreUncontrolled: true,
-              useActiveModalizer: true
-            });
-          }
-        } else if (keyCode === Keys.PageUp) {
-          focusable.findElement({
-            currentElement: focused,
-            container,
-            useActiveModalizer: true,
-            isBackward: true,
-            acceptCondition: (el) => {
-              if (!focusable.isFocusable(el)) {
-                return false;
-              }
-              if (isElementVerticallyVisibleInContainer(this._win, el, mover.visibilityTolerance)) {
-                next = el;
-                return false;
-              }
-              return true;
-            }
-          });
-          if (isGrid && next) {
-            const firstColumnX1 = Math.ceil(next.getBoundingClientRect().left);
-            focusable.findElement({
-              currentElement: next,
-              container,
-              useActiveModalizer: true,
-              acceptCondition: (el) => {
-                if (!focusable.isFocusable(el)) {
-                  return false;
-                }
-                const nextElementX1 = Math.ceil(el.getBoundingClientRect().left);
-                if (focusedElementX1 < nextElementX1 || firstColumnX1 >= nextElementX1) {
-                  return true;
-                }
-                next = el;
-                return false;
-              }
-            });
-          }
-          if (next) {
-            scrollIntoView(this._win, next, false);
-          }
-        } else if (keyCode === Keys.PageDown) {
-          focusable.findElement({
-            currentElement: focused,
-            container,
-            useActiveModalizer: true,
-            acceptCondition: (el) => {
-              if (!focusable.isFocusable(el)) {
-                return false;
-              }
-              if (isElementVerticallyVisibleInContainer(this._win, el, mover.visibilityTolerance)) {
-                next = el;
-                return false;
-              }
-              return true;
-            }
-          });
-          if (isGrid && next) {
-            const lastColumnX1 = Math.ceil(next.getBoundingClientRect().left);
-            focusable.findElement({
-              currentElement: next,
-              container,
-              useActiveModalizer: true,
-              isBackward: true,
-              acceptCondition: (el) => {
-                if (!focusable.isFocusable(el)) {
-                  return false;
-                }
-                const nextElementX1 = Math.ceil(el.getBoundingClientRect().left);
-                if (focusedElementX1 > nextElementX1 || lastColumnX1 <= nextElementX1) {
-                  return true;
-                }
-                next = el;
-                return false;
-              }
-            });
-          }
-          if (next) {
-            scrollIntoView(this._win, next, true);
-          }
-        } else if (isGrid) {
-          const isBackward = keyCode === Keys.Up;
-          const ax1 = focusedElementX1;
-          const ay1 = Math.ceil(focusedElementRect.top);
-          const ax2 = focusedElementX2;
-          const ay2 = Math.floor(focusedElementRect.bottom);
-          let targetElement;
-          let lastDistance;
-          let lastIntersection = 0;
-          focusable.findAll({
-            container,
-            currentElement: focused,
-            isBackward,
-            onElement: (el) => {
-              const rect = el.getBoundingClientRect();
-              const bx1 = Math.ceil(rect.left);
-              const by1 = Math.ceil(rect.top);
-              const bx2 = Math.floor(rect.right);
-              const by2 = Math.floor(rect.bottom);
-              if (isBackward && ay1 < by2 || !isBackward && ay2 > by1) {
-                return true;
-              }
-              const xIntersectionWidth = Math.ceil(Math.min(ax2, bx2)) - Math.floor(Math.max(ax1, bx1));
-              const minWidth = Math.ceil(Math.min(ax2 - ax1, bx2 - bx1));
-              if (xIntersectionWidth > 0 && minWidth >= xIntersectionWidth) {
-                const intersection = xIntersectionWidth / minWidth;
-                if (intersection > lastIntersection) {
-                  targetElement = el;
-                  lastIntersection = intersection;
-                }
-              } else if (lastIntersection === 0) {
-                const distance = getDistance(ax1, ay1, ax2, ay2, bx1, by1, bx2, by2);
-                if (lastDistance === void 0 || distance < lastDistance) {
-                  lastDistance = distance;
-                  targetElement = el;
-                }
-              } else if (lastIntersection > 0) {
-                return false;
-              }
-              return true;
-            }
-          });
-          next = targetElement;
-        }
-        if (next) {
-          event.preventDefault();
-          event.stopImmediatePropagation();
-          nativeFocus(next);
-        }
-      };
-      this._tabster = tabster;
-      this._win = getWindow2;
-      this._movers = {};
-      tabster.queueInit(this._init);
-    }
-    dispose() {
-      var _a5;
-      const win = this._win();
-      this._tabster.focusedElement.unsubscribe(this._onFocus);
-      (_a5 = this._ignoredInputResolve) === null || _a5 === void 0 ? void 0 : _a5.call(this, false);
-      if (this._ignoredInputTimer) {
-        win.clearTimeout(this._ignoredInputTimer);
-        delete this._ignoredInputTimer;
-      }
-      win.removeEventListener("keydown", this._onKeyDown, true);
-      Object.keys(this._movers).forEach((moverId) => {
-        if (this._movers[moverId]) {
-          this._movers[moverId].dispose();
-          delete this._movers[moverId];
-        }
-      });
-    }
-    createMover(element, props, sys) {
-      if (true)
-        ;
-      const newMover = new Mover(this._tabster, element, this._onMoverDispose, props, sys);
-      this._movers[newMover.id] = newMover;
-      return newMover;
-    }
-    async _isIgnoredInput(element, keyCode) {
-      var _a5;
-      if (element.getAttribute("aria-expanded") === "true") {
-        return true;
-      }
-      if (matchesSelector(element, _inputSelector)) {
-        let selectionStart = 0;
-        let selectionEnd = 0;
-        let textLength = 0;
-        let asyncRet;
-        if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") {
-          const type = element.type;
-          const value = element.value;
-          textLength = (value || "").length;
-          if (type === "email" || type === "number") {
-            if (textLength) {
-              const selection = (_a5 = element.ownerDocument.defaultView) === null || _a5 === void 0 ? void 0 : _a5.getSelection();
-              if (selection) {
-                const initialLength = selection.toString().length;
-                const isBackward = keyCode === Keys.Left || keyCode === Keys.Up;
-                selection.modify("extend", isBackward ? "backward" : "forward", "character");
-                if (initialLength !== selection.toString().length) {
-                  selection.modify("extend", isBackward ? "forward" : "backward", "character");
-                  return true;
-                } else {
-                  textLength = 0;
-                }
-              }
-            }
-          } else {
-            const selStart = element.selectionStart;
-            if (selStart === null) {
-              return type === "hidden";
-            }
-            selectionStart = selStart || 0;
-            selectionEnd = element.selectionEnd || 0;
-          }
-        } else if (element.contentEditable === "true") {
-          asyncRet = new (getPromise(this._win))((resolve2) => {
-            this._ignoredInputResolve = (value) => {
-              delete this._ignoredInputResolve;
-              resolve2(value);
-            };
-            const win = this._win();
-            if (this._ignoredInputTimer) {
-              win.clearTimeout(this._ignoredInputTimer);
-            }
-            const {
-              anchorNode: prevAnchorNode,
-              focusNode: prevFocusNode,
-              anchorOffset: prevAnchorOffset,
-              focusOffset: prevFocusOffset
-            } = win.getSelection() || {};
-            this._ignoredInputTimer = win.setTimeout(() => {
-              var _a6, _b, _c;
-              delete this._ignoredInputTimer;
-              const {
-                anchorNode,
-                focusNode,
-                anchorOffset,
-                focusOffset
-              } = win.getSelection() || {};
-              if (anchorNode !== prevAnchorNode || focusNode !== prevFocusNode || anchorOffset !== prevAnchorOffset || focusOffset !== prevFocusOffset) {
-                (_a6 = this._ignoredInputResolve) === null || _a6 === void 0 ? void 0 : _a6.call(this, false);
-                return;
-              }
-              selectionStart = anchorOffset || 0;
-              selectionEnd = focusOffset || 0;
-              textLength = ((_b = element.textContent) === null || _b === void 0 ? void 0 : _b.length) || 0;
-              if (anchorNode && focusNode) {
-                if (element.contains(anchorNode) && element.contains(focusNode)) {
-                  if (anchorNode !== element) {
-                    let anchorFound = false;
-                    const addOffsets = (node) => {
-                      if (node === anchorNode) {
-                        anchorFound = true;
-                      } else if (node === focusNode) {
-                        return true;
-                      }
-                      const nodeText = node.textContent;
-                      if (nodeText && !node.firstChild) {
-                        const len = nodeText.length;
-                        if (anchorFound) {
-                          if (focusNode !== anchorNode) {
-                            selectionEnd += len;
-                          }
-                        } else {
-                          selectionStart += len;
-                          selectionEnd += len;
-                        }
-                      }
-                      let stop = false;
-                      for (let e = node.firstChild; e && !stop; e = e.nextSibling) {
-                        stop = addOffsets(e);
-                      }
-                      return stop;
-                    };
-                    addOffsets(element);
-                  }
-                }
-              }
-              (_c = this._ignoredInputResolve) === null || _c === void 0 ? void 0 : _c.call(this, true);
-            }, 0);
-          });
-        }
-        if (asyncRet && !await asyncRet) {
-          return true;
-        }
-        if (selectionStart !== selectionEnd) {
-          return true;
-        }
-        if (selectionStart > 0 && (keyCode === Keys.Left || keyCode === Keys.Up || keyCode === Keys.Home)) {
-          return true;
-        }
-        if (selectionStart < textLength && (keyCode === Keys.Right || keyCode === Keys.Down || keyCode === Keys.End)) {
-          return true;
-        }
-      }
-      return false;
-    }
-  };
-  function observeMutations(doc, tabster, updateTabsterByAttribute2, syncState) {
-    if (typeof MutationObserver === "undefined") {
-      return () => {
-      };
-    }
-    const getWindow2 = tabster.getWindow;
-    let elementByUId;
-    const onMutation = (mutations) => {
-      var _a5, _b, _c, _d, _e;
-      for (const mutation of mutations) {
-        const target = mutation.target;
-        const removed = mutation.removedNodes;
-        const added = mutation.addedNodes;
-        if (mutation.type === "attributes") {
-          if (mutation.attributeName === TabsterAttributeName) {
-            updateTabsterByAttribute2(tabster, target);
-          }
-        } else {
-          for (let i = 0; i < removed.length; i++) {
-            updateTabsterElements(removed[i], true);
-            (_b = (_a5 = tabster._dummyObserver).domChanged) === null || _b === void 0 ? void 0 : _b.call(_a5, target);
-          }
-          for (let i = 0; i < added.length; i++) {
-            updateTabsterElements(added[i]);
-            (_d = (_c = tabster._dummyObserver).domChanged) === null || _d === void 0 ? void 0 : _d.call(_c, target);
-          }
-        }
-      }
-      (_e = tabster.modalizer) === null || _e === void 0 ? void 0 : _e.hiddenUpdate();
-    };
-    function updateTabsterElements(node, removed) {
-      if (!elementByUId) {
-        elementByUId = getInstanceContext(getWindow2).elementByUId;
-      }
-      processNode(node, removed);
-      const walker = createElementTreeWalker(doc, node, (element) => {
-        return processNode(element, removed);
-      });
-      if (walker) {
-        while (walker.nextNode()) {
-        }
-      }
-    }
-    function processNode(element, removed) {
-      var _a5;
-      if (!element.getAttribute) {
-        return NodeFilter.FILTER_SKIP;
-      }
-      const uid = element.__tabsterElementUID;
-      if (uid && elementByUId) {
-        if (removed) {
-          delete elementByUId[uid];
-        } else {
-          (_a5 = elementByUId[uid]) !== null && _a5 !== void 0 ? _a5 : elementByUId[uid] = new WeakHTMLElement(getWindow2, element);
-        }
-      }
-      if (getTabsterOnElement(tabster, element) || element.hasAttribute(TabsterAttributeName)) {
-        updateTabsterByAttribute2(tabster, element, removed);
-      }
-      return NodeFilter.FILTER_SKIP;
-    }
-    const observer = new MutationObserver(onMutation);
-    if (syncState) {
-      updateTabsterElements(getWindow2().document.body);
-    }
-    observer.observe(doc, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: [TabsterAttributeName]
-    });
-    return () => {
-      observer.disconnect();
-    };
-  }
-  var UncontrolledAPI = class {
-    constructor() {
-    }
-  };
-  var Tabster = class {
-    constructor(tabster) {
-      this.keyboardNavigation = tabster.keyboardNavigation;
-      this.focusedElement = tabster.focusedElement;
-      this.focusable = tabster.focusable;
-      this.root = tabster.root;
-      this.uncontrolled = tabster.uncontrolled;
-      this.core = tabster;
-    }
-  };
-  var TabsterCore = class {
-    constructor(win, props) {
-      var _a5;
-      this._forgetMemorizedElements = [];
-      this._wrappers = /* @__PURE__ */ new Set();
-      this._initQueue = [];
-      this._version = "4.7.3";
-      this._noop = false;
-      this.getWindow = () => {
-        if (!this._win) {
-          throw new Error("Using disposed Tabster.");
-        }
-        return this._win;
-      };
-      this._storage = createWeakMap(win);
-      this._win = win;
-      const getWindow2 = this.getWindow;
-      this.keyboardNavigation = new KeyboardNavigationState(getWindow2);
-      this.focusedElement = new FocusedElementState(this, getWindow2);
-      this.focusable = new FocusableAPI(this);
-      this.root = new RootAPI(this, props === null || props === void 0 ? void 0 : props.autoRoot);
-      this.uncontrolled = new UncontrolledAPI();
-      this.controlTab = (_a5 = props === null || props === void 0 ? void 0 : props.controlTab) !== null && _a5 !== void 0 ? _a5 : true;
-      this.rootDummyInputs = !!(props === null || props === void 0 ? void 0 : props.rootDummyInputs);
-      this._dummyObserver = new DummyInputObserver(getWindow2);
-      this.internal = {
-        stopObserver: () => {
-          if (this._unobserve) {
-            this._unobserve();
-            delete this._unobserve;
-          }
-        },
-        resumeObserver: (syncState) => {
-          if (!this._unobserve) {
-            const doc = getWindow2().document;
-            this._unobserve = observeMutations(doc, this, updateTabsterByAttribute, syncState);
-          }
-        }
-      };
-      startFakeWeakRefsCleanup(getWindow2);
-      this.queueInit(() => {
-        this.internal.resumeObserver(true);
-      });
-    }
-    createTabster(noRefCount) {
-      const wrapper = new Tabster(this);
-      if (!noRefCount) {
-        this._wrappers.add(wrapper);
-      }
-      return wrapper;
-    }
-    disposeTabster(wrapper, allInstances) {
-      if (allInstances) {
-        this._wrappers.clear();
-      } else {
-        this._wrappers.delete(wrapper);
-      }
-      if (this._wrappers.size === 0) {
-        this.dispose();
-      }
-    }
-    dispose() {
-      var _a5, _b, _c, _d, _e, _f, _g, _h;
-      this.internal.stopObserver();
-      const win = this._win;
-      win === null || win === void 0 ? void 0 : win.clearTimeout(this._initTimer);
-      delete this._initTimer;
-      this._initQueue = [];
-      this._forgetMemorizedElements = [];
-      if (win && this._forgetMemorizedTimer) {
-        win.clearTimeout(this._forgetMemorizedTimer);
-        delete this._forgetMemorizedTimer;
-      }
-      (_a5 = this.outline) === null || _a5 === void 0 ? void 0 : _a5.dispose();
-      (_b = this.crossOrigin) === null || _b === void 0 ? void 0 : _b.dispose();
-      (_c = this.deloser) === null || _c === void 0 ? void 0 : _c.dispose();
-      (_d = this.groupper) === null || _d === void 0 ? void 0 : _d.dispose();
-      (_e = this.mover) === null || _e === void 0 ? void 0 : _e.dispose();
-      (_f = this.modalizer) === null || _f === void 0 ? void 0 : _f.dispose();
-      (_g = this.observedElement) === null || _g === void 0 ? void 0 : _g.dispose();
-      (_h = this.restorer) === null || _h === void 0 ? void 0 : _h.dispose();
-      this.keyboardNavigation.dispose();
-      this.focusable.dispose();
-      this.focusedElement.dispose();
-      this.root.dispose();
-      this._dummyObserver.dispose();
-      stopFakeWeakRefsCleanupAndClearStorage(this.getWindow);
-      clearElementCache(this.getWindow);
-      this._storage = /* @__PURE__ */ new WeakMap();
-      this._wrappers.clear();
-      if (win) {
-        disposeInstanceContext(win);
-        delete win.__tabsterInstance;
-        delete this._win;
-      }
-    }
-    storageEntry(element, addremove) {
-      const storage = this._storage;
-      let entry = storage.get(element);
-      if (entry) {
-        if (addremove === false && Object.keys(entry).length === 0) {
-          storage.delete(element);
-        }
-      } else if (addremove === true) {
-        entry = {};
-        storage.set(element, entry);
-      }
-      return entry;
-    }
-    forceCleanup() {
-      if (!this._win) {
-        return;
-      }
-      this._forgetMemorizedElements.push(this._win.document.body);
-      if (this._forgetMemorizedTimer) {
-        return;
-      }
-      this._forgetMemorizedTimer = this._win.setTimeout(() => {
-        delete this._forgetMemorizedTimer;
-        for (let el = this._forgetMemorizedElements.shift(); el; el = this._forgetMemorizedElements.shift()) {
-          clearElementCache(this.getWindow, el);
-          FocusedElementState.forgetMemorized(this.focusedElement, el);
-        }
-      }, 0);
-      cleanupFakeWeakRefs(this.getWindow, true);
-    }
-    queueInit(callback) {
-      var _a5;
-      if (!this._win) {
-        return;
-      }
-      this._initQueue.push(callback);
-      if (!this._initTimer) {
-        this._initTimer = (_a5 = this._win) === null || _a5 === void 0 ? void 0 : _a5.setTimeout(() => {
-          delete this._initTimer;
-          this.drainInitQueue();
-        }, 0);
-      }
-    }
-    drainInitQueue() {
-      if (!this._win) {
-        return;
-      }
-      const queue = this._initQueue;
-      this._initQueue = [];
-      queue.forEach((callback) => callback());
-    }
-  };
-  function createTabster(win, props) {
-    let tabster = getCurrentTabster(win);
-    if (tabster) {
-      return tabster.createTabster();
-    }
-    tabster = new TabsterCore(win, props);
-    win.__tabsterInstance = tabster;
-    return tabster.createTabster();
-  }
-  function getMover(tabster) {
-    const tabsterCore = tabster.core;
-    if (!tabsterCore.mover) {
-      tabsterCore.mover = new MoverAPI(tabsterCore, tabsterCore.getWindow);
-    }
-    return tabsterCore.mover;
-  }
-  function disposeTabster(tabster, allInstances) {
-    tabster.core.disposeTabster(tabster, allInstances);
-  }
-  function getCurrentTabster(win) {
-    return win.__tabsterInstance;
-  }
-
-  // ../node_modules/@fluentui/react-tabster/lib/hooks/useTabster.js
-  var React65 = __toESM(require_react());
-  var useTabster = () => {
-    var _targetDocument;
-    const { targetDocument } = useFluent();
-    const defaultView = ((_targetDocument = targetDocument) === null || _targetDocument === void 0 ? void 0 : _targetDocument.defaultView) || void 0;
-    const tabster = React65.useMemo(() => {
-      if (!defaultView) {
-        return null;
-      }
-      return createTabster(defaultView, {
-        autoRoot: {},
-        controlTab: false
-      });
-    }, [
-      defaultView
-    ]);
-    useIsomorphicLayoutEffect2(() => {
-      return () => {
-        if (tabster) {
-          disposeTabster(tabster);
-        }
-      };
-    }, [
-      tabster
-    ]);
-    return tabster;
-  };
-
-  // ../node_modules/@fluentui/react-tabster/lib/hooks/useTabsterAttributes.js
-  var useTabsterAttributes = (props) => {
-    useTabster();
-    return getTabsterAttribute(props);
-  };
-
-  // ../node_modules/@fluentui/react-tabster/lib/hooks/useArrowNavigationGroup.js
-  var useArrowNavigationGroup = (options = {}) => {
-    const {
-      circular,
-      axis,
-      memorizeCurrent,
-      tabbable,
-      ignoreDefaultKeydown,
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      unstable_hasDefault
-    } = options;
-    const tabster = useTabster();
-    if (tabster) {
-      getMover(tabster);
-    }
-    return useTabsterAttributes({
-      mover: {
-        cyclic: !!circular,
-        direction: axisToMoverDirection(axis !== null && axis !== void 0 ? axis : "vertical"),
-        memorizeCurrent,
-        tabbable,
-        hasDefault: unstable_hasDefault
-      },
-      ...ignoreDefaultKeydown && {
-        focusable: {
-          ignoreKeydown: ignoreDefaultKeydown
-        }
-      }
-    });
-  };
-  function axisToMoverDirection(axis) {
-    switch (axis) {
-      case "horizontal":
-        return Types.MoverDirections.Horizontal;
-      case "grid":
-        return Types.MoverDirections.Grid;
-      case "grid-linear":
-        return Types.MoverDirections.GridLinear;
-      case "both":
-        return Types.MoverDirections.Both;
-      case "vertical":
-      default:
-        return Types.MoverDirections.Vertical;
-    }
-  }
-
-  // ../node_modules/@fluentui/react-tabster/lib/hooks/useFocusVisible.js
-  var React66 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react-tabster/lib/focus/constants.js
-  var KEYBOARD_NAV_ATTRIBUTE = "data-keyboard-nav";
-  var KEYBOARD_NAV_SELECTOR = `:global([${KEYBOARD_NAV_ATTRIBUTE}])`;
-  var FOCUS_VISIBLE_ATTR = "data-fui-focus-visible";
-  var FOCUS_WITHIN_ATTR = "data-fui-focus-within";
-
-  // ../node_modules/@fluentui/react-tabster/lib/focus/focusVisiblePolyfill.js
-  function applyFocusVisiblePolyfill(scope, targetWindow) {
-    if (alreadyInScope(scope)) {
-      return () => void 0;
-    }
-    const state = {
-      current: void 0
-    };
-    const keyborg = createKeyborg(targetWindow);
-    keyborg.subscribe((isNavigatingWithKeyboard) => {
-      if (!isNavigatingWithKeyboard && state.current) {
-        removeFocusVisibleClass(state.current);
-        state.current = void 0;
-      }
-    });
-    const keyborgListener = (e) => {
-      if (state.current) {
-        removeFocusVisibleClass(state.current);
-        state.current = void 0;
-      }
-      if (keyborg.isNavigatingWithKeyboard() && isHTMLElement(e.target) && e.target) {
-        state.current = e.target;
-        applyFocusVisibleClass(state.current);
-      }
-    };
-    const blurListener = (e) => {
-      if (!e.relatedTarget || isHTMLElement(e.relatedTarget) && !scope.contains(e.relatedTarget)) {
-        if (state.current) {
-          removeFocusVisibleClass(state.current);
-          state.current = void 0;
-        }
-      }
-    };
-    scope.addEventListener(KEYBORG_FOCUSIN, keyborgListener);
-    scope.addEventListener("focusout", blurListener);
-    scope.focusVisible = true;
-    return () => {
-      scope.removeEventListener(KEYBORG_FOCUSIN, keyborgListener);
-      scope.removeEventListener("focusout", blurListener);
-      delete scope.focusVisible;
-      disposeKeyborg(keyborg);
-    };
-  }
-  function applyFocusVisibleClass(el) {
-    el.setAttribute(FOCUS_VISIBLE_ATTR, "");
-  }
-  function removeFocusVisibleClass(el) {
-    el.removeAttribute(FOCUS_VISIBLE_ATTR);
-  }
-  function alreadyInScope(el) {
-    var _el;
-    if (!el) {
-      return false;
-    }
-    if (el.focusVisible) {
-      return true;
-    }
-    return alreadyInScope((_el = el) === null || _el === void 0 ? void 0 : _el.parentElement);
-  }
-
-  // ../node_modules/@fluentui/react-tabster/lib/hooks/useFocusVisible.js
-  function useFocusVisible(options = {}) {
-    const contextValue = useFluent();
-    const scopeRef = React66.useRef(null);
-    var _options_targetDocument;
-    const targetDocument = (_options_targetDocument = options.targetDocument) !== null && _options_targetDocument !== void 0 ? _options_targetDocument : contextValue.targetDocument;
-    React66.useEffect(() => {
-      var _targetDocument;
-      if (((_targetDocument = targetDocument) === null || _targetDocument === void 0 ? void 0 : _targetDocument.defaultView) && scopeRef.current) {
-        return applyFocusVisiblePolyfill(scopeRef.current, targetDocument.defaultView);
-      }
-    }, [
-      scopeRef,
-      targetDocument
-    ]);
-    return scopeRef;
-  }
-
-  // ../node_modules/@fluentui/react-tabster/lib/hooks/useFocusWithin.js
-  var React67 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react-tabster/lib/focus/focusWithinPolyfill.js
-  function applyFocusWithinPolyfill(element, win) {
-    const keyborg = createKeyborg(win);
-    keyborg.subscribe((isNavigatingWithKeyboard) => {
-      if (!isNavigatingWithKeyboard) {
-        removeFocusWithinClass(element);
-      }
-    });
-    const keyborgListener = (e) => {
-      if (keyborg.isNavigatingWithKeyboard() && isHTMLElement2(e.target)) {
-        applyFocusWithinClass(element);
-      }
-    };
-    const blurListener = (e) => {
-      if (!e.relatedTarget || isHTMLElement2(e.relatedTarget) && !element.contains(e.relatedTarget)) {
-        removeFocusWithinClass(element);
-      }
-    };
-    element.addEventListener(KEYBORG_FOCUSIN, keyborgListener);
-    element.addEventListener("focusout", blurListener);
-    return () => {
-      element.removeEventListener(KEYBORG_FOCUSIN, keyborgListener);
-      element.removeEventListener("focusout", blurListener);
-      disposeKeyborg(keyborg);
-    };
-  }
-  function applyFocusWithinClass(el) {
-    el.setAttribute(FOCUS_WITHIN_ATTR, "");
-  }
-  function removeFocusWithinClass(el) {
-    el.removeAttribute(FOCUS_WITHIN_ATTR);
-  }
-  function isHTMLElement2(target) {
-    if (!target) {
-      return false;
-    }
-    return Boolean(target && typeof target === "object" && "classList" in target && "contains" in target);
-  }
-
-  // ../node_modules/@fluentui/react-tabster/lib/hooks/useFocusWithin.js
-  function useFocusWithin() {
-    const { targetDocument } = useFluent();
-    const elementRef = React67.useRef(null);
-    React67.useEffect(() => {
-      var _targetDocument;
-      if (((_targetDocument = targetDocument) === null || _targetDocument === void 0 ? void 0 : _targetDocument.defaultView) && elementRef.current) {
-        return applyFocusWithinPolyfill(elementRef.current, targetDocument.defaultView);
-      }
-    }, [
-      elementRef,
-      targetDocument
-    ]);
-    return elementRef;
-  }
-
-  // ../node_modules/@fluentui/react-context-selector/lib/createContext.js
-  var React68 = __toESM(require_react());
-  var import_scheduler = __toESM(require_scheduler2());
-  var createProvider = (Original) => {
-    const Provider2 = (props) => {
-      const valueRef = React68.useRef(props.value);
-      const versionRef = React68.useRef(0);
-      const contextValue = React68.useRef();
-      if (!contextValue.current) {
-        contextValue.current = {
-          value: valueRef,
-          version: versionRef,
-          listeners: []
-        };
-      }
-      useIsomorphicLayoutEffect2(() => {
-        valueRef.current = props.value;
-        versionRef.current += 1;
-        (0, import_scheduler.unstable_runWithPriority)(import_scheduler.unstable_NormalPriority, () => {
-          contextValue.current.listeners.forEach((listener) => {
-            listener([
-              versionRef.current,
-              props.value
-            ]);
-          });
-        });
-      }, [
-        props.value
-      ]);
-      return React68.createElement(Original, {
-        value: contextValue.current
-      }, props.children);
-    };
-    if (true) {
-      Provider2.displayName = "ContextSelector.Provider";
-    }
-    return Provider2;
-  };
-  var createContext11 = (defaultValue) => {
-    const context = React68.createContext({
-      value: {
-        current: defaultValue
-      },
-      version: {
-        current: -1
-      },
-      listeners: []
-    });
-    context.Provider = createProvider(context.Provider);
-    delete context.Consumer;
-    return context;
-  };
-
-  // ../node_modules/@fluentui/react-context-selector/lib/useContextSelector.js
-  var React69 = __toESM(require_react());
-  var useContextSelector = (context, selector) => {
-    const contextValue = React69.useContext(context);
-    const { value: { current: value }, version: { current: version }, listeners } = contextValue;
-    const selected = selector(value);
-    const [state, dispatch] = React69.useReducer((prevState, payload) => {
-      if (!payload) {
-        return [
-          value,
-          selected
-        ];
-      }
-      if (payload[0] <= version) {
-        if (objectIs(prevState[1], selected)) {
-          return prevState;
-        }
-        return [
-          value,
-          selected
-        ];
-      }
-      try {
-        if (objectIs(prevState[0], payload[1])) {
-          return prevState;
-        }
-        const nextSelected = selector(payload[1]);
-        if (objectIs(prevState[1], nextSelected)) {
-          return prevState;
-        }
-        return [
-          payload[1],
-          nextSelected
-        ];
-      } catch (e) {
-      }
-      return [
-        prevState[0],
-        prevState[1]
-      ];
-    }, [
-      value,
-      selected
-    ]);
-    if (!objectIs(state[1], selected)) {
-      dispatch(void 0);
-    }
-    useIsomorphicLayoutEffect2(() => {
-      listeners.push(dispatch);
-      return () => {
-        const index = listeners.indexOf(dispatch);
-        listeners.splice(index, 1);
-      };
-    }, [
-      listeners
-    ]);
-    return state[1];
-  };
-  function is(x, y) {
-    return x === y && (x !== 0 || 1 / x === 1 / y) || x !== x && y !== y;
-  }
-  var objectIs = (
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore fallback to native if it exists (not in IE11)
-    typeof Object.is === "function" ? Object.is : is
-  );
 
   // ../node_modules/@fluentui/keyboard-keys/lib/keys.js
   var Enter = "Enter";
   var Space = " ";
 
   // ../node_modules/@fluentui/react-aria/lib/button/useARIAButtonProps.js
-  var React70 = __toESM(require_react());
+  var React16 = __toESM(require_react());
   function useARIAButtonProps(type, props) {
     const { disabled, disabledFocusable = false, ["aria-disabled"]: ariaDisabled, onClick, onKeyDown, onKeyUp, ...rest } = props !== null && props !== void 0 ? props : {};
     const normalizedARIADisabled = typeof ariaDisabled === "string" ? ariaDisabled === "true" : ariaDisabled;
@@ -45651,8 +30942,8 @@ ${error.stack}`);
       }
     });
     const handleKeyDown = useEventCallback((ev) => {
-      var _onKeyDown2;
-      (_onKeyDown2 = onKeyDown) === null || _onKeyDown2 === void 0 ? void 0 : _onKeyDown2(ev);
+      var _onKeyDown;
+      (_onKeyDown = onKeyDown) === null || _onKeyDown === void 0 ? void 0 : _onKeyDown(ev);
       if (ev.isDefaultPrevented()) {
         return;
       }
@@ -45671,8 +30962,8 @@ ${error.stack}`);
       }
     });
     const handleKeyUp = useEventCallback((ev) => {
-      var _onKeyUp2;
-      (_onKeyUp2 = onKeyUp) === null || _onKeyUp2 === void 0 ? void 0 : _onKeyUp2(ev);
+      var _onKeyUp;
+      (_onKeyUp = onKeyUp) === null || _onKeyUp === void 0 ? void 0 : _onKeyUp(ev);
       if (ev.isDefaultPrevented()) {
         return;
       }
@@ -45728,7 +31019,7 @@ ${error.stack}`);
   };
 
   // ../node_modules/@fluentui/react-button/lib/components/Button/Button.js
-  var React73 = __toESM(require_react());
+  var React19 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-button/lib/components/Button/renderButton.js
   var renderButton_unstable = (state) => {
@@ -45744,15 +31035,15 @@ ${error.stack}`);
   };
 
   // ../node_modules/@fluentui/react-button/lib/components/Button/useButton.js
-  var React72 = __toESM(require_react());
+  var React18 = __toESM(require_react());
 
   // ../node_modules/@fluentui/react-button/lib/contexts/ButtonContext.js
-  var React71 = __toESM(require_react());
-  var buttonContext = React71.createContext(void 0);
+  var React17 = __toESM(require_react());
+  var buttonContext = React17.createContext(void 0);
   var buttonContextDefaultValue = {};
   var ButtonContextProvider = buttonContext.Provider;
   var _React_useContext;
-  var useButtonContext = () => (_React_useContext = React71.useContext(buttonContext)) !== null && _React_useContext !== void 0 ? _React_useContext : buttonContextDefaultValue;
+  var useButtonContext = () => (_React_useContext = React17.useContext(buttonContext)) !== null && _React_useContext !== void 0 ? _React_useContext : buttonContextDefaultValue;
 
   // ../node_modules/@fluentui/react-button/lib/components/Button/useButton.js
   var useButton_unstable = (props, ref) => {
@@ -46298,1328 +31589,20 @@ ${error.stack}`);
   };
 
   // ../node_modules/@fluentui/react-button/lib/components/Button/Button.js
-  var Button2 = /* @__PURE__ */ React73.forwardRef((props, ref) => {
+  var Button = /* @__PURE__ */ React19.forwardRef((props, ref) => {
     const state = useButton_unstable(props, ref);
     useButtonStyles_unstable(state);
     useCustomStyleHook("useButtonStyles_unstable")(state);
     return renderButton_unstable(state);
   });
-  Button2.displayName = "Button";
-
-  // ../node_modules/@fluentui/react-tabs/lib/components/Tab/Tab.js
-  var React76 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react-tabs/lib/components/Tab/useTab.js
-  var React74 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react-tabs/lib/components/TabList/TabListContext.js
-  var tabListContextDefaultValue = {
-    appearance: "transparent",
-    reserveSelectedTabSpace: true,
-    disabled: false,
-    selectedValue: void 0,
-    onRegister: () => {
-    },
-    onUnregister: () => {
-    },
-    onSelect: () => {
-    },
-    getRegisteredTabs: () => {
-      return {
-        registeredTabs: {}
-      };
-    },
-    size: "medium",
-    vertical: false
-  };
-  var TabListContext = createContext11(void 0);
-  var TabListProvider = TabListContext.Provider;
-  var useTabListContext_unstable = (selector) => useContextSelector(TabListContext, (ctx = tabListContextDefaultValue) => selector(ctx));
-
-  // ../node_modules/@fluentui/react-tabs/lib/components/Tab/useTab.js
-  var useTab_unstable = (props, ref) => {
-    var _iconSlot;
-    const { content, disabled: tabDisabled = false, icon, onClick, value } = props;
-    const appearance = useTabListContext_unstable((ctx) => ctx.appearance);
-    const reserveSelectedTabSpace = useTabListContext_unstable((ctx) => ctx.reserveSelectedTabSpace);
-    const listDisabled = useTabListContext_unstable((ctx) => ctx.disabled);
-    const selected = useTabListContext_unstable((ctx) => ctx.selectedValue === value);
-    const onRegister = useTabListContext_unstable((ctx) => ctx.onRegister);
-    const onUnregister = useTabListContext_unstable((ctx) => ctx.onUnregister);
-    const onSelect = useTabListContext_unstable((ctx) => ctx.onSelect);
-    const size = useTabListContext_unstable((ctx) => ctx.size);
-    const vertical = useTabListContext_unstable((ctx) => !!ctx.vertical);
-    const disabled = listDisabled || tabDisabled;
-    const innerRef = React74.useRef(null);
-    const onTabClick = useEventCallback(mergeCallbacks(onClick, (event) => onSelect(event, {
-      value
-    })));
-    React74.useEffect(() => {
-      onRegister({
-        value,
-        ref: innerRef
-      });
-      return () => {
-        onUnregister({
-          value,
-          ref: innerRef
-        });
-      };
-    }, [
-      onRegister,
-      onUnregister,
-      innerRef,
-      value
-    ]);
-    const iconSlot = slot_exports.optional(icon, {
-      elementType: "span"
-    });
-    const contentSlot = slot_exports.always(content, {
-      defaultProps: {
-        children: props.children
-      },
-      elementType: "span"
-    });
-    const iconOnly = Boolean(((_iconSlot = iconSlot) === null || _iconSlot === void 0 ? void 0 : _iconSlot.children) && !contentSlot.children);
-    return {
-      components: {
-        root: "button",
-        icon: "span",
-        content: "span",
-        contentReservedSpace: "span"
-      },
-      root: slot_exports.always(getNativeElementProps2("button", {
-        ref: useMergedRefs2(ref, innerRef),
-        role: "tab",
-        type: "button",
-        // aria-selected undefined indicates it is not selectable
-        // according to https://www.w3.org/TR/wai-aria-1.1/#aria-selected
-        "aria-selected": disabled ? void 0 : `${selected}`,
-        ...props,
-        disabled,
-        onClick: onTabClick
-      }), {
-        elementType: "button"
-      }),
-      icon: iconSlot,
-      iconOnly,
-      content: contentSlot,
-      contentReservedSpace: slot_exports.optional(content, {
-        renderByDefault: !selected && !iconOnly && reserveSelectedTabSpace,
-        defaultProps: {
-          children: props.children
-        },
-        elementType: "span"
-      }),
-      appearance,
-      disabled,
-      selected,
-      size,
-      value,
-      vertical
-    };
-  };
-
-  // ../node_modules/@fluentui/react-tabs/lib/components/Tab/renderTab.js
-  var renderTab_unstable = (state) => {
-    assertSlots(state);
-    return /* @__PURE__ */ jsxs(state.root, {
-      children: [
-        state.icon && /* @__PURE__ */ jsx(state.icon, {}),
-        !state.iconOnly && /* @__PURE__ */ jsx(state.content, {}),
-        state.contentReservedSpace && /* @__PURE__ */ jsx(state.contentReservedSpace, {})
-      ]
-    });
-  };
-
-  // ../node_modules/@fluentui/react-tabs/lib/components/Tab/useTabAnimatedIndicator.styles.js
-  var React75 = __toESM(require_react());
-  var tabIndicatorCssVars_unstable = {
-    offsetVar: "--fui-Tab__indicator--offset",
-    scaleVar: "--fui-Tab__indicator--scale"
-  };
-  var useActiveIndicatorStyles = /* @__PURE__ */ __styles2({
-    base: {
-      B68tc82: "f1mtd64y",
-      Bmxbyg5: "f1y7q3j9"
-    },
-    animated: {
-      Ba2ppi3: "fhwpy7i",
-      F2fol1: "f6zz20j",
-      B1dyfl9: "f1ai4sc1",
-      B0vmy72: "f9qxlq5",
-      u9bimw: "f1aql376"
-    },
-    horizontal: {
-      sjv3b2: ["fug4aj8", "f1i5xzg7"],
-      b1kco5: "f1q7ujh"
-    },
-    vertical: {
-      sjv3b2: "f1hqboyk",
-      b1kco5: "f1dxupa6"
-    }
-  }, {
-    d: [".f1mtd64y{overflow-x:visible;}", ".f1y7q3j9{overflow-y:visible;}", ".fhwpy7i::after{transition-property:transform;}", ".f6zz20j::after{transition-duration:var(--durationSlow);}", ".f1ai4sc1::after{transition-timing-function:var(--curveDecelerateMax);}", ".fug4aj8::after{transform-origin:left;}", ".f1i5xzg7::after{transform-origin:right;}", ".f1q7ujh::after{transform:translateX(var(--fui-Tab__indicator--offset)) scaleX(var(--fui-Tab__indicator--scale));}", ".f1hqboyk::after{transform-origin:top;}", ".f1dxupa6::after{transform:translateY(var(--fui-Tab__indicator--offset)) scaleY(var(--fui-Tab__indicator--scale));}"],
-    m: [["@media (prefers-reduced-motion: reduce){.f9qxlq5::after{transition-property:none;}}", {
-      m: "(prefers-reduced-motion: reduce)"
-    }], ["@media (prefers-reduced-motion: reduce){.f1aql376::after{transition-duration:0.01ms;}}", {
-      m: "(prefers-reduced-motion: reduce)"
-    }]]
-  });
-  var calculateTabRect = (element) => {
-    if (element) {
-      var _element_parentElement;
-      const parentRect = ((_element_parentElement = element.parentElement) === null || _element_parentElement === void 0 ? void 0 : _element_parentElement.getBoundingClientRect()) || {
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0
-      };
-      const tabRect = element.getBoundingClientRect();
-      return {
-        x: tabRect.x - parentRect.x,
-        y: tabRect.y - parentRect.y,
-        width: tabRect.width,
-        height: tabRect.height
-      };
-    }
-    return void 0;
-  };
-  var getRegisteredTabRect = (registeredTabs, value) => {
-    var _registeredTabs_JSON_stringify;
-    const element = value !== void 0 && value !== null ? (_registeredTabs_JSON_stringify = registeredTabs[JSON.stringify(value)]) === null || _registeredTabs_JSON_stringify === void 0 ? void 0 : _registeredTabs_JSON_stringify.ref.current : void 0;
-    return element ? calculateTabRect(element) : void 0;
-  };
-  var useTabAnimatedIndicatorStyles_unstable = (state) => {
-    const {
-      disabled,
-      selected,
-      vertical
-    } = state;
-    const activeIndicatorStyles = useActiveIndicatorStyles();
-    const [lastAnimatedFrom, setLastAnimatedFrom] = React75.useState();
-    const [animationValues, setAnimationValues] = React75.useState({
-      offset: 0,
-      scale: 1
-    });
-    const getRegisteredTabs = useTabListContext_unstable((ctx) => ctx.getRegisteredTabs);
-    React75.useEffect(() => {
-      if (lastAnimatedFrom) {
-        setAnimationValues({
-          offset: 0,
-          scale: 1
-        });
-      }
-    }, [lastAnimatedFrom]);
-    if (selected) {
-      const {
-        previousSelectedValue,
-        selectedValue,
-        registeredTabs
-      } = getRegisteredTabs();
-      if (previousSelectedValue && lastAnimatedFrom !== previousSelectedValue) {
-        const previousSelectedTabRect = getRegisteredTabRect(registeredTabs, previousSelectedValue);
-        const selectedTabRect = getRegisteredTabRect(registeredTabs, selectedValue);
-        if (selectedTabRect && previousSelectedTabRect) {
-          const offset = vertical ? previousSelectedTabRect.y - selectedTabRect.y : previousSelectedTabRect.x - selectedTabRect.x;
-          const scale = vertical ? previousSelectedTabRect.height / selectedTabRect.height : previousSelectedTabRect.width / selectedTabRect.width;
-          setAnimationValues({
-            offset,
-            scale
-          });
-          setLastAnimatedFrom(previousSelectedValue);
-        }
-      }
-    } else if (lastAnimatedFrom) {
-      setLastAnimatedFrom(void 0);
-    }
-    if (disabled) {
-      return state;
-    }
-    const animating = animationValues.offset === 0 && animationValues.scale === 1;
-    state.root.className = mergeClasses(state.root.className, selected && activeIndicatorStyles.base, selected && animating && activeIndicatorStyles.animated, selected && (vertical ? activeIndicatorStyles.vertical : activeIndicatorStyles.horizontal));
-    const rootCssVars = {
-      [tabIndicatorCssVars_unstable.offsetVar]: `${animationValues.offset}px`,
-      [tabIndicatorCssVars_unstable.scaleVar]: `${animationValues.scale}`
-    };
-    state.root.style = {
-      ...rootCssVars,
-      ...state.root.style
-    };
-    return state;
-  };
-
-  // ../node_modules/@fluentui/react-tabs/lib/components/Tab/useTabStyles.styles.js
-  var tabClassNames = {
-    root: "fui-Tab",
-    icon: "fui-Tab__icon",
-    content: "fui-Tab__content"
-  };
-  var reservedSpaceClassNames = {
-    content: "fui-Tab__content--reserved-space"
-  };
-  var useRootStyles2 = /* @__PURE__ */ __styles2({
-    base: {
-      Bt984gj: "f122n59",
-      g2u3we: "fwhevhj",
-      h3c5rm: ["f61n433", "f1q8l70w"],
-      B9xav0g: "fv1dfc8",
-      zhjwy3: ["f1q8l70w", "f61n433"],
-      Bbmb7ep: ["f1aa9q02", "f16jpd5f"],
-      Beyfa6y: ["f16jpd5f", "f1aa9q02"],
-      B7oj6ja: ["f1jar5jt", "fyu767a"],
-      Btl43ni: ["fyu767a", "f1jar5jt"],
-      B4j52fo: "fre7gi1",
-      Bekrc4i: ["f1358rze", "f1rvrf73"],
-      Bn0qgzm: "fqdk4by",
-      ibv6hh: ["f1rvrf73", "f1358rze"],
-      Bceei9c: "f1k6fduh",
-      mc9l5x: "f13qh94s",
-      Bnnss6s: "fi64zpg",
-      Bxotwcr: "f1u07yai",
-      Budl1dq: "frn2hmy",
-      wkccdc: "f1olsevy",
-      Bahqtrf: "fk6fouc",
-      Bg96gwp: "f1i3iumi",
-      oeaueh: "f1s6fcnf",
-      qhf8xq: "f10pi13n",
-      B68tc82: "f1p9o1ba",
-      Bmxbyg5: "f1sil6mw",
-      B9bfxx9: "f1cxpek8"
-    },
-    horizontal: {
-      Brf1p80: "f4d9j23"
-    },
-    vertical: {
-      Brf1p80: "f1s9ku6b"
-    },
-    smallHorizontal: {
-      i8kkvl: "f14mj54c",
-      z8tnut: "fp2oml8",
-      z189sj: ["fdw0yi8", "fk8j09s"],
-      Byoj8tv: "f1tdddsa",
-      uwmqm3: ["fk8j09s", "fdw0yi8"]
-    },
-    smallVertical: {
-      i8kkvl: "f14mj54c",
-      z8tnut: "fclwglc",
-      z189sj: ["fdw0yi8", "fk8j09s"],
-      Byoj8tv: "fywfov9",
-      uwmqm3: ["fk8j09s", "fdw0yi8"]
-    },
-    mediumHorizontal: {
-      i8kkvl: "f1rjii52",
-      z8tnut: "f5yzyt",
-      z189sj: ["f11gcy0p", "f1ng84yb"],
-      Byoj8tv: "fx3omr",
-      uwmqm3: ["f1ng84yb", "f11gcy0p"]
-    },
-    mediumVertical: {
-      i8kkvl: "f1rjii52",
-      z8tnut: "fp2oml8",
-      z189sj: ["f11gcy0p", "f1ng84yb"],
-      Byoj8tv: "f1tdddsa",
-      uwmqm3: ["f1ng84yb", "f11gcy0p"]
-    },
-    largeHorizontal: {
-      i8kkvl: "f1rjii52",
-      z8tnut: "fikn0iw",
-      z189sj: ["f11gcy0p", "f1ng84yb"],
-      Byoj8tv: "fdxej3c",
-      uwmqm3: ["f1ng84yb", "f11gcy0p"]
-    },
-    largeVertical: {
-      i8kkvl: "f1rjii52",
-      z8tnut: "f1kwiid1",
-      z189sj: ["f11gcy0p", "f1ng84yb"],
-      Byoj8tv: "f5b47ha",
-      uwmqm3: ["f1ng84yb", "f11gcy0p"]
-    },
-    transparent: {
-      De3pzq: "f1c21dwh",
-      Jwef8y: "fjxutwb",
-      ecr2s2: "fophhak",
-      Bptxc3x: "fmmjozx",
-      B076xvk: "f1mfqf41",
-      q9r9w5: "f10aiid4",
-      cl4aha: "fpkze5g",
-      Bk452zc: "f149wc3x",
-      a4hkcw: "fjioou7"
-    },
-    subtle: {
-      De3pzq: "fhovq9v",
-      Jwef8y: "f1t94bn6",
-      ecr2s2: "f1wfn5kd",
-      Bptxc3x: "fmmjozx",
-      B076xvk: "f1mfqf41",
-      q9r9w5: "f10aiid4",
-      cl4aha: "fpkze5g",
-      Bk452zc: "f149wc3x",
-      a4hkcw: "fjioou7"
-    },
-    disabled: {
-      De3pzq: "f1c21dwh",
-      Bptxc3x: "fato7r6",
-      cl4aha: "fao1bnu",
-      Bceei9c: "fdrzuqr"
-    },
-    selected: {
-      Bptxc3x: "f1cadz5z",
-      B076xvk: "f1ck17l",
-      q9r9w5: "f42ak0g",
-      cl4aha: "ffplhdr",
-      Bk452zc: "ffth601",
-      a4hkcw: "fhklyu5"
-    }
-  }, {
-    d: [".f122n59{align-items:center;}", ".fwhevhj{border-top-color:none;}", ".f61n433{border-right-color:none;}", ".f1q8l70w{border-left-color:none;}", ".fv1dfc8{border-bottom-color:none;}", ".f1aa9q02{border-bottom-right-radius:var(--borderRadiusMedium);}", ".f16jpd5f{border-bottom-left-radius:var(--borderRadiusMedium);}", ".f1jar5jt{border-top-right-radius:var(--borderRadiusMedium);}", ".fyu767a{border-top-left-radius:var(--borderRadiusMedium);}", ".fre7gi1{border-top-width:0;}", ".f1358rze{border-right-width:0;}", ".f1rvrf73{border-left-width:0;}", ".fqdk4by{border-bottom-width:0;}", ".f1k6fduh{cursor:pointer;}", ".f13qh94s{display:grid;}", ".fi64zpg{flex-shrink:0;}", ".f1u07yai{grid-auto-flow:column;}", ".frn2hmy{grid-template-columns:auto;}", ".f1olsevy{grid-template-rows:auto;}", ".fk6fouc{font-family:var(--fontFamilyBase);}", ".f1i3iumi{line-height:var(--lineHeightBase300);}", ".f1s6fcnf{outline-style:none;}", ".f10pi13n{position:relative;}", ".f1p9o1ba{overflow-x:hidden;}", ".f1sil6mw{overflow-y:hidden;}", ".f1cxpek8{text-transform:none;}", ".f4d9j23{justify-content:center;}", ".f1s9ku6b{justify-content:start;}", ".f14mj54c{column-gap:var(--spacingHorizontalXXS);}", ".fp2oml8{padding-top:var(--spacingVerticalSNudge);}", ".fdw0yi8{padding-right:var(--spacingHorizontalSNudge);}", ".fk8j09s{padding-left:var(--spacingHorizontalSNudge);}", ".f1tdddsa{padding-bottom:var(--spacingVerticalSNudge);}", ".fclwglc{padding-top:var(--spacingVerticalXXS);}", ".fywfov9{padding-bottom:var(--spacingVerticalXXS);}", ".f1rjii52{column-gap:var(--spacingHorizontalSNudge);}", ".f5yzyt{padding-top:var(--spacingVerticalM);}", ".f11gcy0p{padding-right:var(--spacingHorizontalMNudge);}", ".f1ng84yb{padding-left:var(--spacingHorizontalMNudge);}", ".fx3omr{padding-bottom:var(--spacingVerticalM);}", ".fikn0iw{padding-top:var(--spacingVerticalL);}", ".fdxej3c{padding-bottom:var(--spacingVerticalL);}", ".f1kwiid1{padding-top:var(--spacingVerticalS);}", ".f5b47ha{padding-bottom:var(--spacingVerticalS);}", ".f1c21dwh{background-color:var(--colorTransparentBackground);}", ".fmmjozx .fui-Tab__icon{color:var(--colorNeutralForeground2);}", ".fpkze5g .fui-Tab__content{color:var(--colorNeutralForeground2);}", ".fhovq9v{background-color:var(--colorSubtleBackground);}", ".fato7r6 .fui-Tab__icon{color:var(--colorNeutralForegroundDisabled);}", ".fao1bnu .fui-Tab__content{color:var(--colorNeutralForegroundDisabled);}", ".fdrzuqr{cursor:not-allowed;}", ".f1cadz5z .fui-Tab__icon{color:var(--colorCompoundBrandForeground1);}", ".ffplhdr .fui-Tab__content{color:var(--colorNeutralForeground1);}"],
-    h: [".fjxutwb:hover{background-color:var(--colorTransparentBackgroundHover);}", ".f1mfqf41:hover .fui-Tab__icon{color:var(--colorNeutralForeground2Hover);}", ".f149wc3x:hover .fui-Tab__content{color:var(--colorNeutralForeground2Hover);}", ".f1t94bn6:hover{background-color:var(--colorSubtleBackgroundHover);}", ".f1ck17l:hover .fui-Tab__icon{color:var(--colorCompoundBrandForeground1Hover);}", ".ffth601:hover .fui-Tab__content{color:var(--colorNeutralForeground1Hover);}"],
-    a: [".fophhak:active{background-color:var(--colorTransparentBackgroundPressed);}", ".f10aiid4:active .fui-Tab__icon{color:var(--colorNeutralForeground2Pressed);}", ".fjioou7:active .fui-Tab__content{color:var(--colorNeutralForeground2Pressed);}", ".f1wfn5kd:active{background-color:var(--colorSubtleBackgroundPressed);}", ".f42ak0g:active .fui-Tab__icon{color:var(--colorCompoundBrandForeground1Pressed);}", ".fhklyu5:active .fui-Tab__content{color:var(--colorNeutralForeground1Pressed);}"]
-  });
-  var useFocusStyles = /* @__PURE__ */ __styles2({
-    base: {
-      B8q5s1w: "f8hki3x",
-      Bci5o5g: ["f1d2448m", "ffh67wi"],
-      n8qw10: "f1bjia2o",
-      Bdrgwmp: ["ffh67wi", "f1d2448m"],
-      Bn4voq9: "f1p7hgxw",
-      Bfpq7zp: "f1way5bb",
-      g9k6zt: "f9znhxp",
-      j6ew2k: ["fqa318h", "fqa318h"],
-      Bhxq17a: "f1vjpng2"
-    }
-  }, {
-    d: [".f8hki3x[data-fui-focus-visible]{border-top-color:transparent;}", ".f1d2448m[data-fui-focus-visible]{border-right-color:transparent;}", ".ffh67wi[data-fui-focus-visible]{border-left-color:transparent;}", ".f1bjia2o[data-fui-focus-visible]{border-bottom-color:transparent;}", ".f1p7hgxw[data-fui-focus-visible]{outline-width:var(--strokeWidthThick);}", ".f1way5bb[data-fui-focus-visible]{outline-color:transparent;}", ".f9znhxp[data-fui-focus-visible]{outline-style:solid;}", ".fqa318h[data-fui-focus-visible]{box-shadow:var(--shadow4),0 0 0 var(--strokeWidthThick) var(--colorStrokeFocus2);}", ".f1vjpng2[data-fui-focus-visible]{z-index:1;}"]
-  });
-  var usePendingIndicatorStyles = /* @__PURE__ */ __styles2({
-    base: {
-      az7l2e: "fhw179n",
-      Bv4n3vi: ["f10y1uxy", "f6aiuy0"],
-      vqofr: ["f6aiuy0", "f10y1uxy"],
-      B0uxbk8: ["f1kfpfnu", "f1dx5wco"],
-      Bgqb9hq: ["f1dx5wco", "f1kfpfnu"],
-      amg5m6: "f1kmhr4c",
-      zkfqfm: "fl1ydde",
-      Bkydozb: "f1y7maxz",
-      vzq8l0: ["f105swax", "fscdmel"],
-      Bka2azo: ["fscdmel", "f105swax"],
-      Br4ovkg: ["f1tkcw1w", "f1u11x8o"],
-      csmgbd: ["f1u11x8o", "f1tkcw1w"],
-      y36c18: "f16cxu0",
-      B1ctymy: "f1nwgacf",
-      Bgvrrv0: "f15ovonk",
-      ddr6p5: "fvje46l"
-    },
-    disabled: {
-      az7l2e: "f1ut20fw",
-      Bkydozb: "fhrzcfn"
-    },
-    smallHorizontal: {
-      lawp4y: "fchca7p",
-      Baz25je: "f1r53b5e",
-      Fbdkly: ["f1s6rxz5", "fo35v8s"],
-      mdwyqc: ["fo35v8s", "f1s6rxz5"]
-    },
-    smallVertical: {
-      lawp4y: "fze4zud",
-      Fbdkly: ["f1fzr1x6", "f1f351id"],
-      Bciustq: "fdp32p8",
-      Ccq8qp: "f1aij3q"
-    },
-    mediumHorizontal: {
-      lawp4y: "fchca7p",
-      Baz25je: "f1s2r9ax",
-      Fbdkly: ["f1o0nnkk", "fxb7rol"],
-      mdwyqc: ["fxb7rol", "f1o0nnkk"]
-    },
-    mediumVertical: {
-      lawp4y: "f17jracn",
-      Fbdkly: ["f1fzr1x6", "f1f351id"],
-      Bciustq: "f117lcb2",
-      Ccq8qp: "f1aij3q"
-    },
-    largeHorizontal: {
-      lawp4y: "fchca7p",
-      Baz25je: "f1s2r9ax",
-      Fbdkly: ["f1o0nnkk", "fxb7rol"],
-      mdwyqc: ["fxb7rol", "f1o0nnkk"]
-    },
-    largeVertical: {
-      lawp4y: "fel9d3z",
-      Fbdkly: ["f1fzr1x6", "f1f351id"],
-      Bciustq: "f6vqlre",
-      Ccq8qp: "f1aij3q"
-    }
-  }, {
-    h: [".fhw179n:hover::before{background-color:var(--colorNeutralStroke1Hover);}", ".f10y1uxy:hover::before{border-bottom-right-radius:var(--borderRadiusCircular);}", ".f6aiuy0:hover::before{border-bottom-left-radius:var(--borderRadiusCircular);}", ".f1kfpfnu:hover::before{border-top-right-radius:var(--borderRadiusCircular);}", ".f1dx5wco:hover::before{border-top-left-radius:var(--borderRadiusCircular);}", '.f1kmhr4c:hover::before{content:"";}', ".fl1ydde:hover::before{position:absolute;}", ".f1ut20fw:hover::before{background-color:var(--colorTransparentStroke);}"],
-    a: [".f1y7maxz:active::before{background-color:var(--colorNeutralStroke1Pressed);}", ".f105swax:active::before{border-bottom-right-radius:var(--borderRadiusCircular);}", ".fscdmel:active::before{border-bottom-left-radius:var(--borderRadiusCircular);}", ".f1tkcw1w:active::before{border-top-right-radius:var(--borderRadiusCircular);}", ".f1u11x8o:active::before{border-top-left-radius:var(--borderRadiusCircular);}", '.f16cxu0:active::before{content:"";}', ".f1nwgacf:active::before{position:absolute;}", ".fhrzcfn:active::before{background-color:var(--colorTransparentStroke);}"],
-    m: [["@media (forced-colors: active){.f15ovonk:hover::before{background-color:Highlight;}}", {
-      m: "(forced-colors: active)"
-    }], ["@media (forced-colors: active){.fvje46l:active::before{background-color:Highlight;}}", {
-      m: "(forced-colors: active)"
-    }]],
-    d: [".fchca7p::before{bottom:0;}", ".f1r53b5e::before{height:var(--strokeWidthThick);}", ".f1s6rxz5::before{left:var(--spacingHorizontalSNudge);}", ".fo35v8s::before{right:var(--spacingHorizontalSNudge);}", ".fze4zud::before{bottom:var(--spacingVerticalXS);}", ".f1fzr1x6::before{left:0;}", ".f1f351id::before{right:0;}", ".fdp32p8::before{top:var(--spacingVerticalXS);}", ".f1aij3q::before{width:var(--strokeWidthThicker);}", ".f1s2r9ax::before{height:var(--strokeWidthThicker);}", ".f1o0nnkk::before{left:var(--spacingHorizontalM);}", ".fxb7rol::before{right:var(--spacingHorizontalM);}", ".f17jracn::before{bottom:var(--spacingVerticalS);}", ".f117lcb2::before{top:var(--spacingVerticalS);}", ".fel9d3z::before{bottom:var(--spacingVerticalMNudge);}", ".f6vqlre::before{top:var(--spacingVerticalMNudge);}"]
-  });
-  var useActiveIndicatorStyles2 = /* @__PURE__ */ __styles2({
-    base: {
-      Bjyk6c5: "f1rp0jgh",
-      B3778ie: ["fprarqb", "f14vs0nd"],
-      d9w3h3: ["f14vs0nd", "fprarqb"],
-      Bl18szs: ["f1gtfqs9", "f18zvfd9"],
-      B4j8arr: ["f18zvfd9", "f1gtfqs9"],
-      Bsft5z2: "f13zj6fq",
-      E3zdtr: "f1mdlcz9",
-      t2ki1e: "ffmd2fr"
-    },
-    selected: {
-      Bjyk6c5: "f1ksivud",
-      Glksuk: "f1eytvvh",
-      Blzl0y7: "fuaa9s",
-      f7digc: "fy7ktjt",
-      Biqphg1: "f16tp0gf",
-      Bntoloa: "fj0yp7j"
-    },
-    disabled: {
-      Bjyk6c5: "f13lkzet"
-    },
-    smallHorizontal: {
-      By385i5: "fo72kxq",
-      Dlnsje: "f9bb2ob",
-      Eqx8gd: ["f1q70ajw", "f18rbzdx"],
-      B1piin3: ["f18rbzdx", "f1q70ajw"]
-    },
-    smallVertical: {
-      By385i5: "fqbue9b",
-      Eqx8gd: ["f1n6gb5g", "f15yvnhg"],
-      bn5sak: "fk1klkt",
-      a2br6o: "f1o25lip"
-    },
-    mediumHorizontal: {
-      By385i5: "fo72kxq",
-      Dlnsje: "f1vx7lu8",
-      Eqx8gd: ["fna7m5n", "f1oxpfwv"],
-      B1piin3: ["f1oxpfwv", "fna7m5n"]
-    },
-    mediumVertical: {
-      By385i5: "fipylg0",
-      Eqx8gd: ["f1n6gb5g", "f15yvnhg"],
-      bn5sak: "fqchiol",
-      a2br6o: "f1o25lip"
-    },
-    largeHorizontal: {
-      By385i5: "fo72kxq",
-      Dlnsje: "f1vx7lu8",
-      Eqx8gd: ["fna7m5n", "f1oxpfwv"],
-      B1piin3: ["f1oxpfwv", "fna7m5n"]
-    },
-    largeVertical: {
-      By385i5: "f1w7dm5g",
-      Eqx8gd: ["f1n6gb5g", "f15yvnhg"],
-      bn5sak: "f1p6em4m",
-      a2br6o: "f1o25lip"
-    }
-  }, {
-    d: [".f1rp0jgh::after{background-color:var(--colorTransparentStroke);}", ".fprarqb::after{border-bottom-right-radius:var(--borderRadiusCircular);}", ".f14vs0nd::after{border-bottom-left-radius:var(--borderRadiusCircular);}", ".f1gtfqs9::after{border-top-right-radius:var(--borderRadiusCircular);}", ".f18zvfd9::after{border-top-left-radius:var(--borderRadiusCircular);}", '.f13zj6fq::after{content:"";}', ".f1mdlcz9::after{position:absolute;}", ".ffmd2fr::after{z-index:1;}", ".f1ksivud::after{background-color:var(--colorCompoundBrandStroke);}", ".f13lkzet::after{background-color:var(--colorNeutralForegroundDisabled);}", ".fo72kxq::after{bottom:0;}", ".f9bb2ob::after{height:var(--strokeWidthThick);}", ".f1q70ajw::after{left:var(--spacingHorizontalSNudge);}", ".f18rbzdx::after{right:var(--spacingHorizontalSNudge);}", ".fqbue9b::after{bottom:var(--spacingVerticalXS);}", ".f1n6gb5g::after{left:0;}", ".f15yvnhg::after{right:0;}", ".fk1klkt::after{top:var(--spacingVerticalXS);}", ".f1o25lip::after{width:var(--strokeWidthThicker);}", ".f1vx7lu8::after{height:var(--strokeWidthThicker);}", ".fna7m5n::after{left:var(--spacingHorizontalM);}", ".f1oxpfwv::after{right:var(--spacingHorizontalM);}", ".fipylg0::after{bottom:var(--spacingVerticalS);}", ".fqchiol::after{top:var(--spacingVerticalS);}", ".f1w7dm5g::after{bottom:var(--spacingVerticalMNudge);}", ".f1p6em4m::after{top:var(--spacingVerticalMNudge);}"],
-    h: [".f1eytvvh:hover::after{background-color:var(--colorCompoundBrandStrokeHover);}"],
-    a: [".fuaa9s:active::after{background-color:var(--colorCompoundBrandStrokePressed);}"],
-    m: [["@media (forced-colors: active){.fy7ktjt::after{background-color:ButtonText;}}", {
-      m: "(forced-colors: active)"
-    }], ["@media (forced-colors: active){.f16tp0gf:hover::after{background-color:ButtonText;}}", {
-      m: "(forced-colors: active)"
-    }], ["@media (forced-colors: active){.fj0yp7j:active::after{background-color:ButtonText;}}", {
-      m: "(forced-colors: active)"
-    }]]
-  });
-  var useIconStyles2 = /* @__PURE__ */ __styles2({
-    base: {
-      Br312pm: "fwpfdsa",
-      Ijaq50: "f16hsg94",
-      Bt984gj: "f122n59",
-      mc9l5x: "ftuwxu6",
-      Brf1p80: "f4d9j23",
-      B68tc82: "f1p9o1ba",
-      Bmxbyg5: "f1sil6mw",
-      D0sxk3: "f16u1re",
-      t6yez3: "f8bsbmo"
-    },
-    small: {
-      Be2twd7: "fe5j1ua",
-      Bqenvij: "fjamq6b",
-      a9b677: "f64fuq3"
-    },
-    medium: {
-      Be2twd7: "fe5j1ua",
-      Bqenvij: "fjamq6b",
-      a9b677: "f64fuq3"
-    },
-    large: {
-      Be2twd7: "f1rt2boy",
-      Bqenvij: "frvgh55",
-      a9b677: "fq4mcun"
-    },
-    selected: {
-      D0sxk3: "fxoiby5",
-      t6yez3: "f15q0o9g"
-    }
-  }, {
-    d: [".fwpfdsa{grid-column-start:1;}", ".f16hsg94{grid-row-start:1;}", ".f122n59{align-items:center;}", ".ftuwxu6{display:inline-flex;}", ".f4d9j23{justify-content:center;}", ".f1p9o1ba{overflow-x:hidden;}", ".f1sil6mw{overflow-y:hidden;}", ".f16u1re .fui-Icon-filled{display:none;}", ".f8bsbmo .fui-Icon-regular{display:inline;}", ".fe5j1ua{font-size:20px;}", ".fjamq6b{height:20px;}", ".f64fuq3{width:20px;}", ".f1rt2boy{font-size:24px;}", ".frvgh55{height:24px;}", ".fq4mcun{width:24px;}", ".fxoiby5 .fui-Icon-filled{display:inline;}", ".f15q0o9g .fui-Icon-regular{display:none;}"]
-  });
-  var useContentStyles = /* @__PURE__ */ __styles2({
-    base: {
-      Bahqtrf: "fk6fouc",
-      Be2twd7: "fkhj508",
-      Bhrd7zp: "figsok6",
-      Bg96gwp: "f1i3iumi",
-      B68tc82: "f1p9o1ba",
-      Bmxbyg5: "f1sil6mw",
-      z8tnut: "fztplxc",
-      z189sj: ["ffczdla", "fgiv446"],
-      Byoj8tv: "f9g1xly",
-      uwmqm3: ["fgiv446", "ffczdla"]
-    },
-    selected: {
-      Bahqtrf: "fk6fouc",
-      Be2twd7: "fkhj508",
-      Bhrd7zp: "fl43uef",
-      Bg96gwp: "f1i3iumi"
-    },
-    large: {
-      Bahqtrf: "fk6fouc",
-      Be2twd7: "fod5ikn",
-      Bhrd7zp: "figsok6",
-      Bg96gwp: "faaz57k"
-    },
-    largeSelected: {
-      Bahqtrf: "fk6fouc",
-      Be2twd7: "fod5ikn",
-      Bhrd7zp: "fl43uef",
-      Bg96gwp: "faaz57k"
-    },
-    noIconBefore: {
-      Br312pm: "fwpfdsa",
-      Ijaq50: "f16hsg94"
-    },
-    iconBefore: {
-      Br312pm: "fd46tj4",
-      Ijaq50: "f16hsg94"
-    },
-    placeholder: {
-      Bcdw1i0: "fd7fpy0"
-    }
-  }, {
-    d: [".fk6fouc{font-family:var(--fontFamilyBase);}", ".fkhj508{font-size:var(--fontSizeBase300);}", ".figsok6{font-weight:var(--fontWeightRegular);}", ".f1i3iumi{line-height:var(--lineHeightBase300);}", ".f1p9o1ba{overflow-x:hidden;}", ".f1sil6mw{overflow-y:hidden;}", ".fztplxc{padding-top:var(--spacingVerticalNone);}", ".ffczdla{padding-right:var(--spacingHorizontalXXS);}", ".fgiv446{padding-left:var(--spacingHorizontalXXS);}", ".f9g1xly{padding-bottom:var(--spacingVerticalNone);}", ".fl43uef{font-weight:var(--fontWeightSemibold);}", ".fod5ikn{font-size:var(--fontSizeBase400);}", ".faaz57k{line-height:var(--lineHeightBase400);}", ".fwpfdsa{grid-column-start:1;}", ".f16hsg94{grid-row-start:1;}", ".fd46tj4{grid-column-start:2;}", ".fd7fpy0{visibility:hidden;}"]
-  });
-  var useTabStyles_unstable = (state) => {
-    const rootStyles = useRootStyles2();
-    const focusStyles = useFocusStyles();
-    const pendingIndicatorStyles = usePendingIndicatorStyles();
-    const activeIndicatorStyles = useActiveIndicatorStyles2();
-    const iconStyles = useIconStyles2();
-    const contentStyles = useContentStyles();
-    const {
-      appearance,
-      disabled,
-      selected,
-      size,
-      vertical
-    } = state;
-    state.root.className = mergeClasses(
-      tabClassNames.root,
-      rootStyles.base,
-      vertical ? rootStyles.vertical : rootStyles.horizontal,
-      size === "small" && (vertical ? rootStyles.smallVertical : rootStyles.smallHorizontal),
-      size === "medium" && (vertical ? rootStyles.mediumVertical : rootStyles.mediumHorizontal),
-      size === "large" && (vertical ? rootStyles.largeVertical : rootStyles.largeHorizontal),
-      focusStyles.base,
-      !disabled && appearance === "subtle" && rootStyles.subtle,
-      !disabled && appearance === "transparent" && rootStyles.transparent,
-      !disabled && selected && rootStyles.selected,
-      disabled && rootStyles.disabled,
-      // pending indicator (before pseudo element)
-      pendingIndicatorStyles.base,
-      size === "small" && (vertical ? pendingIndicatorStyles.smallVertical : pendingIndicatorStyles.smallHorizontal),
-      size === "medium" && (vertical ? pendingIndicatorStyles.mediumVertical : pendingIndicatorStyles.mediumHorizontal),
-      size === "large" && (vertical ? pendingIndicatorStyles.largeVertical : pendingIndicatorStyles.largeHorizontal),
-      disabled && pendingIndicatorStyles.disabled,
-      // active indicator (after pseudo element)
-      selected && activeIndicatorStyles.base,
-      selected && !disabled && activeIndicatorStyles.selected,
-      selected && size === "small" && (vertical ? activeIndicatorStyles.smallVertical : activeIndicatorStyles.smallHorizontal),
-      selected && size === "medium" && (vertical ? activeIndicatorStyles.mediumVertical : activeIndicatorStyles.mediumHorizontal),
-      selected && size === "large" && (vertical ? activeIndicatorStyles.largeVertical : activeIndicatorStyles.largeHorizontal),
-      selected && disabled && activeIndicatorStyles.disabled,
-      state.root.className
-    );
-    if (state.icon) {
-      state.icon.className = mergeClasses(tabClassNames.icon, iconStyles.base, iconStyles[size], selected && iconStyles.selected, state.icon.className);
-    }
-    if (state.contentReservedSpace) {
-      state.contentReservedSpace.className = mergeClasses(reservedSpaceClassNames.content, contentStyles.base, size === "large" ? contentStyles.largeSelected : contentStyles.selected, state.icon ? contentStyles.iconBefore : contentStyles.noIconBefore, contentStyles.placeholder, state.content.className);
-      state.contentReservedSpaceClassName = state.contentReservedSpace.className;
-    }
-    state.content.className = mergeClasses(tabClassNames.content, contentStyles.base, size === "large" && contentStyles.large, selected && (size === "large" ? contentStyles.largeSelected : contentStyles.selected), state.icon ? contentStyles.iconBefore : contentStyles.noIconBefore, state.content.className);
-    useTabAnimatedIndicatorStyles_unstable(state);
-    return state;
-  };
-
-  // ../node_modules/@fluentui/react-tabs/lib/components/Tab/Tab.js
-  var Tab2 = /* @__PURE__ */ React76.forwardRef((props, ref) => {
-    const state = useTab_unstable(props, ref);
-    useTabStyles_unstable(state);
-    useCustomStyleHook("useTabStyles_unstable")(state);
-    return renderTab_unstable(state);
-  });
-  Tab2.displayName = "Tab";
-
-  // ../node_modules/@fluentui/react-tabs/lib/components/TabList/TabList.js
-  var React78 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react-tabs/lib/components/TabList/useTabList.js
-  var React77 = __toESM(require_react());
-  var useTabList_unstable = (props, ref) => {
-    const { appearance = "transparent", reserveSelectedTabSpace = true, disabled = false, onTabSelect, size = "medium", vertical = false } = props;
-    const innerRef = React77.useRef(null);
-    const focusAttributes = useArrowNavigationGroup({
-      circular: true,
-      axis: vertical ? "vertical" : "horizontal",
-      memorizeCurrent: true
-    });
-    const [selectedValue, setSelectedValue] = useControllableState({
-      state: props.selectedValue,
-      defaultState: props.defaultSelectedValue,
-      initialState: void 0
-    });
-    const currentSelectedValue = React77.useRef(void 0);
-    const previousSelectedValue = React77.useRef(void 0);
-    React77.useEffect(() => {
-      previousSelectedValue.current = currentSelectedValue.current;
-      currentSelectedValue.current = selectedValue;
-    }, [
-      selectedValue
-    ]);
-    const onSelect = useEventCallback((event, data) => {
-      var _onTabSelect;
-      setSelectedValue(data.value);
-      (_onTabSelect = onTabSelect) === null || _onTabSelect === void 0 ? void 0 : _onTabSelect(event, data);
-    });
-    const registeredTabs = React77.useRef({});
-    const onRegister = useEventCallback((data) => {
-      registeredTabs.current[JSON.stringify(data.value)] = data;
-    });
-    const onUnregister = useEventCallback((data) => {
-      delete registeredTabs.current[JSON.stringify(data.value)];
-    });
-    const getRegisteredTabs = React77.useCallback(() => {
-      return {
-        selectedValue: currentSelectedValue.current,
-        previousSelectedValue: previousSelectedValue.current,
-        registeredTabs: registeredTabs.current
-      };
-    }, []);
-    return {
-      components: {
-        root: "div"
-      },
-      root: slot_exports.always(getNativeElementProps2("div", {
-        ref: useMergedRefs2(ref, innerRef),
-        role: "tablist",
-        "aria-orientation": vertical ? "vertical" : "horizontal",
-        ...focusAttributes,
-        ...props
-      }), {
-        elementType: "div"
-      }),
-      appearance,
-      reserveSelectedTabSpace,
-      disabled,
-      selectedValue,
-      size,
-      vertical,
-      onRegister,
-      onUnregister,
-      onSelect,
-      getRegisteredTabs
-    };
-  };
-
-  // ../node_modules/@fluentui/react-tabs/lib/components/TabList/renderTabList.js
-  var renderTabList_unstable = (state, contextValues) => {
-    assertSlots(state);
-    return /* @__PURE__ */ jsx(state.root, {
-      children: /* @__PURE__ */ jsx(TabListProvider, {
-        value: contextValues.tabList,
-        children: state.root.children
-      })
-    });
-  };
-
-  // ../node_modules/@fluentui/react-tabs/lib/components/TabList/useTabListStyles.styles.js
-  var tabListClassNames = {
-    root: "fui-TabList"
-  };
-  var useStyles = /* @__PURE__ */ __styles2({
-    root: {
-      mc9l5x: "f22iagw",
-      Beiy3e4: "f1063pyq",
-      Bnnss6s: "fi64zpg",
-      Eh141a: "flvyvdh",
-      qhf8xq: "f10pi13n"
-    },
-    horizontal: {
-      Bt984gj: "f1q9h2pe",
-      Beiy3e4: "f1063pyq"
-    },
-    vertical: {
-      Bt984gj: "f1q9h2pe",
-      Beiy3e4: "f1vx9l62"
-    }
-  }, {
-    d: [".f22iagw{display:flex;}", ".f1063pyq{flex-direction:row;}", ".fi64zpg{flex-shrink:0;}", ".flvyvdh{flex-wrap:nowrap;}", ".f10pi13n{position:relative;}", ".f1q9h2pe{align-items:stretch;}", ".f1vx9l62{flex-direction:column;}"]
-  });
-  var useTabListStyles_unstable = (state) => {
-    const {
-      vertical
-    } = state;
-    const styles2 = useStyles();
-    state.root.className = mergeClasses(tabListClassNames.root, styles2.root, vertical ? styles2.vertical : styles2.horizontal, state.root.className);
-    return state;
-  };
-
-  // ../node_modules/@fluentui/react-tabs/lib/components/TabList/useTabListContextValues.js
-  function useTabListContextValues_unstable(state) {
-    const { appearance, reserveSelectedTabSpace, disabled, selectedValue: selectedKey, onRegister, onUnregister, onSelect, getRegisteredTabs, size, vertical } = state;
-    const tabList = {
-      appearance,
-      reserveSelectedTabSpace,
-      disabled,
-      selectedValue: selectedKey,
-      onSelect,
-      onRegister,
-      onUnregister,
-      getRegisteredTabs,
-      size,
-      vertical
-    };
-    return {
-      tabList
-    };
-  }
-
-  // ../node_modules/@fluentui/react-tabs/lib/components/TabList/TabList.js
-  var TabList = /* @__PURE__ */ React78.forwardRef((props, ref) => {
-    const state = useTabList_unstable(props, ref);
-    const contextValues = useTabListContextValues_unstable(state);
-    useTabListStyles_unstable(state);
-    useCustomStyleHook("useTabListStyles_unstable")(state);
-    return renderTabList_unstable(state, contextValues);
-  });
-  TabList.displayName = "TabList";
-
-  // ../node_modules/@fluentui/react-table/lib/components/TableCell/TableCell.js
-  var React81 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react-table/lib/components/TableCell/useTableCell.js
-  var React80 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react-table/lib/contexts/tableContext.js
-  var React79 = __toESM(require_react());
-  var tableContext = React79.createContext(void 0);
-  var tableContextDefaultValue = {
-    size: "medium",
-    noNativeElements: false,
-    sortable: false
-  };
-  var TableContextProvider = tableContext.Provider;
-  var _React_useContext2;
-  var useTableContext = () => (_React_useContext2 = React79.useContext(tableContext)) !== null && _React_useContext2 !== void 0 ? _React_useContext2 : tableContextDefaultValue;
-
-  // ../node_modules/@fluentui/react-table/lib/components/TableCell/useTableCell.js
-  var useTableCell_unstable = (props, ref) => {
-    const { noNativeElements, size } = useTableContext();
-    var _props_as;
-    const rootComponent = ((_props_as = props.as) !== null && _props_as !== void 0 ? _props_as : noNativeElements) ? "div" : "td";
-    return {
-      components: {
-        root: rootComponent
-      },
-      root: slot_exports.always(getNativeElementProps2(rootComponent, {
-        ref,
-        role: rootComponent === "div" ? "cell" : void 0,
-        ...props
-      }), {
-        elementType: rootComponent
-      }),
-      noNativeElements,
-      size
-    };
-  };
-
-  // ../node_modules/@fluentui/react-table/lib/components/TableCell/renderTableCell.js
-  var renderTableCell_unstable = (state) => {
-    assertSlots(state);
-    return /* @__PURE__ */ jsx(state.root, {});
-  };
-
-  // ../node_modules/@fluentui/react-table/lib/components/TableCell/useTableCellStyles.styles.js
-  var tableCellClassName = "fui-TableCell";
-  var tableCellClassNames = {
-    root: tableCellClassName
-  };
-  var useTableLayoutStyles = /* @__PURE__ */ __styles2({
-    root: {
-      mc9l5x: "f15pt5es",
-      ha4doy: "fmrv4ls"
-    },
-    medium: {
-      Bqenvij: "f1ft4266"
-    },
-    small: {
-      Bqenvij: "fbsu25e"
-    },
-    "extra-small": {
-      Bqenvij: "frvgh55"
-    }
-  }, {
-    d: [".f15pt5es{display:table-cell;}", ".fmrv4ls{vertical-align:middle;}", ".f1ft4266{height:44px;}", ".fbsu25e{height:34px;}", ".frvgh55{height:24px;}"]
-  });
-  var useFlexLayoutStyles = /* @__PURE__ */ __styles2({
-    root: {
-      mc9l5x: "f22iagw",
-      Bf4jedk: "f10tiqix",
-      Bt984gj: "f122n59",
-      Bh6795r: "fqerorx",
-      Bnnss6s: "f1neuvcm",
-      xawz: "fkjuxzh"
-    },
-    medium: {
-      sshi5w: "f5pgtk9"
-    },
-    small: {
-      sshi5w: "fcep9tg"
-    },
-    "extra-small": {
-      sshi5w: "f1pha7fy"
-    }
-  }, {
-    d: [".f22iagw{display:flex;}", ".f10tiqix{min-width:0px;}", ".f122n59{align-items:center;}", ".fqerorx{flex-grow:1;}", ".f1neuvcm{flex-shrink:1;}", ".fkjuxzh{flex-basis:0px;}", ".f5pgtk9{min-height:44px;}", ".fcep9tg{min-height:34px;}", ".f1pha7fy{min-height:24px;}"]
-  });
-  var useStyles2 = /* @__PURE__ */ __styles2({
-    root: {
-      De3pzq: "f1u2r49w",
-      qhf8xq: "f10pi13n",
-      z8tnut: "f1nbblvp",
-      z189sj: ["f1vdfbxk", "f1f5gg8d"],
-      Byoj8tv: "f1ov4xf1",
-      uwmqm3: ["f1f5gg8d", "f1vdfbxk"],
-      Bn4voq9: "fz36nt7",
-      g9k6zt: "f9znhxp",
-      Bfpq7zp: "fqrak0z",
-      kdpuga: ["f1o2ludy", "f1kjnpwc"],
-      Bw81rd7: ["f1kjnpwc", "f1o2ludy"],
-      B6xbmo0: ["fxmnebo", "f1witrsb"],
-      dm238s: ["f1witrsb", "fxmnebo"]
-    }
-  }, {
-    d: [".f1u2r49w{background-color:inherit;}", ".f10pi13n{position:relative;}", ".f1nbblvp{padding-top:0px;}", ".f1vdfbxk{padding-right:var(--spacingHorizontalS);}", ".f1f5gg8d{padding-left:var(--spacingHorizontalS);}", ".f1ov4xf1{padding-bottom:0px;}", ".fz36nt7[data-fui-focus-visible]{outline-width:2px;}", ".f9znhxp[data-fui-focus-visible]{outline-style:solid;}", ".fqrak0z[data-fui-focus-visible]{outline-color:var(--colorStrokeFocus2);}", ".f1o2ludy[data-fui-focus-visible]{border-bottom-right-radius:var(--borderRadiusMedium);}", ".f1kjnpwc[data-fui-focus-visible]{border-bottom-left-radius:var(--borderRadiusMedium);}", ".fxmnebo[data-fui-focus-visible]{border-top-right-radius:var(--borderRadiusMedium);}", ".f1witrsb[data-fui-focus-visible]{border-top-left-radius:var(--borderRadiusMedium);}"]
-  });
-  var useTableCellStyles_unstable = (state) => {
-    const styles2 = useStyles2();
-    const layoutStyles = {
-      table: useTableLayoutStyles(),
-      flex: useFlexLayoutStyles()
-    };
-    state.root.className = mergeClasses(tableCellClassNames.root, styles2.root, state.noNativeElements ? layoutStyles.flex.root : layoutStyles.table.root, state.noNativeElements ? layoutStyles.flex[state.size] : layoutStyles.table[state.size], state.root.className);
-    return state;
-  };
-
-  // ../node_modules/@fluentui/react-table/lib/components/TableCell/TableCell.js
-  var TableCell = /* @__PURE__ */ React81.forwardRef((props, ref) => {
-    const state = useTableCell_unstable(props, ref);
-    useTableCellStyles_unstable(state);
-    useCustomStyleHook("useTableCellStyles_unstable")(state);
-    return renderTableCell_unstable(state);
-  });
-  TableCell.displayName = "TableCell";
-
-  // ../node_modules/@fluentui/react-table/lib/components/TableRow/TableRow.js
-  var React84 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react-table/lib/components/TableRow/useTableRow.js
-  var React83 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react-table/lib/contexts/tableHeaderContext.js
-  var React82 = __toESM(require_react());
-  var tableHeaderContext = React82.createContext(void 0);
-  var tableHeaderContextDefaultValue = "";
-  var TableHeaderContextProvider = tableHeaderContext.Provider;
-  var useIsInTableHeader = () => React82.useContext(tableHeaderContext) === tableHeaderContextDefaultValue;
-
-  // ../node_modules/@fluentui/react-table/lib/components/TableRow/useTableRow.js
-  var useTableRow_unstable = (props, ref) => {
-    const { noNativeElements, size } = useTableContext();
-    var _props_as;
-    const rootComponent = ((_props_as = props.as) !== null && _props_as !== void 0 ? _props_as : noNativeElements) ? "div" : "tr";
-    const focusVisibleRef = useFocusVisible();
-    const focusWithinRef = useFocusWithin();
-    const isHeaderRow = useIsInTableHeader();
-    var _props_appearance;
-    return {
-      components: {
-        root: rootComponent
-      },
-      root: slot_exports.always(getNativeElementProps2(rootComponent, {
-        ref: useMergedRefs2(ref, focusVisibleRef, focusWithinRef),
-        role: rootComponent === "div" ? "row" : void 0,
-        ...props
-      }), {
-        elementType: rootComponent
-      }),
-      size,
-      noNativeElements,
-      appearance: (_props_appearance = props.appearance) !== null && _props_appearance !== void 0 ? _props_appearance : "none",
-      isHeaderRow
-    };
-  };
-
-  // ../node_modules/@fluentui/react-table/lib/components/TableRow/renderTableRow.js
-  var renderTableRow_unstable = (state) => {
-    assertSlots(state);
-    return /* @__PURE__ */ jsx(state.root, {});
-  };
-
-  // ../node_modules/@fluentui/react-table/lib/components/TableCellActions/useTableCellActionsStyles.styles.js
-  var tableCellActionsClassNames = {
-    root: "fui-TableCellActions"
-  };
-  var useStyles3 = /* @__PURE__ */ __styles2({
-    root: {
-      De3pzq: "f1u2r49w",
-      qhf8xq: "f1euv43f",
-      j35jbq: ["f10k790i", "f1xynx9j"],
-      Bhzewxz: "f1i1t8d1",
-      Bz10aip: "f188r07x",
-      abs64n: "fk73vx1",
-      Frg6f3: ["fcgxt0o", "f1ujusj6"]
-    },
-    visible: {
-      abs64n: "f5p0z4x"
-    }
-  }, {
-    d: [".f1u2r49w{background-color:inherit;}", ".f1euv43f{position:absolute;}", ".f10k790i{right:0px;}", ".f1xynx9j{left:0px;}", ".f1i1t8d1{top:50%;}", ".f188r07x{transform:translateY(-50%);}", ".fk73vx1{opacity:0;}", ".fcgxt0o{margin-left:auto;}", ".f1ujusj6{margin-right:auto;}", ".f5p0z4x{opacity:1;}"]
-  });
-  var useTableCellActionsStyles_unstable = (state) => {
-    const styles2 = useStyles3();
-    state.root.className = mergeClasses(tableCellActionsClassNames.root, styles2.root, state.visible && styles2.visible, state.root.className);
-    return state;
-  };
-
-  // ../node_modules/@fluentui/react-table/lib/components/TableRow/useTableRowStyles.styles.js
-  var tableRowClassName = "fui-TableRow";
-  var tableRowClassNames = {
-    root: tableRowClassName
-  };
-  var useTableLayoutStyles2 = /* @__PURE__ */ __styles2({
-    root: {
-      mc9l5x: "f1u0rzck"
-    }
-  }, {
-    d: [".f1u0rzck{display:table-row;}"]
-  });
-  var useFlexLayoutStyles2 = /* @__PURE__ */ __styles2({
-    root: {
-      mc9l5x: "f22iagw",
-      Bt984gj: "f122n59"
-    }
-  }, {
-    d: [".f22iagw{display:flex;}", ".f122n59{align-items:center;}"]
-  });
-  var useStyles4 = /* @__PURE__ */ __styles2({
-    root: {
-      sj55zd: "f19n0e5",
-      B7ck84d: "f1ewtqcl",
-      Bconypa: "f1jazu75",
-      B6guboy: "f1xeqee6",
-      Bn4voq9: "fz36nt7",
-      g9k6zt: "f9znhxp",
-      Bfpq7zp: "fqrak0z",
-      kdpuga: ["f1o2ludy", "f1kjnpwc"],
-      Bw81rd7: ["f1kjnpwc", "f1o2ludy"],
-      B6xbmo0: ["fxmnebo", "f1witrsb"],
-      dm238s: ["f1witrsb", "fxmnebo"]
-    },
-    noAppearanceFocusWithin: {
-      Bm5rygw: "f13cic75"
-    },
-    rootInteractive: {
-      ecr2s2: "f1wfn5kd",
-      lj723h: "f1g4hkjv",
-      B43xm9u: "f15ngxrw",
-      i921ia: "fjbbrdp",
-      Jwef8y: "f1t94bn6",
-      Bi91k9c: "feu1g3u",
-      Bpt6rm4: "f1uorfem",
-      ff6mpl: "fw60kww"
-    },
-    medium: {
-      Bn0qgzm: "f1vxd6vx",
-      oivjwe: "fg706s2",
-      B9xav0g: "frpde29"
-    },
-    small: {
-      Bn0qgzm: "f1vxd6vx",
-      oivjwe: "fg706s2",
-      B9xav0g: "frpde29"
-    },
-    "extra-small": {
-      Be2twd7: "fy9rknc"
-    },
-    brand: {
-      De3pzq: "f16xkysk",
-      g2u3we: "f1bh3yvw",
-      h3c5rm: ["fmi79ni", "f11fozsx"],
-      B9xav0g: "fnzw4c6",
-      zhjwy3: ["f11fozsx", "fmi79ni"],
-      ecr2s2: "ftepret",
-      gwxt9v: "fqlf3fd",
-      v3aym: ["f9dpb3h", "fw2muls"],
-      Bc736ss: "f1yat0gj",
-      Bk6ri7n: ["fw2muls", "f9dpb3h"],
-      Bk5ld8o: "f7nae3y",
-      c4eypz: ["fkbere7", "fa97sf3"],
-      felo30: "fmtyzcc",
-      Eshu5l: ["fa97sf3", "fkbere7"],
-      Bjwas2f: "fb6zhgp",
-      Bn1d65q: ["fyowp6c", "fz08sq8"],
-      Bxeuatn: "f9dii88",
-      n51gp8: ["fz08sq8", "fyowp6c"],
-      Beo2b4z: ["f1afxoft", "flqq2yx"],
-      h6lo6r: ["flqq2yx", "f1afxoft"],
-      Btyw6ap: ["f1b5xrmd", "f1831rx6"],
-      w1pwid: ["f1831rx6", "f1b5xrmd"],
-      Brwvgy3: "fd94n53",
-      yadkgm: "f1e0wld5"
-    },
-    neutral: {
-      gwxt9v: "fqlf3fd",
-      v3aym: ["f9dpb3h", "fw2muls"],
-      Bc736ss: "f1yat0gj",
-      Bk6ri7n: ["fw2muls", "f9dpb3h"],
-      Bk5ld8o: "f7nae3y",
-      c4eypz: ["fkbere7", "fa97sf3"],
-      felo30: "fmtyzcc",
-      Eshu5l: ["fa97sf3", "fkbere7"],
-      Bjwas2f: "fb6zhgp",
-      Bn1d65q: ["fyowp6c", "fz08sq8"],
-      Bxeuatn: "f9dii88",
-      n51gp8: ["fz08sq8", "fyowp6c"],
-      Beo2b4z: ["f1afxoft", "flqq2yx"],
-      h6lo6r: ["flqq2yx", "f1afxoft"],
-      Btyw6ap: ["f1b5xrmd", "f1831rx6"],
-      w1pwid: ["f1831rx6", "f1b5xrmd"],
-      Brwvgy3: "fd94n53",
-      yadkgm: "f1e0wld5",
-      De3pzq: "fq5gl1p",
-      sj55zd: "f1cgsbmv",
-      Jwef8y: "f1uqaxdt",
-      ecr2s2: "fa9o754",
-      g2u3we: "frmsihh",
-      h3c5rm: ["frttxa5", "f11o2r7f"],
-      B9xav0g: "fem5et0",
-      zhjwy3: ["f11o2r7f", "frttxa5"]
-    },
-    none: {}
-  }, {
-    d: [".f19n0e5{color:var(--colorNeutralForeground1);}", ".f1ewtqcl{box-sizing:border-box;}", ".f1jazu75[data-fui-focus-within]:focus-within .fui-TableSelectionCell{opacity:1;}", ".f1xeqee6[data-fui-focus-within]:focus-within .fui-TableCellActions{opacity:1;}", ".fz36nt7[data-fui-focus-visible]{outline-width:2px;}", ".f9znhxp[data-fui-focus-visible]{outline-style:solid;}", ".fqrak0z[data-fui-focus-visible]{outline-color:var(--colorStrokeFocus2);}", ".f1o2ludy[data-fui-focus-visible]{border-bottom-right-radius:var(--borderRadiusMedium);}", ".f1kjnpwc[data-fui-focus-visible]{border-bottom-left-radius:var(--borderRadiusMedium);}", ".fxmnebo[data-fui-focus-visible]{border-top-right-radius:var(--borderRadiusMedium);}", ".f1witrsb[data-fui-focus-visible]{border-top-left-radius:var(--borderRadiusMedium);}", ".f13cic75[data-fui-focus-within]:focus-within{background-color:var(--colorSubtleBackgroundHover);}", ".f1vxd6vx{border-bottom-width:var(--strokeWidthThin);}", ".fg706s2{border-bottom-style:solid;}", ".frpde29{border-bottom-color:var(--colorNeutralStroke2);}", ".fy9rknc{font-size:var(--fontSizeBase200);}", ".f16xkysk{background-color:var(--colorBrandBackground2);}", ".f1bh3yvw{border-top-color:var(--colorTransparentStrokeInteractive);}", ".fmi79ni{border-right-color:var(--colorTransparentStrokeInteractive);}", ".f11fozsx{border-left-color:var(--colorTransparentStrokeInteractive);}", ".fnzw4c6{border-bottom-color:var(--colorTransparentStrokeInteractive);}", ".fq5gl1p{background-color:var(--colorSubtleBackgroundSelected);}", ".f1cgsbmv{color:var(--colorNeutralForeground1Hover);}", ".frmsihh{border-top-color:var(--colorNeutralStrokeOnBrand);}", ".frttxa5{border-right-color:var(--colorNeutralStrokeOnBrand);}", ".f11o2r7f{border-left-color:var(--colorNeutralStrokeOnBrand);}", ".fem5et0{border-bottom-color:var(--colorNeutralStrokeOnBrand);}"],
-    a: [".f1wfn5kd:active{background-color:var(--colorSubtleBackgroundPressed);}", ".f1g4hkjv:active{color:var(--colorNeutralForeground1Pressed);}", ".f15ngxrw:active .fui-TableCellActions{opacity:1;}", ".fjbbrdp:active .fui-TableSelectionCell{opacity:1;}", ".ftepret:active{background-color:var(--colorBrandBackgroundInvertedSelected);}", ".fa9o754:active{background-color:var(--colorSubtleBackgroundSelected);}"],
-    h: [".f1t94bn6:hover{background-color:var(--colorSubtleBackgroundHover);}", ".feu1g3u:hover{color:var(--colorNeutralForeground1Hover);}", ".f1uorfem:hover .fui-TableCellActions{opacity:1;}", ".fw60kww:hover .fui-TableSelectionCell{opacity:1;}", ".f1uqaxdt:hover{background-color:var(--colorSubtleBackgroundSelected);}"],
-    m: [["@media (forced-colors: active){.fqlf3fd{border-top-width:2px;}}", {
-      m: "(forced-colors: active)"
-    }], ["@media (forced-colors: active){.f9dpb3h{border-right-width:2px;}.fw2muls{border-left-width:2px;}}", {
-      m: "(forced-colors: active)"
-    }], ["@media (forced-colors: active){.f1yat0gj{border-bottom-width:2px;}}", {
-      m: "(forced-colors: active)"
-    }], ["@media (forced-colors: active){.f7nae3y{border-top-style:solid;}}", {
-      m: "(forced-colors: active)"
-    }], ["@media (forced-colors: active){.fa97sf3{border-left-style:solid;}.fkbere7{border-right-style:solid;}}", {
-      m: "(forced-colors: active)"
-    }], ["@media (forced-colors: active){.fmtyzcc{border-bottom-style:solid;}}", {
-      m: "(forced-colors: active)"
-    }], ["@media (forced-colors: active){.fb6zhgp{border-top-color:transparent;}}", {
-      m: "(forced-colors: active)"
-    }], ["@media (forced-colors: active){.fyowp6c{border-right-color:transparent;}.fz08sq8{border-left-color:transparent;}}", {
-      m: "(forced-colors: active)"
-    }], ["@media (forced-colors: active){.f9dii88{border-bottom-color:transparent;}}", {
-      m: "(forced-colors: active)"
-    }], ["@media (forced-colors: active){.f1afxoft{border-bottom-right-radius:var(--borderRadiusMedium);}.flqq2yx{border-bottom-left-radius:var(--borderRadiusMedium);}}", {
-      m: "(forced-colors: active)"
-    }], ["@media (forced-colors: active){.f1831rx6{border-top-left-radius:var(--borderRadiusMedium);}.f1b5xrmd{border-top-right-radius:var(--borderRadiusMedium);}}", {
-      m: "(forced-colors: active)"
-    }], ["@media (forced-colors: active){.fd94n53{box-sizing:border-box;}}", {
-      m: "(forced-colors: active)"
-    }], ["@media (forced-colors: active){.f1e0wld5:focus-visible{outline-offset:-4px;}}", {
-      m: "(forced-colors: active)"
-    }]]
-  });
-  var useTableRowStyles_unstable = (state) => {
-    const styles2 = useStyles4();
-    const layoutStyles = {
-      table: useTableLayoutStyles2(),
-      flex: useFlexLayoutStyles2()
-    };
-    state.root.className = mergeClasses(tableRowClassNames.root, styles2.root, !state.isHeaderRow && styles2.rootInteractive, styles2[state.size], state.noNativeElements ? layoutStyles.flex.root : layoutStyles.table.root, styles2[state.appearance], state.appearance === "none" && !state.isHeaderRow && styles2.noAppearanceFocusWithin, state.root.className);
-    return state;
-  };
-
-  // ../node_modules/@fluentui/react-table/lib/components/TableRow/TableRow.js
-  var TableRow = /* @__PURE__ */ React84.forwardRef((props, ref) => {
-    const state = useTableRow_unstable(props, ref);
-    useTableRowStyles_unstable(state);
-    useCustomStyleHook("useTableRowStyles_unstable")(state);
-    return renderTableRow_unstable(state);
-  });
-  TableRow.displayName = "TableRow";
-
-  // ../node_modules/@fluentui/react-table/lib/components/Table/Table.js
-  var React87 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react-table/lib/components/Table/useTable.js
-  var React85 = __toESM(require_react());
-  var useTable_unstable = (props, ref) => {
-    var _props_as;
-    const rootComponent = ((_props_as = props.as) !== null && _props_as !== void 0 ? _props_as : props.noNativeElements) ? "div" : "table";
-    var _props_size, _props_noNativeElements, _props_sortable;
-    return {
-      components: {
-        root: rootComponent
-      },
-      root: slot_exports.always(getNativeElementProps2(rootComponent, {
-        ref,
-        role: rootComponent === "div" ? "table" : void 0,
-        ...props
-      }), {
-        elementType: rootComponent
-      }),
-      size: (_props_size = props.size) !== null && _props_size !== void 0 ? _props_size : "medium",
-      noNativeElements: (_props_noNativeElements = props.noNativeElements) !== null && _props_noNativeElements !== void 0 ? _props_noNativeElements : false,
-      sortable: (_props_sortable = props.sortable) !== null && _props_sortable !== void 0 ? _props_sortable : false
-    };
-  };
-
-  // ../node_modules/@fluentui/react-table/lib/components/Table/renderTable.js
-  var renderTable_unstable = (state, contextValues) => {
-    assertSlots(state);
-    return /* @__PURE__ */ jsx(TableContextProvider, {
-      value: contextValues.table,
-      children: /* @__PURE__ */ jsx(state.root, {})
-    });
-  };
-
-  // ../node_modules/@fluentui/react-table/lib/components/Table/useTableStyles.styles.js
-  var tableClassName = "fui-Table";
-  var useTableLayoutStyles3 = /* @__PURE__ */ __styles2({
-    root: {
-      mc9l5x: "f1w4nmp0",
-      ha4doy: "fmrv4ls",
-      a9b677: "fly5x3f",
-      B73mfa3: "f14m3nip"
-    }
-  }, {
-    d: [".f1w4nmp0{display:table;}", ".fmrv4ls{vertical-align:middle;}", ".fly5x3f{width:100%;}", ".f14m3nip{table-layout:fixed;}"]
-  });
-  var useFlexLayoutStyles3 = /* @__PURE__ */ __styles2({
-    root: {
-      mc9l5x: "ftgm304"
-    }
-  }, {
-    d: [".ftgm304{display:block;}"]
-  });
-  var useStyles5 = /* @__PURE__ */ __styles2({
-    root: {
-      po53p8: "fgkb47j",
-      De3pzq: "fhovq9v"
-    }
-  }, {
-    d: [".fgkb47j{border-collapse:collapse;}", ".fhovq9v{background-color:var(--colorSubtleBackground);}"]
-  });
-  var useTableStyles_unstable = (state) => {
-    const styles2 = useStyles5();
-    const layoutStyles = {
-      table: useTableLayoutStyles3(),
-      flex: useFlexLayoutStyles3()
-    };
-    state.root.className = mergeClasses(tableClassName, styles2.root, state.noNativeElements ? layoutStyles.flex.root : layoutStyles.table.root, state.root.className);
-    return state;
-  };
-
-  // ../node_modules/@fluentui/react-table/lib/components/Table/useTableContextValues.js
-  var React86 = __toESM(require_react());
-  function useTableContextValues_unstable(state) {
-    const { size, noNativeElements, sortable } = state;
-    const tableContext2 = React86.useMemo(() => ({
-      noNativeElements,
-      size,
-      sortable
-    }), [
-      noNativeElements,
-      size,
-      sortable
-    ]);
-    return {
-      table: tableContext2
-    };
-  }
-
-  // ../node_modules/@fluentui/react-table/lib/components/Table/Table.js
-  var Table = /* @__PURE__ */ React87.forwardRef((props, ref) => {
-    const state = useTable_unstable(props, ref);
-    useTableStyles_unstable(state);
-    useCustomStyleHook("useTableStyles_unstable")(state);
-    return renderTable_unstable(state, useTableContextValues_unstable(state));
-  });
-  Table.displayName = "Table";
-
-  // ../node_modules/@fluentui/react-table/lib/components/TableCellActions/TableCellActions.js
-  var React89 = __toESM(require_react());
-
-  // ../node_modules/@fluentui/react-table/lib/components/TableCellActions/useTableCellActions.js
-  var React88 = __toESM(require_react());
-  var useTableCellActions_unstable = (props, ref) => {
-    var _props_visible;
-    return {
-      components: {
-        root: "div"
-      },
-      root: slot_exports.always(getNativeElementProps2("div", {
-        ref,
-        ...props
-      }), {
-        elementType: "div"
-      }),
-      visible: (_props_visible = props.visible) !== null && _props_visible !== void 0 ? _props_visible : false
-    };
-  };
-
-  // ../node_modules/@fluentui/react-table/lib/components/TableCellActions/renderTableCellActions.js
-  var renderTableCellActions_unstable = (state) => {
-    assertSlots(state);
-    return /* @__PURE__ */ jsx(state.root, {});
-  };
-
-  // ../node_modules/@fluentui/react-table/lib/components/TableCellActions/TableCellActions.js
-  var TableCellActions = /* @__PURE__ */ React89.forwardRef((props, ref) => {
-    const state = useTableCellActions_unstable(props, ref);
-    useTableCellActionsStyles_unstable(state);
-    useCustomStyleHook("useTableCellActionsStyles_unstable")(state);
-    return renderTableCellActions_unstable(state);
-  });
-  TableCellActions.displayName = "TableCellActions";
+  Button.displayName = "Button";
 
   // src/extension/shared.tsx
   var contentGet = "content/get";
   var contentSave = "content/save";
 
-  // src/extension/SaveWizard.tsx
-  var import_react11 = __toESM(require_react(), 1);
+  // src/extension/NewSaveWizard.tsx
+  var import_react3 = __toESM(require_react(), 1);
 
   // ../node_modules/@bufbuild/protobuf/dist/esm/private/assert.js
   function assert(condition, msg) {
@@ -47775,9 +31758,9 @@ ${error.stack}`);
      * Serialize the message to a JSON string.
      */
     toJsonString(options) {
-      var _a5;
+      var _a2;
       const value = this.toJson(options);
-      return JSON.stringify(value, null, (_a5 = options === null || options === void 0 ? void 0 : options.prettySpaces) !== null && _a5 !== void 0 ? _a5 : 0);
+      return JSON.stringify(value, null, (_a2 = options === null || options === void 0 ? void 0 : options.prettySpaces) !== null && _a2 !== void 0 ? _a2 : 0);
     }
     /**
      * Override for serialization behavior. This will be invoked when calling
@@ -47811,8 +31794,8 @@ ${error.stack}`);
 
   // ../node_modules/@bufbuild/protobuf/dist/esm/private/message-type.js
   function makeMessageType(runtime, typeName, fields, opt) {
-    var _a5;
-    const localName = (_a5 = opt === null || opt === void 0 ? void 0 : opt.localName) !== null && _a5 !== void 0 ? _a5 : typeName.substring(typeName.lastIndexOf(".") + 1);
+    var _a2;
+    const localName = (_a2 = opt === null || opt === void 0 ? void 0 : opt.localName) !== null && _a2 !== void 0 ? _a2 : typeName.substring(typeName.lastIndexOf(".") + 1);
     const type = {
       [localName]: function(data) {
         runtime.util.initFields(this);
@@ -48651,8 +32634,8 @@ ${error.stack}`);
       makeReadOptions,
       makeWriteOptions,
       listUnknownFields(message) {
-        var _a5;
-        return (_a5 = message[unknownFieldsSymbol]) !== null && _a5 !== void 0 ? _a5 : [];
+        var _a2;
+        return (_a2 = message[unknownFieldsSymbol]) !== null && _a2 !== void 0 ? _a2 : [];
       },
       discardUnknownFields(message) {
         delete message[unknownFieldsSymbol];
@@ -49367,7 +33350,7 @@ ${error.stack}`);
     throw new Error(`cannot decode enum ${type.typeName} from JSON: ${debugJsonValue(json)}`);
   }
   function writeEnum(type, value, emitIntrinsicDefault, enumAsInteger) {
-    var _a5;
+    var _a2;
     if (value === void 0) {
       return value;
     }
@@ -49381,7 +33364,7 @@ ${error.stack}`);
       return null;
     }
     const val = type.findNumber(value);
-    return (_a5 = val === null || val === void 0 ? void 0 : val.name) !== null && _a5 !== void 0 ? _a5 : value;
+    return (_a2 = val === null || val === void 0 ? void 0 : val.name) !== null && _a2 !== void 0 ? _a2 : value;
   }
   function writeScalar2(type, value, emitIntrinsicDefault) {
     if (value === void 0) {
@@ -49878,13 +33861,13 @@ ${error.stack}`);
     }
   }));
   function normalizeFieldInfosProto3(fieldInfos) {
-    var _a5, _b, _c;
+    var _a2, _b, _c;
     const r = [];
     let o;
     for (const field of typeof fieldInfos == "function" ? fieldInfos() : fieldInfos) {
       const f = field;
       f.localName = localFieldName(field.name, field.oneof !== void 0);
-      f.jsonName = (_a5 = field.jsonName) !== null && _a5 !== void 0 ? _a5 : fieldJsonName(field.name);
+      f.jsonName = (_a2 = field.jsonName) !== null && _a2 !== void 0 ? _a2 : fieldJsonName(field.name);
       f.repeated = (_b = field.repeated) !== null && _b !== void 0 ? _b : false;
       f.packed = (_c = field.packed) !== null && _c !== void 0 ? _c : field.kind == "enum" || field.kind == "scalar" && field.T != ScalarType.BYTES && field.T != ScalarType.STRING;
       if (field.oneof !== void 0) {
@@ -50305,9 +34288,9 @@ ${error.stack}`);
   }
   function createUnaryFn(transport2, service, method) {
     return async function(input, options) {
-      var _a5, _b;
+      var _a2, _b;
       const response = await transport2.unary(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, input);
-      (_a5 = options === null || options === void 0 ? void 0 : options.onHeader) === null || _a5 === void 0 ? void 0 : _a5.call(options, response.header);
+      (_a2 = options === null || options === void 0 ? void 0 : options.onHeader) === null || _a2 === void 0 ? void 0 : _a2.call(options, response.header);
       (_b = options === null || options === void 0 ? void 0 : options.onTrailer) === null || _b === void 0 ? void 0 : _b.call(options, response.trailer);
       return response.message;
     };
@@ -50319,13 +34302,13 @@ ${error.stack}`);
   }
   function createClientStreamingFn(transport2, service, method) {
     return async function(request, options) {
-      var _a5, e_1, _b, _c;
+      var _a2, e_1, _b, _c;
       var _d, _e;
       const response = await transport2.stream(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, request);
       (_d = options === null || options === void 0 ? void 0 : options.onHeader) === null || _d === void 0 ? void 0 : _d.call(options, response.header);
       let singleMessage;
       try {
-        for (var _f = true, _g = __asyncValues2(response.message), _h; _h = await _g.next(), _a5 = _h.done, !_a5; _f = true) {
+        for (var _f = true, _g = __asyncValues2(response.message), _h; _h = await _g.next(), _a2 = _h.done, !_a2; _f = true) {
           _c = _h.value;
           _f = false;
           const message = _c;
@@ -50335,7 +34318,7 @@ ${error.stack}`);
         e_1 = { error: e_1_1 };
       } finally {
         try {
-          if (!_f && !_a5 && (_b = _g.return))
+          if (!_f && !_a2 && (_b = _g.return))
             await _b.call(_g);
         } finally {
           if (e_1)
@@ -50356,10 +34339,10 @@ ${error.stack}`);
   }
   function handleStreamResponse(stream, options) {
     const it = function() {
-      var _a5, _b;
+      var _a2, _b;
       return __asyncGenerator2(this, arguments, function* () {
         const response = yield __await2(stream);
-        (_a5 = options === null || options === void 0 ? void 0 : options.onHeader) === null || _a5 === void 0 ? void 0 : _a5.call(options, response.header);
+        (_a2 = options === null || options === void 0 ? void 0 : options.onHeader) === null || _a2 === void 0 ? void 0 : _a2.call(options, response.header);
         yield __await2(yield* __asyncDelegator2(__asyncValues2(response.message)));
         (_b = options === null || options === void 0 ? void 0 : options.onTrailer) === null || _b === void 0 ? void 0 : _b.call(options, response.trailer);
       });
@@ -50430,9 +34413,9 @@ ${error.stack}`);
 
   // ../node_modules/@bufbuild/connect/dist/esm/protocol/serialization.js
   function getJsonOptions(options) {
-    var _a5;
+    var _a2;
     const o = Object.assign({}, options);
-    (_a5 = o.ignoreUnknownFields) !== null && _a5 !== void 0 ? _a5 : o.ignoreUnknownFields = true;
+    (_a2 = o.ignoreUnknownFields) !== null && _a2 !== void 0 ? _a2 : o.ignoreUnknownFields = true;
     return o;
   }
   function createClientMethodSerializers(method, useBinaryFormat, jsonOptions, binaryOptions) {
@@ -50461,8 +34444,8 @@ ${error.stack}`);
     };
   }
   function createJsonSerialization(messageType, options) {
-    var _a5, _b;
-    const textEncoder = (_a5 = options === null || options === void 0 ? void 0 : options.textEncoder) !== null && _a5 !== void 0 ? _a5 : new TextEncoder();
+    var _a2, _b;
+    const textEncoder = (_a2 = options === null || options === void 0 ? void 0 : options.textEncoder) !== null && _a2 !== void 0 ? _a2 : new TextEncoder();
     const textDecoder = (_b = options === null || options === void 0 ? void 0 : options.textDecoder) !== null && _b !== void 0 ? _b : new TextDecoder();
     const o = getJsonOptions(options);
     return {
@@ -50707,10 +34690,10 @@ ${error.stack}`);
     const req = Object.assign(Object.assign({}, opt.req), { message: normalizeIterable(opt.req.method.I, opt.req.message), signal });
     let doneCalled = false;
     signal.addEventListener("abort", function() {
-      var _a5, _b;
+      var _a2, _b;
       const it = opt.req.message[Symbol.asyncIterator]();
       if (!doneCalled) {
-        (_a5 = it.throw) === null || _a5 === void 0 ? void 0 : _a5.call(it, this.reason).catch(() => {
+        (_a2 = it.throw) === null || _a2 === void 0 ? void 0 : _a2.call(it, this.reason).catch(() => {
         });
       }
       (_b = it.return) === null || _b === void 0 ? void 0 : _b.call(it).catch(() => {
@@ -50754,12 +34737,12 @@ ${error.stack}`);
     ];
   }
   function applyInterceptors(next, interceptors) {
-    var _a5;
-    return (_a5 = interceptors === null || interceptors === void 0 ? void 0 : interceptors.concat().reverse().reduce(
+    var _a2;
+    return (_a2 = interceptors === null || interceptors === void 0 ? void 0 : interceptors.concat().reverse().reduce(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       (n, i) => i(n),
       next
-    )) !== null && _a5 !== void 0 ? _a5 : next;
+    )) !== null && _a2 !== void 0 ? _a2 : next;
   }
   function normalize3(type, message) {
     return message instanceof type ? message : new type(message);
@@ -50841,12 +34824,12 @@ ${error.stack}`);
     }
   };
   function createConnectTransport(options) {
-    var _a5;
+    var _a2;
     assertFetchApi();
-    const useBinaryFormat = (_a5 = options.useBinaryFormat) !== null && _a5 !== void 0 ? _a5 : false;
+    const useBinaryFormat = (_a2 = options.useBinaryFormat) !== null && _a2 !== void 0 ? _a2 : false;
     return {
       async unary(service, method, signal, timeoutMs, header, message) {
-        var _a6;
+        var _a3;
         const { serialize, parse } = createClientMethodSerializers(method, useBinaryFormat, options.jsonOptions, options.binaryOptions);
         return await runUnaryCall({
           interceptors: options.interceptors,
@@ -50859,7 +34842,7 @@ ${error.stack}`);
             url: createMethodUrl(options.baseUrl, service, method),
             init: {
               method: "POST",
-              credentials: (_a6 = options.credentials) !== null && _a6 !== void 0 ? _a6 : "same-origin",
+              credentials: (_a3 = options.credentials) !== null && _a3 !== void 0 ? _a3 : "same-origin",
               redirect: "error",
               mode: "cors"
             },
@@ -50867,7 +34850,7 @@ ${error.stack}`);
             message
           },
           next: async (req) => {
-            var _a7;
+            var _a4;
             const useGet = options.useHttpGet === true && method.idempotency === MethodIdempotency.NoSideEffects;
             let body = null;
             if (useGet) {
@@ -50875,7 +34858,7 @@ ${error.stack}`);
             } else {
               body = serialize(req.message);
             }
-            const fetch = (_a7 = options.fetch) !== null && _a7 !== void 0 ? _a7 : globalThis.fetch;
+            const fetch = (_a4 = options.fetch) !== null && _a4 !== void 0 ? _a4 : globalThis.fetch;
             const response = await fetch(req.url, Object.assign(Object.assign({}, req.init), { headers: req.header, signal: req.signal, body }));
             const { isUnaryError, unaryError } = validateResponse(method.kind, response.status, response.headers);
             if (isUnaryError) {
@@ -50894,7 +34877,7 @@ ${error.stack}`);
         });
       },
       async stream(service, method, signal, timeoutMs, header, input) {
-        var _a6;
+        var _a3;
         const { serialize, parse } = createClientMethodSerializers(method, useBinaryFormat, options.jsonOptions, options.binaryOptions);
         function parseResponseBody(body, trailerTarget) {
           return __asyncGenerator3(this, arguments, function* parseResponseBody_1() {
@@ -50943,7 +34926,7 @@ ${error.stack}`);
             url: createMethodUrl(options.baseUrl, service, method),
             init: {
               method: "POST",
-              credentials: (_a6 = options.credentials) !== null && _a6 !== void 0 ? _a6 : "same-origin",
+              credentials: (_a3 = options.credentials) !== null && _a3 !== void 0 ? _a3 : "same-origin",
               redirect: "error",
               mode: "cors"
             },
@@ -50951,8 +34934,8 @@ ${error.stack}`);
             message: input
           },
           next: async (req) => {
-            var _a7;
-            const fetch = (_a7 = options.fetch) !== null && _a7 !== void 0 ? _a7 : globalThis.fetch;
+            var _a4;
+            const fetch = (_a4 = options.fetch) !== null && _a4 !== void 0 ? _a4 : globalThis.fetch;
             const fRes = await fetch(req.url, Object.assign(Object.assign({}, req.init), { headers: req.header, signal: req.signal, body: await createRequestBody(req.message) }));
             validateResponse(method.kind, fRes.status, fRes.headers);
             if (fRes.body === null) {
@@ -51955,7 +35938,7 @@ ${error.stack}`);
     static fields = proto3.util.newFieldList(() => [
       { no: 4, name: "text", kind: "message", T: Text, oneof: "type" },
       { no: 5, name: "file", kind: "message", T: File, oneof: "type" },
-      { no: 6, name: "url", kind: "message", T: URL, oneof: "type" }
+      { no: 6, name: "url", kind: "message", T: URL2, oneof: "type" }
     ]);
     static fromBinary(bytes, options) {
       return new _Data().fromBinary(bytes, options);
@@ -52341,7 +36324,7 @@ ${error.stack}`);
       return proto3.util.equals(_Text, a, b);
     }
   };
-  var URL = class _URL extends Message {
+  var URL2 = class _URL extends Message {
     /**
      * @generated from field: string url = 1;
      */
@@ -53528,7 +37511,7 @@ ${error.stack}`);
       return proto3.util.equals(_OCRText, a, b);
     }
   };
-  var Image2 = class _Image extends Message {
+  var Image = class _Image extends Message {
     /**
      * @generated from field: bytes image = 1;
      */
@@ -54158,7 +38141,7 @@ ${error.stack}`);
   };
 
   // ../node_modules/@tanstack/query-core/build/lib/subscribable.mjs
-  var Subscribable2 = class {
+  var Subscribable = class {
     constructor() {
       this.listeners = /* @__PURE__ */ new Set();
       this.subscribe = this.subscribe.bind(this);
@@ -54383,7 +38366,7 @@ ${error.stack}`);
   }
 
   // ../node_modules/@tanstack/query-core/build/lib/focusManager.mjs
-  var FocusManager = class extends Subscribable2 {
+  var FocusManager = class extends Subscribable {
     constructor() {
       super();
       this.setup = (onFocus) => {
@@ -54451,7 +38434,7 @@ ${error.stack}`);
 
   // ../node_modules/@tanstack/query-core/build/lib/onlineManager.mjs
   var onlineEvents = ["online", "offline"];
-  var OnlineManager = class extends Subscribable2 {
+  var OnlineManager = class extends Subscribable {
     constructor() {
       super();
       this.setup = (onOnline) => {
@@ -55128,7 +39111,7 @@ ${error.stack}`);
   }
 
   // ../node_modules/@tanstack/query-core/build/lib/queryCache.mjs
-  var QueryCache = class extends Subscribable2 {
+  var QueryCache = class extends Subscribable {
     constructor(config) {
       super();
       this.config = config || {};
@@ -55455,7 +39438,7 @@ ${error.stack}`);
   }
 
   // ../node_modules/@tanstack/query-core/build/lib/mutationCache.mjs
-  var MutationCache = class extends Subscribable2 {
+  var MutationCache = class extends Subscribable {
     constructor(config) {
       super();
       this.config = config || {};
@@ -55937,35 +39920,22 @@ ${error.stack}`);
     });
   }
 
-  // src/extension/SaveWizard.tsx
-  var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
-  var floatingPanelStyle = {
-    padding: "10px",
-    backgroundColor: "white",
-    border: "1px solid #ccc",
-    color: "black",
-    width: "40vh",
-    maxHeight: "300px",
-    overflowY: "auto",
-    zIndex: 9999,
-    right: "10px",
-    bottom: "10px",
-    position: "fixed"
-  };
-  var SaveWizard = () => {
-    const [error, setError] = (0, import_react11.useState)(void 0);
-    const [title, setTitle] = (0, import_react11.useState)(document.title || window.location.href);
-    const [tag, setTag] = (0, import_react11.useState)(void 0);
-    const [tags, setTags] = (0, import_react11.useState)(["browser/save"]);
-    const [url, setUrl] = (0, import_react11.useState)(window.location.href);
-    const [annotation, setAnnotation] = (0, import_react11.useState)("");
-    const [annotations, setAnnotations] = (0, import_react11.useState)([]);
-    const [selectedValue, setSelectedValue] = (0, import_react11.useState)("tags");
-    const [analysis, setAnalysis] = (0, import_react11.useState)(void 0);
+  // src/extension/NewSaveWizard.tsx
+  var import_jsx_runtime2 = __toESM(require_jsx_runtime(), 1);
+  var NewSaveWizard = () => {
+    const [error, setError] = (0, import_react3.useState)(void 0);
+    const [title, setTitle] = (0, import_react3.useState)(document.title || window.location.href);
+    const [tag, setTag] = (0, import_react3.useState)(void 0);
+    const [tags, setTags] = (0, import_react3.useState)(["browser/save"]);
+    const [url, setUrl] = (0, import_react3.useState)(window.location.href);
+    const [annotation, setAnnotation] = (0, import_react3.useState)("");
+    const [annotations, setAnnotations] = (0, import_react3.useState)([]);
+    const [selectedValue, setSelectedValue] = (0, import_react3.useState)("tags");
+    const [analysis, setAnalysis] = (0, import_react3.useState)(void 0);
     const onTabSelect = (event, data) => {
       setSelectedValue(data.value);
     };
-    (0, import_react11.useEffect)(() => {
+    (0, import_react3.useEffect)(() => {
       const handleKeyDown = (event) => {
       };
       document.addEventListener("keydown", handleKeyDown);
@@ -56004,16 +39974,15 @@ ${error.stack}`);
     };
     const handleSave = async () => {
       setError(void 0);
-      try {
-        const res = await contentService.save({
-          content: urlContent(url, tags),
-          related: []
-        });
-        console.log(res);
-      } catch (e) {
-        console.error(e);
-        setError(e.message);
-      }
+      const content = urlContent(url, tags);
+      chrome.runtime.sendMessage(
+        { action: contentSave, data: content.toJson() },
+        (response) => {
+          if (response && response.error) {
+            setError(response.error);
+          }
+        }
+      );
     };
     const handleRemove = (id) => {
       setAnnotations(annotations.filter((annotation2, idx) => idx !== id));
@@ -56021,64 +39990,42 @@ ${error.stack}`);
     const handleRemoveTag = (id) => {
       setAnnotations(tags.filter((annotation2, idx) => idx !== id));
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(Stack, { id: "floating-panel", tokens: { childrenGap: 10 }, style: floatingPanelStyle, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
-        TextField,
-        {
-          value: title,
-          onChange: (e, newValue) => setTitle(newValue || "")
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(TabList, { selectedValue, onTabSelect, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Tab2, { value: "tags", children: "Tags" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Tab2, { value: "annotations", children: "Annotations" }),
-        /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Tab2, { value: "analyze", children: "Analyze" })
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { id: "floating-panel", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("input", { type: "text", value: title, onChange: (e) => setTitle(e.target.value) }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "tablist", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { onClick: () => setSelectedValue("tags"), children: "Tags" }),
+        /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { onClick: () => setSelectedValue("annotations"), children: "Annotations" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("div", { children: [
-        selectedValue === "analyze" && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(Stack, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Button2, { onClick: analyze, children: "Analyze" }),
-          analysis && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("ul", { children: analysis.map((content, idx) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(import_jsx_runtime8.Fragment, { children: content.tags.map((t, idx2) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Button2, { onClick: () => handleAddTag(t), children: t }, idx2)) })) })
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
+        selectedValue === "analyze" && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "button-primary", onClick: analyze, children: "Analyze" }),
+          analysis && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("ul", { children: analysis.map((content, idx) => content.tags.map((t, idx2) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { onClick: () => handleAddTag(t), children: t }, idx2))) })
         ] }),
-        selectedValue === "tags" && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(Stack, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
-            TextField,
-            {
-              value: tag,
-              placeholder: "tag",
-              onChange: (e, newValue) => setTag(newValue || "")
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(PrimaryButton, { onClick: () => tag && handleAddTag(tag), text: "Add" }),
-          tags.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Table, { style: { height: "100px", overflowY: "auto" }, children: tags.map((tag2, idx) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(TableRow, { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(TableCell, { children: [
+        selectedValue === "tags" && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("input", { type: "text", value: tag, placeholder: "tag", onChange: (e) => setTag(e.target.value) }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "button-primary", onClick: () => tag && handleAddTag(tag), children: "Add" }),
+          tags.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("table", { className: "table", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("tbody", { children: tags.map((tag2, idx) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("tr", { className: "table-row", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("td", { className: "table-cell", children: [
             tag2,
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(TableCellActions, { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(PrimaryButton, { onClick: () => handleRemoveTag(idx), text: "Remove" }) })
-          ] }) }, idx)) })
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "button-primary", onClick: () => handleRemoveTag(idx), children: "Remove" })
+          ] }) }, idx)) }) })
         ] }),
-        selectedValue === "annotations" && /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(Stack, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
-            TextField,
-            {
-              multiline: true,
-              rows: 4,
-              value: annotation,
-              onChange: (e, newValue) => setAnnotation(newValue || "")
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(PrimaryButton, { onClick: handleAddAnnotation, text: "Add" }),
-          annotations.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Table, { style: { height: "100px", overflowY: "auto" }, children: annotations.map((annotation2, idx) => /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(TableRow, { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(TableCell, { children: [
+        selectedValue === "annotations" && /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("textarea", { rows: 4, value: annotation, onChange: (e) => setAnnotation(e.target.value) }),
+          /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "button-primary", onClick: handleAddAnnotation, children: "Add" }),
+          annotations.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("table", { className: "table", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("tbody", { children: annotations.map((annotation2, idx) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("tr", { className: "table-row", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("td", { className: "table-cell", children: [
             annotation2,
-            /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(TableCellActions, { children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(PrimaryButton, { onClick: () => handleRemove(idx), text: "Remove" }) })
-          ] }) }, idx)) })
+            /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "button-primary", onClick: () => handleRemove(idx), children: "Remove" })
+          ] }) }, idx)) }) })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Stack, { horizontal: true, tokens: { childrenGap: 10 }, children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(PrimaryButton, { onClick: handleSave, text: "Save" }) }),
-      error && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("div", { style: { color: "red" }, children: error })
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: { display: "flex", gap: "10px" }, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("button", { className: "button-primary", onClick: handleSave, children: "Save" }) }),
+      error && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: { color: "red" }, children: error })
     ] });
   };
 
   // src/extension/FloatingPanel.tsx
-  var import_jsx_runtime9 = __toESM(require_jsx_runtime(), 1);
-  var floatingPanelStyle2 = {
+  var import_jsx_runtime3 = __toESM(require_jsx_runtime(), 1);
+  var floatingPanelStyle = {
     padding: "10px",
     backgroundColor: "white",
     border: "1px solid #ccc",
@@ -56091,9 +40038,9 @@ ${error.stack}`);
     position: "fixed"
   };
   var FloatingPanel = () => {
-    const [visible, setVisible] = (0, import_react13.useState)(false);
-    const [content, setContent] = (0, import_react13.useState)(void 0);
-    (0, import_react13.useEffect)(() => {
+    const [visible, setVisible] = (0, import_react4.useState)(false);
+    const [tabContent, setTabContent] = (0, import_react4.useState)(void 0);
+    (0, import_react4.useEffect)(() => {
       const listener = (event) => {
         if (event.ctrlKey && event.key === "l") {
           event.preventDefault();
@@ -56105,44 +40052,53 @@ ${error.stack}`);
         document.removeEventListener("keydown", listener);
       };
     }, [visible]);
-    (0, import_react13.useEffect)(() => {
+    (0, import_react4.useEffect)(() => {
       chrome.runtime.sendMessage(
         { action: contentGet, data: "TODO make url?" },
         (response) => {
           if (response.data) {
-            setContent(response.data);
+            setTabContent(response.data);
             setVisible(true);
           }
         }
       );
     }, []);
     const saveContent = () => {
+      if (!tabContent) {
+        return;
+      }
+      const u = new URL(tabContent.from);
+      const content = urlContent(tabContent.to, ["browser/history", u.host]);
       chrome.runtime.sendMessage(
         { action: contentSave, data: content },
         (response) => {
+          if (response.error) {
+            console.error(response.error);
+            return;
+          }
           setVisible(false);
         }
       );
-      setContent(void 0);
+      setTabContent(void 0);
     };
     const dontSave = () => {
       setVisible(false);
-      setContent(void 0);
+      setTabContent(void 0);
     };
     if (!visible) {
       return null;
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Stack, { id: "floating-panel", tokens: { childrenGap: 10 }, style: floatingPanelStyle2, children: content ? /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(import_jsx_runtime9.Fragment, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("h5", { children: "Save this page?" }),
-      /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(Stack, { horizontal: true, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Button2, { onClick: saveContent, children: "Yes" }),
-        /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(Button2, { onClick: dontSave, children: "No" })
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Stack, { id: "floating-panel", tokens: { childrenGap: 10 }, style: floatingPanelStyle, children: tabContent ? /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h5", { children: "Save this page?" }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(Stack, { horizontal: true, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Button, { onClick: saveContent, children: "Yes" }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(Button, { onClick: dontSave, children: "No" })
       ] })
-    ] }) : /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(SaveWizard, {}) });
+    ] }) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(NewSaveWizard, {}) });
   };
 
   // src/extension/content.tsx
-  var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime4 = __toESM(require_jsx_runtime(), 1);
   var rootElem = document.createElement("div");
   rootElem.setAttribute("id", "lunabrain-root");
   document.body.appendChild(rootElem);
@@ -56152,7 +40108,7 @@ ${error.stack}`);
   rootElem.style.margin = "0";
   var root = import_client.default.createRoot(rootElem);
   root.render(
-    /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(import_react15.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(FloatingPanel, {}) })
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(import_react6.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(FloatingPanel, {}) })
   );
 })();
 /*! Bundled license information:
@@ -56212,82 +40168,6 @@ react/cjs/react-jsx-runtime.development.js:
    *
    * This source code is licensed under the MIT license found in the
    * LICENSE file in the root directory of this source tree.
-   *)
-
-scheduler/cjs/scheduler.development.js:
-  (** @license React v0.20.0
-   * scheduler.development.js
-   *
-   * Copyright (c) Facebook, Inc. and its affiliates.
-   *
-   * This source code is licensed under the MIT license found in the
-   * LICENSE file in the root directory of this source tree.
-   *)
-
-keyborg/dist/keyborg.esm.js:
-  (*!
-   * Copyright (c) Microsoft Corporation. All rights reserved.
-   * Licensed under the MIT License.
-   *)
-
-keyborg/dist/keyborg.esm.js:
-  (*!
-   * Copyright (c) Microsoft Corporation. All rights reserved.
-   * Licensed under the MIT License.
-   *)
-
-tabster/dist/tabster.esm.js:
-  (*!
-   * Copyright (c) Microsoft Corporation. All rights reserved.
-   * Licensed under the MIT License.
-   *)
-
-tabster/dist/tabster.esm.js:
-  (*!
-   * Copyright (c) Microsoft Corporation. All rights reserved.
-   * Licensed under the MIT License.
-   *)
-
-tabster/dist/tabster.esm.js:
-  (*!
-   * Copyright (c) Microsoft Corporation. All rights reserved.
-   * Licensed under the MIT License.
-   *)
-
-tabster/dist/tabster.esm.js:
-  (*!
-   * Copyright (c) Microsoft Corporation. All rights reserved.
-   * Licensed under the MIT License.
-   *)
-
-tabster/dist/tabster.esm.js:
-  (*!
-   * Copyright (c) Microsoft Corporation. All rights reserved.
-   * Licensed under the MIT License.
-   *)
-
-tabster/dist/tabster.esm.js:
-  (*!
-   * Copyright (c) Microsoft Corporation. All rights reserved.
-   * Licensed under the MIT License.
-   *)
-
-tabster/dist/tabster.esm.js:
-  (*!
-   * Copyright (c) Microsoft Corporation. All rights reserved.
-   * Licensed under the MIT License.
-   *)
-
-tabster/dist/tabster.esm.js:
-  (*!
-   * Copyright (c) Microsoft Corporation. All rights reserved.
-   * Licensed under the MIT License.
-   *)
-
-tabster/dist/tabster.esm.js:
-  (*!
-   * Copyright (c) Microsoft Corporation. All rights reserved.
-   * Licensed under the MIT License.
    *)
 */
 //# sourceMappingURL=content.js.map

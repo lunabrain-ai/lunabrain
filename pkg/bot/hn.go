@@ -5,7 +5,7 @@ import (
 	"github.com/alexferrari88/gohn/pkg/gohn"
 	"github.com/google/uuid"
 	"github.com/lunabrain-ai/lunabrain/gen/content"
-	cnt "github.com/lunabrain-ai/lunabrain/pkg/content"
+	cnt "github.com/lunabrain-ai/lunabrain/pkg/content/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/pkg/errors"
@@ -99,7 +99,7 @@ func (c *HN) Collect(userID string) error {
 			},
 		}
 
-		norm, err := c.normalizer.Normalize(data)
+		norm, _, err := c.normalizer.Normalize(data)
 		if err != nil {
 			return errors.Wrapf(err, "unable to normalize content")
 		}

@@ -23,6 +23,15 @@
 		4C2324BC2AB0EFAB00AB937A /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324BB2AB0EFAB00AB937A /* AudioRecorder.swift */; };
 		4C2324BE2AB0EFF300AB937A /* RecordingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324BD2AB0EFF300AB937A /* RecordingsView.swift */; };
 		4C2324C02AB8159500AB937A /* AIViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C2324BF2AB8159500AB937A /* AIViewModel.swift */; };
+		4C3694462AE4DB8000E12780 /* protoflow.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C36943A2AE4DB8000E12780 /* protoflow.pb.swift */; };
+		4C3694472AE4DB8000E12780 /* chat.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C36943C2AE4DB8000E12780 /* chat.connect.swift */; };
+		4C3694482AE4DB8000E12780 /* chat.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C36943D2AE4DB8000E12780 /* chat.pb.swift */; };
+		4C3694492AE4DB8000E12780 /* content.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C36943F2AE4DB8000E12780 /* content.pb.swift */; };
+		4C36944A2AE4DB8000E12780 /* content.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3694402AE4DB8000E12780 /* content.connect.swift */; };
+		4C36944B2AE4DB8000E12780 /* user.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3694422AE4DB8000E12780 /* user.connect.swift */; };
+		4C36944C2AE4DB8000E12780 /* user.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3694432AE4DB8000E12780 /* user.pb.swift */; };
+		4C36944D2AE4DB8000E12780 /* protoflow.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3694442AE4DB8000E12780 /* protoflow.connect.swift */; };
+		4C36944E2AE4DB8000E12780 /* ai.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3694452AE4DB8000E12780 /* ai.pb.swift */; };
 		4C4056CE2ACE928A00F95A24 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056CD2ACE928A00F95A24 /* SafariWebExtensionHandler.swift */; };
 		4C4056D12ACE928A00F95A24 /* _locales in Resources */ = {isa = PBXBuildFile; fileRef = 4C4056D02ACE928A00F95A24 /* _locales */; };
 		4C4056D32ACE928A00F95A24 /* images in Resources */ = {isa = PBXBuildFile; fileRef = 4C4056D22ACE928A00F95A24 /* images */; };
@@ -33,13 +42,6 @@
 		4C4056DD2ACE928A00F95A24 /* popup.css in Resources */ = {isa = PBXBuildFile; fileRef = 4C4056DC2ACE928A00F95A24 /* popup.css */; };
 		4C4056DF2ACE928A00F95A24 /* popup.js in Resources */ = {isa = PBXBuildFile; fileRef = 4C4056DE2ACE928A00F95A24 /* popup.js */; };
 		4C4056E32ACE928A00F95A24 /* safari.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4C4056CB2ACE928A00F95A24 /* safari.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		4C4056F32ACE94F100F95A24 /* protoflow.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056E92ACE94F100F95A24 /* protoflow.pb.swift */; };
-		4C4056F52ACE94F100F95A24 /* chat.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056EC2ACE94F100F95A24 /* chat.connect.swift */; };
-		4C4056F62ACE94F100F95A24 /* chat.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056ED2ACE94F100F95A24 /* chat.pb.swift */; };
-		4C4056F72ACE94F100F95A24 /* content.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056EF2ACE94F100F95A24 /* content.pb.swift */; };
-		4C4056F82ACE94F100F95A24 /* content.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056F02ACE94F100F95A24 /* content.connect.swift */; };
-		4C4056F92ACE94F100F95A24 /* protoflow.connect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056F12ACE94F100F95A24 /* protoflow.connect.swift */; };
-		4C4056FA2ACE94F100F95A24 /* ai.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4056F22ACE94F100F95A24 /* ai.pb.swift */; };
 		4C4056FC2ACE976300F95A24 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 4C4056FB2ACE976300F95A24 /* background.js */; };
 		4CAC7AD62AD4D27D00C6A2F8 /* Markdown in Frameworks */ = {isa = PBXBuildFile; productRef = 4CAC7AD52AD4D27D00C6A2F8 /* Markdown */; };
 		4CAC7B092AD4D7AC00C6A2F8 /* EditableListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAC7B082AD4D7AC00C6A2F8 /* EditableListItem.swift */; };
@@ -112,6 +114,15 @@
 		4C2324BB2AB0EFAB00AB937A /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
 		4C2324BD2AB0EFF300AB937A /* RecordingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingsView.swift; sourceTree = "<group>"; };
 		4C2324BF2AB8159500AB937A /* AIViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIViewModel.swift; sourceTree = "<group>"; };
+		4C36943A2AE4DB8000E12780 /* protoflow.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = protoflow.pb.swift; sourceTree = "<group>"; };
+		4C36943C2AE4DB8000E12780 /* chat.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = chat.connect.swift; sourceTree = "<group>"; };
+		4C36943D2AE4DB8000E12780 /* chat.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = chat.pb.swift; sourceTree = "<group>"; };
+		4C36943F2AE4DB8000E12780 /* content.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = content.pb.swift; sourceTree = "<group>"; };
+		4C3694402AE4DB8000E12780 /* content.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = content.connect.swift; sourceTree = "<group>"; };
+		4C3694422AE4DB8000E12780 /* user.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = user.connect.swift; sourceTree = "<group>"; };
+		4C3694432AE4DB8000E12780 /* user.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = user.pb.swift; sourceTree = "<group>"; };
+		4C3694442AE4DB8000E12780 /* protoflow.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = protoflow.connect.swift; sourceTree = "<group>"; };
+		4C3694452AE4DB8000E12780 /* ai.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ai.pb.swift; sourceTree = "<group>"; };
 		4C4056CB2ACE928A00F95A24 /* safari.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = safari.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C4056CD2ACE928A00F95A24 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
 		4C4056D02ACE928A00F95A24 /* _locales */ = {isa = PBXFileReference; lastKnownFileType = folder; path = _locales; sourceTree = "<group>"; };
@@ -123,13 +134,6 @@
 		4C4056DC2ACE928A00F95A24 /* popup.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = popup.css; sourceTree = "<group>"; };
 		4C4056DE2ACE928A00F95A24 /* popup.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = popup.js; sourceTree = "<group>"; };
 		4C4056E02ACE928A00F95A24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4C4056E92ACE94F100F95A24 /* protoflow.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = protoflow.pb.swift; sourceTree = "<group>"; };
-		4C4056EC2ACE94F100F95A24 /* chat.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = chat.connect.swift; sourceTree = "<group>"; };
-		4C4056ED2ACE94F100F95A24 /* chat.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = chat.pb.swift; sourceTree = "<group>"; };
-		4C4056EF2ACE94F100F95A24 /* content.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = content.pb.swift; sourceTree = "<group>"; };
-		4C4056F02ACE94F100F95A24 /* content.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = content.connect.swift; sourceTree = "<group>"; };
-		4C4056F12ACE94F100F95A24 /* protoflow.connect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = protoflow.connect.swift; sourceTree = "<group>"; };
-		4C4056F22ACE94F100F95A24 /* ai.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ai.pb.swift; sourceTree = "<group>"; };
 		4C4056FB2ACE976300F95A24 /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = background.js; sourceTree = "<group>"; };
 		4CAC7B082AD4D7AC00C6A2F8 /* EditableListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableListItem.swift; sourceTree = "<group>"; };
 		4CE6D15F2ACCCBE1002D7E2C /* lunabrain desktop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "lunabrain desktop.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -181,6 +185,7 @@
 			isa = PBXGroup;
 			children = (
 				4C2324B52AAFDD7200AB937A /* Storyboard.storyboard */,
+				4C3694392AE4DB8000E12780 /* Generated */,
 				4C2324892AAE7FE200AB937A /* lunabrain */,
 				4C23249B2AAE7FE300AB937A /* lunabrain Watch App */,
 				4CE6D1602ACCCBE1002D7E2C /* lunabrain desktop */,
@@ -203,7 +208,6 @@
 		4C2324892AAE7FE200AB937A /* lunabrain */ = {
 			isa = PBXGroup;
 			children = (
-				4C4056E82ACE94F100F95A24 /* Generated */,
 				4C2324AE2AAEE30400AB937A /* Info.plist */,
 				4C23248A2AAE7FE200AB937A /* lunabrainApp.swift */,
 				4C23248C2AAE7FE200AB937A /* ContentView.swift */,
@@ -246,6 +250,46 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		4C3694392AE4DB8000E12780 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				4C36943A2AE4DB8000E12780 /* protoflow.pb.swift */,
+				4C36943B2AE4DB8000E12780 /* chat */,
+				4C36943E2AE4DB8000E12780 /* content */,
+				4C3694412AE4DB8000E12780 /* user */,
+				4C3694442AE4DB8000E12780 /* protoflow.connect.swift */,
+				4C3694452AE4DB8000E12780 /* ai.pb.swift */,
+			);
+			path = Generated;
+			sourceTree = "<group>";
+		};
+		4C36943B2AE4DB8000E12780 /* chat */ = {
+			isa = PBXGroup;
+			children = (
+				4C36943C2AE4DB8000E12780 /* chat.connect.swift */,
+				4C36943D2AE4DB8000E12780 /* chat.pb.swift */,
+			);
+			path = chat;
+			sourceTree = "<group>";
+		};
+		4C36943E2AE4DB8000E12780 /* content */ = {
+			isa = PBXGroup;
+			children = (
+				4C36943F2AE4DB8000E12780 /* content.pb.swift */,
+				4C3694402AE4DB8000E12780 /* content.connect.swift */,
+			);
+			path = content;
+			sourceTree = "<group>";
+		};
+		4C3694412AE4DB8000E12780 /* user */ = {
+			isa = PBXGroup;
+			children = (
+				4C3694422AE4DB8000E12780 /* user.connect.swift */,
+				4C3694432AE4DB8000E12780 /* user.pb.swift */,
+			);
+			path = user;
+			sourceTree = "<group>";
+		};
 		4C4056CC2ACE928A00F95A24 /* safari */ = {
 			isa = PBXGroup;
 			children = (
@@ -270,36 +314,6 @@
 				4C4056FB2ACE976300F95A24 /* background.js */,
 			);
 			path = Resources;
-			sourceTree = "<group>";
-		};
-		4C4056E82ACE94F100F95A24 /* Generated */ = {
-			isa = PBXGroup;
-			children = (
-				4C4056E92ACE94F100F95A24 /* protoflow.pb.swift */,
-				4C4056EB2ACE94F100F95A24 /* chat */,
-				4C4056EE2ACE94F100F95A24 /* content */,
-				4C4056F12ACE94F100F95A24 /* protoflow.connect.swift */,
-				4C4056F22ACE94F100F95A24 /* ai.pb.swift */,
-			);
-			path = Generated;
-			sourceTree = SOURCE_ROOT;
-		};
-		4C4056EB2ACE94F100F95A24 /* chat */ = {
-			isa = PBXGroup;
-			children = (
-				4C4056EC2ACE94F100F95A24 /* chat.connect.swift */,
-				4C4056ED2ACE94F100F95A24 /* chat.pb.swift */,
-			);
-			path = chat;
-			sourceTree = "<group>";
-		};
-		4C4056EE2ACE94F100F95A24 /* content */ = {
-			isa = PBXGroup;
-			children = (
-				4C4056EF2ACE94F100F95A24 /* content.pb.swift */,
-				4C4056F02ACE94F100F95A24 /* content.connect.swift */,
-			);
-			path = content;
 			sourceTree = "<group>";
 		};
 		4CE6D1602ACCCBE1002D7E2C /* lunabrain desktop */ = {
@@ -508,20 +522,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C4056F32ACE94F100F95A24 /* protoflow.pb.swift in Sources */,
+				4C36944E2AE4DB8000E12780 /* ai.pb.swift in Sources */,
 				4C2324BE2AB0EFF300AB937A /* RecordingsView.swift in Sources */,
-				4C4056F62ACE94F100F95A24 /* chat.pb.swift in Sources */,
+				4C3694462AE4DB8000E12780 /* protoflow.pb.swift in Sources */,
+				4C3694482AE4DB8000E12780 /* chat.pb.swift in Sources */,
+				4C36944C2AE4DB8000E12780 /* user.pb.swift in Sources */,
 				4C23248D2AAE7FE200AB937A /* ContentView.swift in Sources */,
-				4C4056FA2ACE94F100F95A24 /* ai.pb.swift in Sources */,
 				4CAC7B092AD4D7AC00C6A2F8 /* EditableListItem.swift in Sources */,
+				4C3694472AE4DB8000E12780 /* chat.connect.swift in Sources */,
+				4C36944B2AE4DB8000E12780 /* user.connect.swift in Sources */,
 				4C2324BA2AB0DFE500AB937A /* TranscriptionViewModel.swift in Sources */,
-				4C4056F52ACE94F100F95A24 /* chat.connect.swift in Sources */,
+				4C36944D2AE4DB8000E12780 /* protoflow.connect.swift in Sources */,
+				4C36944A2AE4DB8000E12780 /* content.connect.swift in Sources */,
 				4C2324C02AB8159500AB937A /* AIViewModel.swift in Sources */,
-				4C4056F82ACE94F100F95A24 /* content.connect.swift in Sources */,
-				4C4056F92ACE94F100F95A24 /* protoflow.connect.swift in Sources */,
 				4C2324BC2AB0EFAB00AB937A /* AudioRecorder.swift in Sources */,
 				4C23248B2AAE7FE200AB937A /* lunabrainApp.swift in Sources */,
-				4C4056F72ACE94F100F95A24 /* content.pb.swift in Sources */,
+				4C3694492AE4DB8000E12780 /* content.pb.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -684,6 +700,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"lunabrain Watch App/Preview Content\"";
@@ -714,6 +731,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"lunabrain Watch App/Preview Content\"";
@@ -746,6 +764,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"lunabrain/Preview Content\"";
@@ -782,6 +801,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"lunabrain/Preview Content\"";

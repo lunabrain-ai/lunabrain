@@ -4,7 +4,8 @@ import {
     Button,
 } from "@fluentui/react-components";
 import {contentGet, contentSave, TabContent} from "@/extension/shared";
-import {SaveWizard} from "@/extension/SaveWizard";
+import {NewSaveWizard} from "@/extension/NewSaveWizard";
+import {urlContent} from "@/extension/util";
 
 interface FloatingPanelProps {}
 
@@ -25,7 +26,7 @@ const floatingPanelStyle: React.CSSProperties = {
 
 export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
     const [visible, setVisible] = useState<boolean>(false);
-    const [content, setContent] = useState<TabContent|undefined>(undefined);
+    const [tabContent, setTabContent] = useState<TabContent|undefined>(undefined);
 
     useEffect(() => {
         const listener = (event: KeyboardEvent) => {
@@ -45,7 +46,7 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
             { action: contentGet, data: "TODO make url?" },
             (response) => {
                 if (response.data) {
-                    setContent(response.data);
+                    setTabContent(response.data);
                     setVisible(true);
                 }
             }
@@ -53,18 +54,27 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
     }, []);
 
     const saveContent = () => {
+        if (!tabContent) {
+            return;
+        }
+        const u = new URL(tabContent.from);
+        const content = urlContent(tabContent.to, ['browser/history', u.host])
         chrome.runtime.sendMessage(
             { action: contentSave, data: content },
             (response) => {
+                if (response.error) {
+                    console.error(response.error);
+                    return;
+                }
                 setVisible(false)
             }
         );
-        setContent(undefined);
+        setTabContent(undefined);
     }
 
     const dontSave = () => {
         setVisible(false);
-        setContent(undefined);
+        setTabContent(undefined);
     }
 
     if (!visible) {
@@ -73,7 +83,7 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
 
     return (
         <Stack id="floating-panel" tokens={{ childrenGap: 10 }} style={floatingPanelStyle}>
-            {content ? (
+            {tabContent ? (
                 <>
                     <h5>Save this page?</h5>
                     <Stack horizontal>
@@ -82,7 +92,7 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
                     </Stack>
                 </>
             ) : (
-                <SaveWizard />
+                <NewSaveWizard />
             )}
         </Stack>
     );

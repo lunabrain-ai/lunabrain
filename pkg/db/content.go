@@ -143,22 +143,6 @@ func (s *Store) SaveContent(userID uuid.UUID, botID uuid.UUID, data *content.Con
 }
 
 func (s *Store) SearchContent(userID uuid.UUID, page, limit int, groupID string, tags []string) ([]model.Content, *Pagination, error) {
-	//if groupID != "" {
-	//	g := &model.Group{
-	//		Base: model.Base{
-	//			ID: uuid.MustParse(groupID),
-	//		},
-	//	}
-	//	res := s.db.Preload("Content").
-	//		Preload("Content.RelatedContent").
-	//		Preload("Content.Votes").First(g)
-	//	if res.Error != nil {
-	//		return nil, nil, errors.Wrapf(res.Error, "could not get content")
-	//	}
-	//	return g.Content, nil, nil
-	//}
-
-	// TODO breadchris only get content for user
 	var c []model.Content
 	pagination := Pagination{
 		Limit: limit,

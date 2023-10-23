@@ -10,6 +10,14 @@ const rootElem = document.createElement("div");
 rootElem.setAttribute("id", "lunabrain-root");
 document.body.appendChild(rootElem);
 
+// let shadowRoot = rootElem.attachShadow({mode: 'open'});
+// rootElem.style.width = '0';
+// rootElem.style.height = '0';
+// rootElem.style.padding = '0';
+// rootElem.style.margin = '0';
+//
+// shadowRoot.appendChild(rootElem);
+
 rootElem.style.width = '0';
 rootElem.style.height = '0';
 rootElem.style.padding = '0';

@@ -12,6 +12,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
 	"github.com/lunabrain-ai/lunabrain/pkg/config"
 	"github.com/lunabrain-ai/lunabrain/pkg/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/content/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/lunabrain-ai/lunabrain/pkg/log"
@@ -79,8 +80,8 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	normalize := content.NewNormalize(builder)
-	service := content.NewService(store, session, agent, normalize)
+	normalizeNormalize := normalize.NewNormalize(builder)
+	service := content.NewService(store, session, agent, normalizeNormalize)
 	discordConfig, err := discord.NewConfig(provider)
 	if err != nil {
 		return nil, err
@@ -112,7 +113,7 @@ func Wire() (*cli.App, error) {
 	userService := user.NewService(store, session)
 	apihttpServer := server.New(contentConfig, service, store, bucketBucket, discordService, protoflowProtoflow, sessionManager, userService)
 	botDiscord := bot.NewDiscord(discordgoSession, store)
-	hn := bot.NewHN(store, normalize)
+	hn := bot.NewHN(store, normalizeNormalize)
 	app := NewApp(logLog, apihttpServer, botDiscord, hn)
 	return app, nil
 }

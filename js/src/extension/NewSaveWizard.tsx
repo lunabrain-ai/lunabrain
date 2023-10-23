@@ -3,6 +3,8 @@ import {SelectTabData, SelectTabEvent, TabValue} from "@fluentui/react-component
 import {contentService} from "@/service";
 import {urlContent} from "@/extension/util";
 import { Content } from "@/rpc/content/content_pb";
+import {contentSave} from "@/extension/shared";
+import toast from "react-hot-toast";
 
 interface SaveWizardProps {}
 
@@ -51,7 +53,7 @@ const styles: Record<string, React.CSSProperties> = {
     }
 };
 
-export const SaveWizard: React.FC<SaveWizardProps> = () => {
+export const NewSaveWizard: React.FC<SaveWizardProps> = () => {
     const [error, setError] = useState<string|undefined>(undefined);
     const [title, setTitle] = useState(document.title || window.location.href);
     const [tag, setTag] = useState<string|undefined>(undefined);
@@ -114,16 +116,15 @@ export const SaveWizard: React.FC<SaveWizardProps> = () => {
 
     const handleSave = async () => {
         setError(undefined);
-        try {
-            const res = await contentService.save({
-                content: urlContent(url, tags),
-                related: []
-            })
-            console.log(res)
-        } catch (e: any) {
-            console.error(e)
-            setError(e.message);
-        }
+        const content = urlContent(url, tags);
+        chrome.runtime.sendMessage(
+            { action: contentSave, data: content.toJson() },
+            (response) => {
+                if (response && response.error) {
+                    setError(response.error);
+                }
+            }
+        );
     }
 
     const handleRemove = (id: number) => {
@@ -140,7 +141,6 @@ export const SaveWizard: React.FC<SaveWizardProps> = () => {
             <div className="tablist">
                 <button onClick={() => setSelectedValue("tags")}>Tags</button>
                 <button onClick={() => setSelectedValue("annotations")}>Annotations</button>
-                <button onClick={() => setSelectedValue("analyze")}>Analyze</button>
             </div>
             <div>
                 {/* Analyze content */}
@@ -158,8 +158,6 @@ export const SaveWizard: React.FC<SaveWizardProps> = () => {
                         )}
                     </div>
                 )}
-
-                {/* Tags content */}
                 {selectedValue === 'tags' && (
                     <div>
                         <input type="text" value={tag} placeholder="tag" onChange={(e) => setTag(e.target.value)} />

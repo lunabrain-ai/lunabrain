@@ -53,3 +53,15 @@ func NewBuilder(config Config) (*Builder, error) {
 		path:   config.Path,
 	}, nil
 }
+
+func NewTestBuilder() *Builder {
+	return &Builder{
+		Bucket: nil,
+		config: Config{
+			LocalName: "test",
+			Path:      "",
+			URLBase:   "",
+		},
+		path: "",
+	}
+}
