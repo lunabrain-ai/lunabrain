@@ -147,6 +147,16 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 
 	muxRoot := http.NewServeMux()
 
+	muxRoot.HandleFunc("/webhook", func(w http.ResponseWriter, r *http.Request) {
+		// dump http request
+		dump, err := httputil.DumpRequest(r, true)
+		if err != nil {
+			slog.Error("failed to dump request", "error", err)
+			return
+		}
+		slog.Debug("webhook request", "dump", string(dump))
+	})
+
 	// TODO breadchris fix this code, preferably with chi
 	muxRoot.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {

@@ -12,7 +12,7 @@ import {
 import { Content } from '@/rpc/content/content_pb';
 import { withHistory } from 'slate-history'
 import { Editable, ReactEditor, Slate, withReact } from 'slate-react'
-import { BulletedListElement } from './custom-types'
+import { BulletedListElement, CustomEditor} from './custom-types'
 import isHotkey from 'is-hotkey'
 import {serialize} from "@/util/slate";
 import {Stack, TextField} from "@fluentui/react";
@@ -23,7 +23,7 @@ import toast from "react-hot-toast";
 import {textContent, urlContent} from "@/extension/util";
 import {useProjectContext} from "@/providers/ProjectProvider";
 
-const SHORTCUTS = {
+const SHORTCUTS: Record<string, string> = {
     '*': 'list-item',
     '-': 'list-item',
     '+': 'list-item',
@@ -52,21 +52,24 @@ const useOnKeydown = (editor: Editor) => {
     return onKeyDown
 }
 
-export const MarkdownEditor: React.FC<{initial?: Descendant[]}> = ({
-}) => {
-    const { loadContent } = useProjectContext();
+export const MarkdownEditor: React.FC<{ initial?: Descendant[] }> = ({}) => {
+    const {loadContent} = useProjectContext();
 
     const [text, setText] = useState<string>('');
     const [currentInputType, setCurrentInputType] = useState<string>('text');
 
-    const renderElement = useCallback(props => <Element {...props} />, [])
+    const renderElement = useCallback((props: JSX.IntrinsicAttributes & { attributes: any; children: any; element: any; }) =>
+        <Element {...props} />, [])
     const editor = useMemo(
         () => withShortcuts(withReact(withHistory(createEditor()))),
         []
     )
     const initialValue = useMemo(
         () =>
-            JSON.parse(localStorage.getItem('content') || 'null') || [],
+            JSON.parse(localStorage.getItem('content') || 'null') || [{
+                type: 'paragraph',
+                children: [{text: ''}],
+            }],
         []
     )
 
@@ -75,12 +78,12 @@ export const MarkdownEditor: React.FC<{initial?: Descendant[]}> = ({
             queueMicrotask(() => {
                 const pendingDiffs = ReactEditor.androidPendingDiffs(editor)
 
-                const scheduleFlush = pendingDiffs?.some(({ diff, path }) => {
+                const scheduleFlush = pendingDiffs?.some(({diff, path}) => {
                     if (!diff.text.endsWith(' ')) {
                         return false
                     }
 
-                    const { text } = SlateNode.leaf(editor, path)
+                    const {text} = SlateNode.leaf(editor, path)
                     const beforeText = text.slice(0, diff.start) + diff.text.slice(0, -1)
                     if (!(beforeText in SHORTCUTS)) {
                         return
@@ -108,7 +111,7 @@ export const MarkdownEditor: React.FC<{initial?: Descendant[]}> = ({
 
     const onChange: ToolbarProps["onCheckedValueChange"] = (
         e,
-        { name, checkedItems }
+        {name, checkedItems}
     ) => {
         setCurrentInputType(checkedItems[0]);
     };
@@ -151,7 +154,7 @@ export const MarkdownEditor: React.FC<{initial?: Descendant[]}> = ({
                     const content = JSON.stringify(value)
                     localStorage.setItem('content', content)
                     //@ts-ignore
-                    if (value.length === 1 && value[0].type === 'paragraph') {
+                    if (value.length === 1 && value[0].type === 'paragraph' && value[0].children.length === 1 && value[0].children[0].type === 'text') {
                         //@ts-ignore
                         setText(value[0].children[0].text)
                     }
@@ -184,19 +187,19 @@ export const MarkdownEditor: React.FC<{initial?: Descendant[]}> = ({
                                         aria-label="Text"
                                         name="textOptions"
                                         value="text"
-                                        icon={<TextT24Regular />}
+                                        icon={<TextT24Regular/>}
                                     />
                                     <ToolbarRadioButton
                                         aria-label="Link"
                                         name="textOptions"
                                         value="link"
-                                        icon={<Link24Regular />}
+                                        icon={<Link24Regular/>}
                                     />
                                     <ToolbarRadioButton
                                         aria-label="prompt"
                                         name="textOptions"
                                         value="prompt"
-                                        icon={<BrainCircuit24Regular />}
+                                        icon={<BrainCircuit24Regular/>}
                                     />
                                 </ToolbarRadioGroup>
                             </Toolbar>
@@ -219,7 +222,7 @@ export const MarkdownEditor: React.FC<{initial?: Descendant[]}> = ({
     )
 }
 
-const withShortcuts = editor => {
+const withShortcuts = (editor: CustomEditor) => {
     const { deleteBackward, insertText } = editor
 
     editor.insertText = text => {
@@ -244,6 +247,7 @@ const withShortcuts = editor => {
                 }
 
                 const newProperties: Partial<SlateElement> = {
+                    // @ts-ignore
                     type,
                 }
                 Transforms.setNodes<SlateElement>(editor, newProperties, {
@@ -305,7 +309,6 @@ const withShortcuts = editor => {
                     return
                 }
             }
-
             deleteBackward(...args)
         }
     }
@@ -313,7 +316,7 @@ const withShortcuts = editor => {
     return editor
 }
 
-const Element = ({ attributes, children, element }) => {
+const Element: React.FC<{attributes: any, children: any, element: any}> = ({ attributes, children, element }) => {
     switch (element.type) {
         case 'block-quote':
             return <blockquote {...attributes}>{children}</blockquote>

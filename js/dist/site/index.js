@@ -92096,7 +92096,10 @@ to {
       []
     );
     const initialValue = (0, import_react63.useMemo)(
-      () => JSON.parse(localStorage.getItem("content") || "null") || [],
+      () => JSON.parse(localStorage.getItem("content") || "null") || [{
+        type: "paragraph",
+        children: [{ text: "" }]
+      }],
       []
     );
     const handleDOMBeforeInput = (0, import_react63.useCallback)(
@@ -92166,7 +92169,7 @@ to {
           if (isAstChange) {
             const content3 = JSON.stringify(value);
             localStorage.setItem("content", content3);
-            if (value.length === 1 && value[0].type === "paragraph") {
+            if (value.length === 1 && value[0].type === "paragraph" && value[0].children.length === 1 && value[0].children[0].type === "text") {
               setText(value[0].children[0].text);
             }
           }
@@ -92256,6 +92259,7 @@ to {
             Transforms.delete(editor);
           }
           const newProperties = {
+            // @ts-ignore
             type
           };
           Transforms.setNodes(editor, newProperties, {
