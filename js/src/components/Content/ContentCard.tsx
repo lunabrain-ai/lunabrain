@@ -149,7 +149,7 @@ export const ContentCard: React.FC<{
                 </Stack>
             </CardPreview>
             <CardFooter>
-                <Stack style={{width: '100%'}} horizontal tokens={{childrenGap: 10}}>
+                <Stack style={{width: '100%', overflowX: 'auto'}} horizontal tokens={{childrenGap: 10}}>
                     <Stack.Item>
                         <Vote contentID={item.id} votes={item.votes} />
                     </Stack.Item>

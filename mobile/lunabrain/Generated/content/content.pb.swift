@@ -124,6 +124,8 @@ public struct Content_Contents {
 
   public var related: [Content_Content] = []
 
+  public var parents: [String] = []
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -985,6 +987,7 @@ extension Content_Contents: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "content"),
     2: .same(proto: "related"),
+    3: .same(proto: "parents"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -995,6 +998,7 @@ extension Content_Contents: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularMessageField(value: &self._content) }()
       case 2: try { try decoder.decodeRepeatedMessageField(value: &self.related) }()
+      case 3: try { try decoder.decodeRepeatedStringField(value: &self.parents) }()
       default: break
       }
     }
@@ -1011,12 +1015,16 @@ extension Content_Contents: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     if !self.related.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.related, fieldNumber: 2)
     }
+    if !self.parents.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.parents, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Content_Contents, rhs: Content_Contents) -> Bool {
     if lhs._content != rhs._content {return false}
     if lhs.related != rhs.related {return false}
+    if lhs.parents != rhs.parents {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

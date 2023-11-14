@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from 'react'
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import {
     createEditor,
     Descendant,
@@ -11,17 +11,18 @@ import {
 } from 'slate'
 import { Content } from '@/rpc/content/content_pb';
 import { withHistory } from 'slate-history'
-import { Editable, ReactEditor, Slate, withReact } from 'slate-react'
-import { BulletedListElement, CustomEditor} from './custom-types'
+import {Editable, ReactEditor, Slate, useFocused, useSelected, withReact} from 'slate-react'
+import {BulletedListElement, CustomEditor, MentionElement} from './custom-types'
 import isHotkey from 'is-hotkey'
 import {serialize} from "@/util/slate";
 import {Stack, TextField} from "@fluentui/react";
-import {Button, Toolbar, ToolbarProps, ToolbarRadioButton, ToolbarRadioGroup} from "@fluentui/react-components";
+import {Badge, Button, Toolbar, ToolbarProps, ToolbarRadioButton, ToolbarRadioGroup} from "@fluentui/react-components";
 import {BrainCircuit24Regular, TextT24Regular, Link24Regular, MusicNote224Regular} from "@fluentui/react-icons";
 import {contentService} from "@/service";
 import toast from "react-hot-toast";
 import {textContent, urlContent} from "@/extension/util";
 import {useProjectContext} from "@/providers/ProjectProvider";
+import {Portal} from "@/components/Editor/Components";
 
 const SHORTCUTS: Record<string, string> = {
     '*': 'list-item',
@@ -52,8 +53,38 @@ const useOnKeydown = (editor: Editor) => {
     return onKeyDown
 }
 
+const insertMention = (editor: CustomEditor, character: string) => {
+    const mention: MentionElement = {
+        type: 'mention',
+        character,
+        children: [{ text: '' }],
+    }
+    Transforms.insertNodes(editor, mention)
+    Transforms.move(editor)
+}
+
+const withMentions = (editor: CustomEditor) => {
+    const { isInline, isVoid, markableVoid } = editor
+
+    editor.isInline = (element) => {
+        return element.type === 'mention' ? true : isInline(element)
+    }
+
+    editor.isVoid = (element) => {
+        return element.type === 'mention' ? true : isVoid(element)
+    }
+
+    editor.markableVoid = (element) => {
+        return element.type === 'mention' || markableVoid(element)
+    }
+
+    return editor
+}
+
+
 export const MarkdownEditor: React.FC<{ initial?: Descendant[] }> = ({}) => {
-    const {loadContent} = useProjectContext();
+    const {loadContent, content, selectedContent, tags} = useProjectContext();
+    const ref = useRef<HTMLDivElement | null>()
 
     const [text, setText] = useState<string>('');
     const [currentInputType, setCurrentInputType] = useState<string>('text');
@@ -61,7 +92,7 @@ export const MarkdownEditor: React.FC<{ initial?: Descendant[] }> = ({}) => {
     const renderElement = useCallback((props: JSX.IntrinsicAttributes & { attributes: any; children: any; element: any; }) =>
         <Element {...props} />, [])
     const editor = useMemo(
-        () => withShortcuts(withReact(withHistory(createEditor()))),
+        () => withMentions(withShortcuts(withReact(withHistory(createEditor())))),
         []
     )
     const initialValue = useMemo(
@@ -71,6 +102,45 @@ export const MarkdownEditor: React.FC<{ initial?: Descendant[] }> = ({}) => {
                 children: [{text: ''}],
             }],
         []
+    )
+
+    const [target, setTarget] = useState<Range | null>()
+    const [index, setIndex] = useState(0)
+    const [search, setSearch] = useState('')
+
+    const chars = tags.map(t => t.name).filter(c =>
+        c.toLowerCase().startsWith(search.toLowerCase())
+    ).slice(0, 10)
+
+    const onKeyDown = useCallback(
+        (event: { key: any; preventDefault: () => void; }) => {
+            if (target && chars.length > 0) {
+                switch (event.key) {
+                    case 'ArrowDown':
+                        event.preventDefault()
+                        const prevIndex = index >= chars.length - 1 ? 0 : index + 1
+                        setIndex(prevIndex)
+                        break
+                    case 'ArrowUp':
+                        event.preventDefault()
+                        const nextIndex = index <= 0 ? chars.length - 1 : index - 1
+                        setIndex(nextIndex)
+                        break
+                    case 'Tab':
+                    case 'Enter':
+                        event.preventDefault()
+                        Transforms.select(editor, target)
+                        insertMention(editor, chars[index])
+                        setTarget(null)
+                        break
+                    case 'Escape':
+                        event.preventDefault()
+                        setTarget(null)
+                        break
+                }
+            }
+        },
+        [chars, editor, index, target]
     )
 
     const handleDOMBeforeInput = useCallback(
@@ -141,6 +211,16 @@ export const MarkdownEditor: React.FC<{ initial?: Descendant[] }> = ({}) => {
         void loadContent();
     }
 
+    useEffect(() => {
+        if (target && chars.length > 0 && ref.current) {
+            const el = ref.current
+            const domRange = ReactEditor.toDOMRange(editor, target)
+            const rect = domRange.getBoundingClientRect()
+            el.style.top = `${rect.top + window.pageYOffset + 24}px`
+            el.style.left = `${rect.left + window.pageXOffset}px`
+        }
+    }, [chars.length, editor, index, search, target])
+
     return (
         <Slate
             editor={editor}
@@ -159,6 +239,28 @@ export const MarkdownEditor: React.FC<{ initial?: Descendant[] }> = ({}) => {
                         setText(value[0].children[0].text)
                     }
                 }
+
+                const { selection } = editor
+                if (selection && Range.isCollapsed(selection)) {
+                    const [start] = Range.edges(selection)
+                    const wordBefore = Editor.before(editor, start, { unit: 'word' })
+                    const before = wordBefore && Editor.before(editor, wordBefore)
+                    const beforeRange = before && Editor.range(editor, before, start)
+                    const beforeText = beforeRange && Editor.string(editor, beforeRange)
+                    const beforeMatch = beforeText && beforeText.match(/^#(\w+)$/)
+                    const after = Editor.after(editor, start)
+                    const afterRange = Editor.range(editor, start, after)
+                    const afterText = Editor.string(editor, afterRange)
+                    const afterMatch = afterText.match(/^(\s|$)/)
+
+                    if (beforeMatch && afterMatch) {
+                        setTarget(beforeRange)
+                        setSearch(beforeMatch[1])
+                        setIndex(0)
+                        return
+                    }
+                }
+                setTarget(null)
             }}
         >
             <Stack>
@@ -166,12 +268,54 @@ export const MarkdownEditor: React.FC<{ initial?: Descendant[] }> = ({}) => {
                     <Editable
                         style={{height: '100%', maxHeight: '100%', overflowY: 'auto'}}
                         onDOMBeforeInput={handleDOMBeforeInput}
+                        onKeyDown={onKeyDown}
                         renderElement={renderElement}
                         placeholder="Write some markdown..."
                         spellCheck
                         autoFocus
                     />
+                    {target && chars.length > 0 && (
+                        <Portal>
+                            <div
+                                ref={ref}
+                                style={{
+                                    top: '-9999px',
+                                    left: '-9999px',
+                                    position: 'absolute',
+                                    zIndex: 1,
+                                    padding: '3px',
+                                    background: 'white',
+                                    borderRadius: '4px',
+                                    boxShadow: '0 1px 5px rgba(0,0,0,.2)',
+                                }}
+                                data-cy="mentions-portal"
+                            >
+                                {chars.map((char, i) => (
+                                    <div
+                                        key={char}
+                                        onClick={() => {
+                                            Transforms.select(editor, target)
+                                            insertMention(editor, char)
+                                            setTarget(null)
+                                        }}
+                                        style={{
+                                            padding: '1px 3px',
+                                            borderRadius: '3px',
+                                            background: i === index ? '#B4D5FF' : 'transparent',
+                                        }}
+                                    >
+                                        {char}
+                                    </div>
+                                ))}
+                            </div>
+                        </Portal>
+                    )}
                 </Stack.Item>
+                {selectedContent.length > 0 && (
+                    <Stack.Item>
+                        Commenting on {selectedContent.map(c => c)}
+                    </Stack.Item>
+                )}
                 <Stack.Item>
                     <Stack horizontal horizontalAlign={'space-between'} tokens={{childrenGap: 3}}>
                         <Stack.Item>
@@ -316,8 +460,27 @@ const withShortcuts = (editor: CustomEditor) => {
     return editor
 }
 
+const Mention = ({ attributes, children, element }) => {
+    const selected = useSelected()
+    const focused = useFocused()
+    if (!element || element.children.length === 0) {
+        return children;
+    }
+    return (
+        <Badge
+            {...attributes}
+            contentEditable={false}
+            data-cy={`mention-${element.character.replace(' ', '-')}`}
+        >
+      #{element.character}
+        </Badge>
+    )
+}
+
 const Element: React.FC<{attributes: any, children: any, element: any}> = ({ attributes, children, element }) => {
     switch (element.type) {
+        case 'mention':
+            return <Mention {...attributes} element={element}>{children}</Mention>
         case 'block-quote':
             return <blockquote {...attributes}>{children}</blockquote>
         case 'bulleted-list':

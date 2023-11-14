@@ -64,6 +64,9 @@ type ProjectContextType = {
     loadContent: () => void;
     loadTags: () => void;
 
+    selectedContent: string[];
+    setSelectedContent: (content: string[]) => void;
+
     userSettings: UserSettings;
     setUserSettings: (userSettings: UserSettings) => void;
 };
@@ -87,11 +90,26 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     const [tags, setTags] = useState<Tag[]>([]);
     const [filteredTags, setFilteredTags] = useState<string[]>([]);
     const [showTagTree, setShowTagTree] = useState<boolean>(true);
+    const [selectedContent, setSelectedContent] = useState<string[]>([]);
     const [userSettings, setUserSettings] = useState<UserSettings>({
         showPreviews: false,
         showQRCodes: false,
         showRelatedContent: false,
     });
+
+    useEffect(() => {
+        const handleResize = () => {
+            console.log(window.innerWidth)
+            if (window.innerWidth < 600) {
+                setShowTagTree(false);
+            }
+        }
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        }
+    }, []);
 
     const addFilteredTag = (tag: string) => {
         setFilteredTags((prev) => [...prev, tag]);
@@ -267,6 +285,9 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
 
                 showTagTree,
                 setShowTagTree,
+
+                selectedContent,
+                setSelectedContent,
 
                 userSettings,
                 setUserSettings,

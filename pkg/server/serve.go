@@ -157,7 +157,7 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 		slog.Debug("webhook request", "dump", string(dump))
 	})
 
-	// TODO breadchris fix this code, preferably with chi
+	// TODO breadchris path routing should be done in a more modular way, as opposed to being done all in the handler
 	muxRoot.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
 			http.Redirect(w, r, "/app", http.StatusFound)

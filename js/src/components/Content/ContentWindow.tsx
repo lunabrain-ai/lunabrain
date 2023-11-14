@@ -36,8 +36,7 @@ const MediaViewer: React.FC = ({  }) => {
 export const ContentWindow: React.FC = ({  }) => {
     const [inputValue, setInputValue] = useState<string | undefined>('');
     const [searchValue, setSearchValue] = useState<string | undefined>('');
-    const { content, showTagTree, setShowTagTree, loadContent } = useProjectContext();
-    const [selectedContent, setSelectedContent] = useState<string[]>([]);
+    const { content, showTagTree, setShowTagTree, loadContent, selectedContent, setSelectedContent } = useProjectContext();
     const [inputType, setInputType] = useState<string>('url');
 
     const deleteContent = async () => {

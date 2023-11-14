@@ -292,6 +292,11 @@ export class Contents extends Message<Contents> {
    */
   related: Content[] = [];
 
+  /**
+   * @generated from field: repeated string parents = 3;
+   */
+  parents: string[] = [];
+
   constructor(data?: PartialMessage<Contents>) {
     super();
     proto3.util.initPartial(data, this);
@@ -302,6 +307,7 @@ export class Contents extends Message<Contents> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "content", kind: "message", T: Content },
     { no: 2, name: "related", kind: "message", T: Content, repeated: true },
+    { no: 3, name: "parents", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Contents {

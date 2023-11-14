@@ -50,6 +50,7 @@ message ContentIDs {
 message Contents {
   Content content = 1;
   repeated Content related = 2;
+  repeated string parents = 3;
 }
 
 message Query {
