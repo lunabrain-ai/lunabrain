@@ -1,0 +1,19 @@
+{{- if isset .Site.Params "giscus" -}}
+  {{- if and (isset .Site.Params.giscus "repo") (not (eq .Site.Params.giscus.repo "" )) (eq (.Params.disable_comments | default false) false) -}}
+  <script src="https://giscus.app/client.js"
+    data-repo="{{ .Site.Params.giscus.repo }}"
+    data-repo-id="{{ .Site.Params.giscus.repoID }}"
+    data-category="{{ .Site.Params.giscus.category }}"
+    data-category-id="{{ .Site.Params.giscus.categoryID }}"
+    data-mapping="{{ default "pathname" .Site.Params.giscus.mapping }}"
+    data-reactions-enabled="{{ default "1" .Site.Params.giscus.reactionsEnabled }}"
+    data-emit-metadata="{{ default "0" .Site.Params.giscus.emitMetadata }}"
+    data-input-position="{{ default "bottom" .Site.Params.giscus.inputPosition }}"
+    data-theme="{{ default "light" .Site.Params.giscus.theme }}"
+    data-lang="{{ default "en" .Site.Params.giscus.lang }}"
+    data-loading="{{ default "lazy" .Site.Params.giscus.loading }}"
+    crossorigin="anonymous"
+    async>
+  </script>
+  {{- end -}}
+{{- end -}}

@@ -1,11 +1,67 @@
 package cli
 
 import (
+	"bufio"
 	"github.com/lunabrain-ai/lunabrain/pkg/bot"
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/protoflow-labs/protoflow/pkg/util/reload"
 	"github.com/urfave/cli/v2"
+	"log/slog"
+	"os/exec"
 )
+
+func startProcess(cmd *exec.Cmd) (cleanup func(), err error) {
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		return nil, err
+	}
+
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return nil, err
+	}
+	cleanup = func() {
+		stdout.Close()
+		stderr.Close()
+	}
+
+	stderrScan := bufio.NewScanner(stderr)
+	go func() {
+		for stderrScan.Scan() {
+			slog.Info(cmd.String(), "stderr", stderrScan.Text())
+		}
+	}()
+
+	scanner := bufio.NewScanner(stdout)
+	go func() {
+		for scanner.Scan() {
+			slog.Info(cmd.String(), "stdout", stderrScan.Text())
+		}
+	}()
+
+	slog.Debug(cmd.String())
+
+	if err = cmd.Start(); err != nil {
+		return nil, err
+	}
+	return cleanup, nil
+}
+
+func NewServeAction(httpServer server.HTTPServer) func(context *cli.Context) error {
+	return func(context *cli.Context) error {
+		if context.Bool("dev") {
+			return liveReload()
+		}
+		// TODO breadchris the protoflow server can be embedded here to help with debugging
+		//go func() {
+		//	err := protoflowServer.Start()
+		//	if err != nil {
+		//		log.Err(err).Msg("failed to start protoflow server")
+		//	}
+		//}()
+		return httpServer.Start()
+	}
+}
 
 func NewServeCommand(
 	httpServer server.HTTPServer,
@@ -18,19 +74,7 @@ func NewServeCommand(
 				Name: "dev",
 			},
 		},
-		Action: func(context *cli.Context) error {
-			if context.Bool("dev") {
-				return liveReload()
-			}
-			// TODO breadchris the protoflow server can be embedded here to help with debugging
-			//go func() {
-			//	err := protoflowServer.Start()
-			//	if err != nil {
-			//		log.Err(err).Msg("failed to start protoflow server")
-			//	}
-			//}()
-			return httpServer.Start()
-		},
+		Action: NewServeAction(httpServer),
 	}
 }
 

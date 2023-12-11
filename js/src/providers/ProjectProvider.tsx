@@ -99,7 +99,6 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
 
     useEffect(() => {
         const handleResize = () => {
-            console.log(window.innerWidth)
             if (window.innerWidth < 600) {
                 setShowTagTree(false);
             }

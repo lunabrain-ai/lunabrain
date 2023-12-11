@@ -44,19 +44,11 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	bucketConfig, err := bucket.NewConfig(provider)
+	store, err := db.New(dbConfig)
 	if err != nil {
 		return nil, err
 	}
-	bucketBucket, err := bucket.New(bucketConfig)
-	if err != nil {
-		return nil, err
-	}
-	gormDB, err := db.NewGormDB(dbConfig, bucketBucket)
-	if err != nil {
-		return nil, err
-	}
-	store, err := db.New(gormDB)
+	gormDB, err := db.NewGorm(dbConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -76,12 +68,25 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
+	bucketConfig, err := bucket.NewConfig(provider)
+	if err != nil {
+		return nil, err
+	}
 	builder, err := bucket.NewBuilder(bucketConfig)
 	if err != nil {
 		return nil, err
 	}
-	normalizeNormalize := normalize.NewNormalize(builder)
-	service := content.NewService(store, session, agent, normalizeNormalize)
+	bucketBucket, err := bucket.New(bucketConfig)
+	if err != nil {
+		return nil, err
+	}
+	whisperConfig, err := whisper.NewConfig(provider)
+	if err != nil {
+		return nil, err
+	}
+	client := whisper.NewClient(whisperConfig, openaiConfig, bucketBucket)
+	normalizeNormalize := normalize.New(builder, bucketBucket, client, store)
+	service := content.NewService(store, session, agent, normalizeNormalize, bucketBucket)
 	discordConfig, err := discord.NewConfig(provider)
 	if err != nil {
 		return nil, err
@@ -104,12 +109,7 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	whisperConfig, err := whisper.NewConfig(provider)
-	if err != nil {
-		return nil, err
-	}
-	client := whisper.NewClient(whisperConfig, openaiConfig, bucketBucket)
-	protoflowProtoflow := protoflow.New(agent, session, bucketBucket, protoflowConfig, client)
+	protoflowProtoflow := protoflow.New(agent, session, bucketBucket, protoflowConfig, client, normalizeNormalize)
 	userService := user.NewService(store, session)
 	apihttpServer := server.New(contentConfig, service, store, bucketBucket, discordService, protoflowProtoflow, sessionManager, userService)
 	botDiscord := bot.NewDiscord(discordgoSession, store)

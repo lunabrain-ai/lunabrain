@@ -8,6 +8,7 @@ import (
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"log/slog"
 )
 
 func (s *Store) ShareContentWithGroup(contentID, groupID string) error {
@@ -72,6 +73,19 @@ func (s *Store) saveOrUpdateContent(userID uuid.UUID, botID uuid.UUID, data *con
 			}
 		}
 	}
+
+	if !found && data.Id != "" {
+		if r := s.db.Model(c).
+			Where("id = ?", data.Id).
+			First(c); r.Error != nil {
+			if !errors.Is(r.Error, gorm.ErrRecordNotFound) {
+				return nil, errors.Wrapf(r.Error, "could not get content")
+			}
+		} else {
+			found = true
+		}
+	}
+
 	var bots []*model.Bot
 	if botID != uuid.Nil {
 		bots = []*model.Bot{
@@ -95,11 +109,18 @@ func (s *Store) saveOrUpdateContent(userID uuid.UUID, botID uuid.UUID, data *con
 			VisitCount: 1,
 			Tags:       tags,
 		}
+		if data.Id != "" {
+			c.ID = uuid.MustParse(data.Id)
+		}
 		res = s.db.Create(c)
 	} else {
 		// TODO breadchris we currently ignore tag updates for this case
 		// TODO breadchris multiple users cant add the same url
-		res = s.db.Model(c).Update("visit_count", gorm.Expr("visit_count + ?", 1))
+		res = s.db.Model(c).
+			Update("visit_count", gorm.Expr("visit_count + ?", 1)).
+			Update("content_data", &model.ContentData{
+				Data: data,
+			})
 	}
 	if res.Error != nil {
 		return nil, errors.Wrapf(res.Error, "could not save content")
@@ -151,10 +172,11 @@ func (s *Store) SearchContent(userID uuid.UUID, page, limit int, groupID string,
 	query := s.db.
 		Distinct().
 		Select("contents.*").
-		Joins("JOIN content_tags ON content_tags.content_id = contents.id").
-		Joins("JOIN tags ON tags.id = content_tags.tag_id")
+		Joins("LEFT JOIN content_tags ON content_tags.content_id = contents.id").
+		Joins("LEFT JOIN tags ON tags.id = content_tags.tag_id")
 
 	if groupID != "" {
+		slog.Debug("searching for group content", "group_id", groupID)
 		query = query.
 			Joins("JOIN group_content ON group_content.content_id = contents.id").
 			Where("group_content.group_id = ?", groupID)

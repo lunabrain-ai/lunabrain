@@ -618,6 +618,8 @@ public struct Content_File {
 
   public var data: Data = Data()
 
+  public var url: String = String()
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -1919,6 +1921,7 @@ extension Content_File: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "file"),
     2: .same(proto: "data"),
+    3: .same(proto: "url"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1929,6 +1932,7 @@ extension Content_File: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.file) }()
       case 2: try { try decoder.decodeSingularBytesField(value: &self.data) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self.url) }()
       default: break
       }
     }
@@ -1941,12 +1945,16 @@ extension Content_File: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     if !self.data.isEmpty {
       try visitor.visitSingularBytesField(value: self.data, fieldNumber: 2)
     }
+    if !self.url.isEmpty {
+      try visitor.visitSingularStringField(value: self.url, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Content_File, rhs: Content_File) -> Bool {
     if lhs.file != rhs.file {return false}
     if lhs.data != rhs.data {return false}
+    if lhs.url != rhs.url {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

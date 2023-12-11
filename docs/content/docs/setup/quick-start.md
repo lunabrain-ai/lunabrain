@@ -35,13 +35,6 @@ git clone https://github.com/lunabrain-ai/lunabrain.git
 cd lunabrain
 ```
 
-### Docker Compose
-The fastest way to bring up LunaBrain is with `docker-compose`:
-
-```
-docker-compose up
-```
-
 ### Run the backend
 If you want to roll up your sleves and dig around, you can bring up the services manually.
 

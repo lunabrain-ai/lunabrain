@@ -91,6 +91,10 @@ export const ContentWindow: React.FC = ({  }) => {
     return (
         <Stack style={{ padding: '5px', height: '95vh' }} verticalFill>
             <Stack.Item grow styles={{ root: { overflowY: 'auto' } }}>
+                <Stack.Item disableShrink>
+                    {/*<SearchStack />*/}
+                    <CreateCard />
+                </Stack.Item>
                 <Stack horizontal>
                     <Stack.Item style={{ width: '100%'}}>
                         <ContentList content={content} selectedContent={selectedContent} setSelectedContent={setSelectedContent} />
@@ -104,10 +108,6 @@ export const ContentWindow: React.FC = ({  }) => {
                         )}
                     </Stack.Item>
                 </Stack>
-            </Stack.Item>
-            <Stack.Item disableShrink>
-                {/*<SearchStack />*/}
-                <CreateCard />
             </Stack.Item>
         </Stack>
     )

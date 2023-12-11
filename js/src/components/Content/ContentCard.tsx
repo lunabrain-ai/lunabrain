@@ -26,15 +26,49 @@ import {
     SubtractCircle16Regular,
     Search24Regular,
     PreviewLink16Regular,
-    NoteAdd16Regular,
 } from "@fluentui/react-icons";
-import { StoredContent, Content } from "@/rpc/content/content_pb";
+import { StoredContent, Segment, Content } from "@/rpc/content/content_pb";
 import {useStyles} from "@/components/Content/styles";
 import QRCode from "@/components/QRCode";
 import {useState} from "react";
 import {FilteredTagInput} from "@/components/Content/FilteredTagInput";
 import ReactMarkdown from "react-markdown";
-import {MarkdownEditor} from "@/components/Editor/MarkdownEditor";
+import {VideoPlayer} from "@/components/VideoPlayer";
+
+const contentDisplay = (id: string, content: Content): JSX.Element|null => {
+    switch (content.type.case) {
+        case 'data':
+            const d = content.type.value;
+            switch (d.type.case) {
+                case 'text':
+                    return <ReactMarkdown>{d.type.value.data.toString()}</ReactMarkdown>
+                case 'file':
+                    return <VideoPlayer url={`/media/${id}`} insertText={(t) => {}} />
+                case 'url':
+                    return null; //<a href={d.type.value.url}>{d.type.value.url}</a>
+            }
+            break;
+        case 'normalized':
+            const n = content.type.value;
+            switch (n.type.case) {
+                case 'article':
+                    return <p>{n.type.value.title}</p>
+                case 'transcript':
+                    return <SegmentView segments={n.type.value.segments} />
+            }
+    }
+    return null;
+}
+
+const SegmentView: React.FC<{ segments: Segment[] }> = ({ segments }) => {
+    return (
+        <p>
+            {segments.map((s, i) => (
+                <span key={i}>{s.text}</span>
+            ))}
+        </p>
+    )
+}
 
 export const ContentCard: React.FC<{
     item: StoredContent,
@@ -109,6 +143,9 @@ export const ContentCard: React.FC<{
             />
             <CardPreview>
                 <Stack horizontal>
+                    <Stack.Item style={{maxHeight: '70vh', overflowY: 'auto'}}>
+                        {item.content && contentDisplay(item.id, item.content)}
+                    </Stack.Item>
                     {preview && (
                         <>
                             <Stack.Item grow={1}>
@@ -117,7 +154,7 @@ export const ContentCard: React.FC<{
                                         <CardActions />
                                     </Stack.Item>
                                     <Stack.Item style={{maxHeight: '70vh', overflowY: 'auto'}}>
-                                        <ReactMarkdown>{item.preview}</ReactMarkdown>
+                                        {item.content && contentDisplay(item.id, item.content)}
                                     </Stack.Item>
                                 </Stack>
                             </Stack.Item>
@@ -180,67 +217,19 @@ export const ContentCard: React.FC<{
     )
 }
 
-type ContentDisplay = {
-    type: string
-    info: string
-}
-
-const contentDisplay = (content: Content): ContentDisplay|undefined => {
-    switch (content.type.case) {
-        case 'data':
-            const d = content.type.value;
-            switch (d.type.case) {
-                case 'text':
-                    return {
-                        type: 'text',
-                        info: d.type.value.data,
-                    }
-                case 'file':
-                    return {
-                        type: 'file',
-                        info: d.type.value.file,
-                    }
-                case 'url':
-                    return {
-                        type: 'url',
-                        info: d.type.value.url,
-                    }
-            }
-            break;
-        case 'normalized':
-            const n = content.type.value;
-            switch (n.type.case) {
-                case 'article':
-                    return {
-                        type: 'article',
-                        info: n.type.value.title,
-                    }
-            }
-    }
-    return undefined;
-}
-
 export const RelatedContentCard: React.FC<{
     content: Content,
     setChecked?: (checked: boolean) => void,
 }> = ({ content, setChecked }) => {
-    const cd = contentDisplay(content);
-    if (!cd) {
-        return null;
-    }
     return (
         <Card
             floatingAction={
                 <Checkbox onChange={(ev, checked) => {setChecked && setChecked(checked || false)}} />
             }
         >
-            <CardHeader
-                header={cd.type}
-            />
+            <CardHeader></CardHeader>
             <CardPreview>
-                <ReactMarkdown>
-                    {cd.info}
-                </ReactMarkdown>
+                {contentDisplay(content.id, content)}
             </CardPreview>
             <CardFooter>
                 {content.tags.map((t, i) => <Badge key={i}>{t}</Badge>)}

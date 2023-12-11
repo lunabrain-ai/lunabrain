@@ -1,6 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import {projectService} from "@/service";
 import {useProjectContext} from "@/providers/ProjectProvider";
+import { Data, File } from '@/rpc/content/content_pb';
 
 interface FileDropProps {
     children?: React.ReactNode;
@@ -25,12 +26,17 @@ export const FileDrop: React.FC<FileDropProps> = ({children}) => {
                         setLoading(true);
                         const res = projectService.uploadContent({
                             content: {
-                                options: {
-                                    case: 'fileOptions',
-                                    value: {
-                                        file: file.name,
-                                        data: fileBytes,
-                                    }
+                                type: {
+                                    case: 'data',
+                                    value: new Data({
+                                        type: {
+                                            case: 'file',
+                                            value: new File({
+                                                file: file.name,
+                                                data: fileBytes,
+                                            })
+                                        }
+                                    })
                                 },
                             },
                         }, {

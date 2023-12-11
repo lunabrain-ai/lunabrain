@@ -155,6 +155,7 @@ message Categories {
 message File {
   string file = 1;
   bytes data = 2;
+  string url = 3;
 }
 
 message Text {

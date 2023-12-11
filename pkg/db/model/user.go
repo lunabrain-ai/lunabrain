@@ -12,4 +12,5 @@ type User struct {
 	Data         datatypes.JSONType[*user.User]
 	Content      []Content   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	GroupUsers   []GroupUser `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	Sessions     []Session   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/pkg/errors"
 	"gorm.io/datatypes"
+	"log/slog"
 )
 
 func (s *Store) ValidGroupInvite(secret string) (uuid.UUID, error) {
@@ -85,7 +86,8 @@ func (s *Store) GetGroupsForUser(userID uuid.UUID) ([]model.GroupUser, error) {
 	}
 	res := s.db.Preload("GroupUsers.Group").First(u)
 	if res.Error != nil {
-		return nil, errors.Wrapf(res.Error, "could not get groups for user")
+		slog.Warn("could not get groups for user", "error", res.Error)
+		return []model.GroupUser{}, nil
 	}
 	return u.GroupUsers, nil
 }

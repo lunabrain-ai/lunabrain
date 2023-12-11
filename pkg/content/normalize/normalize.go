@@ -1,26 +1,85 @@
 package normalize
 
 import (
+	"context"
+	"github.com/google/uuid"
 	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
+	"github.com/lunabrain-ai/lunabrain/pkg/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
+	"github.com/pkg/errors"
+	"github.com/reactivex/rxgo/v2"
+	"log/slog"
+	ghttp "net/http"
 	"net/url"
+	"path"
+	"sync"
 )
 
 type Normalize struct {
 	bucket *bucket.Builder
+	// TODO breadchris use just builder instead
+	fileStore *bucket.Bucket
+	whisper   *whisper.Client
+	db        *db.Store
+
+	ObsLookup map[string]rxgo.Observable
 }
 
-func NewNormalize(b *bucket.Builder) *Normalize {
+func New(
+	b *bucket.Builder,
+	fileStore *bucket.Bucket,
+	whisper *whisper.Client,
+	db *db.Store,
+) *Normalize {
 	return &Normalize{
-		bucket: b,
+		bucket:    b,
+		fileStore: fileStore,
+		whisper:   whisper,
+		db:        db,
+		ObsLookup: make(map[string]rxgo.Observable),
 	}
 }
 
-func (s *Normalize) Normalize(c *content.Content) ([]*content.Content, []string, error) {
-	var nCnt []*content.Content
+func (s *Normalize) Normalize(ctx context.Context, uid uuid.UUID, c *content.Content) ([]*content.Content, []string, error) {
+	var (
+		nCnt []*content.Content
+		err  error
+		obs  rxgo.Observable
+		id   = uuid.New()
+	)
 	switch t := c.Type.(type) {
 	case *content.Content_Data:
 		switch u := t.Data.Type.(type) {
+		case *content.Data_File:
+			var ct *content.Transcript
+
+			name := u.File.File
+
+			contentType := ghttp.DetectContentType(u.File.Data)
+			switch contentType {
+			case "audio/wave":
+				ct, obs, err = s.ProcessAudio(context.TODO(), u.File, id, false)
+			//case "application/pdf":
+			//	obs = s.ProcessPDF(ctx, u.File)
+			//case "text/plain; charset=utf-8":
+			//	obs = s.ProcessText(ctx, u.File)
+			default:
+				// TODO breadchris m4a is not a mime type in the golang mime package
+				if path.Ext(name) == ".m4a" {
+					ct, obs, err = s.ProcessAudio(context.TODO(), u.File, id, true)
+				} else {
+					return nil, nil, errors.Errorf("unsupported file type: %s", contentType)
+				}
+			}
+			if err != nil {
+				return nil, nil, err
+			}
+
+			if ct != nil && obs != nil {
+				nCnt = append(nCnt, newTranscriptContent(id, ct))
+				s.observeSegments(obs, uid, id, ct)
+			}
 		case *content.Data_Url:
 			ul := u.Url.Url
 			pUrl, err := url.Parse(ul)
@@ -53,4 +112,31 @@ func (s *Normalize) Normalize(c *content.Content) ([]*content.Content, []string,
 		}
 	}
 	return nCnt, []string{}, nil
+}
+
+func (s *Normalize) observeSegments(
+	obs rxgo.Observable,
+	userID uuid.UUID,
+	cntID uuid.UUID,
+	ct *content.Transcript,
+) {
+	var mutex sync.Mutex
+	obs.ForEach(func(item any) {
+		t, ok := item.(*content.Segment)
+		if !ok {
+			return
+		}
+
+		ct.Segments = append(ct.Segments, t)
+		mutex.Lock()
+		defer mutex.Unlock()
+		_, err := s.db.SaveContent(userID, uuid.Nil, newTranscriptContent(cntID, ct), nil)
+		if err != nil {
+			slog.Error("error saving content", "error", err)
+		}
+	}, func(err error) {
+		slog.Error("error in observable", "error", err)
+	}, func() {
+		slog.Info("transcription complete")
+	})
 }

@@ -3,7 +3,7 @@ services:
   lunabrain:
 #    image: ghcr.io/lunabrain/lunabrain
     build:
-      context: .
+      context: ..
     hostname: lunabrain
     ports:
       - "80:8080"

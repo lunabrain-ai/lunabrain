@@ -99,7 +99,7 @@ func (c *HN) Collect(userID string) error {
 			},
 		}
 
-		norm, _, err := c.normalizer.Normalize(data)
+		norm, _, err := c.normalizer.Normalize(ctx, uuid.MustParse(userID), data)
 		if err != nil {
 			return errors.Wrapf(err, "unable to normalize content")
 		}

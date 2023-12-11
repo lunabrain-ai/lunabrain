@@ -1097,6 +1097,11 @@ export class File extends Message<File> {
    */
   data = new Uint8Array(0);
 
+  /**
+   * @generated from field: string url = 3;
+   */
+  url = "";
+
   constructor(data?: PartialMessage<File>) {
     super();
     proto3.util.initPartial(data, this);
@@ -1107,6 +1112,7 @@ export class File extends Message<File> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "file", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "data", kind: "scalar", T: 12 /* ScalarType.BYTES */ },
+    { no: 3, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): File {

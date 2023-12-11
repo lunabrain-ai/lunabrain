@@ -36261,6 +36261,10 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
      * @generated from field: bytes data = 2;
      */
     data = new Uint8Array(0);
+    /**
+     * @generated from field: string url = 3;
+     */
+    url = "";
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
@@ -36281,6 +36285,13 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
         kind: "scalar",
         T: 12
         /* ScalarType.BYTES */
+      },
+      {
+        no: 3,
+        name: "url",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
       }
     ]);
     static fromBinary(bytes, options) {

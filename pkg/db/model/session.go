@@ -9,8 +9,8 @@ import (
 type Session struct {
 	Base
 
-	UserID uuid.UUID `gorm:"foreignKey:ID"`
-	User   User      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	UserID uuid.UUID
+	User   User `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 
 	Segments []Segment
 
@@ -21,8 +21,8 @@ type Session struct {
 type Segment struct {
 	Base
 
-	SessionID uuid.UUID `gorm:"foreignKey:ID"`
-	Session   Session   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	SessionID uuid.UUID
+	Session   Session `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 	Data      datatypes.JSONType[*gen.Segment]
 }
 

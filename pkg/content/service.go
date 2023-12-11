@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/gen/content/contentconnect"
+	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/content/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
@@ -24,6 +25,7 @@ type Service struct {
 	sess       *db.Session
 	openai     *openai.Agent
 	normalizer *normalize.Normalize
+	fileStore  *bucket.Bucket
 }
 
 var _ contentconnect.ContentServiceHandler = (*Service)(nil)
@@ -33,7 +35,30 @@ func (s *Service) Save(ctx context.Context, c *connect_go.Request[content.Conten
 	if err != nil {
 		return nil, err
 	}
-	norm, tags, err := s.normalizer.Normalize(c.Msg.Content)
+
+	if c.Msg.Content.Id == "" {
+		c.Msg.Content.Id = uuid.New().String()
+	}
+	switch u := c.Msg.Content.Type.(type) {
+	case *content.Content_Data:
+		switch t := u.Data.Type.(type) {
+		case *content.Data_File:
+			if len(t.File.Data) > 0 {
+				// TODO breadchris this syntax feels weird, i would expect to get back a path
+				err := s.fileStore.Bucket.WriteAll(ctx, c.Msg.Content.Id, t.File.Data, nil)
+				if err != nil {
+					return nil, err
+				}
+				t.File.Url, err = s.fileStore.NewFile(c.Msg.Content.Id)
+				if err != nil {
+					return nil, err
+				}
+			}
+			t.File.Data = nil
+		}
+	}
+
+	norm, tags, err := s.normalizer.Normalize(ctx, uid, c.Msg.Content)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to normalize content")
 	}
@@ -45,29 +70,6 @@ func (s *Service) Save(ctx context.Context, c *connect_go.Request[content.Conten
 		return nil, errors.Wrapf(err, "unable to save content")
 	}
 	return connect_go.NewResponse(&content.ContentIDs{ContentIds: []string{cnt.String()}}), nil
-}
-
-func trimMarkdownWhitespace(md string) string {
-	// Remove leading and trailing whitespace
-	md = strings.TrimSpace(md)
-
-	// Replace multiple consecutive newlines with a single newline
-	md = regexp.MustCompile(`\n{3,}`).ReplaceAllString(md, "\n\n")
-
-	// Replace multiple spaces with a single space outside of code snippets
-	codeBlocks := regexp.MustCompile("`[^`]+`")
-	matches := codeBlocks.FindAllString(md, -1)
-	for _, match := range matches {
-		md = strings.Replace(md, match, strings.ReplaceAll(match, " ", "␣"), -1)
-	}
-
-	md = regexp.MustCompile(` +`).ReplaceAllString(md, " ")
-
-	for _, match := range matches {
-		md = strings.Replace(md, match, strings.ReplaceAll(match, "␣", " "), -1)
-	}
-
-	return md
 }
 
 func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Query]) (*connect_go.Response[content.Results], error) {
@@ -285,11 +287,36 @@ func NewService(
 	sess *db.Session,
 	openai *openai.Agent,
 	normalizer *normalize.Normalize,
+	fileStore *bucket.Bucket,
 ) *Service {
 	return &Service{
 		db:         db,
 		sess:       sess,
 		openai:     openai,
 		normalizer: normalizer,
+		fileStore:  fileStore,
 	}
+}
+
+func trimMarkdownWhitespace(md string) string {
+	// Remove leading and trailing whitespace
+	md = strings.TrimSpace(md)
+
+	// Replace multiple consecutive newlines with a single newline
+	md = regexp.MustCompile(`\n{3,}`).ReplaceAllString(md, "\n\n")
+
+	// Replace multiple spaces with a single space outside of code snippets
+	codeBlocks := regexp.MustCompile("`[^`]+`")
+	matches := codeBlocks.FindAllString(md, -1)
+	for _, match := range matches {
+		md = strings.Replace(md, match, strings.ReplaceAll(match, " ", "␣"), -1)
+	}
+
+	md = regexp.MustCompile(` +`).ReplaceAllString(md, " ")
+
+	for _, match := range matches {
+		md = strings.Replace(md, match, strings.ReplaceAll(match, "␣", " "), -1)
+	}
+
+	return md
 }

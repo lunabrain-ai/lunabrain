@@ -47,7 +47,7 @@ type HTTPServer interface {
 var (
 	ProviderSet = wire.NewSet(
 		content.NewService,
-		normalize.NewNormalize,
+		normalize.New,
 		user.NewService,
 		shttp.NewSession,
 		content.NewConfig,
@@ -86,7 +86,7 @@ func NewLogInterceptor() connect.UnaryInterceptorFunc {
 		) (connect.AnyResponse, error) {
 			resp, err := next(ctx, req)
 			if err != nil {
-				// slog.Error("connect error", "error", fmt.Sprintf("%+v", err))
+				slog.Error("connect error", "error", fmt.Sprintf("%+v", err))
 				// TODO breadchris this should only be done for local dev
 				fmt.Printf("%+v\n", err)
 			}

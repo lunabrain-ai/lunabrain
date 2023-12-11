@@ -20,8 +20,9 @@ func NewApp(
 	hn *bot.HN,
 ) *cli.App {
 	return &cli.App{
-		Name:  "lunabrain",
-		Usage: "Save and search for information.",
+		Name:   "lunabrain",
+		Usage:  "Save and search for information.",
+		Action: NewServeAction(httpServer),
 		Commands: []*cli.Command{
 			NewServeCommand(httpServer),
 			NewCollectCommand(discord, hn),

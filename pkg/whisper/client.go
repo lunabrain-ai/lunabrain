@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/wire"
-	genapi "github.com/lunabrain-ai/lunabrain/gen"
+	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/pkg/errors"
@@ -78,7 +78,7 @@ func (a *Client) apiTranscription(ctx context.Context, id string, filePath strin
 			duration += res.Duration
 
 			for _, s := range res.Segments {
-				seg := genapi.Segment{
+				seg := content.Segment{
 					Num:       uint32(s.ID),
 					Text:      s.Text,
 					StartTime: uint64(duration + s.Start),
@@ -134,15 +134,17 @@ func (a *Client) offlineTranscription(ctx context.Context, file string, captureD
 		}
 
 		stdoutScan := bufio.NewScanner(stdout)
+		var done chan struct{}
 		go func() {
 			for stdoutScan.Scan() {
-				var seg genapi.Segment
+				var seg content.Segment
 				if err := json.Unmarshal([]byte(stdoutScan.Text()), &seg); err != nil {
 					next <- rxgo.Error(err)
 					continue
 				}
 				next <- rxgo.Of(&seg)
 			}
+			done <- struct{}{}
 		}()
 
 		stderrScan := bufio.NewScanner(stderr)
@@ -170,5 +172,6 @@ func (a *Client) offlineTranscription(ctx context.Context, file string, captureD
 			next <- rxgo.Error(err)
 			return
 		}
+		<-done
 	}}, rxgo.WithContext(ctx))
 }

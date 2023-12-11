@@ -17,12 +17,15 @@ import isHotkey from 'is-hotkey'
 import {serialize} from "@/util/slate";
 import {Stack, TextField} from "@fluentui/react";
 import {Badge, Button, Toolbar, ToolbarProps, ToolbarRadioButton, ToolbarRadioGroup} from "@fluentui/react-components";
-import {BrainCircuit24Regular, TextT24Regular, Link24Regular, MusicNote224Regular} from "@fluentui/react-icons";
+import {BrainCircuit24Regular, Folder24Regular, TextT24Regular, Link24Regular, MusicNote224Regular} from "@fluentui/react-icons";
 import {contentService} from "@/service";
 import toast from "react-hot-toast";
 import {textContent, urlContent} from "@/extension/util";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {Portal} from "@/components/Editor/Components";
+import {FileSelect} from "@/components/FileSelect";
+import {VideoPlayer} from "@/components/VideoPlayer";
+import {FileUpload} from "@/components/FileUpload";
 
 const SHORTCUTS: Record<string, string> = {
     '*': 'list-item',
@@ -87,7 +90,7 @@ export const MarkdownEditor: React.FC<{ initial?: Descendant[] }> = ({}) => {
     const ref = useRef<HTMLDivElement | null>()
 
     const [text, setText] = useState<string>('');
-    const [currentInputType, setCurrentInputType] = useState<string>('text');
+    const [currentInputType, setCurrentInputType] = useState<'text'|'url'|'file'>('text');
 
     const renderElement = useCallback((props: JSX.IntrinsicAttributes & { attributes: any; children: any; element: any; }) =>
         <Element {...props} />, [])
@@ -95,11 +98,15 @@ export const MarkdownEditor: React.FC<{ initial?: Descendant[] }> = ({}) => {
         () => withMentions(withShortcuts(withReact(withHistory(createEditor())))),
         []
     )
+
     const initialValue = useMemo(
         () =>
             JSON.parse(localStorage.getItem('content') || 'null') || [{
-                type: 'paragraph',
-                children: [{text: ''}],
+                type: 'bulleted-list',
+                children: [{
+                    type: 'list-item',
+                    children: [{ text: '' }],
+                }],
             }],
         []
     )
@@ -114,6 +121,10 @@ export const MarkdownEditor: React.FC<{ initial?: Descendant[] }> = ({}) => {
 
     const onKeyDown = useCallback(
         (event: { key: any; preventDefault: () => void; }) => {
+            switch (event.key) {
+                case 'Tab':
+                    event.preventDefault()
+            }
             if (target && chars.length > 0) {
                 switch (event.key) {
                     case 'ArrowDown':
@@ -221,6 +232,39 @@ export const MarkdownEditor: React.FC<{ initial?: Descendant[] }> = ({}) => {
         }
     }, [chars.length, editor, index, search, target])
 
+    const insertText = (text: string) => {
+        Transforms.insertText(editor, text)
+    }
+
+    const getInputType = () => {
+        if (currentInputType === 'text') {
+            return <Editable
+                style={{height: '100%', maxHeight: '100%', overflowY: 'auto'}}
+                onDOMBeforeInput={handleDOMBeforeInput}
+                onKeyDown={onKeyDown}
+                renderElement={renderElement}
+                placeholder="Write some markdown..."
+                spellCheck
+                autoFocus
+            />
+        }
+        if (currentInputType === 'url') {
+            return <TextField
+                value={text}
+                onChange={(e, v) => {
+                    setText(v || '');
+                }}
+                placeholder="Enter a URL"
+            />
+        }
+        if (currentInputType === 'file') {
+            return (
+                <FileUpload />
+            )
+        }
+        return null;
+    }
+
     return (
         <Slate
             editor={editor}
@@ -265,15 +309,7 @@ export const MarkdownEditor: React.FC<{ initial?: Descendant[] }> = ({}) => {
         >
             <Stack>
                 <Stack.Item>
-                    <Editable
-                        style={{height: '100%', maxHeight: '100%', overflowY: 'auto'}}
-                        onDOMBeforeInput={handleDOMBeforeInput}
-                        onKeyDown={onKeyDown}
-                        renderElement={renderElement}
-                        placeholder="Write some markdown..."
-                        spellCheck
-                        autoFocus
-                    />
+                    {getInputType()}
                     {target && chars.length > 0 && (
                         <Portal>
                             <div
@@ -319,34 +355,40 @@ export const MarkdownEditor: React.FC<{ initial?: Descendant[] }> = ({}) => {
                 <Stack.Item>
                     <Stack horizontal horizontalAlign={'space-between'} tokens={{childrenGap: 3}}>
                         <Stack.Item>
-                            <Toolbar
-                                aria-label="with Radio Buttons"
-                                defaultCheckedValues={{
-                                    textOptions: ["text"],
+                            <Button
+                                onClick={() => {
+                                    setCurrentInputType('text');
                                 }}
-                                onCheckedValueChange={onChange}
-                            >
-                                <ToolbarRadioGroup>
-                                    <ToolbarRadioButton
-                                        aria-label="Text"
-                                        name="textOptions"
-                                        value="text"
-                                        icon={<TextT24Regular/>}
-                                    />
-                                    <ToolbarRadioButton
-                                        aria-label="Link"
-                                        name="textOptions"
-                                        value="link"
-                                        icon={<Link24Regular/>}
-                                    />
-                                    <ToolbarRadioButton
-                                        aria-label="prompt"
-                                        name="textOptions"
-                                        value="prompt"
-                                        icon={<BrainCircuit24Regular/>}
-                                    />
-                                </ToolbarRadioGroup>
-                            </Toolbar>
+                                aria-label="Text"
+                                name="textOptions"
+                                icon={<TextT24Regular/>}
+                            />
+                            <Button
+                                onClick={() => {
+                                    setCurrentInputType('url');
+                                }}
+                                aria-label="Link"
+                                name="textOptions"
+                                icon={<Link24Regular/>}
+                            />
+                            <Button
+                                onClick={() => {
+                                    setCurrentInputType('file');
+                                }}
+                                aria-label="file"
+                                name="textOptions"
+                                value="file"
+                                icon={<Folder24Regular/>}
+                            />
+                            <Button
+                                onClick={() => {
+                                    // setCurrentInputType('');
+                                }}
+                                aria-label="prompt"
+                                name="textOptions"
+                                value="prompt"
+                                icon={<BrainCircuit24Regular/>}
+                            />
                         </Stack.Item>
                         <Stack.Item>
                             <Button onClick={() => {
@@ -354,7 +396,7 @@ export const MarkdownEditor: React.FC<{ initial?: Descendant[] }> = ({}) => {
                                 if (currentInputType === 'text') {
                                     void saveText(serialize(editor));
                                 }
-                                if (currentInputType === 'link') {
+                                if (currentInputType === 'url') {
                                     void saveURL(text);
                                 }
                             }}>Save</Button>
@@ -460,19 +502,16 @@ const withShortcuts = (editor: CustomEditor) => {
     return editor
 }
 
-const Mention = ({ attributes, children, element }) => {
+const Mention = ({ attributes, character }) => {
     const selected = useSelected()
     const focused = useFocused()
-    if (!element || element.children.length === 0) {
-        return children;
-    }
     return (
         <Badge
             {...attributes}
             contentEditable={false}
-            data-cy={`mention-${element.character.replace(' ', '-')}`}
+            data-cy={`mention-${character.replace(' ', '-')}`}
         >
-      #{element.character}
+      #{character}
         </Badge>
     )
 }
@@ -480,7 +519,7 @@ const Mention = ({ attributes, children, element }) => {
 const Element: React.FC<{attributes: any, children: any, element: any}> = ({ attributes, children, element }) => {
     switch (element.type) {
         case 'mention':
-            return <Mention {...attributes} element={element}>{children}</Mention>
+            return <Mention {...attributes} character={element.character}>{children}</Mention>
         case 'block-quote':
             return <blockquote {...attributes}>{children}</blockquote>
         case 'bulleted-list':

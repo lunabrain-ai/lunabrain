@@ -40,7 +40,7 @@ func newDefaultConfig() Config {
 			URLBase: "localhost:8080/bucket",
 		},
 		Service: content.Config{
-			Port: "8080",
+			Port: "8000",
 		},
 		Scrape: scrape.Config{
 			Client: scrape.ClientHTTP,

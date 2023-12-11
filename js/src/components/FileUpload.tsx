@@ -1,8 +1,10 @@
 import React, { ChangeEvent, useState } from 'react';
-import {projectService} from "@/service";
+import {contentService, projectService} from "@/service";
 import {useProjectContext} from "@/providers/ProjectProvider";
 import {Button} from "@fluentui/react-components";
 import toast from "react-hot-toast";
+import {VideoPlayer} from "@/components/VideoPlayer";
+import {MessageList} from "@/components/Content/MessageList";
 
 function readFileInChunks(file: File, chunkSize: number = 25 * 1024 * 1024): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -40,6 +42,7 @@ export const FileUpload: React.FC = () => {
     const { streamMessages, loading, setLoading } = useProjectContext();
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [fileName, setFileName] = useState<string | null>(null);
+    const url = selectedFile ? URL.createObjectURL(selectedFile) : null;
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files ? event.target.files[0] : null;
@@ -58,20 +61,24 @@ export const FileUpload: React.FC = () => {
                 const fileBytes = new Uint8Array(fileAsArrayBuffer as ArrayBuffer);
                 try {
                     setLoading(true);
-                    const res = projectService.uploadContent({
+                    const res = contentService.save({
                         content: {
                             type: {
-                                case: 'file',
+                                case: 'data',
                                 value: {
-                                    file: selectedFile.name,
-                                    data: fileBytes,
+                                    type: {
+                                        case: 'file',
+                                        value: {
+                                            file: selectedFile.name,
+                                            data: fileBytes,
+                                        },
+                                    },
                                 }
                             },
                         },
                     }, {
                         timeoutMs: undefined,
                     })
-                    streamMessages(res);
                 } catch (e: any) {
                     console.log(e);
                     toast.error(e.message);
@@ -85,6 +92,7 @@ export const FileUpload: React.FC = () => {
         <div>
             <input type="file" onChange={handleFileChange} />
             {fileName && <div>Selected File: {fileName}</div>}
+            {url && <VideoPlayer url={url} insertText={(t) => {}} />}
             <Button onClick={handleFileUpload} disabled={!selectedFile}>Upload</Button>
         </div>
     );
