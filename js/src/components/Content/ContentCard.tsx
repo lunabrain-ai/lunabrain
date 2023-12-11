@@ -170,19 +170,17 @@ export const ContentCard: React.FC<{
                             <QRCode text={item.url} />
                         </Stack.Item>
                     )}
-                    {userSettings.showRelatedContent && (
-                        <Stack.Item>
-                            {item.related.length > 0 && (
-                                <Stack horizontal disableShrink tokens={{childrenGap: 5}} style={{width: '100%', overflowX: 'scroll', display: 'flex', flexFlow: 'row nowrap'}}>
-                                    {item.related.map((r) => (
-                                        <Stack.Item key={r.id} style={{width: 100}} grow>
-                                            <RelatedContentCard key={r.id} content={r} />
-                                        </Stack.Item>
-                                    ))}
-                                </Stack>
-                            )}
-                        </Stack.Item>
-                    )}
+                    <Stack.Item>
+                        {item.related.length > 0 && (
+                            <Stack horizontal disableShrink tokens={{childrenGap: 5}} style={{width: '100%', overflowX: 'scroll', display: 'flex', flexFlow: 'row nowrap'}}>
+                                {item.related.map((r) => (
+                                    <Stack.Item key={r.id} style={{width: 100}} grow>
+                                        <RelatedContentCard key={r.id} content={r} />
+                                    </Stack.Item>
+                                ))}
+                            </Stack>
+                        )}
+                    </Stack.Item>
                 </Stack>
             </CardPreview>
             <CardFooter>
