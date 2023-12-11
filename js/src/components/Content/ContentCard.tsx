@@ -228,7 +228,7 @@ export const RelatedContentCard: React.FC<{
             }
         >
             <CardHeader></CardHeader>
-            <CardPreview>
+            <CardPreview style={{maxHeight: '300px', overflowY: 'auto'}}>
                 {contentDisplay(content.id, content)}
             </CardPreview>
             <CardFooter>

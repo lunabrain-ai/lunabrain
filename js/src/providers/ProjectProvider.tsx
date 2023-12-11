@@ -94,7 +94,7 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     const [userSettings, setUserSettings] = useState<UserSettings>({
         showPreviews: false,
         showQRCodes: false,
-        showRelatedContent: false,
+        showRelatedContent: true,
     });
 
     useEffect(() => {
