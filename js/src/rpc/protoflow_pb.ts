@@ -5,7 +5,7 @@
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
 import { Message, proto3, protoInt64 } from "@bufbuild/protobuf";
-import { Content } from "./content/content_pb.js";
+import { Content, Segment as Segment$1 } from "./content/content_pb.js";
 
 /**
  * @generated from message protoflow.AnalyzeConversationRequest
@@ -1203,9 +1203,9 @@ export class YouTubeVideoResponse extends Message<YouTubeVideoResponse> {
   filePath?: FilePath;
 
   /**
-   * @generated from field: repeated protoflow.Segment transcript = 3;
+   * @generated from field: repeated content.Segment transcript = 3;
    */
-  transcript: Segment[] = [];
+  transcript: Segment$1[] = [];
 
   constructor(data?: PartialMessage<YouTubeVideoResponse>) {
     super();
@@ -1217,7 +1217,7 @@ export class YouTubeVideoResponse extends Message<YouTubeVideoResponse> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "file_path", kind: "message", T: FilePath },
-    { no: 3, name: "transcript", kind: "message", T: Segment, repeated: true },
+    { no: 3, name: "transcript", kind: "message", T: Segment$1, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): YouTubeVideoResponse {

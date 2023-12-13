@@ -17,7 +17,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/lunabrain-ai/lunabrain/pkg/log"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
-	"github.com/lunabrain-ai/lunabrain/pkg/protoflow"
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/lunabrain-ai/lunabrain/pkg/user"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
@@ -105,13 +104,8 @@ func Wire() (*cli.App, error) {
 		return nil, err
 	}
 	discordService := discord.New(discordSession, handler)
-	protoflowConfig, err := protoflow.NewConfig(provider)
-	if err != nil {
-		return nil, err
-	}
-	protoflowProtoflow := protoflow.New(agent, session, bucketBucket, protoflowConfig, client, normalizeNormalize)
 	userService := user.NewService(store, session)
-	apihttpServer := server.New(contentConfig, service, store, bucketBucket, discordService, protoflowProtoflow, sessionManager, userService)
+	apihttpServer := server.New(contentConfig, service, store, bucketBucket, discordService, sessionManager, userService)
 	botDiscord := bot.NewDiscord(discordgoSession, store)
 	hn := bot.NewHN(store, normalizeNormalize)
 	app := NewApp(logLog, apihttpServer, botDiscord, hn)

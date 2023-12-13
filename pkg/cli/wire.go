@@ -12,7 +12,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/log"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
-	"github.com/lunabrain-ai/lunabrain/pkg/protoflow"
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/urfave/cli/v2"
@@ -29,7 +28,6 @@ func Wire() (*cli.App, error) {
 		discord.ProviderSet,
 		//publish.ProviderSet,
 		bot.ProviderSet,
-		protoflow.ProviderSet,
 		openai.ProviderSet,
 		whisper.ProviderSet,
 	))

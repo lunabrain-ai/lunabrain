@@ -83,3 +83,33 @@ func newTranscriptContent(cntID uuid.UUID, t *content.Transcript) *content.Conte
 		},
 	}
 }
+
+//func GenerateImages(ctx context.Context, c *connect_go.Request[genapi.GenerateImagesRequest]) (*connect_go.Response[genapi.GenerateImagesResponse], error) {
+//	images, err := p.openai.GenerateImages(ctx, c.Msg.Prompt)
+//	if err != nil {
+//		return nil, err
+//	}
+//	return connect_go.NewResponse(&genapi.GenerateImagesResponse{
+//		Images: images,
+//	}), nil
+//}
+
+//func OCR(ctx context.Context, c *connect_go.Request[genapi.FilePath]) (*connect_go.Response[genapi.OCRText], error) {
+//	log.Info().Str("file", c.Msg.File).Msg("ocr")
+//	client := gosseract.NewClient()
+//	defer client.Close()
+//
+//	err := client.SetImage(c.Msg.File)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	text, err := client.Text()
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	return connect_go.NewResponse(&genapi.OCRText{
+//		Text: text,
+//	}), nil
+//}

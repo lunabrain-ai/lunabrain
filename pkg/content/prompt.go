@@ -1,4 +1,4 @@
-package protoflow
+package content
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"log/slog"
 )
 
-func (p *Protoflow) Infer(ctx context.Context, c *connect_go.Request[genapi.InferRequest], c2 *connect_go.ServerStream[genapi.InferResponse]) error {
+func (s *Service) Infer(ctx context.Context, c *connect_go.Request[genapi.InferRequest], c2 *connect_go.ServerStream[genapi.InferResponse]) error {
 	var content string
 	for _, t := range c.Msg.Text {
 		content += t + " "
@@ -17,7 +17,7 @@ func (p *Protoflow) Infer(ctx context.Context, c *connect_go.Request[genapi.Infe
 		obs rxgo.Observable
 		err error
 	)
-	obs, err = p.openai.Ask(c.Msg.Prompt, content)
+	obs, err = s.openai.Ask(c.Msg.Prompt, content)
 	if err != nil {
 		return err
 	}
@@ -42,9 +42,9 @@ func (p *Protoflow) Infer(ctx context.Context, c *connect_go.Request[genapi.Infe
 	return resErr
 }
 
-func (p *Protoflow) AnalyzeConversation(ctx context.Context, c *connect_go.Request[genapi.AnalyzeConversationRequest]) (*connect_go.Response[genapi.AnalyzeConversationResponse], error) {
+func (s *Service) AnalyzeConversation(ctx context.Context, c *connect_go.Request[genapi.AnalyzeConversationRequest]) (*connect_go.Response[genapi.AnalyzeConversationResponse], error) {
 	ac := &genapi.AnalyzeConversationResponse{}
-	err := p.openai.PromptToProto(ctx, c.Msg.Text, ac)
+	err := s.openai.PromptToProto(ctx, c.Msg.Text, ac)
 	if err != nil {
 		return nil, err
 	}

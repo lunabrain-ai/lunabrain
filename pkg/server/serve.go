@@ -8,7 +8,6 @@ import (
 	"github.com/google/wire"
 	"github.com/lunabrain-ai/lunabrain/gen/chat/chatconnect"
 	"github.com/lunabrain-ai/lunabrain/gen/content/contentconnect"
-	"github.com/lunabrain-ai/lunabrain/gen/genconnect"
 	"github.com/lunabrain-ai/lunabrain/gen/user/userconnect"
 	"github.com/lunabrain-ai/lunabrain/js/dist/site"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
@@ -17,7 +16,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/content/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	shttp "github.com/lunabrain-ai/lunabrain/pkg/http"
-	code "github.com/lunabrain-ai/lunabrain/pkg/protoflow"
 	"github.com/lunabrain-ai/lunabrain/pkg/user"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -30,14 +28,13 @@ import (
 )
 
 type APIHTTPServer struct {
-	config           content.Config
-	db               *db.Store
-	contentService   *content.Service
-	bucket           *bucket.Bucket
-	discordService   *discord.DiscordService
-	protoflowService *code.Protoflow
-	sessionManager   *shttp.SessionManager
-	userService      *user.UserService
+	config         content.Config
+	db             *db.Store
+	contentService *content.Service
+	bucket         *bucket.Bucket
+	discordService *discord.DiscordService
+	sessionManager *shttp.SessionManager
+	userService    *user.UserService
 }
 
 type HTTPServer interface {
@@ -62,19 +59,17 @@ func New(
 	db *db.Store,
 	bucket *bucket.Bucket,
 	d *discord.DiscordService,
-	protoflowService *code.Protoflow,
 	sessionManager *shttp.SessionManager,
 	userService *user.UserService,
 ) *APIHTTPServer {
 	return &APIHTTPServer{
-		config:           config,
-		contentService:   apiServer,
-		db:               db,
-		bucket:           bucket,
-		discordService:   d,
-		protoflowService: protoflowService,
-		sessionManager:   sessionManager,
-		userService:      userService,
+		config:         config,
+		contentService: apiServer,
+		db:             db,
+		bucket:         bucket,
+		discordService: d,
+		sessionManager: sessionManager,
+		userService:    userService,
 	}
 }
 
@@ -111,10 +106,8 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	apiRoot.Handle(contentconnect.NewContentServiceHandler(a.contentService, interceptors))
 	apiRoot.Handle(userconnect.NewUserServiceHandler(a.userService, interceptors))
 	apiRoot.Handle(chatconnect.NewDiscordServiceHandler(a.discordService, interceptors))
-	apiRoot.Handle(genconnect.NewProtoflowServiceHandler(a.protoflowService, interceptors))
 	reflector := grpcreflect.NewStaticReflector(
 		"content.ContentService",
-		"protoflow.ProtoflowService",
 		"user.UserService",
 		"chat.DiscordService",
 	)

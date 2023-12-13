@@ -5,7 +5,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
-	"github.com/lunabrain-ai/lunabrain/pkg/protoflow"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"go.uber.org/config"
@@ -22,13 +21,12 @@ const (
 )
 
 type Config struct {
-	Bucket    bucket.Config    `yaml:"bucket"`
-	Service   content.Config   `yaml:"api"`
-	Scrape    scrape.Config    `yaml:"scrape"`
-	DB        db.Config        `yaml:"db"`
-	OpenAI    openai.Config    `yaml:"openai"`
-	Protoflow protoflow.Config `yaml:"protoflow"`
-	Whisper   whisper.Config   `yaml:"config"`
+	Bucket  bucket.Config  `yaml:"bucket"`
+	Service content.Config `yaml:"api"`
+	Scrape  scrape.Config  `yaml:"scrape"`
+	DB      db.Config      `yaml:"db"`
+	OpenAI  openai.Config  `yaml:"openai"`
+	Whisper whisper.Config `yaml:"config"`
 }
 
 func newDefaultConfig() Config {
@@ -45,10 +43,9 @@ func newDefaultConfig() Config {
 		Scrape: scrape.Config{
 			Client: scrape.ClientHTTP,
 		},
-		DB:        db.NewDefaultConfig(),
-		OpenAI:    openai.NewDefaultConfig(),
-		Protoflow: protoflow.NewDefaultConfig(),
-		Whisper:   whisper.NewDefaultConfig(),
+		DB:      db.NewDefaultConfig(),
+		OpenAI:  openai.NewDefaultConfig(),
+		Whisper: whisper.NewDefaultConfig(),
 	}
 }
 

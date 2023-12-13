@@ -2,10 +2,13 @@ package normalize
 
 import (
 	"context"
+	connect_go "github.com/bufbuild/connect-go"
 	"github.com/google/uuid"
+	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/util"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/pkg/errors"
 	"github.com/reactivex/rxgo/v2"
@@ -87,16 +90,52 @@ func (s *Normalize) Normalize(ctx context.Context, uid uuid.UUID, c *content.Con
 				return nil, nil, err
 			}
 
+			sub, err := util.RemoveSubdomains(pUrl.Host)
+			if err != nil {
+				return nil, nil, err
+			}
+
 			tags := []string{
 				pUrl.Host,
 			}
 
-			if pUrl.Host == "chat.openai.com" {
+			switch sub {
+			case "chat.openai.com":
 				cnt, err := s.chatgptContent(ul)
 				if err != nil {
 					return nil, nil, err
 				}
 				return cnt, tags, nil
+			case "youtube.com":
+				slog.Debug("downloading youtube video", "host", pUrl.Host, "id", pUrl.Query().Get("v"))
+				r, err := s.DownloadYouTubeVideo(ctx, &connect_go.Request[genapi.YouTubeVideo]{
+					Msg: &genapi.YouTubeVideo{
+						Id:   pUrl.Query().Get("v"),
+						File: id.String(),
+					},
+				})
+				if err != nil {
+					return nil, nil, err
+				}
+				if r.Msg.Transcript == nil {
+					var ct *content.Transcript
+					ct, obs, err = s.ProcessAudio(ctx, &content.File{
+						File: r.Msg.FilePath.File,
+					}, id, true)
+					nCnt = append(nCnt, newTranscriptContent(id, ct))
+					s.observeSegments(obs, uid, id, ct)
+				} else {
+					_, err := s.db.SaveContent(uid, uuid.Nil, newTranscriptContent(id, &content.Transcript{
+						Id:       id.String(),
+						Name:     r.Msg.Title,
+						Segments: r.Msg.Transcript,
+					}), nil)
+					if err != nil {
+						slog.Error("error saving content", "error", err)
+					}
+				}
+			default:
+				return nil, nil, errors.Errorf("unsupported url: %s", ul)
 			}
 
 			// TODO breadchris some domain specific logic is a nice to have

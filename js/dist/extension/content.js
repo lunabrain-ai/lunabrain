@@ -37751,7 +37751,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
      */
     filePath;
     /**
-     * @generated from field: repeated protoflow.Segment transcript = 3;
+     * @generated from field: repeated content.Segment transcript = 3;
      */
     transcript = [];
     constructor(data) {
@@ -37769,7 +37769,7 @@ Be sure to create slots properly by using "slot.always" or "slot.optional" with 
         /* ScalarType.STRING */
       },
       { no: 2, name: "file_path", kind: "message", T: FilePath },
-      { no: 3, name: "transcript", kind: "message", T: Segment2, repeated: true }
+      { no: 3, name: "transcript", kind: "message", T: Segment, repeated: true }
     ]);
     static fromBinary(bytes, options) {
       return new _YouTubeVideoResponse().fromBinary(bytes, options);

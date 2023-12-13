@@ -452,7 +452,7 @@ public struct Protoflow_YouTubeVideoResponse {
   /// Clears the value of `filePath`. Subsequent reads from it will return its default value.
   public mutating func clearFilePath() {self._filePath = nil}
 
-  public var transcript: [Protoflow_Segment] = []
+  public var transcript: [Content_Segment] = []
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 

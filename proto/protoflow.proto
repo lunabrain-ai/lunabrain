@@ -161,5 +161,5 @@ message FilePath {
 message YouTubeVideoResponse {
   string title = 1;
   FilePath file_path = 2;
-  repeated Segment transcript = 3;
+  repeated content.Segment transcript = 3;
 }
