@@ -10,7 +10,7 @@ import (
 
 type Discord struct {
 	session *discordgo.Session
-	db      *db.Store
+	db      *db.GormStore
 }
 
 func (c *Discord) Collect(channelID string) ([]*model.DiscordMessage, error) {
@@ -136,7 +136,7 @@ func (c *Discord) getHistoricalChannelMessages(channelID string) ([]*model.Disco
 	return returnMessages, nil
 }
 
-func NewDiscord(session *discordgo.Session, db *db.Store) *Discord {
+func NewDiscord(session *discordgo.Session, db *db.GormStore) *Discord {
 	return &Discord{
 		session: session,
 		db:      db,

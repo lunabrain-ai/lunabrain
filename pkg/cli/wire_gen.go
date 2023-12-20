@@ -7,13 +7,13 @@
 package cli
 
 import (
-	"github.com/lunabrain-ai/lunabrain/pkg/bot"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
-	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
 	"github.com/lunabrain-ai/lunabrain/pkg/config"
 	"github.com/lunabrain-ai/lunabrain/pkg/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/content/normalize"
+	"github.com/lunabrain-ai/lunabrain/pkg/content/store"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/group"
 	"github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/lunabrain-ai/lunabrain/pkg/log"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
@@ -43,19 +43,12 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	store, err := db.New(dbConfig)
+	client, err := db.NewEnt(dbConfig)
 	if err != nil {
 		return nil, err
 	}
-	gormDB, err := db.NewGorm(dbConfig)
-	if err != nil {
-		return nil, err
-	}
-	sessionManager, err := http.NewSession(gormDB)
-	if err != nil {
-		return nil, err
-	}
-	session, err := db.NewSession(gormDB, sessionManager)
+	entStore := store.NewEntStore(client)
+	sessionManager, err := http.NewSession(client)
 	if err != nil {
 		return nil, err
 	}
@@ -83,31 +76,13 @@ func Wire() (*cli.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	client := whisper.NewClient(whisperConfig, openaiConfig, bucketBucket)
-	normalizeNormalize := normalize.New(builder, bucketBucket, client, store)
-	service := content.NewService(store, session, agent, normalizeNormalize, bucketBucket)
-	discordConfig, err := discord.NewConfig(provider)
-	if err != nil {
-		return nil, err
-	}
-	discordgoSession, err := discord.NewDiscordSession(discordConfig)
-	if err != nil {
-		return nil, err
-	}
-	discordSession, err := discord.NewSession(discordConfig, discordgoSession)
-	if err != nil {
-		return nil, err
-	}
-	discordBot := discord.NewBot(agent)
-	handler, err := discord.NewHandler(discordConfig, discordgoSession, discordBot)
-	if err != nil {
-		return nil, err
-	}
-	discordService := discord.New(discordSession, handler)
-	userService := user.NewService(store, session)
-	apihttpServer := server.New(contentConfig, service, store, bucketBucket, discordService, sessionManager, userService)
-	botDiscord := bot.NewDiscord(discordgoSession, store)
-	hn := bot.NewHN(store, normalizeNormalize)
-	app := NewApp(logLog, apihttpServer, botDiscord, hn)
+	whisperClient := whisper.NewClient(whisperConfig, openaiConfig, bucketBucket)
+	normalizeNormalize := normalize.New(builder, bucketBucket, whisperClient, entStore)
+	service := content.NewService(entStore, sessionManager, agent, normalizeNormalize, bucketBucket)
+	groupEntStore := group.NewEntStore(client)
+	userEntStore := user.NewEntStore(client)
+	userService := user.NewService(groupEntStore, sessionManager, userEntStore)
+	apihttpServer := server.New(contentConfig, service, bucketBucket, sessionManager, userService)
+	app := NewApp(logLog, apihttpServer)
 	return app, nil
 }

@@ -5,9 +5,7 @@ package cli
 
 import (
 	"github.com/google/wire"
-	"github.com/lunabrain-ai/lunabrain/pkg/bot"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
-	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
 	"github.com/lunabrain-ai/lunabrain/pkg/config"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/log"
@@ -25,9 +23,6 @@ func Wire() (*cli.App, error) {
 		server.ProviderSet,
 		db.ProviderSet,
 		bucket.ProviderSet,
-		discord.ProviderSet,
-		//publish.ProviderSet,
-		bot.ProviderSet,
 		openai.ProviderSet,
 		whisper.ProviderSet,
 	))

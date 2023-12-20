@@ -24,3 +24,5 @@ venv3.*/
 *.egg-info/
 *.egg
 *.egg-info/
+
+.protoflow.yaml

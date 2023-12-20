@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/lunabrain-ai/lunabrain/gen/content"
 	cnt "github.com/lunabrain-ai/lunabrain/pkg/content/normalize"
+	contentstore "github.com/lunabrain-ai/lunabrain/pkg/content/store"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/pkg/errors"
@@ -15,7 +16,8 @@ import (
 
 // HN collects messages from Hacker News
 type HN struct {
-	db         *db.Store
+	db         *db.GormStore
+	content    *contentstore.EntStore
 	normalizer *cnt.Normalize
 }
 
@@ -26,11 +28,11 @@ type HNStory struct {
 }
 
 func NewHN(
-	db *db.Store,
+	content *contentstore.EntStore,
 	normalizer *cnt.Normalize,
 ) *HN {
 	return &HN{
-		db:         db,
+		content:    content,
 		normalizer: normalizer,
 	}
 }
@@ -105,7 +107,7 @@ func (c *HN) Collect(userID string) error {
 		}
 
 		// TODO breadchris remove user
-		_, err = c.db.SaveContent(uuid.MustParse(userID), id, data, norm)
+		_, err = c.content.SaveContent(ctx, uuid.MustParse(userID), id, data, norm)
 		if err != nil {
 			slog.Warn("error storing content", "error", err)
 			continue

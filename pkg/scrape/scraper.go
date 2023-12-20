@@ -21,11 +21,11 @@ type scraper struct {
 	httpClient     *http.Client
 	browserDomains []string
 	config         Config
-	db             *db.Store
+	db             *db.GormStore
 	chromeCtx      context.Context
 }
 
-func NewScraper(config Config, db *db.Store) *scraper {
+func NewScraper(config Config, db *db.GormStore) *scraper {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}

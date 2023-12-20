@@ -6,15 +6,13 @@ import (
 	"github.com/bufbuild/connect-go"
 	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
 	"github.com/google/wire"
-	"github.com/lunabrain-ai/lunabrain/gen/chat/chatconnect"
 	"github.com/lunabrain-ai/lunabrain/gen/content/contentconnect"
 	"github.com/lunabrain-ai/lunabrain/gen/user/userconnect"
 	"github.com/lunabrain-ai/lunabrain/js/dist/site"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
-	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
 	"github.com/lunabrain-ai/lunabrain/pkg/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/content/normalize"
-	"github.com/lunabrain-ai/lunabrain/pkg/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/group"
 	shttp "github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/lunabrain-ai/lunabrain/pkg/user"
 	"golang.org/x/net/http2"
@@ -29,10 +27,8 @@ import (
 
 type APIHTTPServer struct {
 	config         content.Config
-	db             *db.Store
 	contentService *content.Service
 	bucket         *bucket.Bucket
-	discordService *discord.DiscordService
 	sessionManager *shttp.SessionManager
 	userService    *user.UserService
 }
@@ -43,9 +39,10 @@ type HTTPServer interface {
 
 var (
 	ProviderSet = wire.NewSet(
-		content.NewService,
+		content.ProviderSet,
+		group.ProviderSet,
+		user.ProviderSet,
 		normalize.New,
-		user.NewService,
 		shttp.NewSession,
 		content.NewConfig,
 		New,
@@ -56,18 +53,14 @@ var (
 func New(
 	config content.Config,
 	apiServer *content.Service,
-	db *db.Store,
 	bucket *bucket.Bucket,
-	d *discord.DiscordService,
 	sessionManager *shttp.SessionManager,
 	userService *user.UserService,
 ) *APIHTTPServer {
 	return &APIHTTPServer{
 		config:         config,
 		contentService: apiServer,
-		db:             db,
 		bucket:         bucket,
-		discordService: d,
 		sessionManager: sessionManager,
 		userService:    userService,
 	}
@@ -105,11 +98,9 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 
 	apiRoot.Handle(contentconnect.NewContentServiceHandler(a.contentService, interceptors))
 	apiRoot.Handle(userconnect.NewUserServiceHandler(a.userService, interceptors))
-	apiRoot.Handle(chatconnect.NewDiscordServiceHandler(a.discordService, interceptors))
 	reflector := grpcreflect.NewStaticReflector(
 		"content.ContentService",
 		"user.UserService",
-		"chat.DiscordService",
 	)
 	recoverCall := func(_ context.Context, spec connect.Spec, _ http.Header, p any) error {
 		slog.Error("panic", "err", fmt.Sprintf("%+v", p))

@@ -7,7 +7,7 @@ import (
 	genapi "github.com/lunabrain-ai/lunabrain/gen"
 	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
-	"github.com/lunabrain-ai/lunabrain/pkg/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/content/store"
 	"github.com/lunabrain-ai/lunabrain/pkg/util"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/pkg/errors"
@@ -24,23 +24,20 @@ type Normalize struct {
 	// TODO breadchris use just builder instead
 	fileStore *bucket.Bucket
 	whisper   *whisper.Client
-	db        *db.Store
-
-	ObsLookup map[string]rxgo.Observable
+	content   *store.EntStore
 }
 
 func New(
 	b *bucket.Builder,
 	fileStore *bucket.Bucket,
 	whisper *whisper.Client,
-	db *db.Store,
+	content *store.EntStore,
 ) *Normalize {
 	return &Normalize{
 		bucket:    b,
 		fileStore: fileStore,
 		whisper:   whisper,
-		db:        db,
-		ObsLookup: make(map[string]rxgo.Observable),
+		content:   content,
 	}
 }
 
@@ -125,7 +122,7 @@ func (s *Normalize) Normalize(ctx context.Context, uid uuid.UUID, c *content.Con
 					nCnt = append(nCnt, newTranscriptContent(id, ct))
 					s.observeSegments(obs, uid, id, ct)
 				} else {
-					_, err := s.db.SaveContent(uid, uuid.Nil, newTranscriptContent(id, &content.Transcript{
+					_, err := s.content.SaveContent(ctx, uid, uuid.Nil, newTranscriptContent(id, &content.Transcript{
 						Id:       id.String(),
 						Name:     r.Msg.Title,
 						Segments: r.Msg.Transcript,
@@ -134,8 +131,7 @@ func (s *Normalize) Normalize(ctx context.Context, uid uuid.UUID, c *content.Con
 						slog.Error("error saving content", "error", err)
 					}
 				}
-			default:
-				return nil, nil, errors.Errorf("unsupported url: %s", ul)
+				return nCnt, tags, nil
 			}
 
 			// TODO breadchris some domain specific logic is a nice to have
@@ -169,7 +165,7 @@ func (s *Normalize) observeSegments(
 		ct.Segments = append(ct.Segments, t)
 		mutex.Lock()
 		defer mutex.Unlock()
-		_, err := s.db.SaveContent(userID, uuid.Nil, newTranscriptContent(cntID, ct), nil)
+		_, err := s.content.SaveContent(context.TODO(), userID, uuid.Nil, newTranscriptContent(cntID, ct), nil)
 		if err != nil {
 			slog.Error("error saving content", "error", err)
 		}

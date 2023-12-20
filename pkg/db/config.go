@@ -22,7 +22,7 @@ type Config struct {
 
 func NewDefaultConfig() Config {
 	return Config{
-		DSN:   "${DSN:\"data/lunabrain.db\"}",
+		DSN:   "${DSN:\"file:data/lunabrain.db?_fk=1\"}",
 		Type:  "sqlite3",
 		Debug: false,
 

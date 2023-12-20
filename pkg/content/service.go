@@ -5,12 +5,14 @@ import (
 	connect_go "github.com/bufbuild/connect-go"
 	"github.com/go-shiori/go-readability"
 	"github.com/google/uuid"
+	"github.com/google/wire"
 	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/gen/content/contentconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/content/normalize"
-	"github.com/lunabrain-ai/lunabrain/pkg/db"
-	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
+	"github.com/lunabrain-ai/lunabrain/pkg/content/store"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent"
+	"github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/pkg/errors"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -21,14 +23,35 @@ import (
 )
 
 type Service struct {
-	db         *db.Store
-	sess       *db.Session
+	content    *store.EntStore
+	sess       *http.SessionManager
 	openai     *openai.Agent
 	normalizer *normalize.Normalize
 	fileStore  *bucket.Bucket
 }
 
 var _ contentconnect.ContentServiceHandler = (*Service)(nil)
+
+var ProviderSet = wire.NewSet(
+	NewService,
+	store.NewEntStore,
+)
+
+func NewService(
+	db *store.EntStore,
+	sess *http.SessionManager,
+	openai *openai.Agent,
+	normalizer *normalize.Normalize,
+	fileStore *bucket.Bucket,
+) *Service {
+	return &Service{
+		content:    db,
+		sess:       sess,
+		openai:     openai,
+		normalizer: normalizer,
+		fileStore:  fileStore,
+	}
+}
 
 func (s *Service) Save(ctx context.Context, c *connect_go.Request[content.Contents]) (*connect_go.Response[content.ContentIDs], error) {
 	uid, err := s.sess.GetUserID(ctx)
@@ -65,7 +88,7 @@ func (s *Service) Save(ctx context.Context, c *connect_go.Request[content.Conten
 	norm = append(norm, c.Msg.Related...)
 	c.Msg.Content.Tags = append(c.Msg.Content.Tags, tags...)
 
-	cnt, err := s.db.SaveContent(uid, uuid.Nil, c.Msg.Content, norm)
+	cnt, err := s.content.SaveContent(ctx, uid, uuid.Nil, c.Msg.Content, norm)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to save content")
 	}
@@ -78,19 +101,28 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 		return nil, err
 	}
 
-	var ct []model.Content
+	// TODO breadchris content should not return internal model
+	var ct []*ent.Content
 	if c.Msg.ContentID != "" {
 		parsedID, err := uuid.Parse(c.Msg.ContentID)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to parse content id")
 		}
-		singleContent, err := s.db.GetContentByID(parsedID)
+		singleContent, err := s.content.GetContentByID(ctx, parsedID)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to get stored content")
 		}
-		ct = append(ct, *singleContent)
+		ct = append(ct, singleContent)
 	} else {
-		ct, _, err = s.db.SearchContent(userID, 0, 100, c.Msg.GroupID, c.Msg.Tags)
+		groupID := uuid.Nil
+		if c.Msg.GroupID != "" {
+			groupID, err = uuid.Parse(c.Msg.GroupID)
+			if err != nil {
+				return nil, errors.Wrapf(err, "unable to parse group id")
+			}
+		}
+		// TODO breadchris pagination
+		ct, err = s.content.SearchContent(ctx, userID, 0, 100, groupID, c.Msg.Tags)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to get stored content")
 		}
@@ -99,20 +131,20 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 	var storedContent []*content.StoredContent
 	for _, cn := range ct {
 		var tags []*content.Tag
-		for _, t := range cn.Tags {
+		for _, t := range cn.Edges.Tags {
 			tags = append(tags, &content.Tag{Name: t.Name})
 		}
 		sc := &content.StoredContent{
 			Id:      cn.ID.String(),
-			Content: cn.Data,
-			Votes:   int32(len(cn.Votes)),
+			Content: cn.Data.Content,
+			Votes:   int32(len(cn.Edges.Votes)),
 			Tags:    tags,
 		}
-		if cn.User != nil {
-			sc.User = cn.User.Data.Data
+		if cn.Edges.User != nil {
+			sc.User = cn.Edges.User.Data.User
 		}
 
-		switch t := cn.ContentData.Data.Type.(type) {
+		switch t := cn.Data.Type.(type) {
 		case *content.Content_Data:
 			switch u := t.Data.Type.(type) {
 			case *content.Data_Url:
@@ -122,17 +154,17 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 
 		maxRelated := 20
 		var related []*content.Content
-		for _, r := range cn.RelatedContent {
+		for _, r := range cn.Edges.Children {
 			// TODO breadchris remove this limitation
 			if len(related) >= maxRelated {
 				break
 			}
 
-			rc := r.ContentData.Data
+			rc := r.Data
 			rc.Id = r.ID.String()
 
-			related = append(related, rc)
-			switch t := r.ContentData.Data.Type.(type) {
+			related = append(related, rc.Content)
+			switch t := r.Data.Type.(type) {
 			case *content.Content_Normalized:
 				switch u := t.Normalized.Type.(type) {
 				case *content.Normalized_Readme:
@@ -158,7 +190,7 @@ func (s *Service) Delete(ctx context.Context, c *connect_go.Request[content.Cont
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to parse content id")
 		}
-		err = s.db.DeleteContent(id)
+		err = s.content.DeleteContent(ctx, id)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to save content")
 		}
@@ -176,7 +208,7 @@ func (s *Service) SetTags(ctx context.Context, c *connect_go.Request[content.Set
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to parse content id")
 	}
-	err = s.db.SetTags(id, c.Msg.Tags)
+	err = s.content.SetTags(ctx, id, c.Msg.Tags)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to set tags")
 	}
@@ -189,14 +221,13 @@ func (s *Service) GetTags(ctx context.Context, c *connect_go.Request[content.Tag
 		ts  []string
 	)
 	if c.Msg.GroupId != "" {
-		var gID uuid.UUID
-		gID, err = uuid.Parse(c.Msg.GroupId)
+		gID, err := uuid.Parse(c.Msg.GroupId)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to parse group id")
 		}
-		ts, err = s.db.GetTagsForGroup(gID)
+		ts, err = s.content.GetTagsForGroup(ctx, gID)
 	} else {
-		ts, err = s.db.GetTags()
+		ts, err = s.content.GetTags(ctx)
 	}
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to get tags")
@@ -219,11 +250,11 @@ func (s *Service) Vote(ctx context.Context, c *connect_go.Request[content.VoteRe
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to parse content id")
 	}
-	err = s.db.VoteOnContent(id, cuid)
+	err = s.content.VoteOnContent(ctx, id, cuid)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to vote on content")
 	}
-	votes, err := s.db.GetContentVotes(cuid)
+	votes, err := s.content.GetContentVotes(ctx, cuid)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to get content votes")
 	}
@@ -280,22 +311,6 @@ Here is the content: \n\n`
 		Content: c.Msg,
 		Related: nCnt,
 	}), nil
-}
-
-func NewService(
-	db *db.Store,
-	sess *db.Session,
-	openai *openai.Agent,
-	normalizer *normalize.Normalize,
-	fileStore *bucket.Bucket,
-) *Service {
-	return &Service{
-		db:         db,
-		sess:       sess,
-		openai:     openai,
-		normalizer: normalizer,
-		fileStore:  fileStore,
-	}
 }
 
 func trimMarkdownWhitespace(md string) string {

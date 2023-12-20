@@ -52,7 +52,7 @@ const contentDisplay = (id: string, content: Content): JSX.Element|null => {
             const n = content.type.value;
             switch (n.type.case) {
                 case 'article':
-                    return <p>{n.type.value.title}</p>
+                    return <p className={"text-ellipsis"}>{n.type.value.text}</p>
                 case 'transcript':
                     return <SegmentView segments={n.type.value.segments} />
             }
@@ -146,20 +146,6 @@ export const ContentCard: React.FC<{
                     <Stack.Item style={{maxHeight: '70vh', overflowY: 'auto'}}>
                         {item.content && contentDisplay(item.id, item.content)}
                     </Stack.Item>
-                    {preview && (
-                        <>
-                            <Stack.Item grow={1}>
-                                <Stack>
-                                    <Stack.Item>
-                                        <CardActions />
-                                    </Stack.Item>
-                                    <Stack.Item style={{maxHeight: '70vh', overflowY: 'auto'}}>
-                                        {item.content && contentDisplay(item.id, item.content)}
-                                    </Stack.Item>
-                                </Stack>
-                            </Stack.Item>
-                        </>
-                    )}
                     {userSettings.showPreviews && (
                         <Stack.Item>
                             <IFrameSandbox url={item.url} />

@@ -4,7 +4,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/google/uuid"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
-	"github.com/pkg/errors"
 	"log/slog"
 )
 
@@ -17,7 +16,7 @@ type FileConfig struct {
 type File struct {
 	session *discordgo.Session
 	config  FileConfig
-	db      db.Store
+	db      db.GormStore
 }
 
 func (f *File) Publish(contentID uuid.UUID) error {
@@ -28,19 +27,19 @@ func (f *File) Publish(contentID uuid.UUID) error {
 
 	slog.Debug("publishing content to file", "contentID", contentID.String())
 
-	_, err := f.db.GetContentByID(contentID)
-	if err != nil {
-		return errors.Wrapf(err, "failed to get content by id %s", contentID)
-	}
-
-	// TODO breadchris this is a POC for publishing to a file
-	if f.config.Type == "logseq" {
-		slog.Info("publishing to logseq")
-	}
+	//_, err := f.db.GetContentByID(contentID)
+	//if err != nil {
+	//	return errors.Wrapf(err, "failed to get content by id %s", contentID)
+	//}
+	//
+	//// TODO breadchris this is a POC for publishing to a file
+	//if f.config.Type == "logseq" {
+	//	slog.Info("publishing to logseq")
+	//}
 	return nil
 }
 
-func NewFile(config Config, db db.Store) *File {
+func NewFile(config Config, db db.GormStore) *File {
 	return &File{
 		config: config.File,
 		db:     db,
