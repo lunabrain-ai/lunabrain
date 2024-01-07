@@ -10,8 +10,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/gen/user"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/user"
 )
 
 // Group is the model entity for the Group schema.
@@ -20,7 +20,7 @@ type Group struct {
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
 	// Data holds the value of the "data" field.
-	Data user.Group `json:"data,omitempty"`
+	Data *user.Group `json:"data,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GroupQuery when eager-loading is set.
 	Edges        GroupEdges `json:"edges"`

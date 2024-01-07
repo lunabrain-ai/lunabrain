@@ -25,4 +25,4 @@ venv3.*/
 *.egg
 *.egg-info/
 
-.protoflow.yaml
+.lunabrain.yaml

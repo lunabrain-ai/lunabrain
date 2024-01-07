@@ -16,7 +16,7 @@
     "jsx": "react-jsx",
     "incremental": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./site/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],

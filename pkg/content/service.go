@@ -6,14 +6,15 @@ import (
 	"github.com/go-shiori/go-readability"
 	"github.com/google/uuid"
 	"github.com/google/wire"
-	"github.com/lunabrain-ai/lunabrain/gen/content"
-	"github.com/lunabrain-ai/lunabrain/gen/content/contentconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/content/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/content/store"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/content/contentconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
+	"github.com/lunabrain-ai/lunabrain/pkg/publish"
 	"github.com/pkg/errors"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
@@ -28,6 +29,7 @@ type Service struct {
 	openai     *openai.Agent
 	normalizer *normalize.Normalize
 	fileStore  *bucket.Bucket
+	builder    *bucket.Builder
 }
 
 var _ contentconnect.ContentServiceHandler = (*Service)(nil)
@@ -43,6 +45,7 @@ func NewService(
 	openai *openai.Agent,
 	normalizer *normalize.Normalize,
 	fileStore *bucket.Bucket,
+	builder *bucket.Builder,
 ) *Service {
 	return &Service{
 		content:    db,
@@ -50,7 +53,31 @@ func NewService(
 		openai:     openai,
 		normalizer: normalizer,
 		fileStore:  fileStore,
+		builder:    builder,
 	}
+}
+
+func (s *Service) Publish(ctx context.Context, c *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error) {
+	b := publish.NewBlog(s.builder)
+	err := b.Publish("blog", []*content.Content{
+		{
+			Id: "1",
+			Type: &content.Content_Data{
+				Data: &content.Data{
+					Type: &content.Data_Text{
+						Text: &content.Text{
+							Data: "another one",
+						},
+					},
+				},
+			},
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return connect_go.NewResponse(&content.ContentIDs{ContentIds: c.Msg.GetContentIds()}), nil
 }
 
 func (s *Service) Save(ctx context.Context, c *connect_go.Request[content.Contents]) (*connect_go.Response[content.ContentIDs], error) {
@@ -137,7 +164,6 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 		sc := &content.StoredContent{
 			Id:      cn.ID.String(),
 			Content: cn.Data.Content,
-			Votes:   int32(len(cn.Edges.Votes)),
 			Tags:    tags,
 		}
 		if cn.Edges.User != nil {
@@ -238,29 +264,6 @@ func (s *Service) GetTags(ctx context.Context, c *connect_go.Request[content.Tag
 		processTags(root, t)
 	}
 	return connect_go.NewResponse(&content.Tags{Tags: root.SubTags}), nil
-}
-
-func (s *Service) Vote(ctx context.Context, c *connect_go.Request[content.VoteRequest]) (*connect_go.Response[content.VoteResponse], error) {
-	id, err := s.sess.GetUserID(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	cuid, err := uuid.Parse(c.Msg.ContentId)
-	if err != nil {
-		return nil, errors.Wrapf(err, "unable to parse content id")
-	}
-	err = s.content.VoteOnContent(ctx, id, cuid)
-	if err != nil {
-		return nil, errors.Wrapf(err, "unable to vote on content")
-	}
-	votes, err := s.content.GetContentVotes(ctx, cuid)
-	if err != nil {
-		return nil, errors.Wrapf(err, "unable to get content votes")
-	}
-	return connect_go.NewResponse(&content.VoteResponse{
-		Votes: uint32(len(votes)),
-	}), nil
 }
 
 func (s *Service) Analyze(ctx context.Context, c *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error) {

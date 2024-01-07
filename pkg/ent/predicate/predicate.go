@@ -26,6 +26,3 @@ type Tag func(*sql.Selector)
 
 // User is the predicate function for entuser builders.
 type User func(*sql.Selector)
-
-// Vote is the predicate function for vote builders.
-type Vote func(*sql.Selector)

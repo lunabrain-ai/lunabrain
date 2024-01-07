@@ -16,7 +16,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/schema"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/tag"
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/vote"
 )
 
 // ContentCreate is the builder for creating a Content entity.
@@ -29,12 +28,6 @@ type ContentCreate struct {
 // SetRoot sets the "root" field.
 func (cc *ContentCreate) SetRoot(b bool) *ContentCreate {
 	cc.mutation.SetRoot(b)
-	return cc
-}
-
-// SetVisitCount sets the "visit_count" field.
-func (cc *ContentCreate) SetVisitCount(i int64) *ContentCreate {
-	cc.mutation.SetVisitCount(i)
 	return cc
 }
 
@@ -136,21 +129,6 @@ func (cc *ContentCreate) AddParents(c ...*Content) *ContentCreate {
 	return cc.AddParentIDs(ids...)
 }
 
-// AddVoteIDs adds the "votes" edge to the Vote entity by IDs.
-func (cc *ContentCreate) AddVoteIDs(ids ...uuid.UUID) *ContentCreate {
-	cc.mutation.AddVoteIDs(ids...)
-	return cc
-}
-
-// AddVotes adds the "votes" edges to the Vote entity.
-func (cc *ContentCreate) AddVotes(v ...*Vote) *ContentCreate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return cc.AddVoteIDs(ids...)
-}
-
 // AddGroupIDs adds the "groups" edge to the Group entity by IDs.
 func (cc *ContentCreate) AddGroupIDs(ids ...uuid.UUID) *ContentCreate {
 	cc.mutation.AddGroupIDs(ids...)
@@ -216,9 +194,6 @@ func (cc *ContentCreate) check() error {
 	if _, ok := cc.mutation.Root(); !ok {
 		return &ValidationError{Name: "root", err: errors.New(`ent: missing required field "Content.root"`)}
 	}
-	if _, ok := cc.mutation.VisitCount(); !ok {
-		return &ValidationError{Name: "visit_count", err: errors.New(`ent: missing required field "Content.visit_count"`)}
-	}
 	if _, ok := cc.mutation.Data(); !ok {
 		return &ValidationError{Name: "data", err: errors.New(`ent: missing required field "Content.data"`)}
 	}
@@ -263,10 +238,6 @@ func (cc *ContentCreate) createSpec() (*Content, *sqlgraph.CreateSpec) {
 	if value, ok := cc.mutation.Root(); ok {
 		_spec.SetField(content.FieldRoot, field.TypeBool, value)
 		_node.Root = value
-	}
-	if value, ok := cc.mutation.VisitCount(); ok {
-		_spec.SetField(content.FieldVisitCount, field.TypeInt64, value)
-		_node.VisitCount = value
 	}
 	if value, ok := cc.mutation.Data(); ok {
 		_spec.SetField(content.FieldData, field.TypeJSON, value)
@@ -334,22 +305,6 @@ func (cc *ContentCreate) createSpec() (*Content, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(content.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := cc.mutation.VotesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   content.VotesTable,
-			Columns: []string{content.VotesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(vote.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

@@ -4,10 +4,10 @@ import (
 	"context"
 	connect_go "github.com/bufbuild/connect-go"
 	"github.com/google/uuid"
-	genapi "github.com/lunabrain-ai/lunabrain/gen"
-	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/content/store"
+	genapi "github.com/lunabrain-ai/lunabrain/pkg/gen"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/util"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/pkg/errors"
@@ -122,14 +122,11 @@ func (s *Normalize) Normalize(ctx context.Context, uid uuid.UUID, c *content.Con
 					nCnt = append(nCnt, newTranscriptContent(id, ct))
 					s.observeSegments(obs, uid, id, ct)
 				} else {
-					_, err := s.content.SaveContent(ctx, uid, uuid.Nil, newTranscriptContent(id, &content.Transcript{
+					nCnt = append(nCnt, newTranscriptContent(id, &content.Transcript{
 						Id:       id.String(),
 						Name:     r.Msg.Title,
 						Segments: r.Msg.Transcript,
-					}), nil)
-					if err != nil {
-						slog.Error("error saving content", "error", err)
-					}
+					}))
 				}
 				return nCnt, tags, nil
 			}

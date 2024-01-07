@@ -23,7 +23,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/session"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/tag"
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/vote"
 )
 
 // Client is the client that holds all ent builders.
@@ -45,8 +44,6 @@ type Client struct {
 	Tag *TagClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
-	// Vote is the client for interacting with the Vote builders.
-	Vote *VoteClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -67,7 +64,6 @@ func (c *Client) init() {
 	c.Session = NewSessionClient(c.config)
 	c.Tag = NewTagClient(c.config)
 	c.User = NewUserClient(c.config)
-	c.Vote = NewVoteClient(c.config)
 }
 
 type (
@@ -160,7 +156,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Session:     NewSessionClient(cfg),
 		Tag:         NewTagClient(cfg),
 		User:        NewUserClient(cfg),
-		Vote:        NewVoteClient(cfg),
 	}, nil
 }
 
@@ -187,7 +182,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Session:     NewSessionClient(cfg),
 		Tag:         NewTagClient(cfg),
 		User:        NewUserClient(cfg),
-		Vote:        NewVoteClient(cfg),
 	}, nil
 }
 
@@ -218,7 +212,6 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Content, c.Group, c.GroupInvite, c.GroupUser, c.Session, c.Tag, c.User,
-		c.Vote,
 	} {
 		n.Use(hooks...)
 	}
@@ -229,7 +222,6 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Content, c.Group, c.GroupInvite, c.GroupUser, c.Session, c.Tag, c.User,
-		c.Vote,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -252,8 +244,6 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Tag.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
-	case *VoteMutation:
-		return c.Vote.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
@@ -424,22 +414,6 @@ func (c *ContentClient) QueryParents(co *Content) *ContentQuery {
 			sqlgraph.From(content.Table, content.FieldID, id),
 			sqlgraph.To(content.Table, content.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, content.ParentsTable, content.ParentsPrimaryKey...),
-		)
-		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryVotes queries the votes edge of a Content.
-func (c *ContentClient) QueryVotes(co *Content) *VoteQuery {
-	query := (&VoteClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := co.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(content.Table, content.FieldID, id),
-			sqlgraph.To(vote.Table, vote.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, content.VotesTable, content.VotesColumn),
 		)
 		fromV = sqlgraph.Neighbors(co.driver.Dialect(), step)
 		return fromV, nil
@@ -1437,22 +1411,6 @@ func (c *UserClient) QueryGroupUsers(u *User) *GroupUserQuery {
 	return query
 }
 
-// QueryVotes queries the votes edge of a User.
-func (c *UserClient) QueryVotes(u *User) *VoteQuery {
-	query := (&VoteClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := u.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(entuser.Table, entuser.FieldID, id),
-			sqlgraph.To(vote.Table, vote.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, entuser.VotesTable, entuser.VotesColumn),
-		)
-		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -1478,178 +1436,12 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 	}
 }
 
-// VoteClient is a client for the Vote schema.
-type VoteClient struct {
-	config
-}
-
-// NewVoteClient returns a client for the Vote from the given config.
-func NewVoteClient(c config) *VoteClient {
-	return &VoteClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `vote.Hooks(f(g(h())))`.
-func (c *VoteClient) Use(hooks ...Hook) {
-	c.hooks.Vote = append(c.hooks.Vote, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `vote.Intercept(f(g(h())))`.
-func (c *VoteClient) Intercept(interceptors ...Interceptor) {
-	c.inters.Vote = append(c.inters.Vote, interceptors...)
-}
-
-// Create returns a builder for creating a Vote entity.
-func (c *VoteClient) Create() *VoteCreate {
-	mutation := newVoteMutation(c.config, OpCreate)
-	return &VoteCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Vote entities.
-func (c *VoteClient) CreateBulk(builders ...*VoteCreate) *VoteCreateBulk {
-	return &VoteCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *VoteClient) MapCreateBulk(slice any, setFunc func(*VoteCreate, int)) *VoteCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &VoteCreateBulk{err: fmt.Errorf("calling to VoteClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*VoteCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &VoteCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Vote.
-func (c *VoteClient) Update() *VoteUpdate {
-	mutation := newVoteMutation(c.config, OpUpdate)
-	return &VoteUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *VoteClient) UpdateOne(v *Vote) *VoteUpdateOne {
-	mutation := newVoteMutation(c.config, OpUpdateOne, withVote(v))
-	return &VoteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *VoteClient) UpdateOneID(id uuid.UUID) *VoteUpdateOne {
-	mutation := newVoteMutation(c.config, OpUpdateOne, withVoteID(id))
-	return &VoteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Vote.
-func (c *VoteClient) Delete() *VoteDelete {
-	mutation := newVoteMutation(c.config, OpDelete)
-	return &VoteDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *VoteClient) DeleteOne(v *Vote) *VoteDeleteOne {
-	return c.DeleteOneID(v.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *VoteClient) DeleteOneID(id uuid.UUID) *VoteDeleteOne {
-	builder := c.Delete().Where(vote.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &VoteDeleteOne{builder}
-}
-
-// Query returns a query builder for Vote.
-func (c *VoteClient) Query() *VoteQuery {
-	return &VoteQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeVote},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a Vote entity by its id.
-func (c *VoteClient) Get(ctx context.Context, id uuid.UUID) (*Vote, error) {
-	return c.Query().Where(vote.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *VoteClient) GetX(ctx context.Context, id uuid.UUID) *Vote {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryContent queries the content edge of a Vote.
-func (c *VoteClient) QueryContent(v *Vote) *ContentQuery {
-	query := (&ContentClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := v.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(vote.Table, vote.FieldID, id),
-			sqlgraph.To(content.Table, content.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, vote.ContentTable, vote.ContentColumn),
-		)
-		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryUser queries the user edge of a Vote.
-func (c *VoteClient) QueryUser(v *Vote) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := v.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(vote.Table, vote.FieldID, id),
-			sqlgraph.To(entuser.Table, entuser.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, vote.UserTable, vote.UserColumn),
-		)
-		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *VoteClient) Hooks() []Hook {
-	return c.hooks.Vote
-}
-
-// Interceptors returns the client interceptors.
-func (c *VoteClient) Interceptors() []Interceptor {
-	return c.inters.Vote
-}
-
-func (c *VoteClient) mutate(ctx context.Context, m *VoteMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&VoteCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&VoteUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&VoteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&VoteDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown Vote mutation op: %q", m.Op())
-	}
-}
-
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Content, Group, GroupInvite, GroupUser, Session, Tag, User, Vote []ent.Hook
+		Content, Group, GroupInvite, GroupUser, Session, Tag, User []ent.Hook
 	}
 	inters struct {
-		Content, Group, GroupInvite, GroupUser, Session, Tag, User,
-		Vote []ent.Interceptor
+		Content, Group, GroupInvite, GroupUser, Session, Tag, User []ent.Interceptor
 	}
 )

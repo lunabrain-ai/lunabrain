@@ -407,7 +407,7 @@ func (gq *GroupQuery) WithTags(opts ...func(*TagQuery)) *GroupQuery {
 // Example:
 //
 //	var v []struct {
-//		Data user.Group `json:"data,omitempty"`
+//		Data *user.Group `json:"data,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -430,7 +430,7 @@ func (gq *GroupQuery) GroupBy(field string, fields ...string) *GroupGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Data user.Group `json:"data,omitempty"`
+//		Data *user.Group `json:"data,omitempty"`
 //	}
 //
 //	client.Group.Query().

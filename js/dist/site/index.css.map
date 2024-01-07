@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../site/content/editor.css"],
+  "sourcesContent": [".tiptap ul {\n    list-style-type: revert;\n    margin-inline-start: 0px;\n    margin-inline-end: 0px;\n    padding-inline-start: 40px;\n}"],
+  "mappings": ";AAAA,CAAC,OAAO;AACJ,mBAAiB;AACjB,uBAAqB;AACrB,qBAAmB;AACnB,wBAAsB;AAC1B;",
+  "names": []
+}

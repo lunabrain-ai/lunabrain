@@ -23,8 +23,6 @@ type Content struct {
 	ID uuid.UUID `json:"id,omitempty"`
 	// Root holds the value of the "root" field.
 	Root bool `json:"root,omitempty"`
-	// VisitCount holds the value of the "visit_count" field.
-	VisitCount int64 `json:"visit_count,omitempty"`
 	// Data holds the value of the "data" field.
 	Data *schema.ContentEncoder `json:"data,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -46,13 +44,11 @@ type ContentEdges struct {
 	Children []*Content `json:"children,omitempty"`
 	// Parents holds the value of the parents edge.
 	Parents []*Content `json:"parents,omitempty"`
-	// Votes holds the value of the votes edge.
-	Votes []*Vote `json:"votes,omitempty"`
 	// Groups holds the value of the groups edge.
 	Groups []*Group `json:"groups,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [5]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -95,19 +91,10 @@ func (e ContentEdges) ParentsOrErr() ([]*Content, error) {
 	return nil, &NotLoadedError{edge: "parents"}
 }
 
-// VotesOrErr returns the Votes value or an error if the edge
-// was not loaded in eager-loading.
-func (e ContentEdges) VotesOrErr() ([]*Vote, error) {
-	if e.loadedTypes[4] {
-		return e.Votes, nil
-	}
-	return nil, &NotLoadedError{edge: "votes"}
-}
-
 // GroupsOrErr returns the Groups value or an error if the edge
 // was not loaded in eager-loading.
 func (e ContentEdges) GroupsOrErr() ([]*Group, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[4] {
 		return e.Groups, nil
 	}
 	return nil, &NotLoadedError{edge: "groups"}
@@ -122,8 +109,6 @@ func (*Content) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case content.FieldRoot:
 			values[i] = new(sql.NullBool)
-		case content.FieldVisitCount:
-			values[i] = new(sql.NullInt64)
 		case content.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
 		case content.FieldID:
@@ -156,12 +141,6 @@ func (c *Content) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field root", values[i])
 			} else if value.Valid {
 				c.Root = value.Bool
-			}
-		case content.FieldVisitCount:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field visit_count", values[i])
-			} else if value.Valid {
-				c.VisitCount = value.Int64
 			}
 		case content.FieldData:
 			if value, ok := values[i].(*[]byte); !ok {
@@ -217,11 +196,6 @@ func (c *Content) QueryParents() *ContentQuery {
 	return NewContentClient(c.config).QueryParents(c)
 }
 
-// QueryVotes queries the "votes" edge of the Content entity.
-func (c *Content) QueryVotes() *VoteQuery {
-	return NewContentClient(c.config).QueryVotes(c)
-}
-
 // QueryGroups queries the "groups" edge of the Content entity.
 func (c *Content) QueryGroups() *GroupQuery {
 	return NewContentClient(c.config).QueryGroups(c)
@@ -252,9 +226,6 @@ func (c *Content) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v, ", c.ID))
 	builder.WriteString("root=")
 	builder.WriteString(fmt.Sprintf("%v", c.Root))
-	builder.WriteString(", ")
-	builder.WriteString("visit_count=")
-	builder.WriteString(fmt.Sprintf("%v", c.VisitCount))
 	builder.WriteString(", ")
 	builder.WriteString("data=")
 	builder.WriteString(fmt.Sprintf("%v", c.Data))

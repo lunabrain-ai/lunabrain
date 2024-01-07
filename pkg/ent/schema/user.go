@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/gen/user"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/user"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -30,7 +30,6 @@ func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("content", Content.Type),
 		edge.To("group_users", GroupUser.Type),
-		edge.To("votes", Vote.Type),
 	}
 }
 

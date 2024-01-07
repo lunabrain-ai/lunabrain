@@ -43,7 +43,7 @@ const runTailwindBuild = (watch, outfile) => {
         const args = [
             'tailwindcss',
             'build',
-            '-i', 'src/styles/tailwind.css',
+            '-i', 'site/styles/tailwind.css',
             '-o', outfile
         ];
 
@@ -98,10 +98,10 @@ if (buildSite) {
     await doBuild({
         ...baseOptions,
         entryPoints: [
-            "./src/index.tsx",
-            "./src/styles/globals.css",
-            "./src/favicon.ico",
-            "./src/index.html",
+            "./site/index.tsx",
+            "./site/styles/globals.css",
+            "./site/favicon.ico",
+            "./site/index.html",
         ],
         outdir: `${buildDir}/site/`,
     }, true);
@@ -111,13 +111,13 @@ if (buildExtension) {
     await doBuild({
         ...baseOptions,
         entryPoints: [
-            "./src/extension/content.tsx",
-            "./src/extension/tab.tsx",
-            "./src/extension/options.tsx",
-            "./src/extension/background.tsx",
-            "./src/extension/options.html",
-            "./src/extension/tab.html",
-            "./src/extension/manifest.json",
+            "./extension/content.tsx",
+            "./extension/tab.tsx",
+            "./extension/options.tsx",
+            "./extension/background.tsx",
+            "./extension/options.html",
+            "./extension/tab.html",
+            "./extension/manifest.json",
         ],
         outdir: `${buildDir}/extension/`,
     }, false);

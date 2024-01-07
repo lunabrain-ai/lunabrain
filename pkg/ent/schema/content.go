@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/gen/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
 	"google.golang.org/protobuf/encoding/protojson"
 	"time"
 )
@@ -21,7 +21,6 @@ func (Content) Fields() []ent.Field {
 		field.UUID("id", uuid.UUID{}).
 			Default(uuid.New),
 		field.Bool("root"),
-		field.Int64("visit_count"),
 		field.JSON("data", &ContentEncoder{}),
 		field.Time("created_at").Default(time.Now),
 	}
@@ -38,7 +37,6 @@ func (Content) Edges() []ent.Edge {
 		edge.To("children", Content.Type),
 		edge.From("parents", Content.Type).
 			Ref("children"),
-		edge.To("votes", Vote.Type),
 		edge.To("groups", Group.Type),
 	}
 }

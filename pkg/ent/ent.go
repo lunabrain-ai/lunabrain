@@ -20,7 +20,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/tag"
 
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/vote"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -88,7 +87,6 @@ func checkColumn(table, column string) error {
 			session.Table:     session.ValidColumn,
 			tag.Table:         tag.ValidColumn,
 			entuser.Table:     entuser.ValidColumn,
-			vote.Table:        vote.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

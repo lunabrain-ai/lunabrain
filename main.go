@@ -1,6 +1,6 @@
 package main
 
-//go:generate protoc --jsonschema_out=gen/jsonschema --proto_path=proto proto/ai.proto
+//go:generate protoc --jsonschema_out=pkg/gen/jsonschema --proto_path=proto proto/ai.proto
 //go:generate npx buf generate proto
 
 import (

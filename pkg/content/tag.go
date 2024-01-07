@@ -1,7 +1,7 @@
 package content
 
 import (
-	"github.com/lunabrain-ai/lunabrain/gen/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
 	"strings"
 )
 

@@ -3,12 +3,12 @@ package content
 import (
 	"context"
 	connect_go "github.com/bufbuild/connect-go"
-	genapi "github.com/lunabrain-ai/lunabrain/gen"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen"
 	"github.com/reactivex/rxgo/v2"
 	"log/slog"
 )
 
-func (s *Service) Infer(ctx context.Context, c *connect_go.Request[genapi.InferRequest], c2 *connect_go.ServerStream[genapi.InferResponse]) error {
+func (s *Service) Infer(ctx context.Context, c *connect_go.Request[gen.InferRequest], c2 *connect_go.ServerStream[gen.InferResponse]) error {
 	var content string
 	for _, t := range c.Msg.Text {
 		content += t + " "
@@ -28,7 +28,7 @@ func (s *Service) Infer(ctx context.Context, c *connect_go.Request[genapi.InferR
 		if !ok {
 			return
 		}
-		if err := c2.Send(&genapi.InferResponse{
+		if err := c2.Send(&gen.InferResponse{
 			Text: s,
 		}); err != nil {
 			slog.Error("error sending token", "error", err)
@@ -42,8 +42,8 @@ func (s *Service) Infer(ctx context.Context, c *connect_go.Request[genapi.InferR
 	return resErr
 }
 
-func (s *Service) AnalyzeConversation(ctx context.Context, c *connect_go.Request[genapi.AnalyzeConversationRequest]) (*connect_go.Response[genapi.AnalyzeConversationResponse], error) {
-	ac := &genapi.AnalyzeConversationResponse{}
+func (s *Service) AnalyzeConversation(ctx context.Context, c *connect_go.Request[gen.AnalyzeConversationRequest]) (*connect_go.Response[gen.AnalyzeConversationResponse], error) {
+	ac := &gen.AnalyzeConversationResponse{}
 	err := s.openai.PromptToProto(ctx, c.Msg.Text, ac)
 	if err != nil {
 		return nil, err

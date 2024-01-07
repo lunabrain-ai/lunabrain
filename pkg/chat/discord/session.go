@@ -13,7 +13,6 @@ var ProviderSet = wire.NewSet(
 	NewBot,
 	NewHandler,
 	NewSession,
-	New,
 )
 
 type Session struct {

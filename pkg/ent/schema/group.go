@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/gen/user"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/user"
 )
 
 // Group holds the schema definition for the Group entity.
@@ -18,7 +18,7 @@ func (Group) Fields() []ent.Field {
 	return []ent.Field{
 		field.UUID("id", uuid.UUID{}).
 			Default(uuid.New),
-		field.JSON("data", user.Group{}),
+		field.JSON("data", &user.Group{}),
 	}
 }
 

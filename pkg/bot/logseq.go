@@ -11,13 +11,6 @@ import (
 	"strings"
 )
 
-type LogSeq struct {
-}
-
-func NewLogSeq() *LogSeq {
-	return &LogSeq{}
-}
-
 // walkDirectory walks a directory and emits markdown file paths to an Observable.
 func walkDirectory(dir string) rxgo.Observable {
 	return rxgo.Create([]rxgo.Producer{func(ctx context.Context, next chan<- rxgo.Item) {
@@ -89,7 +82,7 @@ func parseMarkdown(filePath string) ([]TaggedLink, error) {
 	return results, nil
 }
 
-func (s *LogSeq) Load(dir string) rxgo.Observable {
+func ProcessFiles(dir string) rxgo.Observable {
 	observable := walkDirectory(dir)
 
 	// Parse markdown and extract URLs and tags

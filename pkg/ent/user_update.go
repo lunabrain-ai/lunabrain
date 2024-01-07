@@ -16,7 +16,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/predicate"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/schema"
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/vote"
 )
 
 // UserUpdate is the builder for updating User entities.
@@ -80,21 +79,6 @@ func (uu *UserUpdate) AddGroupUsers(g ...*GroupUser) *UserUpdate {
 	return uu.AddGroupUserIDs(ids...)
 }
 
-// AddVoteIDs adds the "votes" edge to the Vote entity by IDs.
-func (uu *UserUpdate) AddVoteIDs(ids ...uuid.UUID) *UserUpdate {
-	uu.mutation.AddVoteIDs(ids...)
-	return uu
-}
-
-// AddVotes adds the "votes" edges to the Vote entity.
-func (uu *UserUpdate) AddVotes(v ...*Vote) *UserUpdate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return uu.AddVoteIDs(ids...)
-}
-
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -140,27 +124,6 @@ func (uu *UserUpdate) RemoveGroupUsers(g ...*GroupUser) *UserUpdate {
 		ids[i] = g[i].ID
 	}
 	return uu.RemoveGroupUserIDs(ids...)
-}
-
-// ClearVotes clears all "votes" edges to the Vote entity.
-func (uu *UserUpdate) ClearVotes() *UserUpdate {
-	uu.mutation.ClearVotes()
-	return uu
-}
-
-// RemoveVoteIDs removes the "votes" edge to Vote entities by IDs.
-func (uu *UserUpdate) RemoveVoteIDs(ids ...uuid.UUID) *UserUpdate {
-	uu.mutation.RemoveVoteIDs(ids...)
-	return uu
-}
-
-// RemoveVotes removes "votes" edges to Vote entities.
-func (uu *UserUpdate) RemoveVotes(v ...*Vote) *UserUpdate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return uu.RemoveVoteIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -298,51 +261,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uu.mutation.VotesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   entuser.VotesTable,
-			Columns: []string{entuser.VotesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(vote.FieldID, field.TypeUUID),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.RemovedVotesIDs(); len(nodes) > 0 && !uu.mutation.VotesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   entuser.VotesTable,
-			Columns: []string{entuser.VotesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(vote.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.VotesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   entuser.VotesTable,
-			Columns: []string{entuser.VotesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(vote.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{entuser.Label}
@@ -411,21 +329,6 @@ func (uuo *UserUpdateOne) AddGroupUsers(g ...*GroupUser) *UserUpdateOne {
 	return uuo.AddGroupUserIDs(ids...)
 }
 
-// AddVoteIDs adds the "votes" edge to the Vote entity by IDs.
-func (uuo *UserUpdateOne) AddVoteIDs(ids ...uuid.UUID) *UserUpdateOne {
-	uuo.mutation.AddVoteIDs(ids...)
-	return uuo
-}
-
-// AddVotes adds the "votes" edges to the Vote entity.
-func (uuo *UserUpdateOne) AddVotes(v ...*Vote) *UserUpdateOne {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return uuo.AddVoteIDs(ids...)
-}
-
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -471,27 +374,6 @@ func (uuo *UserUpdateOne) RemoveGroupUsers(g ...*GroupUser) *UserUpdateOne {
 		ids[i] = g[i].ID
 	}
 	return uuo.RemoveGroupUserIDs(ids...)
-}
-
-// ClearVotes clears all "votes" edges to the Vote entity.
-func (uuo *UserUpdateOne) ClearVotes() *UserUpdateOne {
-	uuo.mutation.ClearVotes()
-	return uuo
-}
-
-// RemoveVoteIDs removes the "votes" edge to Vote entities by IDs.
-func (uuo *UserUpdateOne) RemoveVoteIDs(ids ...uuid.UUID) *UserUpdateOne {
-	uuo.mutation.RemoveVoteIDs(ids...)
-	return uuo
-}
-
-// RemoveVotes removes "votes" edges to Vote entities.
-func (uuo *UserUpdateOne) RemoveVotes(v ...*Vote) *UserUpdateOne {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return uuo.RemoveVoteIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -652,51 +534,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(groupuser.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if uuo.mutation.VotesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   entuser.VotesTable,
-			Columns: []string{entuser.VotesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(vote.FieldID, field.TypeUUID),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.RemovedVotesIDs(); len(nodes) > 0 && !uuo.mutation.VotesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   entuser.VotesTable,
-			Columns: []string{entuser.VotesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(vote.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.VotesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   entuser.VotesTable,
-			Columns: []string{entuser.VotesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(vote.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

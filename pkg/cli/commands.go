@@ -83,7 +83,7 @@ func liveReload() error {
 	c := reload.Config{
 		Cmd: []string{"go", "run", "main.go", "start"},
 		// ideally we use tilt here
-		Targets:  []string{"pkg", "gen"},
+		Targets:  []string{"pkg"},
 		Patterns: []string{"**/*.go"},
 	}
 	// TODO breadchris this code needs to be refactored to use observability

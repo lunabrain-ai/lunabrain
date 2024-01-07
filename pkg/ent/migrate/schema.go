@@ -12,7 +12,6 @@ var (
 	ContentsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "root", Type: field.TypeBool},
-		{Name: "visit_count", Type: field.TypeInt64},
 		{Name: "data", Type: field.TypeJSON},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "user_content", Type: field.TypeUUID, Nullable: true},
@@ -25,7 +24,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "contents_users_content",
-				Columns:    []*schema.Column{ContentsColumns[5]},
+				Columns:    []*schema.Column{ContentsColumns[4]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -135,32 +134,6 @@ var (
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 	}
-	// VotesColumns holds the columns for the "votes" table.
-	VotesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID},
-		{Name: "content_votes", Type: field.TypeUUID, Nullable: true},
-		{Name: "user_votes", Type: field.TypeUUID, Nullable: true},
-	}
-	// VotesTable holds the schema information for the "votes" table.
-	VotesTable = &schema.Table{
-		Name:       "votes",
-		Columns:    VotesColumns,
-		PrimaryKey: []*schema.Column{VotesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "votes_contents_votes",
-				Columns:    []*schema.Column{VotesColumns[1]},
-				RefColumns: []*schema.Column{ContentsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:     "votes_users_votes",
-				Columns:    []*schema.Column{VotesColumns[2]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
-	}
 	// ContentChildrenColumns holds the columns for the "content_children" table.
 	ContentChildrenColumns = []*schema.Column{
 		{Name: "content_id", Type: field.TypeUUID},
@@ -245,7 +218,6 @@ var (
 		SessionsTable,
 		TagsTable,
 		UsersTable,
-		VotesTable,
 		ContentChildrenTable,
 		ContentGroupsTable,
 		TagContentsTable,
@@ -258,8 +230,6 @@ func init() {
 	GroupUsersTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupUsersTable.ForeignKeys[1].RefTable = UsersTable
 	TagsTable.ForeignKeys[0].RefTable = GroupsTable
-	VotesTable.ForeignKeys[0].RefTable = ContentsTable
-	VotesTable.ForeignKeys[1].RefTable = UsersTable
 	ContentChildrenTable.ForeignKeys[0].RefTable = ContentsTable
 	ContentChildrenTable.ForeignKeys[1].RefTable = ContentsTable
 	ContentGroupsTable.ForeignKeys[0].RefTable = ContentsTable

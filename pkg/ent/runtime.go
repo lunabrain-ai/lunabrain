@@ -12,7 +12,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/schema"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/tag"
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/vote"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -22,7 +21,7 @@ func init() {
 	contentFields := schema.Content{}.Fields()
 	_ = contentFields
 	// contentDescCreatedAt is the schema descriptor for created_at field.
-	contentDescCreatedAt := contentFields[4].Descriptor()
+	contentDescCreatedAt := contentFields[3].Descriptor()
 	// content.DefaultCreatedAt holds the default value on creation for the created_at field.
 	content.DefaultCreatedAt = contentDescCreatedAt.Default.(func() time.Time)
 	// contentDescID is the schema descriptor for id field.
@@ -53,10 +52,4 @@ func init() {
 	entuserDescID := entuserFields[0].Descriptor()
 	// entuser.DefaultID holds the default value on creation for the id field.
 	entuser.DefaultID = entuserDescID.Default.(func() uuid.UUID)
-	voteFields := schema.Vote{}.Fields()
-	_ = voteFields
-	// voteDescID is the schema descriptor for id field.
-	voteDescID := voteFields[0].Descriptor()
-	// vote.DefaultID holds the default value on creation for the id field.
-	vote.DefaultID = voteDescID.Default.(func() uuid.UUID)
 }

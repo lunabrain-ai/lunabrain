@@ -14,7 +14,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupuser"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/schema"
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/vote"
 )
 
 // UserCreate is the builder for creating a User entity.
@@ -84,21 +83,6 @@ func (uc *UserCreate) AddGroupUsers(g ...*GroupUser) *UserCreate {
 		ids[i] = g[i].ID
 	}
 	return uc.AddGroupUserIDs(ids...)
-}
-
-// AddVoteIDs adds the "votes" edge to the Vote entity by IDs.
-func (uc *UserCreate) AddVoteIDs(ids ...uuid.UUID) *UserCreate {
-	uc.mutation.AddVoteIDs(ids...)
-	return uc
-}
-
-// AddVotes adds the "votes" edges to the Vote entity.
-func (uc *UserCreate) AddVotes(v ...*Vote) *UserCreate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return uc.AddVoteIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -225,22 +209,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(groupuser.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := uc.mutation.VotesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   entuser.VotesTable,
-			Columns: []string{entuser.VotesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(vote.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

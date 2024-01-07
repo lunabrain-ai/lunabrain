@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/lunabrain-ai/lunabrain/gen/user"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/user"
 	"gorm.io/datatypes"
 )
 

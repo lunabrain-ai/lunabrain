@@ -17,8 +17,6 @@ const (
 	FieldID = "id"
 	// FieldRoot holds the string denoting the root field in the database.
 	FieldRoot = "root"
-	// FieldVisitCount holds the string denoting the visit_count field in the database.
-	FieldVisitCount = "visit_count"
 	// FieldData holds the string denoting the data field in the database.
 	FieldData = "data"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -31,8 +29,6 @@ const (
 	EdgeChildren = "children"
 	// EdgeParents holds the string denoting the parents edge name in mutations.
 	EdgeParents = "parents"
-	// EdgeVotes holds the string denoting the votes edge name in mutations.
-	EdgeVotes = "votes"
 	// EdgeGroups holds the string denoting the groups edge name in mutations.
 	EdgeGroups = "groups"
 	// Table holds the table name of the content in the database.
@@ -53,13 +49,6 @@ const (
 	ChildrenTable = "content_children"
 	// ParentsTable is the table that holds the parents relation/edge. The primary key declared below.
 	ParentsTable = "content_children"
-	// VotesTable is the table that holds the votes relation/edge.
-	VotesTable = "votes"
-	// VotesInverseTable is the table name for the Vote entity.
-	// It exists in this package in order to avoid circular dependency with the "vote" package.
-	VotesInverseTable = "votes"
-	// VotesColumn is the table column denoting the votes relation/edge.
-	VotesColumn = "content_votes"
 	// GroupsTable is the table that holds the groups relation/edge. The primary key declared below.
 	GroupsTable = "content_groups"
 	// GroupsInverseTable is the table name for the Group entity.
@@ -71,7 +60,6 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldRoot,
-	FieldVisitCount,
 	FieldData,
 	FieldCreatedAt,
 }
@@ -132,11 +120,6 @@ func ByRoot(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRoot, opts...).ToFunc()
 }
 
-// ByVisitCount orders the results by the visit_count field.
-func ByVisitCount(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldVisitCount, opts...).ToFunc()
-}
-
 // ByCreatedAt orders the results by the created_at field.
 func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
@@ -191,20 +174,6 @@ func ByParents(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByVotesCount orders the results by votes count.
-func ByVotesCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newVotesStep(), opts...)
-	}
-}
-
-// ByVotes orders the results by votes terms.
-func ByVotes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newVotesStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
 // ByGroupsCount orders the results by groups count.
 func ByGroupsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -244,13 +213,6 @@ func newParentsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, true, ParentsTable, ParentsPrimaryKey...),
-	)
-}
-func newVotesStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(VotesInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, VotesTable, VotesColumn),
 	)
 }
 func newGroupsStep() *sqlgraph.Step {

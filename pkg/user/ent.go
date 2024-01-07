@@ -3,10 +3,10 @@ package user
 import (
 	"context"
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/gen/user"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/schema"
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/user"
 	"github.com/pkg/errors"
 	"log/slog"
 )

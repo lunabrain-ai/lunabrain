@@ -16,7 +16,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupuser"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/predicate"
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/vote"
 )
 
 // UserQuery is the builder for querying User entities.
@@ -28,7 +27,6 @@ type UserQuery struct {
 	predicates     []predicate.User
 	withContent    *ContentQuery
 	withGroupUsers *GroupUserQuery
-	withVotes      *VoteQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -102,28 +100,6 @@ func (uq *UserQuery) QueryGroupUsers() *GroupUserQuery {
 			sqlgraph.From(entuser.Table, entuser.FieldID, selector),
 			sqlgraph.To(groupuser.Table, groupuser.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, entuser.GroupUsersTable, entuser.GroupUsersColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryVotes chains the current query on the "votes" edge.
-func (uq *UserQuery) QueryVotes() *VoteQuery {
-	query := (&VoteClient{config: uq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := uq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := uq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(entuser.Table, entuser.FieldID, selector),
-			sqlgraph.To(vote.Table, vote.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, entuser.VotesTable, entuser.VotesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -325,7 +301,6 @@ func (uq *UserQuery) Clone() *UserQuery {
 		predicates:     append([]predicate.User{}, uq.predicates...),
 		withContent:    uq.withContent.Clone(),
 		withGroupUsers: uq.withGroupUsers.Clone(),
-		withVotes:      uq.withVotes.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -351,17 +326,6 @@ func (uq *UserQuery) WithGroupUsers(opts ...func(*GroupUserQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withGroupUsers = query
-	return uq
-}
-
-// WithVotes tells the query-builder to eager-load the nodes that are connected to
-// the "votes" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithVotes(opts ...func(*VoteQuery)) *UserQuery {
-	query := (&VoteClient{config: uq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	uq.withVotes = query
 	return uq
 }
 
@@ -443,10 +407,9 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [2]bool{
 			uq.withContent != nil,
 			uq.withGroupUsers != nil,
-			uq.withVotes != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -478,13 +441,6 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadGroupUsers(ctx, query, nodes,
 			func(n *User) { n.Edges.GroupUsers = []*GroupUser{} },
 			func(n *User, e *GroupUser) { n.Edges.GroupUsers = append(n.Edges.GroupUsers, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := uq.withVotes; query != nil {
-		if err := uq.loadVotes(ctx, query, nodes,
-			func(n *User) { n.Edges.Votes = []*Vote{} },
-			func(n *User, e *Vote) { n.Edges.Votes = append(n.Edges.Votes, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -548,37 +504,6 @@ func (uq *UserQuery) loadGroupUsers(ctx context.Context, query *GroupUserQuery, 
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_group_users" returned %v for node %v`, *fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (uq *UserQuery) loadVotes(ctx context.Context, query *VoteQuery, nodes []*User, init func(*User), assign func(*User, *Vote)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uuid.UUID]*User)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	query.withFKs = true
-	query.Where(predicate.Vote(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(entuser.VotesColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.user_votes
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "user_votes" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_votes" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

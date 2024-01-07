@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/wire"
-	"github.com/lunabrain-ai/lunabrain/gen/jsonschema"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/jsonschema"
 	"github.com/pkg/errors"
 	"github.com/reactivex/rxgo/v2"
 	"github.com/samber/lo"

@@ -8,7 +8,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"go.uber.org/config"
-	"io/ioutil"
 	"log/slog"
 	"os"
 	"path"
@@ -56,7 +55,7 @@ func NewConfigProvider() (config.Provider, error) {
 		config.Static(newDefaultConfig()),
 	}
 
-	files, err := ioutil.ReadDir(configDir)
+	files, err := os.ReadDir(configDir)
 	if err == nil {
 		for _, file := range files {
 			// do not add to opts if file is not *.yaml

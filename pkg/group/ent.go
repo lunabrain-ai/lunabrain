@@ -3,10 +3,10 @@ package group
 import (
 	"context"
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/gen/user"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupinvite"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/user"
 	"github.com/pkg/errors"
 )
 
@@ -20,10 +20,10 @@ func NewEntStore(client *ent.Client) *EntStore {
 	}
 }
 
-func (s *EntStore) ValidGroupInvite(secret string) (uuid.UUID, error) {
+func (s *EntStore) ValidGroupInvite(ctx context.Context, secret string) (uuid.UUID, error) {
 	inv, err := s.client.GroupInvite.Query().
 		Where(groupinvite.Secret(secret)).
-		Only(context.Background())
+		Only(ctx)
 
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -32,44 +32,39 @@ func (s *EntStore) ValidGroupInvite(secret string) (uuid.UUID, error) {
 		return uuid.UUID{}, errors.Wrapf(err, "could not get group invite")
 	}
 
-	return inv.QueryGroup().OnlyX(context.Background()).ID, nil
+	return inv.QueryGroup().OnlyX(ctx).ID, nil
 }
 
-func (s *EntStore) GetGroupByID(groupID uuid.UUID) (*user.Group, error) {
+func (s *EntStore) GetGroupByID(ctx context.Context, groupID uuid.UUID) (*user.Group, error) {
 	grp, err := s.client.Group.Query().
 		Where(group.ID(groupID)).
-		Only(context.Background())
-
+		Only(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return nil, errors.Wrapf(err, "group not found")
 		}
 		return nil, errors.Wrapf(err, "could not get group")
 	}
-
-	return &grp.Data, nil
+	return grp.Data, nil
 }
 
-func (s *EntStore) CreateGroupInvite(groupID uuid.UUID) (string, error) {
+func (s *EntStore) CreateGroupInvite(ctx context.Context, groupID uuid.UUID) (string, error) {
 	secret := uuid.New().String()
 
 	_, err := s.client.GroupInvite.Create().
 		SetSecret(secret).
 		SetGroupID(groupID).
-		Save(context.Background())
-
+		Save(ctx)
 	if err != nil {
 		return "", errors.Wrapf(err, "could not create group invite")
 	}
-
 	return secret, nil
 }
 
-func (s *EntStore) CreateGroup(creator uuid.UUID, data *user.Group) (uuid.UUID, error) {
+func (s *EntStore) CreateGroup(ctx context.Context, creator uuid.UUID, data *user.Group) (uuid.UUID, error) {
 	grp, err := s.client.Group.Create().
-		SetData(*data).
-		Save(context.Background())
-
+		SetData(data).
+		Save(ctx)
 	if err != nil {
 		return uuid.UUID{}, errors.Wrapf(err, "could not create group")
 	}
@@ -78,18 +73,16 @@ func (s *EntStore) CreateGroup(creator uuid.UUID, data *user.Group) (uuid.UUID, 
 		SetUserID(creator).
 		SetGroupID(grp.ID).
 		SetRole("admin").
-		Save(context.Background())
-
+		Save(ctx)
 	if err != nil {
 		return uuid.UUID{}, errors.Wrapf(err, "could not create group user")
 	}
-
 	return grp.ID, nil
 }
 
-func (s *EntStore) DeleteGroup(groupID uuid.UUID) error {
+func (s *EntStore) DeleteGroup(ctx context.Context, groupID uuid.UUID) error {
 	err := s.client.Group.DeleteOneID(groupID).
-		Exec(context.Background())
+		Exec(ctx)
 
 	if err != nil {
 		return errors.Wrapf(err, "could not delete group")
@@ -97,14 +90,13 @@ func (s *EntStore) DeleteGroup(groupID uuid.UUID) error {
 	return nil
 }
 
-func (s *EntStore) GetTagsForGroup(groupID uuid.UUID) ([]string, error) {
+func (s *EntStore) GetTagsForGroup(ctx context.Context, groupID uuid.UUID) ([]string, error) {
 	grp, err := s.client.Group.Query().
 		Where(group.ID(groupID)).
 		WithContent(func(q *ent.ContentQuery) {
 			q.WithTags()
 		}).
-		Only(context.Background())
-
+		Only(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return nil, errors.Wrapf(err, "group not found")
@@ -118,7 +110,6 @@ func (s *EntStore) GetTagsForGroup(groupID uuid.UUID) ([]string, error) {
 			tagNames = append(tagNames, tag.Name)
 		}
 	}
-
 	return tagNames, nil
 }
 

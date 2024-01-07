@@ -61,11 +61,6 @@ func Root(v bool) predicate.Content {
 	return predicate.Content(sql.FieldEQ(FieldRoot, v))
 }
 
-// VisitCount applies equality check predicate on the "visit_count" field. It's identical to VisitCountEQ.
-func VisitCount(v int64) predicate.Content {
-	return predicate.Content(sql.FieldEQ(FieldVisitCount, v))
-}
-
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Content {
 	return predicate.Content(sql.FieldEQ(FieldCreatedAt, v))
@@ -79,46 +74,6 @@ func RootEQ(v bool) predicate.Content {
 // RootNEQ applies the NEQ predicate on the "root" field.
 func RootNEQ(v bool) predicate.Content {
 	return predicate.Content(sql.FieldNEQ(FieldRoot, v))
-}
-
-// VisitCountEQ applies the EQ predicate on the "visit_count" field.
-func VisitCountEQ(v int64) predicate.Content {
-	return predicate.Content(sql.FieldEQ(FieldVisitCount, v))
-}
-
-// VisitCountNEQ applies the NEQ predicate on the "visit_count" field.
-func VisitCountNEQ(v int64) predicate.Content {
-	return predicate.Content(sql.FieldNEQ(FieldVisitCount, v))
-}
-
-// VisitCountIn applies the In predicate on the "visit_count" field.
-func VisitCountIn(vs ...int64) predicate.Content {
-	return predicate.Content(sql.FieldIn(FieldVisitCount, vs...))
-}
-
-// VisitCountNotIn applies the NotIn predicate on the "visit_count" field.
-func VisitCountNotIn(vs ...int64) predicate.Content {
-	return predicate.Content(sql.FieldNotIn(FieldVisitCount, vs...))
-}
-
-// VisitCountGT applies the GT predicate on the "visit_count" field.
-func VisitCountGT(v int64) predicate.Content {
-	return predicate.Content(sql.FieldGT(FieldVisitCount, v))
-}
-
-// VisitCountGTE applies the GTE predicate on the "visit_count" field.
-func VisitCountGTE(v int64) predicate.Content {
-	return predicate.Content(sql.FieldGTE(FieldVisitCount, v))
-}
-
-// VisitCountLT applies the LT predicate on the "visit_count" field.
-func VisitCountLT(v int64) predicate.Content {
-	return predicate.Content(sql.FieldLT(FieldVisitCount, v))
-}
-
-// VisitCountLTE applies the LTE predicate on the "visit_count" field.
-func VisitCountLTE(v int64) predicate.Content {
-	return predicate.Content(sql.FieldLTE(FieldVisitCount, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -245,29 +200,6 @@ func HasParents() predicate.Content {
 func HasParentsWith(preds ...predicate.Content) predicate.Content {
 	return predicate.Content(func(s *sql.Selector) {
 		step := newParentsStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasVotes applies the HasEdge predicate on the "votes" edge.
-func HasVotes() predicate.Content {
-	return predicate.Content(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, VotesTable, VotesColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasVotesWith applies the HasEdge predicate on the "votes" edge with a given conditions (other predicates).
-func HasVotesWith(preds ...predicate.Vote) predicate.Content {
-	return predicate.Content(func(s *sql.Selector) {
-		step := newVotesStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

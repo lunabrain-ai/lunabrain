@@ -3346,7 +3346,7 @@
     };
   }
 
-  // src/rpc/user/user_pb.ts
+  // site/rpc/user/user_pb.ts
   var GroupInfoRequest = class _GroupInfoRequest extends Message {
     /**
      * @generated from field: string secret = 1;
@@ -3697,7 +3697,7 @@
     }
   };
 
-  // src/rpc/content/content_pb.ts
+  // site/rpc/content/content_pb.ts
   var SetTagsRequest = class _SetTagsRequest extends Message {
     /**
      * @generated from field: string content_id = 1;
@@ -3767,72 +3767,6 @@
     }
     static equals(a, b) {
       return proto3.util.equals(_TagRequest, a, b);
-    }
-  };
-  var VoteRequest = class _VoteRequest extends Message {
-    /**
-     * @generated from field: string content_id = 1;
-     */
-    contentId = "";
-    constructor(data) {
-      super();
-      proto3.util.initPartial(data, this);
-    }
-    static runtime = proto3;
-    static typeName = "content.VoteRequest";
-    static fields = proto3.util.newFieldList(() => [
-      {
-        no: 1,
-        name: "content_id",
-        kind: "scalar",
-        T: 9
-        /* ScalarType.STRING */
-      }
-    ]);
-    static fromBinary(bytes, options) {
-      return new _VoteRequest().fromBinary(bytes, options);
-    }
-    static fromJson(jsonValue, options) {
-      return new _VoteRequest().fromJson(jsonValue, options);
-    }
-    static fromJsonString(jsonString, options) {
-      return new _VoteRequest().fromJsonString(jsonString, options);
-    }
-    static equals(a, b) {
-      return proto3.util.equals(_VoteRequest, a, b);
-    }
-  };
-  var VoteResponse = class _VoteResponse extends Message {
-    /**
-     * @generated from field: uint32 votes = 1;
-     */
-    votes = 0;
-    constructor(data) {
-      super();
-      proto3.util.initPartial(data, this);
-    }
-    static runtime = proto3;
-    static typeName = "content.VoteResponse";
-    static fields = proto3.util.newFieldList(() => [
-      {
-        no: 1,
-        name: "votes",
-        kind: "scalar",
-        T: 13
-        /* ScalarType.UINT32 */
-      }
-    ]);
-    static fromBinary(bytes, options) {
-      return new _VoteResponse().fromBinary(bytes, options);
-    }
-    static fromJson(jsonValue, options) {
-      return new _VoteResponse().fromJson(jsonValue, options);
-    }
-    static fromJsonString(jsonString, options) {
-      return new _VoteResponse().fromJsonString(jsonString, options);
-    }
-    static equals(a, b) {
-      return proto3.util.equals(_VoteResponse, a, b);
     }
   };
   var Tags = class _Tags extends Message {
@@ -4092,10 +4026,6 @@
      */
     url = "";
     /**
-     * @generated from field: int32 votes = 8;
-     */
-    votes = 0;
-    /**
      * @generated from field: user.User user = 9;
      */
     user;
@@ -4150,13 +4080,6 @@
         kind: "scalar",
         T: 9
         /* ScalarType.STRING */
-      },
-      {
-        no: 8,
-        name: "votes",
-        kind: "scalar",
-        T: 5
-        /* ScalarType.INT32 */
       },
       { no: 9, name: "user", kind: "message", T: User },
       { no: 10, name: "tags", kind: "message", T: Tag, repeated: true },
@@ -4989,7 +4912,7 @@
     }
   };
 
-  // src/rpc/protoflow_pb.ts
+  // site/rpc/protoflow_pb.ts
   var AnalyzeConversationRequest2 = class _AnalyzeConversationRequest extends Message {
     /**
      * @generated from field: string text = 1;
@@ -6181,7 +6104,7 @@
     }
   };
 
-  // src/rpc/ai_pb.ts
+  // site/rpc/ai_pb.ts
   var AnalyzeConversationResponse = class _AnalyzeConversationResponse extends Message {
     /**
      * Phone numbers of the participants
@@ -6261,7 +6184,7 @@
     }
   };
 
-  // src/rpc/protoflow_connect.ts
+  // site/rpc/protoflow_connect.ts
   var ProtoflowService = {
     typeName: "protoflow.ProtoflowService",
     methods: {
@@ -6376,7 +6299,7 @@
     }
   };
 
-  // src/rpc/content/content_connect.ts
+  // site/rpc/content/content_connect.ts
   var ContentService = {
     typeName: "content.ContentService",
     methods: {
@@ -6433,20 +6356,11 @@
         I: SetTagsRequest,
         O: Empty,
         kind: MethodKind.Unary
-      },
-      /**
-       * @generated from rpc content.ContentService.Vote
-       */
-      vote: {
-        name: "Vote",
-        I: VoteRequest,
-        O: VoteResponse,
-        kind: MethodKind.Unary
       }
     }
   };
 
-  // src/rpc/user/user_connect.ts
+  // site/rpc/user/user_connect.ts
   var UserService = {
     typeName: "user.UserService",
     methods: {
@@ -8303,7 +8217,7 @@
     }
   };
 
-  // src/service.ts
+  // site/service.ts
   var baseURL = "https://demo.lunabrain.com";
   var queryClient = new QueryClient();
   var transport = createConnectTransport({
@@ -8314,11 +8228,11 @@
   var contentService = createPromiseClient(ContentService, transport);
   var userService = createPromiseClient(UserService, transport);
 
-  // src/extension/shared.tsx
+  // extension/shared.tsx
   var contentGet = "content/get";
   var contentSave = "content/save";
 
-  // src/extension/background.tsx
+  // extension/background.tsx
   var tabContent = void 0;
   var chromeExt = () => {
     async function saveContent(content) {

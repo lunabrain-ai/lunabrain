@@ -17,7 +17,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/predicate"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/tag"
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/vote"
 )
 
 // ContentQuery is the builder for querying Content entities.
@@ -31,7 +30,6 @@ type ContentQuery struct {
 	withTags     *TagQuery
 	withChildren *ContentQuery
 	withParents  *ContentQuery
-	withVotes    *VoteQuery
 	withGroups   *GroupQuery
 	withFKs      bool
 	// intermediate query (i.e. traversal path).
@@ -151,28 +149,6 @@ func (cq *ContentQuery) QueryParents() *ContentQuery {
 			sqlgraph.From(content.Table, content.FieldID, selector),
 			sqlgraph.To(content.Table, content.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, content.ParentsTable, content.ParentsPrimaryKey...),
-		)
-		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryVotes chains the current query on the "votes" edge.
-func (cq *ContentQuery) QueryVotes() *VoteQuery {
-	query := (&VoteClient{config: cq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := cq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := cq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(content.Table, content.FieldID, selector),
-			sqlgraph.To(vote.Table, vote.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, content.VotesTable, content.VotesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(cq.driver.Dialect(), step)
 		return fromU, nil
@@ -398,7 +374,6 @@ func (cq *ContentQuery) Clone() *ContentQuery {
 		withTags:     cq.withTags.Clone(),
 		withChildren: cq.withChildren.Clone(),
 		withParents:  cq.withParents.Clone(),
-		withVotes:    cq.withVotes.Clone(),
 		withGroups:   cq.withGroups.Clone(),
 		// clone intermediate query.
 		sql:  cq.sql.Clone(),
@@ -447,17 +422,6 @@ func (cq *ContentQuery) WithParents(opts ...func(*ContentQuery)) *ContentQuery {
 		opt(query)
 	}
 	cq.withParents = query
-	return cq
-}
-
-// WithVotes tells the query-builder to eager-load the nodes that are connected to
-// the "votes" edge. The optional arguments are used to configure the query builder of the edge.
-func (cq *ContentQuery) WithVotes(opts ...func(*VoteQuery)) *ContentQuery {
-	query := (&VoteClient{config: cq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	cq.withVotes = query
 	return cq
 }
 
@@ -551,12 +515,11 @@ func (cq *ContentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Cont
 		nodes       = []*Content{}
 		withFKs     = cq.withFKs
 		_spec       = cq.querySpec()
-		loadedTypes = [6]bool{
+		loadedTypes = [5]bool{
 			cq.withUser != nil,
 			cq.withTags != nil,
 			cq.withChildren != nil,
 			cq.withParents != nil,
-			cq.withVotes != nil,
 			cq.withGroups != nil,
 		}
 	)
@@ -608,13 +571,6 @@ func (cq *ContentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Cont
 		if err := cq.loadParents(ctx, query, nodes,
 			func(n *Content) { n.Edges.Parents = []*Content{} },
 			func(n *Content, e *Content) { n.Edges.Parents = append(n.Edges.Parents, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := cq.withVotes; query != nil {
-		if err := cq.loadVotes(ctx, query, nodes,
-			func(n *Content) { n.Edges.Votes = []*Vote{} },
-			func(n *Content, e *Vote) { n.Edges.Votes = append(n.Edges.Votes, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -840,37 +796,6 @@ func (cq *ContentQuery) loadParents(ctx context.Context, query *ContentQuery, no
 		for kn := range nodes {
 			assign(kn, n)
 		}
-	}
-	return nil
-}
-func (cq *ContentQuery) loadVotes(ctx context.Context, query *VoteQuery, nodes []*Content, init func(*Content), assign func(*Content, *Vote)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uuid.UUID]*Content)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	query.withFKs = true
-	query.Where(predicate.Vote(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(content.VotesColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.content_votes
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "content_votes" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "content_votes" returned %v for node %v`, *fk, n.ID)
-		}
-		assign(node, n)
 	}
 	return nil
 }

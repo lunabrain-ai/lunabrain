@@ -15,7 +15,12 @@ type Builder struct {
 
 func (s *Builder) Dir(name string) *Builder {
 	ns := *s
-	ns.path = path.Join(s.config.Path, name)
+
+	pp := s.config.Path
+	if ns.path != "" {
+		pp = ns.path
+	}
+	ns.path = path.Join(pp, name)
 	return &ns
 }
 
@@ -52,16 +57,4 @@ func NewBuilder(config Config) (*Builder, error) {
 		config: config,
 		path:   config.Path,
 	}, nil
-}
-
-func NewTestBuilder() *Builder {
-	return &Builder{
-		Bucket: nil,
-		config: Config{
-			LocalName: "test",
-			Path:      "",
-			URLBase:   "",
-		},
-		path: "",
-	}
 }

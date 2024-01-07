@@ -5,7 +5,7 @@ import (
 	"database/sql/driver"
 	"errors"
 	"fmt"
-	"github.com/lunabrain-ai/lunabrain/gen/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
 	"strings"
 
 	"google.golang.org/protobuf/encoding/protojson"

@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Content, ContentIDs, Contents, Query, Results, SetTagsRequest, TagRequest, Tags, VoteRequest, VoteResponse } from "./content_pb.js";
+import { Content, ContentIDs, Contents, Query, Results, SetTagsRequest, TagRequest, Tags } from "./content_pb.js";
 import { Empty, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -67,12 +67,12 @@ export const ContentService = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc content.ContentService.Vote
+     * @generated from rpc content.ContentService.Publish
      */
-    vote: {
-      name: "Vote",
-      I: VoteRequest,
-      O: VoteResponse,
+    publish: {
+      name: "Publish",
+      I: ContentIDs,
+      O: ContentIDs,
       kind: MethodKind.Unary,
     },
   }

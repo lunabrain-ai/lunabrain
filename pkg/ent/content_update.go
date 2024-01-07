@@ -18,7 +18,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/schema"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/tag"
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/vote"
 )
 
 // ContentUpdate is the builder for updating Content entities.
@@ -37,19 +36,6 @@ func (cu *ContentUpdate) Where(ps ...predicate.Content) *ContentUpdate {
 // SetRoot sets the "root" field.
 func (cu *ContentUpdate) SetRoot(b bool) *ContentUpdate {
 	cu.mutation.SetRoot(b)
-	return cu
-}
-
-// SetVisitCount sets the "visit_count" field.
-func (cu *ContentUpdate) SetVisitCount(i int64) *ContentUpdate {
-	cu.mutation.ResetVisitCount()
-	cu.mutation.SetVisitCount(i)
-	return cu
-}
-
-// AddVisitCount adds i to the "visit_count" field.
-func (cu *ContentUpdate) AddVisitCount(i int64) *ContentUpdate {
-	cu.mutation.AddVisitCount(i)
 	return cu
 }
 
@@ -135,21 +121,6 @@ func (cu *ContentUpdate) AddParents(c ...*Content) *ContentUpdate {
 		ids[i] = c[i].ID
 	}
 	return cu.AddParentIDs(ids...)
-}
-
-// AddVoteIDs adds the "votes" edge to the Vote entity by IDs.
-func (cu *ContentUpdate) AddVoteIDs(ids ...uuid.UUID) *ContentUpdate {
-	cu.mutation.AddVoteIDs(ids...)
-	return cu
-}
-
-// AddVotes adds the "votes" edges to the Vote entity.
-func (cu *ContentUpdate) AddVotes(v ...*Vote) *ContentUpdate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return cu.AddVoteIDs(ids...)
 }
 
 // AddGroupIDs adds the "groups" edge to the Group entity by IDs.
@@ -241,27 +212,6 @@ func (cu *ContentUpdate) RemoveParents(c ...*Content) *ContentUpdate {
 	return cu.RemoveParentIDs(ids...)
 }
 
-// ClearVotes clears all "votes" edges to the Vote entity.
-func (cu *ContentUpdate) ClearVotes() *ContentUpdate {
-	cu.mutation.ClearVotes()
-	return cu
-}
-
-// RemoveVoteIDs removes the "votes" edge to Vote entities by IDs.
-func (cu *ContentUpdate) RemoveVoteIDs(ids ...uuid.UUID) *ContentUpdate {
-	cu.mutation.RemoveVoteIDs(ids...)
-	return cu
-}
-
-// RemoveVotes removes "votes" edges to Vote entities.
-func (cu *ContentUpdate) RemoveVotes(v ...*Vote) *ContentUpdate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return cu.RemoveVoteIDs(ids...)
-}
-
 // ClearGroups clears all "groups" edges to the Group entity.
 func (cu *ContentUpdate) ClearGroups() *ContentUpdate {
 	cu.mutation.ClearGroups()
@@ -321,12 +271,6 @@ func (cu *ContentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := cu.mutation.Root(); ok {
 		_spec.SetField(content.FieldRoot, field.TypeBool, value)
-	}
-	if value, ok := cu.mutation.VisitCount(); ok {
-		_spec.SetField(content.FieldVisitCount, field.TypeInt64, value)
-	}
-	if value, ok := cu.mutation.AddedVisitCount(); ok {
-		_spec.AddField(content.FieldVisitCount, field.TypeInt64, value)
 	}
 	if value, ok := cu.mutation.Data(); ok {
 		_spec.SetField(content.FieldData, field.TypeJSON, value)
@@ -498,51 +442,6 @@ func (cu *ContentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if cu.mutation.VotesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   content.VotesTable,
-			Columns: []string{content.VotesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(vote.FieldID, field.TypeUUID),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := cu.mutation.RemovedVotesIDs(); len(nodes) > 0 && !cu.mutation.VotesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   content.VotesTable,
-			Columns: []string{content.VotesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(vote.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := cu.mutation.VotesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   content.VotesTable,
-			Columns: []string{content.VotesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(vote.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if cu.mutation.GroupsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -611,19 +510,6 @@ type ContentUpdateOne struct {
 // SetRoot sets the "root" field.
 func (cuo *ContentUpdateOne) SetRoot(b bool) *ContentUpdateOne {
 	cuo.mutation.SetRoot(b)
-	return cuo
-}
-
-// SetVisitCount sets the "visit_count" field.
-func (cuo *ContentUpdateOne) SetVisitCount(i int64) *ContentUpdateOne {
-	cuo.mutation.ResetVisitCount()
-	cuo.mutation.SetVisitCount(i)
-	return cuo
-}
-
-// AddVisitCount adds i to the "visit_count" field.
-func (cuo *ContentUpdateOne) AddVisitCount(i int64) *ContentUpdateOne {
-	cuo.mutation.AddVisitCount(i)
 	return cuo
 }
 
@@ -709,21 +595,6 @@ func (cuo *ContentUpdateOne) AddParents(c ...*Content) *ContentUpdateOne {
 		ids[i] = c[i].ID
 	}
 	return cuo.AddParentIDs(ids...)
-}
-
-// AddVoteIDs adds the "votes" edge to the Vote entity by IDs.
-func (cuo *ContentUpdateOne) AddVoteIDs(ids ...uuid.UUID) *ContentUpdateOne {
-	cuo.mutation.AddVoteIDs(ids...)
-	return cuo
-}
-
-// AddVotes adds the "votes" edges to the Vote entity.
-func (cuo *ContentUpdateOne) AddVotes(v ...*Vote) *ContentUpdateOne {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return cuo.AddVoteIDs(ids...)
 }
 
 // AddGroupIDs adds the "groups" edge to the Group entity by IDs.
@@ -815,27 +686,6 @@ func (cuo *ContentUpdateOne) RemoveParents(c ...*Content) *ContentUpdateOne {
 	return cuo.RemoveParentIDs(ids...)
 }
 
-// ClearVotes clears all "votes" edges to the Vote entity.
-func (cuo *ContentUpdateOne) ClearVotes() *ContentUpdateOne {
-	cuo.mutation.ClearVotes()
-	return cuo
-}
-
-// RemoveVoteIDs removes the "votes" edge to Vote entities by IDs.
-func (cuo *ContentUpdateOne) RemoveVoteIDs(ids ...uuid.UUID) *ContentUpdateOne {
-	cuo.mutation.RemoveVoteIDs(ids...)
-	return cuo
-}
-
-// RemoveVotes removes "votes" edges to Vote entities.
-func (cuo *ContentUpdateOne) RemoveVotes(v ...*Vote) *ContentUpdateOne {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return cuo.RemoveVoteIDs(ids...)
-}
-
 // ClearGroups clears all "groups" edges to the Group entity.
 func (cuo *ContentUpdateOne) ClearGroups() *ContentUpdateOne {
 	cuo.mutation.ClearGroups()
@@ -925,12 +775,6 @@ func (cuo *ContentUpdateOne) sqlSave(ctx context.Context) (_node *Content, err e
 	}
 	if value, ok := cuo.mutation.Root(); ok {
 		_spec.SetField(content.FieldRoot, field.TypeBool, value)
-	}
-	if value, ok := cuo.mutation.VisitCount(); ok {
-		_spec.SetField(content.FieldVisitCount, field.TypeInt64, value)
-	}
-	if value, ok := cuo.mutation.AddedVisitCount(); ok {
-		_spec.AddField(content.FieldVisitCount, field.TypeInt64, value)
 	}
 	if value, ok := cuo.mutation.Data(); ok {
 		_spec.SetField(content.FieldData, field.TypeJSON, value)
@@ -1095,51 +939,6 @@ func (cuo *ContentUpdateOne) sqlSave(ctx context.Context) (_node *Content, err e
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(content.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if cuo.mutation.VotesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   content.VotesTable,
-			Columns: []string{content.VotesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(vote.FieldID, field.TypeUUID),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := cuo.mutation.RemovedVotesIDs(); len(nodes) > 0 && !cuo.mutation.VotesCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   content.VotesTable,
-			Columns: []string{content.VotesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(vote.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := cuo.mutation.VotesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   content.VotesTable,
-			Columns: []string{content.VotesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(vote.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

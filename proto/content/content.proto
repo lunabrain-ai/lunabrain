@@ -14,7 +14,7 @@ service ContentService {
   rpc Delete(ContentIDs) returns (ContentIDs);
   rpc GetTags(TagRequest) returns (Tags);
   rpc SetTags(SetTagsRequest) returns (google.protobuf.Empty);
-  rpc Vote(VoteRequest) returns (VoteResponse);
+  rpc Publish(ContentIDs) returns (ContentIDs);
 }
 
 message SetTagsRequest {
@@ -24,14 +24,6 @@ message SetTagsRequest {
 
 message TagRequest {
   string group_id = 1;
-}
-
-message VoteRequest {
-  string content_id = 1;
-}
-
-message VoteResponse {
-  uint32 votes = 1;
 }
 
 message Tags {
@@ -73,7 +65,6 @@ message StoredContent {
   string description = 5;
   string image = 6;
   string url = 7;
-  int32 votes = 8;
   user.User user = 9;
   repeated Tag tags = 10;
   string preview = 11;

@@ -6,12 +6,12 @@ import (
 	"github.com/bufbuild/connect-go"
 	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
 	"github.com/google/wire"
-	"github.com/lunabrain-ai/lunabrain/gen/content/contentconnect"
-	"github.com/lunabrain-ai/lunabrain/gen/user/userconnect"
 	"github.com/lunabrain-ai/lunabrain/js/dist/site"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/content/normalize"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/content/contentconnect"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/user/userconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/group"
 	shttp "github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/lunabrain-ai/lunabrain/pkg/user"
@@ -67,7 +67,8 @@ func New(
 }
 
 func NewLogInterceptor() connect.UnaryInterceptorFunc {
-	interceptor := func(next connect.UnaryFunc) connect.UnaryFunc {
+	// TODO breadchris support logging for stream calls
+	return func(next connect.UnaryFunc) connect.UnaryFunc {
 		return func(
 			ctx context.Context,
 			req connect.AnyRequest,
@@ -81,7 +82,6 @@ func NewLogInterceptor() connect.UnaryInterceptorFunc {
 			return resp, err
 		}
 	}
-	return interceptor
 }
 
 func loggingMiddleware(next http.Handler) http.Handler {
@@ -122,6 +122,10 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	f := http.FS(os.DirFS("data"))
 	mediaFileServer := http.FileServer(f)
 
+	// TODO breadchris brittle path
+	blog := http.FS(os.DirFS("data/blog"))
+	blogFileServer := http.FileServer(blog)
+
 	u, err := url.Parse(a.config.Proxy)
 	if err != nil {
 		slog.Error("failed to parse proxy", "error", err)
@@ -143,6 +147,12 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 
 	// TODO breadchris path routing should be done in a more modular way, as opposed to being done all in the handler
 	muxRoot.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasPrefix(r.URL.Path, "/@") {
+			_ = strings.Replace(r.URL.Path, "/@", "", 1)
+			println("path", r.URL.Path)
+			blogFileServer.ServeHTTP(w, r)
+			return
+		}
 		if r.URL.Path == "/" {
 			http.Redirect(w, r, "/app", http.StatusFound)
 			return

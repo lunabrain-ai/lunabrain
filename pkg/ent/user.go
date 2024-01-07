@@ -37,11 +37,9 @@ type UserEdges struct {
 	Content []*Content `json:"content,omitempty"`
 	// GroupUsers holds the value of the group_users edge.
 	GroupUsers []*GroupUser `json:"group_users,omitempty"`
-	// Votes holds the value of the votes edge.
-	Votes []*Vote `json:"votes,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [2]bool
 }
 
 // ContentOrErr returns the Content value or an error if the edge
@@ -60,15 +58,6 @@ func (e UserEdges) GroupUsersOrErr() ([]*GroupUser, error) {
 		return e.GroupUsers, nil
 	}
 	return nil, &NotLoadedError{edge: "group_users"}
-}
-
-// VotesOrErr returns the Votes value or an error if the edge
-// was not loaded in eager-loading.
-func (e UserEdges) VotesOrErr() ([]*Vote, error) {
-	if e.loadedTypes[2] {
-		return e.Votes, nil
-	}
-	return nil, &NotLoadedError{edge: "votes"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -144,11 +133,6 @@ func (u *User) QueryContent() *ContentQuery {
 // QueryGroupUsers queries the "group_users" edge of the User entity.
 func (u *User) QueryGroupUsers() *GroupUserQuery {
 	return NewUserClient(u.config).QueryGroupUsers(u)
-}
-
-// QueryVotes queries the "votes" edge of the User entity.
-func (u *User) QueryVotes() *VoteQuery {
-	return NewUserClient(u.config).QueryVotes(u)
 }
 
 // Update returns a builder for updating this User.

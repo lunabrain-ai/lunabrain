@@ -3,14 +3,13 @@ package store
 import (
 	"context"
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/gen/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent"
 	entcontent "github.com/lunabrain-ai/lunabrain/pkg/ent/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/schema"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/tag"
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/vote"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
 	"github.com/pkg/errors"
 )
 
@@ -30,14 +29,18 @@ func (s *EntStore) DeleteContent(ctx context.Context, id uuid.UUID) error {
 }
 
 func (s *EntStore) SaveOrUpdateContent(ctx context.Context, userID, botID uuid.UUID, data *content.Content, root bool) (*ent.Content, error) {
-	var c *ent.Content
-	var err error
+	var (
+		c   *ent.Content
+		err error
+		id  = uuid.New()
+	)
 
 	contentEncoder := schema.ContentEncoder{Content: data}
 
 	if data.Id != "" {
+		id = uuid.MustParse(data.Id)
 		// Try to find the content by ID
-		c, err = s.client.Content.Get(ctx, uuid.MustParse(data.Id))
+		c, err = s.client.Content.Get(ctx, id)
 		if err != nil && !ent.IsNotFound(err) {
 			return nil, err
 		}
@@ -46,9 +49,8 @@ func (s *EntStore) SaveOrUpdateContent(ctx context.Context, userID, botID uuid.U
 	if c == nil {
 		// Content not found, create new
 		c, err = s.client.Content.Create().
-			SetID(uuid.New()).
+			SetID(id).
 			SetRoot(root).
-			SetVisitCount(1).
 			SetData(&contentEncoder).
 			SetUserID(userID).
 			Save(ctx)
@@ -56,7 +58,6 @@ func (s *EntStore) SaveOrUpdateContent(ctx context.Context, userID, botID uuid.U
 		// TODO breadchris authorization
 		// Update existing content
 		c, err = c.Update().
-			SetVisitCount(c.VisitCount + 1).
 			SetData(&contentEncoder).
 			Save(ctx)
 	}
@@ -196,45 +197,4 @@ func (s *EntStore) GetTagsForGroup(ctx context.Context, groupID uuid.UUID) ([]st
 		tagNames = append(tagNames, t.Name)
 	}
 	return tagNames, nil
-}
-
-func (s *EntStore) VoteOnContent(ctx context.Context, userID, contentID uuid.UUID) error {
-	exists, err := s.client.Vote.Query().
-		Where(vote.HasUserWith(entuser.ID(userID))).
-		Where(vote.HasContentWith(entcontent.ID(contentID))).
-		Exist(ctx)
-
-	if err != nil {
-		return errors.Wrapf(err, "error checking for existing vote")
-	}
-
-	if exists {
-		// Remove vote
-		_, err = s.client.Vote.Delete().
-			Where(vote.HasUserWith(entuser.ID(userID))).
-			Where(vote.HasContentWith(entcontent.ID(contentID))).
-			Exec(ctx)
-	} else {
-		// Add vote
-		_, err = s.client.Vote.Create().SetUserID(userID).SetContentID(contentID).Save(ctx)
-	}
-
-	if err != nil {
-		return errors.Wrapf(err, "could not process vote on content")
-	}
-	return nil
-}
-
-func (s *EntStore) GetContentVotes(ctx context.Context, contentID uuid.UUID) ([]*ent.Vote, error) {
-	content, err := s.client.Content.Get(ctx, contentID)
-	if err != nil {
-		return nil, errors.Wrapf(err, "could not get content")
-	}
-
-	votes, err := content.QueryVotes().All(ctx)
-	if err != nil {
-		return nil, errors.Wrapf(err, "could not get votes for content")
-	}
-
-	return votes, nil
 }

@@ -10,12 +10,12 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/gen/user"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupinvite"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupuser"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/tag"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/user"
 )
 
 // GroupCreate is the builder for creating a Group entity.
@@ -26,7 +26,7 @@ type GroupCreate struct {
 }
 
 // SetData sets the "data" field.
-func (gc *GroupCreate) SetData(u user.Group) *GroupCreate {
+func (gc *GroupCreate) SetData(u *user.Group) *GroupCreate {
 	gc.mutation.SetData(u)
 	return gc
 }

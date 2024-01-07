@@ -11,13 +11,13 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/gen/user"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupinvite"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupuser"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/predicate"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/tag"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/user"
 )
 
 // GroupUpdate is the builder for updating Group entities.
@@ -34,7 +34,7 @@ func (gu *GroupUpdate) Where(ps ...predicate.Group) *GroupUpdate {
 }
 
 // SetData sets the "data" field.
-func (gu *GroupUpdate) SetData(u user.Group) *GroupUpdate {
+func (gu *GroupUpdate) SetData(u *user.Group) *GroupUpdate {
 	gu.mutation.SetData(u)
 	return gu
 }
@@ -428,7 +428,7 @@ type GroupUpdateOne struct {
 }
 
 // SetData sets the "data" field.
-func (guo *GroupUpdateOne) SetData(u user.Group) *GroupUpdateOne {
+func (guo *GroupUpdateOne) SetData(u *user.Group) *GroupUpdateOne {
 	guo.mutation.SetData(u)
 	return guo
 }
