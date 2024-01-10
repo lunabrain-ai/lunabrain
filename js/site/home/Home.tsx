@@ -1,6 +1,7 @@
 import {useProjectContext} from "@/react/ProjectProvider";
 import {ContentPage} from "@/content/ContentPage";
 import {AuthLandingPage} from "@/auth/AuthLandingPage";
+import {SourcePage} from "@/source/SourcePage";
 
 export function Home() {
     const { user, loading } = useProjectContext();
@@ -15,7 +16,7 @@ export function Home() {
     }
     return (
         <div className="h-screen flex flex-col gap-4 w-full">
-            {user ? <ContentPage /> : <AuthLandingPage />}
+            {user ? <SourcePage /> : <AuthLandingPage />}
         </div>
     )
 }

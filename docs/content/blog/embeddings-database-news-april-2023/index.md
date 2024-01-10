@@ -47,12 +47,12 @@ are fueling their development and rapid growth.
 ![Surfboard floating in the AI ocean](wave1-hi-crop.png)
 
 The Venture Capital (VC) firms of the world have been busy throwing money at several Vector Database companies with
-Weaviate, a company built around [an Open Source product](https://github.com/weaviate/weaviate), closing a
+Weaviate, a company built around [an Open SourcePage product](https://github.com/weaviate/weaviate), closing a
 [$16 million Series A round](https://www.prnewswire.com/news-releases/semi-technologies-16m-series-a-round-highlights-a-new-wave-of-ai-first-database-tech-301486766.html)
 last month.
 
 That may sound like a lot of dough, but there two other Vector Database startups that raised even bigger rounds with
-Chroma, a YC-backed [Open Source product](https://github.com/chroma-core/chroma), raising
+Chroma, a YC-backed [Open SourcePage product](https://github.com/chroma-core/chroma), raising
 $18 million with *just* 1.2k GitHub stars and Pinecone, a proprietary Cloud-Only startup,
 [raising a $28 million](https://techcrunch.com/2022/03/29/pinecone-announces-28m-series-a-for-purpose-built-database-aimed-at-data-scientists/)
 at an almost-unicorn valuation of $700 million.
@@ -153,12 +153,12 @@ important functionality for specific use cases.)
 
 This is by no means an exhaustive list, but here are the most popular ones that I've seen people using:
 
-- [Weaviate](https://github.com/weaviate/weaviate) (Open Source)
-- [Milvus](https://github.com/milvus-io/milvus) (Open Source)
-- [FAISS](https://www.pinecone.io/learn/faiss/) (Open Source)
+- [Weaviate](https://github.com/weaviate/weaviate) (Open SourcePage)
+- [Milvus](https://github.com/milvus-io/milvus) (Open SourcePage)
+- [FAISS](https://www.pinecone.io/learn/faiss/) (Open SourcePage)
 - [Pinecone](https://www.pinecone.io/) (Cloud Only)
-- [Chroma](https://github.com/chroma-core/chroma) (Open Source)
-- [Qdrant](https://qdrant.tech/) (Open Source)
+- [Chroma](https://github.com/chroma-core/chroma) (Open SourcePage)
+- [Qdrant](https://qdrant.tech/) (Open SourcePage)
 
 For an up-to-date list of Vector Databases... Well, there isn't one that I could find yet, so check back and I'll add
 an Awesome List here to bookmark.
@@ -237,7 +237,7 @@ figure out which parts of it are the most important (they're modeled after how h
 
 -----
 
-![Source: https://news.tfw2005.com/wp-content/uploads/sites/10/2014/12/3A-Transformers-Bumblebee-010_1417704751.jpg](transformer-crop-full-sm.jpg)
+![SourcePage: https://news.tfw2005.com/wp-content/uploads/sites/10/2014/12/3A-Transformers-Bumblebee-010_1417704751.jpg](transformer-crop-full-sm.jpg)
 
 *NLP Goes Mainstream With Transformers*
 

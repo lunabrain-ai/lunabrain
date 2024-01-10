@@ -30,6 +30,8 @@ type ContentServiceClient interface {
 	GetTags(ctx context.Context, in *TagRequest, opts ...grpc.CallOption) (*Tags, error)
 	SetTags(ctx context.Context, in *SetTagsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Publish(ctx context.Context, in *ContentIDs, opts ...grpc.CallOption) (*ContentIDs, error)
+	GetSources(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Sources, error)
+	Types(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GRPCTypeInfo, error)
 }
 
 type contentServiceClient struct {
@@ -103,6 +105,24 @@ func (c *contentServiceClient) Publish(ctx context.Context, in *ContentIDs, opts
 	return out, nil
 }
 
+func (c *contentServiceClient) GetSources(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Sources, error) {
+	out := new(Sources)
+	err := c.cc.Invoke(ctx, "/content.ContentService/GetSources", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *contentServiceClient) Types(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GRPCTypeInfo, error) {
+	out := new(GRPCTypeInfo)
+	err := c.cc.Invoke(ctx, "/content.ContentService/Types", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ContentServiceServer is the server API for ContentService service.
 // All implementations should embed UnimplementedContentServiceServer
 // for forward compatibility
@@ -114,6 +134,8 @@ type ContentServiceServer interface {
 	GetTags(context.Context, *TagRequest) (*Tags, error)
 	SetTags(context.Context, *SetTagsRequest) (*emptypb.Empty, error)
 	Publish(context.Context, *ContentIDs) (*ContentIDs, error)
+	GetSources(context.Context, *emptypb.Empty) (*Sources, error)
+	Types(context.Context, *emptypb.Empty) (*GRPCTypeInfo, error)
 }
 
 // UnimplementedContentServiceServer should be embedded to have forward compatible implementations.
@@ -140,6 +162,12 @@ func (UnimplementedContentServiceServer) SetTags(context.Context, *SetTagsReques
 }
 func (UnimplementedContentServiceServer) Publish(context.Context, *ContentIDs) (*ContentIDs, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Publish not implemented")
+}
+func (UnimplementedContentServiceServer) GetSources(context.Context, *emptypb.Empty) (*Sources, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSources not implemented")
+}
+func (UnimplementedContentServiceServer) Types(context.Context, *emptypb.Empty) (*GRPCTypeInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Types not implemented")
 }
 
 // UnsafeContentServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -279,6 +307,42 @@ func _ContentService_Publish_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ContentService_GetSources_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContentServiceServer).GetSources(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/content.ContentService/GetSources",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContentServiceServer).GetSources(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ContentService_Types_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContentServiceServer).Types(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/content.ContentService/Types",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContentServiceServer).Types(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ContentService_ServiceDesc is the grpc.ServiceDesc for ContentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -313,6 +377,14 @@ var ContentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Publish",
 			Handler:    _ContentService_Publish_Handler,
+		},
+		{
+			MethodName: "GetSources",
+			Handler:    _ContentService_GetSources_Handler,
+		},
+		{
+			MethodName: "Types",
+			Handler:    _ContentService_Types_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

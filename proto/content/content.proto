@@ -5,6 +5,9 @@ package content;
 import "google/protobuf/any.proto";
 import "google/protobuf/empty.proto";
 import "user/user.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/descriptor.proto";
+
 option go_package = "./gen";
 
 service ContentService {
@@ -15,6 +18,38 @@ service ContentService {
   rpc GetTags(TagRequest) returns (Tags);
   rpc SetTags(SetTagsRequest) returns (google.protobuf.Empty);
   rpc Publish(ContentIDs) returns (ContentIDs);
+  rpc GetSources(google.protobuf.Empty) returns (Sources);
+  rpc Types(google.protobuf.Empty) returns (GRPCTypeInfo);
+}
+
+message Sources {
+  repeated EnumeratedSource sources = 1;
+}
+
+message EnumeratedSource {
+  Source source = 1;
+  repeated DisplayContent display_content = 2;
+}
+
+message DisplayContent {
+  string title = 1;
+  string description = 2;
+  Content content = 3;
+}
+
+message Source {
+  string name = 1;
+  oneof type {
+    Server server = 2;
+    Folder folder = 3;
+  }
+}
+
+message Server {
+}
+
+message Folder {
+  string path = 2;
 }
 
 message SetTagsRequest {
@@ -85,7 +120,17 @@ message Content {
     Data data = 6;
     Normalized normalized = 7;
     Transformed transformed = 8;
+    Post post = 9;
+    Site site = 10;
   };
+}
+
+message Post {
+  string title = 1;
+  string summary = 2;
+  string content = 3;
+  repeated string authors = 4;
+  bool draft = 6;
 }
 
 message GitRepo {
@@ -180,4 +225,79 @@ message Transcript {
   string id = 1;
   string name = 2;
   repeated Segment segments = 3;
+}
+
+message GRPCTypeInfo {
+  google.protobuf.DescriptorProto msg = 1;
+  map<string, google.protobuf.DescriptorProto> desc_lookup = 3;
+  map<string, google.protobuf.EnumDescriptorProto> enum_lookup = 4;
+  string package_name = 6;
+}
+
+message Site {
+  HugoConfig hugo_config = 1;
+}
+
+message HugoConfig {
+  string theme = 1;
+  string base_url = 2;
+  string title = 3;
+  ParamsConfig params = 4;
+}
+
+message ParamsConfig {
+  string env = 1;
+  string description = 2;
+  string author = 3;
+  string default_theme = 4;
+  bool show_share_buttons = 5;
+  bool show_reading_time = 6;
+  bool display_full_lang_name = 7;
+  bool show_post_nav_links = 8;
+  bool show_bread_crumbs = 9;
+  bool show_code_copy_buttons = 10;
+  bool show_rss_button_in_section_term_list = 11;
+  bool show_all_pages_in_archive = 12;
+  bool show_page_nums = 13;
+  bool show_toc = 14;
+  repeated string images = 15;
+  ProfileModeConfig profile_mode = 16;
+  HomeInfoParamsConfig home_info_params = 17;
+  repeated SocialIconConfig social_icons = 18;
+  EditPostConfig edit_post = 19;
+  AssetsConfig assets = 20;
+}
+
+message ProfileModeConfig {
+  bool enabled = 1;
+  string title = 2;
+  string image_url = 3;
+  string image_title = 4;
+  repeated ButtonConfig buttons = 5;
+}
+
+message ButtonConfig {
+  string name = 1;
+  string url = 2;
+}
+
+message HomeInfoParamsConfig {
+  string title = 1;
+  string content = 2;
+}
+
+message SocialIconConfig {
+  string name = 1;
+  string title = 2;
+  string url = 3;
+}
+
+message EditPostConfig {
+  string url = 1;
+  string text = 2;
+  bool append_file_path = 3;
+}
+
+message AssetsConfig {
+  bool disable_hljs = 1;
 }

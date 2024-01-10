@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
-import toast from "react-hot-toast";
 import { useProjectContext } from "@/react/ProjectProvider";
-import { MarkdownEditor } from "@/slate/editor/MarkdownEditor";
 import { ContentList } from "@/content/ContentList";
 import { TagManager } from "@/tag/TagManager";
-import { contentService } from "@/service";
-import {CpuChipIcon, FolderIcon, LinkIcon, TrashIcon} from "@heroicons/react/24/outline";
-import {serialize} from "@/util/slate";
 import {CreateCard} from "@/content/CreateCard";
 
 export const ContentWindow: React.FC = () => {
@@ -32,7 +27,6 @@ export const ContentWindow: React.FC = () => {
         <div className="p-5 h-[95vh] flex flex-col">
             <div className="flex-grow">
                 <div className="mb-4">
-                    {/* <SearchStack /> */}
                     <CreateCard />
                 </div>
                 <div>

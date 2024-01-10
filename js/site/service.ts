@@ -4,8 +4,8 @@ import {
 import {createPromiseClient} from "@bufbuild/connect";
 import { ProtoflowService } from "@/rpc/protoflow_connect";
 import { ContentService } from "@/rpc/content/content_connect";
-import { UserService } from "./rpc/user/user_connect";
 import {QueryClient} from "@tanstack/react-query";
+import { UserService } from "@/rpc/user/user_connect";
 
 export const baseURL = process.env.BASE_URL;
 

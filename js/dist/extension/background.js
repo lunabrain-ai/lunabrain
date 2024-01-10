@@ -2279,6 +2279,192 @@
     return r;
   }
 
+  // ../node_modules/@bufbuild/protobuf/dist/esm/private/binary-format-proto2.js
+  function makeBinaryFormatProto2() {
+    return Object.assign(Object.assign({}, makeBinaryFormatCommon()), { writeMessage(message, writer, options) {
+      const type = message.getType();
+      let field;
+      try {
+        for (field of type.fields.byNumber()) {
+          let value, repeated = field.repeated, localName = field.localName;
+          if (field.oneof) {
+            const oneof = message[field.oneof.localName];
+            if (oneof.case !== localName) {
+              continue;
+            }
+            value = oneof.value;
+          } else {
+            value = message[localName];
+            if (value === void 0 && !field.oneof && !field.opt) {
+              throw new Error(`cannot encode field ${type.typeName}.${field.name} to binary: required field not set`);
+            }
+          }
+          switch (field.kind) {
+            case "scalar":
+            case "enum":
+              let scalarType = field.kind == "enum" ? ScalarType.INT32 : field.T;
+              if (repeated) {
+                if (field.packed) {
+                  writePacked(writer, scalarType, field.no, value);
+                } else {
+                  for (const item of value) {
+                    writeScalar(writer, scalarType, field.no, item, true);
+                  }
+                }
+              } else {
+                if (value !== void 0) {
+                  writeScalar(writer, scalarType, field.no, value, true);
+                }
+              }
+              break;
+            case "message":
+              if (repeated) {
+                for (const item of value) {
+                  writeMessageField(writer, options, field.T, field.no, item);
+                }
+              } else {
+                writeMessageField(writer, options, field.T, field.no, value);
+              }
+              break;
+            case "map":
+              for (const [key, val] of Object.entries(value)) {
+                writeMapEntry(writer, options, field, key, val);
+              }
+              break;
+          }
+        }
+      } catch (e) {
+        let m = field ? `cannot encode field ${type.typeName}.${field === null || field === void 0 ? void 0 : field.name} to binary` : `cannot encode message ${type.typeName} to binary`;
+        let r = e instanceof Error ? e.message : String(e);
+        throw new Error(m + (r.length > 0 ? `: ${r}` : ""));
+      }
+      if (options.writeUnknownFields) {
+        this.writeUnknownFields(message, writer);
+      }
+      return writer;
+    } });
+  }
+
+  // ../node_modules/@bufbuild/protobuf/dist/esm/private/json-format-proto2.js
+  function makeJsonFormatProto2() {
+    return makeJsonFormatCommon((writeEnum2, writeScalar3) => {
+      return function writeField(field, value, options) {
+        if (field.kind == "map") {
+          const jsonObj = {};
+          switch (field.V.kind) {
+            case "scalar":
+              for (const [entryKey, entryValue] of Object.entries(value)) {
+                const val = writeScalar3(field.V.T, entryValue, true);
+                assert(val !== void 0);
+                jsonObj[entryKey.toString()] = val;
+              }
+              break;
+            case "message":
+              for (const [entryKey, entryValue] of Object.entries(value)) {
+                jsonObj[entryKey.toString()] = entryValue.toJson(options);
+              }
+              break;
+            case "enum":
+              const enumType = field.V.T;
+              for (const [entryKey, entryValue] of Object.entries(value)) {
+                assert(entryValue === void 0 || typeof entryValue == "number");
+                const val = writeEnum2(enumType, entryValue, true, options.enumAsInteger);
+                assert(val !== void 0);
+                jsonObj[entryKey.toString()] = val;
+              }
+              break;
+          }
+          return options.emitDefaultValues || Object.keys(jsonObj).length > 0 ? jsonObj : void 0;
+        } else if (field.repeated) {
+          const jsonArr = [];
+          switch (field.kind) {
+            case "scalar":
+              for (let i = 0; i < value.length; i++) {
+                jsonArr.push(writeScalar3(field.T, value[i], true));
+              }
+              break;
+            case "enum":
+              for (let i = 0; i < value.length; i++) {
+                jsonArr.push(writeEnum2(field.T, value[i], true, options.enumAsInteger));
+              }
+              break;
+            case "message":
+              for (let i = 0; i < value.length; i++) {
+                jsonArr.push(value[i].toJson(options));
+              }
+              break;
+          }
+          return options.emitDefaultValues || jsonArr.length > 0 ? jsonArr : void 0;
+        } else {
+          if (value === void 0) {
+            if (!field.oneof && !field.opt) {
+              throw `required field not set`;
+            }
+            return void 0;
+          }
+          switch (field.kind) {
+            case "scalar":
+              return writeScalar3(field.T, value, true);
+            case "enum":
+              return writeEnum2(field.T, value, true, options.enumAsInteger);
+            case "message":
+              return wrapField(field.T, value).toJson(options);
+          }
+        }
+      };
+    });
+  }
+
+  // ../node_modules/@bufbuild/protobuf/dist/esm/proto2.js
+  var proto2 = makeProtoRuntime("proto2", makeJsonFormatProto2(), makeBinaryFormatProto2(), Object.assign(Object.assign({}, makeUtilCommon()), {
+    newFieldList(fields) {
+      return new InternalFieldList(fields, normalizeFieldInfosProto2);
+    },
+    initFields(target) {
+      for (const member of target.getType().fields.byMember()) {
+        const name = member.localName, t = target;
+        if (member.repeated) {
+          t[name] = [];
+          continue;
+        }
+        switch (member.kind) {
+          case "oneof":
+            t[name] = { case: void 0 };
+            break;
+          case "map":
+            t[name] = {};
+            break;
+          case "scalar":
+          case "enum":
+          case "message":
+            break;
+        }
+      }
+    }
+  }));
+  function normalizeFieldInfosProto2(fieldInfos) {
+    var _a, _b, _c;
+    const r = [];
+    let o;
+    for (const field of typeof fieldInfos == "function" ? fieldInfos() : fieldInfos) {
+      const f = field;
+      f.localName = localFieldName(field.name, field.oneof !== void 0);
+      f.jsonName = (_a = field.jsonName) !== null && _a !== void 0 ? _a : fieldJsonName(field.name);
+      f.repeated = (_b = field.repeated) !== null && _b !== void 0 ? _b : false;
+      f.packed = (_c = field.packed) !== null && _c !== void 0 ? _c : false;
+      if (field.oneof !== void 0) {
+        const ooname = typeof field.oneof == "string" ? field.oneof : field.oneof.name;
+        if (!o || o.name != ooname) {
+          o = new InternalOneofInfo(ooname);
+        }
+        f.oneof = o;
+        o.addField(f);
+      }
+      r.push(f);
+    }
+    return r;
+  }
+
   // ../node_modules/@bufbuild/protobuf/dist/esm/service-type.js
   var MethodKind;
   (function(MethodKind2) {
@@ -2292,6 +2478,968 @@
     MethodIdempotency2[MethodIdempotency2["NoSideEffects"] = 1] = "NoSideEffects";
     MethodIdempotency2[MethodIdempotency2["Idempotent"] = 2] = "Idempotent";
   })(MethodIdempotency || (MethodIdempotency = {}));
+
+  // ../node_modules/@bufbuild/protobuf/dist/esm/google/protobuf/descriptor_pb.js
+  var FileDescriptorSet = class _FileDescriptorSet extends Message {
+    constructor(data) {
+      super();
+      this.file = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _FileDescriptorSet().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _FileDescriptorSet().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _FileDescriptorSet().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_FileDescriptorSet, a, b);
+    }
+  };
+  FileDescriptorSet.runtime = proto2;
+  FileDescriptorSet.typeName = "google.protobuf.FileDescriptorSet";
+  FileDescriptorSet.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "file", kind: "message", T: FileDescriptorProto, repeated: true }
+  ]);
+  var FileDescriptorProto = class _FileDescriptorProto extends Message {
+    constructor(data) {
+      super();
+      this.dependency = [];
+      this.publicDependency = [];
+      this.weakDependency = [];
+      this.messageType = [];
+      this.enumType = [];
+      this.service = [];
+      this.extension = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _FileDescriptorProto().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _FileDescriptorProto().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _FileDescriptorProto().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_FileDescriptorProto, a, b);
+    }
+  };
+  FileDescriptorProto.runtime = proto2;
+  FileDescriptorProto.typeName = "google.protobuf.FileDescriptorProto";
+  FileDescriptorProto.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9, opt: true },
+    { no: 2, name: "package", kind: "scalar", T: 9, opt: true },
+    { no: 3, name: "dependency", kind: "scalar", T: 9, repeated: true },
+    { no: 10, name: "public_dependency", kind: "scalar", T: 5, repeated: true },
+    { no: 11, name: "weak_dependency", kind: "scalar", T: 5, repeated: true },
+    { no: 4, name: "message_type", kind: "message", T: DescriptorProto, repeated: true },
+    { no: 5, name: "enum_type", kind: "message", T: EnumDescriptorProto, repeated: true },
+    { no: 6, name: "service", kind: "message", T: ServiceDescriptorProto, repeated: true },
+    { no: 7, name: "extension", kind: "message", T: FieldDescriptorProto, repeated: true },
+    { no: 8, name: "options", kind: "message", T: FileOptions, opt: true },
+    { no: 9, name: "source_code_info", kind: "message", T: SourceCodeInfo, opt: true },
+    { no: 12, name: "syntax", kind: "scalar", T: 9, opt: true },
+    { no: 13, name: "edition", kind: "scalar", T: 9, opt: true }
+  ]);
+  var DescriptorProto = class _DescriptorProto extends Message {
+    constructor(data) {
+      super();
+      this.field = [];
+      this.extension = [];
+      this.nestedType = [];
+      this.enumType = [];
+      this.extensionRange = [];
+      this.oneofDecl = [];
+      this.reservedRange = [];
+      this.reservedName = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _DescriptorProto().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _DescriptorProto().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _DescriptorProto().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_DescriptorProto, a, b);
+    }
+  };
+  DescriptorProto.runtime = proto2;
+  DescriptorProto.typeName = "google.protobuf.DescriptorProto";
+  DescriptorProto.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9, opt: true },
+    { no: 2, name: "field", kind: "message", T: FieldDescriptorProto, repeated: true },
+    { no: 6, name: "extension", kind: "message", T: FieldDescriptorProto, repeated: true },
+    { no: 3, name: "nested_type", kind: "message", T: DescriptorProto, repeated: true },
+    { no: 4, name: "enum_type", kind: "message", T: EnumDescriptorProto, repeated: true },
+    { no: 5, name: "extension_range", kind: "message", T: DescriptorProto_ExtensionRange, repeated: true },
+    { no: 8, name: "oneof_decl", kind: "message", T: OneofDescriptorProto, repeated: true },
+    { no: 7, name: "options", kind: "message", T: MessageOptions, opt: true },
+    { no: 9, name: "reserved_range", kind: "message", T: DescriptorProto_ReservedRange, repeated: true },
+    { no: 10, name: "reserved_name", kind: "scalar", T: 9, repeated: true }
+  ]);
+  var DescriptorProto_ExtensionRange = class _DescriptorProto_ExtensionRange extends Message {
+    constructor(data) {
+      super();
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _DescriptorProto_ExtensionRange().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _DescriptorProto_ExtensionRange().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _DescriptorProto_ExtensionRange().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_DescriptorProto_ExtensionRange, a, b);
+    }
+  };
+  DescriptorProto_ExtensionRange.runtime = proto2;
+  DescriptorProto_ExtensionRange.typeName = "google.protobuf.DescriptorProto.ExtensionRange";
+  DescriptorProto_ExtensionRange.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "start", kind: "scalar", T: 5, opt: true },
+    { no: 2, name: "end", kind: "scalar", T: 5, opt: true },
+    { no: 3, name: "options", kind: "message", T: ExtensionRangeOptions, opt: true }
+  ]);
+  var DescriptorProto_ReservedRange = class _DescriptorProto_ReservedRange extends Message {
+    constructor(data) {
+      super();
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _DescriptorProto_ReservedRange().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _DescriptorProto_ReservedRange().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _DescriptorProto_ReservedRange().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_DescriptorProto_ReservedRange, a, b);
+    }
+  };
+  DescriptorProto_ReservedRange.runtime = proto2;
+  DescriptorProto_ReservedRange.typeName = "google.protobuf.DescriptorProto.ReservedRange";
+  DescriptorProto_ReservedRange.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "start", kind: "scalar", T: 5, opt: true },
+    { no: 2, name: "end", kind: "scalar", T: 5, opt: true }
+  ]);
+  var ExtensionRangeOptions = class _ExtensionRangeOptions extends Message {
+    constructor(data) {
+      super();
+      this.uninterpretedOption = [];
+      this.declaration = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _ExtensionRangeOptions().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _ExtensionRangeOptions().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _ExtensionRangeOptions().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_ExtensionRangeOptions, a, b);
+    }
+  };
+  ExtensionRangeOptions.runtime = proto2;
+  ExtensionRangeOptions.typeName = "google.protobuf.ExtensionRangeOptions";
+  ExtensionRangeOptions.fields = proto2.util.newFieldList(() => [
+    { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true },
+    { no: 2, name: "declaration", kind: "message", T: ExtensionRangeOptions_Declaration, repeated: true },
+    { no: 3, name: "verification", kind: "enum", T: proto2.getEnumType(ExtensionRangeOptions_VerificationState), opt: true, default: ExtensionRangeOptions_VerificationState.UNVERIFIED }
+  ]);
+  var ExtensionRangeOptions_VerificationState;
+  (function(ExtensionRangeOptions_VerificationState2) {
+    ExtensionRangeOptions_VerificationState2[ExtensionRangeOptions_VerificationState2["DECLARATION"] = 0] = "DECLARATION";
+    ExtensionRangeOptions_VerificationState2[ExtensionRangeOptions_VerificationState2["UNVERIFIED"] = 1] = "UNVERIFIED";
+  })(ExtensionRangeOptions_VerificationState || (ExtensionRangeOptions_VerificationState = {}));
+  proto2.util.setEnumType(ExtensionRangeOptions_VerificationState, "google.protobuf.ExtensionRangeOptions.VerificationState", [
+    { no: 0, name: "DECLARATION" },
+    { no: 1, name: "UNVERIFIED" }
+  ]);
+  var ExtensionRangeOptions_Declaration = class _ExtensionRangeOptions_Declaration extends Message {
+    constructor(data) {
+      super();
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _ExtensionRangeOptions_Declaration().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _ExtensionRangeOptions_Declaration().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _ExtensionRangeOptions_Declaration().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_ExtensionRangeOptions_Declaration, a, b);
+    }
+  };
+  ExtensionRangeOptions_Declaration.runtime = proto2;
+  ExtensionRangeOptions_Declaration.typeName = "google.protobuf.ExtensionRangeOptions.Declaration";
+  ExtensionRangeOptions_Declaration.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "number", kind: "scalar", T: 5, opt: true },
+    { no: 2, name: "full_name", kind: "scalar", T: 9, opt: true },
+    { no: 3, name: "type", kind: "scalar", T: 9, opt: true },
+    { no: 4, name: "is_repeated", kind: "scalar", T: 8, opt: true },
+    { no: 5, name: "reserved", kind: "scalar", T: 8, opt: true },
+    { no: 6, name: "repeated", kind: "scalar", T: 8, opt: true }
+  ]);
+  var FieldDescriptorProto = class _FieldDescriptorProto extends Message {
+    constructor(data) {
+      super();
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _FieldDescriptorProto().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _FieldDescriptorProto().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _FieldDescriptorProto().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_FieldDescriptorProto, a, b);
+    }
+  };
+  FieldDescriptorProto.runtime = proto2;
+  FieldDescriptorProto.typeName = "google.protobuf.FieldDescriptorProto";
+  FieldDescriptorProto.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9, opt: true },
+    { no: 3, name: "number", kind: "scalar", T: 5, opt: true },
+    { no: 4, name: "label", kind: "enum", T: proto2.getEnumType(FieldDescriptorProto_Label), opt: true },
+    { no: 5, name: "type", kind: "enum", T: proto2.getEnumType(FieldDescriptorProto_Type), opt: true },
+    { no: 6, name: "type_name", kind: "scalar", T: 9, opt: true },
+    { no: 2, name: "extendee", kind: "scalar", T: 9, opt: true },
+    { no: 7, name: "default_value", kind: "scalar", T: 9, opt: true },
+    { no: 9, name: "oneof_index", kind: "scalar", T: 5, opt: true },
+    { no: 10, name: "json_name", kind: "scalar", T: 9, opt: true },
+    { no: 8, name: "options", kind: "message", T: FieldOptions, opt: true },
+    { no: 17, name: "proto3_optional", kind: "scalar", T: 8, opt: true }
+  ]);
+  var FieldDescriptorProto_Type;
+  (function(FieldDescriptorProto_Type2) {
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["DOUBLE"] = 1] = "DOUBLE";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["FLOAT"] = 2] = "FLOAT";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["INT64"] = 3] = "INT64";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["UINT64"] = 4] = "UINT64";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["INT32"] = 5] = "INT32";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["FIXED64"] = 6] = "FIXED64";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["FIXED32"] = 7] = "FIXED32";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["BOOL"] = 8] = "BOOL";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["STRING"] = 9] = "STRING";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["GROUP"] = 10] = "GROUP";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["MESSAGE"] = 11] = "MESSAGE";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["BYTES"] = 12] = "BYTES";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["UINT32"] = 13] = "UINT32";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["ENUM"] = 14] = "ENUM";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["SFIXED32"] = 15] = "SFIXED32";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["SFIXED64"] = 16] = "SFIXED64";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["SINT32"] = 17] = "SINT32";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["SINT64"] = 18] = "SINT64";
+  })(FieldDescriptorProto_Type || (FieldDescriptorProto_Type = {}));
+  proto2.util.setEnumType(FieldDescriptorProto_Type, "google.protobuf.FieldDescriptorProto.Type", [
+    { no: 1, name: "TYPE_DOUBLE" },
+    { no: 2, name: "TYPE_FLOAT" },
+    { no: 3, name: "TYPE_INT64" },
+    { no: 4, name: "TYPE_UINT64" },
+    { no: 5, name: "TYPE_INT32" },
+    { no: 6, name: "TYPE_FIXED64" },
+    { no: 7, name: "TYPE_FIXED32" },
+    { no: 8, name: "TYPE_BOOL" },
+    { no: 9, name: "TYPE_STRING" },
+    { no: 10, name: "TYPE_GROUP" },
+    { no: 11, name: "TYPE_MESSAGE" },
+    { no: 12, name: "TYPE_BYTES" },
+    { no: 13, name: "TYPE_UINT32" },
+    { no: 14, name: "TYPE_ENUM" },
+    { no: 15, name: "TYPE_SFIXED32" },
+    { no: 16, name: "TYPE_SFIXED64" },
+    { no: 17, name: "TYPE_SINT32" },
+    { no: 18, name: "TYPE_SINT64" }
+  ]);
+  var FieldDescriptorProto_Label;
+  (function(FieldDescriptorProto_Label2) {
+    FieldDescriptorProto_Label2[FieldDescriptorProto_Label2["OPTIONAL"] = 1] = "OPTIONAL";
+    FieldDescriptorProto_Label2[FieldDescriptorProto_Label2["REQUIRED"] = 2] = "REQUIRED";
+    FieldDescriptorProto_Label2[FieldDescriptorProto_Label2["REPEATED"] = 3] = "REPEATED";
+  })(FieldDescriptorProto_Label || (FieldDescriptorProto_Label = {}));
+  proto2.util.setEnumType(FieldDescriptorProto_Label, "google.protobuf.FieldDescriptorProto.Label", [
+    { no: 1, name: "LABEL_OPTIONAL" },
+    { no: 2, name: "LABEL_REQUIRED" },
+    { no: 3, name: "LABEL_REPEATED" }
+  ]);
+  var OneofDescriptorProto = class _OneofDescriptorProto extends Message {
+    constructor(data) {
+      super();
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _OneofDescriptorProto().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _OneofDescriptorProto().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _OneofDescriptorProto().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_OneofDescriptorProto, a, b);
+    }
+  };
+  OneofDescriptorProto.runtime = proto2;
+  OneofDescriptorProto.typeName = "google.protobuf.OneofDescriptorProto";
+  OneofDescriptorProto.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9, opt: true },
+    { no: 2, name: "options", kind: "message", T: OneofOptions, opt: true }
+  ]);
+  var EnumDescriptorProto = class _EnumDescriptorProto extends Message {
+    constructor(data) {
+      super();
+      this.value = [];
+      this.reservedRange = [];
+      this.reservedName = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _EnumDescriptorProto().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _EnumDescriptorProto().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _EnumDescriptorProto().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_EnumDescriptorProto, a, b);
+    }
+  };
+  EnumDescriptorProto.runtime = proto2;
+  EnumDescriptorProto.typeName = "google.protobuf.EnumDescriptorProto";
+  EnumDescriptorProto.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9, opt: true },
+    { no: 2, name: "value", kind: "message", T: EnumValueDescriptorProto, repeated: true },
+    { no: 3, name: "options", kind: "message", T: EnumOptions, opt: true },
+    { no: 4, name: "reserved_range", kind: "message", T: EnumDescriptorProto_EnumReservedRange, repeated: true },
+    { no: 5, name: "reserved_name", kind: "scalar", T: 9, repeated: true }
+  ]);
+  var EnumDescriptorProto_EnumReservedRange = class _EnumDescriptorProto_EnumReservedRange extends Message {
+    constructor(data) {
+      super();
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _EnumDescriptorProto_EnumReservedRange().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _EnumDescriptorProto_EnumReservedRange().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _EnumDescriptorProto_EnumReservedRange().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_EnumDescriptorProto_EnumReservedRange, a, b);
+    }
+  };
+  EnumDescriptorProto_EnumReservedRange.runtime = proto2;
+  EnumDescriptorProto_EnumReservedRange.typeName = "google.protobuf.EnumDescriptorProto.EnumReservedRange";
+  EnumDescriptorProto_EnumReservedRange.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "start", kind: "scalar", T: 5, opt: true },
+    { no: 2, name: "end", kind: "scalar", T: 5, opt: true }
+  ]);
+  var EnumValueDescriptorProto = class _EnumValueDescriptorProto extends Message {
+    constructor(data) {
+      super();
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _EnumValueDescriptorProto().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _EnumValueDescriptorProto().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _EnumValueDescriptorProto().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_EnumValueDescriptorProto, a, b);
+    }
+  };
+  EnumValueDescriptorProto.runtime = proto2;
+  EnumValueDescriptorProto.typeName = "google.protobuf.EnumValueDescriptorProto";
+  EnumValueDescriptorProto.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9, opt: true },
+    { no: 2, name: "number", kind: "scalar", T: 5, opt: true },
+    { no: 3, name: "options", kind: "message", T: EnumValueOptions, opt: true }
+  ]);
+  var ServiceDescriptorProto = class _ServiceDescriptorProto extends Message {
+    constructor(data) {
+      super();
+      this.method = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _ServiceDescriptorProto().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _ServiceDescriptorProto().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _ServiceDescriptorProto().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_ServiceDescriptorProto, a, b);
+    }
+  };
+  ServiceDescriptorProto.runtime = proto2;
+  ServiceDescriptorProto.typeName = "google.protobuf.ServiceDescriptorProto";
+  ServiceDescriptorProto.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9, opt: true },
+    { no: 2, name: "method", kind: "message", T: MethodDescriptorProto, repeated: true },
+    { no: 3, name: "options", kind: "message", T: ServiceOptions, opt: true }
+  ]);
+  var MethodDescriptorProto = class _MethodDescriptorProto extends Message {
+    constructor(data) {
+      super();
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _MethodDescriptorProto().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _MethodDescriptorProto().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _MethodDescriptorProto().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_MethodDescriptorProto, a, b);
+    }
+  };
+  MethodDescriptorProto.runtime = proto2;
+  MethodDescriptorProto.typeName = "google.protobuf.MethodDescriptorProto";
+  MethodDescriptorProto.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9, opt: true },
+    { no: 2, name: "input_type", kind: "scalar", T: 9, opt: true },
+    { no: 3, name: "output_type", kind: "scalar", T: 9, opt: true },
+    { no: 4, name: "options", kind: "message", T: MethodOptions, opt: true },
+    { no: 5, name: "client_streaming", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 6, name: "server_streaming", kind: "scalar", T: 8, opt: true, default: false }
+  ]);
+  var FileOptions = class _FileOptions extends Message {
+    constructor(data) {
+      super();
+      this.uninterpretedOption = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _FileOptions().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _FileOptions().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _FileOptions().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_FileOptions, a, b);
+    }
+  };
+  FileOptions.runtime = proto2;
+  FileOptions.typeName = "google.protobuf.FileOptions";
+  FileOptions.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "java_package", kind: "scalar", T: 9, opt: true },
+    { no: 8, name: "java_outer_classname", kind: "scalar", T: 9, opt: true },
+    { no: 10, name: "java_multiple_files", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 20, name: "java_generate_equals_and_hash", kind: "scalar", T: 8, opt: true },
+    { no: 27, name: "java_string_check_utf8", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 9, name: "optimize_for", kind: "enum", T: proto2.getEnumType(FileOptions_OptimizeMode), opt: true, default: FileOptions_OptimizeMode.SPEED },
+    { no: 11, name: "go_package", kind: "scalar", T: 9, opt: true },
+    { no: 16, name: "cc_generic_services", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 17, name: "java_generic_services", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 18, name: "py_generic_services", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 42, name: "php_generic_services", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 23, name: "deprecated", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 31, name: "cc_enable_arenas", kind: "scalar", T: 8, opt: true, default: true },
+    { no: 36, name: "objc_class_prefix", kind: "scalar", T: 9, opt: true },
+    { no: 37, name: "csharp_namespace", kind: "scalar", T: 9, opt: true },
+    { no: 39, name: "swift_prefix", kind: "scalar", T: 9, opt: true },
+    { no: 40, name: "php_class_prefix", kind: "scalar", T: 9, opt: true },
+    { no: 41, name: "php_namespace", kind: "scalar", T: 9, opt: true },
+    { no: 44, name: "php_metadata_namespace", kind: "scalar", T: 9, opt: true },
+    { no: 45, name: "ruby_package", kind: "scalar", T: 9, opt: true },
+    { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true }
+  ]);
+  var FileOptions_OptimizeMode;
+  (function(FileOptions_OptimizeMode2) {
+    FileOptions_OptimizeMode2[FileOptions_OptimizeMode2["SPEED"] = 1] = "SPEED";
+    FileOptions_OptimizeMode2[FileOptions_OptimizeMode2["CODE_SIZE"] = 2] = "CODE_SIZE";
+    FileOptions_OptimizeMode2[FileOptions_OptimizeMode2["LITE_RUNTIME"] = 3] = "LITE_RUNTIME";
+  })(FileOptions_OptimizeMode || (FileOptions_OptimizeMode = {}));
+  proto2.util.setEnumType(FileOptions_OptimizeMode, "google.protobuf.FileOptions.OptimizeMode", [
+    { no: 1, name: "SPEED" },
+    { no: 2, name: "CODE_SIZE" },
+    { no: 3, name: "LITE_RUNTIME" }
+  ]);
+  var MessageOptions = class _MessageOptions extends Message {
+    constructor(data) {
+      super();
+      this.uninterpretedOption = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _MessageOptions().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _MessageOptions().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _MessageOptions().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_MessageOptions, a, b);
+    }
+  };
+  MessageOptions.runtime = proto2;
+  MessageOptions.typeName = "google.protobuf.MessageOptions";
+  MessageOptions.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "message_set_wire_format", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 2, name: "no_standard_descriptor_accessor", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 3, name: "deprecated", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 7, name: "map_entry", kind: "scalar", T: 8, opt: true },
+    { no: 11, name: "deprecated_legacy_json_field_conflicts", kind: "scalar", T: 8, opt: true },
+    { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true }
+  ]);
+  var FieldOptions = class _FieldOptions extends Message {
+    constructor(data) {
+      super();
+      this.targets = [];
+      this.uninterpretedOption = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _FieldOptions().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _FieldOptions().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _FieldOptions().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_FieldOptions, a, b);
+    }
+  };
+  FieldOptions.runtime = proto2;
+  FieldOptions.typeName = "google.protobuf.FieldOptions";
+  FieldOptions.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "ctype", kind: "enum", T: proto2.getEnumType(FieldOptions_CType), opt: true, default: FieldOptions_CType.STRING },
+    { no: 2, name: "packed", kind: "scalar", T: 8, opt: true },
+    { no: 6, name: "jstype", kind: "enum", T: proto2.getEnumType(FieldOptions_JSType), opt: true, default: FieldOptions_JSType.JS_NORMAL },
+    { no: 5, name: "lazy", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 15, name: "unverified_lazy", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 3, name: "deprecated", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 10, name: "weak", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 16, name: "debug_redact", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 17, name: "retention", kind: "enum", T: proto2.getEnumType(FieldOptions_OptionRetention), opt: true },
+    { no: 18, name: "target", kind: "enum", T: proto2.getEnumType(FieldOptions_OptionTargetType), opt: true },
+    { no: 19, name: "targets", kind: "enum", T: proto2.getEnumType(FieldOptions_OptionTargetType), repeated: true },
+    { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true }
+  ]);
+  var FieldOptions_CType;
+  (function(FieldOptions_CType2) {
+    FieldOptions_CType2[FieldOptions_CType2["STRING"] = 0] = "STRING";
+    FieldOptions_CType2[FieldOptions_CType2["CORD"] = 1] = "CORD";
+    FieldOptions_CType2[FieldOptions_CType2["STRING_PIECE"] = 2] = "STRING_PIECE";
+  })(FieldOptions_CType || (FieldOptions_CType = {}));
+  proto2.util.setEnumType(FieldOptions_CType, "google.protobuf.FieldOptions.CType", [
+    { no: 0, name: "STRING" },
+    { no: 1, name: "CORD" },
+    { no: 2, name: "STRING_PIECE" }
+  ]);
+  var FieldOptions_JSType;
+  (function(FieldOptions_JSType2) {
+    FieldOptions_JSType2[FieldOptions_JSType2["JS_NORMAL"] = 0] = "JS_NORMAL";
+    FieldOptions_JSType2[FieldOptions_JSType2["JS_STRING"] = 1] = "JS_STRING";
+    FieldOptions_JSType2[FieldOptions_JSType2["JS_NUMBER"] = 2] = "JS_NUMBER";
+  })(FieldOptions_JSType || (FieldOptions_JSType = {}));
+  proto2.util.setEnumType(FieldOptions_JSType, "google.protobuf.FieldOptions.JSType", [
+    { no: 0, name: "JS_NORMAL" },
+    { no: 1, name: "JS_STRING" },
+    { no: 2, name: "JS_NUMBER" }
+  ]);
+  var FieldOptions_OptionRetention;
+  (function(FieldOptions_OptionRetention2) {
+    FieldOptions_OptionRetention2[FieldOptions_OptionRetention2["RETENTION_UNKNOWN"] = 0] = "RETENTION_UNKNOWN";
+    FieldOptions_OptionRetention2[FieldOptions_OptionRetention2["RETENTION_RUNTIME"] = 1] = "RETENTION_RUNTIME";
+    FieldOptions_OptionRetention2[FieldOptions_OptionRetention2["RETENTION_SOURCE"] = 2] = "RETENTION_SOURCE";
+  })(FieldOptions_OptionRetention || (FieldOptions_OptionRetention = {}));
+  proto2.util.setEnumType(FieldOptions_OptionRetention, "google.protobuf.FieldOptions.OptionRetention", [
+    { no: 0, name: "RETENTION_UNKNOWN" },
+    { no: 1, name: "RETENTION_RUNTIME" },
+    { no: 2, name: "RETENTION_SOURCE" }
+  ]);
+  var FieldOptions_OptionTargetType;
+  (function(FieldOptions_OptionTargetType2) {
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_UNKNOWN"] = 0] = "TARGET_TYPE_UNKNOWN";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_FILE"] = 1] = "TARGET_TYPE_FILE";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_EXTENSION_RANGE"] = 2] = "TARGET_TYPE_EXTENSION_RANGE";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_MESSAGE"] = 3] = "TARGET_TYPE_MESSAGE";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_FIELD"] = 4] = "TARGET_TYPE_FIELD";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_ONEOF"] = 5] = "TARGET_TYPE_ONEOF";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_ENUM"] = 6] = "TARGET_TYPE_ENUM";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_ENUM_ENTRY"] = 7] = "TARGET_TYPE_ENUM_ENTRY";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_SERVICE"] = 8] = "TARGET_TYPE_SERVICE";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_METHOD"] = 9] = "TARGET_TYPE_METHOD";
+  })(FieldOptions_OptionTargetType || (FieldOptions_OptionTargetType = {}));
+  proto2.util.setEnumType(FieldOptions_OptionTargetType, "google.protobuf.FieldOptions.OptionTargetType", [
+    { no: 0, name: "TARGET_TYPE_UNKNOWN" },
+    { no: 1, name: "TARGET_TYPE_FILE" },
+    { no: 2, name: "TARGET_TYPE_EXTENSION_RANGE" },
+    { no: 3, name: "TARGET_TYPE_MESSAGE" },
+    { no: 4, name: "TARGET_TYPE_FIELD" },
+    { no: 5, name: "TARGET_TYPE_ONEOF" },
+    { no: 6, name: "TARGET_TYPE_ENUM" },
+    { no: 7, name: "TARGET_TYPE_ENUM_ENTRY" },
+    { no: 8, name: "TARGET_TYPE_SERVICE" },
+    { no: 9, name: "TARGET_TYPE_METHOD" }
+  ]);
+  var OneofOptions = class _OneofOptions extends Message {
+    constructor(data) {
+      super();
+      this.uninterpretedOption = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _OneofOptions().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _OneofOptions().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _OneofOptions().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_OneofOptions, a, b);
+    }
+  };
+  OneofOptions.runtime = proto2;
+  OneofOptions.typeName = "google.protobuf.OneofOptions";
+  OneofOptions.fields = proto2.util.newFieldList(() => [
+    { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true }
+  ]);
+  var EnumOptions = class _EnumOptions extends Message {
+    constructor(data) {
+      super();
+      this.uninterpretedOption = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _EnumOptions().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _EnumOptions().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _EnumOptions().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_EnumOptions, a, b);
+    }
+  };
+  EnumOptions.runtime = proto2;
+  EnumOptions.typeName = "google.protobuf.EnumOptions";
+  EnumOptions.fields = proto2.util.newFieldList(() => [
+    { no: 2, name: "allow_alias", kind: "scalar", T: 8, opt: true },
+    { no: 3, name: "deprecated", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 6, name: "deprecated_legacy_json_field_conflicts", kind: "scalar", T: 8, opt: true },
+    { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true }
+  ]);
+  var EnumValueOptions = class _EnumValueOptions extends Message {
+    constructor(data) {
+      super();
+      this.uninterpretedOption = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _EnumValueOptions().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _EnumValueOptions().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _EnumValueOptions().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_EnumValueOptions, a, b);
+    }
+  };
+  EnumValueOptions.runtime = proto2;
+  EnumValueOptions.typeName = "google.protobuf.EnumValueOptions";
+  EnumValueOptions.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "deprecated", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true }
+  ]);
+  var ServiceOptions = class _ServiceOptions extends Message {
+    constructor(data) {
+      super();
+      this.uninterpretedOption = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _ServiceOptions().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _ServiceOptions().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _ServiceOptions().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_ServiceOptions, a, b);
+    }
+  };
+  ServiceOptions.runtime = proto2;
+  ServiceOptions.typeName = "google.protobuf.ServiceOptions";
+  ServiceOptions.fields = proto2.util.newFieldList(() => [
+    { no: 33, name: "deprecated", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true }
+  ]);
+  var MethodOptions = class _MethodOptions extends Message {
+    constructor(data) {
+      super();
+      this.uninterpretedOption = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _MethodOptions().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _MethodOptions().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _MethodOptions().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_MethodOptions, a, b);
+    }
+  };
+  MethodOptions.runtime = proto2;
+  MethodOptions.typeName = "google.protobuf.MethodOptions";
+  MethodOptions.fields = proto2.util.newFieldList(() => [
+    { no: 33, name: "deprecated", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 34, name: "idempotency_level", kind: "enum", T: proto2.getEnumType(MethodOptions_IdempotencyLevel), opt: true, default: MethodOptions_IdempotencyLevel.IDEMPOTENCY_UNKNOWN },
+    { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true }
+  ]);
+  var MethodOptions_IdempotencyLevel;
+  (function(MethodOptions_IdempotencyLevel2) {
+    MethodOptions_IdempotencyLevel2[MethodOptions_IdempotencyLevel2["IDEMPOTENCY_UNKNOWN"] = 0] = "IDEMPOTENCY_UNKNOWN";
+    MethodOptions_IdempotencyLevel2[MethodOptions_IdempotencyLevel2["NO_SIDE_EFFECTS"] = 1] = "NO_SIDE_EFFECTS";
+    MethodOptions_IdempotencyLevel2[MethodOptions_IdempotencyLevel2["IDEMPOTENT"] = 2] = "IDEMPOTENT";
+  })(MethodOptions_IdempotencyLevel || (MethodOptions_IdempotencyLevel = {}));
+  proto2.util.setEnumType(MethodOptions_IdempotencyLevel, "google.protobuf.MethodOptions.IdempotencyLevel", [
+    { no: 0, name: "IDEMPOTENCY_UNKNOWN" },
+    { no: 1, name: "NO_SIDE_EFFECTS" },
+    { no: 2, name: "IDEMPOTENT" }
+  ]);
+  var UninterpretedOption = class _UninterpretedOption extends Message {
+    constructor(data) {
+      super();
+      this.name = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _UninterpretedOption().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _UninterpretedOption().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _UninterpretedOption().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_UninterpretedOption, a, b);
+    }
+  };
+  UninterpretedOption.runtime = proto2;
+  UninterpretedOption.typeName = "google.protobuf.UninterpretedOption";
+  UninterpretedOption.fields = proto2.util.newFieldList(() => [
+    { no: 2, name: "name", kind: "message", T: UninterpretedOption_NamePart, repeated: true },
+    { no: 3, name: "identifier_value", kind: "scalar", T: 9, opt: true },
+    { no: 4, name: "positive_int_value", kind: "scalar", T: 4, opt: true },
+    { no: 5, name: "negative_int_value", kind: "scalar", T: 3, opt: true },
+    { no: 6, name: "double_value", kind: "scalar", T: 1, opt: true },
+    { no: 7, name: "string_value", kind: "scalar", T: 12, opt: true },
+    { no: 8, name: "aggregate_value", kind: "scalar", T: 9, opt: true }
+  ]);
+  var UninterpretedOption_NamePart = class _UninterpretedOption_NamePart extends Message {
+    constructor(data) {
+      super();
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _UninterpretedOption_NamePart().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _UninterpretedOption_NamePart().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _UninterpretedOption_NamePart().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_UninterpretedOption_NamePart, a, b);
+    }
+  };
+  UninterpretedOption_NamePart.runtime = proto2;
+  UninterpretedOption_NamePart.typeName = "google.protobuf.UninterpretedOption.NamePart";
+  UninterpretedOption_NamePart.fields = proto2.util.newFieldList(() => [
+    {
+      no: 1,
+      name: "name_part",
+      kind: "scalar",
+      T: 9
+      /* ScalarType.STRING */
+    },
+    {
+      no: 2,
+      name: "is_extension",
+      kind: "scalar",
+      T: 8
+      /* ScalarType.BOOL */
+    }
+  ]);
+  var SourceCodeInfo = class _SourceCodeInfo extends Message {
+    constructor(data) {
+      super();
+      this.location = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _SourceCodeInfo().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _SourceCodeInfo().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _SourceCodeInfo().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_SourceCodeInfo, a, b);
+    }
+  };
+  SourceCodeInfo.runtime = proto2;
+  SourceCodeInfo.typeName = "google.protobuf.SourceCodeInfo";
+  SourceCodeInfo.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "location", kind: "message", T: SourceCodeInfo_Location, repeated: true }
+  ]);
+  var SourceCodeInfo_Location = class _SourceCodeInfo_Location extends Message {
+    constructor(data) {
+      super();
+      this.path = [];
+      this.span = [];
+      this.leadingDetachedComments = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _SourceCodeInfo_Location().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _SourceCodeInfo_Location().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _SourceCodeInfo_Location().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_SourceCodeInfo_Location, a, b);
+    }
+  };
+  SourceCodeInfo_Location.runtime = proto2;
+  SourceCodeInfo_Location.typeName = "google.protobuf.SourceCodeInfo.Location";
+  SourceCodeInfo_Location.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "path", kind: "scalar", T: 5, repeated: true, packed: true },
+    { no: 2, name: "span", kind: "scalar", T: 5, repeated: true, packed: true },
+    { no: 3, name: "leading_comments", kind: "scalar", T: 9, opt: true },
+    { no: 4, name: "trailing_comments", kind: "scalar", T: 9, opt: true },
+    { no: 6, name: "leading_detached_comments", kind: "scalar", T: 9, repeated: true }
+  ]);
+  var GeneratedCodeInfo = class _GeneratedCodeInfo extends Message {
+    constructor(data) {
+      super();
+      this.annotation = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _GeneratedCodeInfo().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _GeneratedCodeInfo().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _GeneratedCodeInfo().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_GeneratedCodeInfo, a, b);
+    }
+  };
+  GeneratedCodeInfo.runtime = proto2;
+  GeneratedCodeInfo.typeName = "google.protobuf.GeneratedCodeInfo";
+  GeneratedCodeInfo.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "annotation", kind: "message", T: GeneratedCodeInfo_Annotation, repeated: true }
+  ]);
+  var GeneratedCodeInfo_Annotation = class _GeneratedCodeInfo_Annotation extends Message {
+    constructor(data) {
+      super();
+      this.path = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _GeneratedCodeInfo_Annotation().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _GeneratedCodeInfo_Annotation().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _GeneratedCodeInfo_Annotation().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_GeneratedCodeInfo_Annotation, a, b);
+    }
+  };
+  GeneratedCodeInfo_Annotation.runtime = proto2;
+  GeneratedCodeInfo_Annotation.typeName = "google.protobuf.GeneratedCodeInfo.Annotation";
+  GeneratedCodeInfo_Annotation.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "path", kind: "scalar", T: 5, repeated: true, packed: true },
+    { no: 2, name: "source_file", kind: "scalar", T: 9, opt: true },
+    { no: 3, name: "begin", kind: "scalar", T: 5, opt: true },
+    { no: 4, name: "end", kind: "scalar", T: 5, opt: true },
+    { no: 5, name: "semantic", kind: "enum", T: proto2.getEnumType(GeneratedCodeInfo_Annotation_Semantic), opt: true }
+  ]);
+  var GeneratedCodeInfo_Annotation_Semantic;
+  (function(GeneratedCodeInfo_Annotation_Semantic2) {
+    GeneratedCodeInfo_Annotation_Semantic2[GeneratedCodeInfo_Annotation_Semantic2["NONE"] = 0] = "NONE";
+    GeneratedCodeInfo_Annotation_Semantic2[GeneratedCodeInfo_Annotation_Semantic2["SET"] = 1] = "SET";
+    GeneratedCodeInfo_Annotation_Semantic2[GeneratedCodeInfo_Annotation_Semantic2["ALIAS"] = 2] = "ALIAS";
+  })(GeneratedCodeInfo_Annotation_Semantic || (GeneratedCodeInfo_Annotation_Semantic = {}));
+  proto2.util.setEnumType(GeneratedCodeInfo_Annotation_Semantic, "google.protobuf.GeneratedCodeInfo.Annotation.Semantic", [
+    { no: 0, name: "NONE" },
+    { no: 1, name: "SET" },
+    { no: 2, name: "ALIAS" }
+  ]);
 
   // ../node_modules/@bufbuild/protobuf/dist/esm/google/protobuf/empty_pb.js
   var Empty = class _Empty extends Message {
@@ -3346,7 +4494,7 @@
     };
   }
 
-  // site/rpc/user/user_pb.ts
+  // rpc/user/user_pb.ts
   var GroupInfoRequest = class _GroupInfoRequest extends Message {
     /**
      * @generated from field: string secret = 1;
@@ -3697,7 +4845,208 @@
     }
   };
 
-  // site/rpc/content/content_pb.ts
+  // rpc/content/content_pb.ts
+  var Sources = class _Sources extends Message {
+    /**
+     * @generated from field: repeated content.EnumeratedSource sources = 1;
+     */
+    sources = [];
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.Sources";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "sources", kind: "message", T: EnumeratedSource, repeated: true }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _Sources().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _Sources().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _Sources().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_Sources, a, b);
+    }
+  };
+  var EnumeratedSource = class _EnumeratedSource extends Message {
+    /**
+     * @generated from field: content.Source source = 1;
+     */
+    source;
+    /**
+     * @generated from field: repeated content.DisplayContent display_content = 2;
+     */
+    displayContent = [];
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.EnumeratedSource";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "source", kind: "message", T: Source },
+      { no: 2, name: "display_content", kind: "message", T: DisplayContent, repeated: true }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _EnumeratedSource().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _EnumeratedSource().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _EnumeratedSource().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_EnumeratedSource, a, b);
+    }
+  };
+  var DisplayContent = class _DisplayContent extends Message {
+    /**
+     * @generated from field: string title = 1;
+     */
+    title = "";
+    /**
+     * @generated from field: string description = 2;
+     */
+    description = "";
+    /**
+     * @generated from field: content.Content content = 3;
+     */
+    content;
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.DisplayContent";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "title",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "description",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 3, name: "content", kind: "message", T: Content }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _DisplayContent().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _DisplayContent().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _DisplayContent().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_DisplayContent, a, b);
+    }
+  };
+  var Source = class _Source extends Message {
+    /**
+     * @generated from field: string name = 1;
+     */
+    name = "";
+    /**
+     * @generated from oneof content.Source.type
+     */
+    type = { case: void 0 };
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.Source";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "name",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 2, name: "server", kind: "message", T: Server, oneof: "type" },
+      { no: 3, name: "folder", kind: "message", T: Folder, oneof: "type" }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _Source().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _Source().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _Source().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_Source, a, b);
+    }
+  };
+  var Server = class _Server extends Message {
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.Server";
+    static fields = proto3.util.newFieldList(() => []);
+    static fromBinary(bytes, options) {
+      return new _Server().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _Server().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _Server().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_Server, a, b);
+    }
+  };
+  var Folder = class _Folder extends Message {
+    /**
+     * @generated from field: string path = 2;
+     */
+    path = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.Folder";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 2,
+        name: "path",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _Folder().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _Folder().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _Folder().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_Folder, a, b);
+    }
+  };
   var SetTagsRequest = class _SetTagsRequest extends Message {
     /**
      * @generated from field: string content_id = 1;
@@ -4200,7 +5549,9 @@
       },
       { no: 6, name: "data", kind: "message", T: Data, oneof: "type" },
       { no: 7, name: "normalized", kind: "message", T: Normalized, oneof: "type" },
-      { no: 8, name: "transformed", kind: "message", T: Transformed, oneof: "type" }
+      { no: 8, name: "transformed", kind: "message", T: Transformed, oneof: "type" },
+      { no: 9, name: "post", kind: "message", T: Post, oneof: "type" },
+      { no: 10, name: "site", kind: "message", T: Site, oneof: "type" }
     ]);
     static fromBinary(bytes, options) {
       return new _Content().fromBinary(bytes, options);
@@ -4213,6 +5564,77 @@
     }
     static equals(a, b) {
       return proto3.util.equals(_Content, a, b);
+    }
+  };
+  var Post = class _Post extends Message {
+    /**
+     * @generated from field: string title = 1;
+     */
+    title = "";
+    /**
+     * @generated from field: string summary = 2;
+     */
+    summary = "";
+    /**
+     * @generated from field: string content = 3;
+     */
+    content = "";
+    /**
+     * @generated from field: repeated string authors = 4;
+     */
+    authors = [];
+    /**
+     * @generated from field: bool draft = 6;
+     */
+    draft = false;
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.Post";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "title",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "summary",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 3,
+        name: "content",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 4, name: "authors", kind: "scalar", T: 9, repeated: true },
+      {
+        no: 6,
+        name: "draft",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _Post().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _Post().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _Post().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_Post, a, b);
     }
   };
   var GitRepo = class _GitRepo extends Message {
@@ -4911,8 +6333,651 @@
       return proto3.util.equals(_Transcript, a, b);
     }
   };
+  var GRPCTypeInfo = class _GRPCTypeInfo extends Message {
+    /**
+     * @generated from field: google.protobuf.DescriptorProto msg = 1;
+     */
+    msg;
+    /**
+     * @generated from field: map<string, google.protobuf.DescriptorProto> desc_lookup = 3;
+     */
+    descLookup = {};
+    /**
+     * @generated from field: map<string, google.protobuf.EnumDescriptorProto> enum_lookup = 4;
+     */
+    enumLookup = {};
+    /**
+     * @generated from field: string package_name = 6;
+     */
+    packageName = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.GRPCTypeInfo";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "msg", kind: "message", T: DescriptorProto },
+      { no: 3, name: "desc_lookup", kind: "map", K: 9, V: { kind: "message", T: DescriptorProto } },
+      { no: 4, name: "enum_lookup", kind: "map", K: 9, V: { kind: "message", T: EnumDescriptorProto } },
+      {
+        no: 6,
+        name: "package_name",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _GRPCTypeInfo().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _GRPCTypeInfo().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _GRPCTypeInfo().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_GRPCTypeInfo, a, b);
+    }
+  };
+  var Site = class _Site extends Message {
+    /**
+     * @generated from field: content.HugoConfig hugo_config = 1;
+     */
+    hugoConfig;
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.Site";
+    static fields = proto3.util.newFieldList(() => [
+      { no: 1, name: "hugo_config", kind: "message", T: HugoConfig }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _Site().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _Site().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _Site().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_Site, a, b);
+    }
+  };
+  var HugoConfig = class _HugoConfig extends Message {
+    /**
+     * @generated from field: string theme = 1;
+     */
+    theme = "";
+    /**
+     * @generated from field: string base_url = 2;
+     */
+    baseUrl = "";
+    /**
+     * @generated from field: string title = 3;
+     */
+    title = "";
+    /**
+     * @generated from field: content.ParamsConfig params = 4;
+     */
+    params;
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.HugoConfig";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "theme",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "base_url",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 3,
+        name: "title",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 4, name: "params", kind: "message", T: ParamsConfig }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _HugoConfig().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _HugoConfig().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _HugoConfig().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_HugoConfig, a, b);
+    }
+  };
+  var ParamsConfig = class _ParamsConfig extends Message {
+    /**
+     * @generated from field: string env = 1;
+     */
+    env = "";
+    /**
+     * @generated from field: string description = 2;
+     */
+    description = "";
+    /**
+     * @generated from field: string author = 3;
+     */
+    author = "";
+    /**
+     * @generated from field: string default_theme = 4;
+     */
+    defaultTheme = "";
+    /**
+     * @generated from field: bool show_share_buttons = 5;
+     */
+    showShareButtons = false;
+    /**
+     * @generated from field: bool show_reading_time = 6;
+     */
+    showReadingTime = false;
+    /**
+     * @generated from field: bool display_full_lang_name = 7;
+     */
+    displayFullLangName = false;
+    /**
+     * @generated from field: bool show_post_nav_links = 8;
+     */
+    showPostNavLinks = false;
+    /**
+     * @generated from field: bool show_bread_crumbs = 9;
+     */
+    showBreadCrumbs = false;
+    /**
+     * @generated from field: bool show_code_copy_buttons = 10;
+     */
+    showCodeCopyButtons = false;
+    /**
+     * @generated from field: bool show_rss_button_in_section_term_list = 11;
+     */
+    showRssButtonInSectionTermList = false;
+    /**
+     * @generated from field: bool show_all_pages_in_archive = 12;
+     */
+    showAllPagesInArchive = false;
+    /**
+     * @generated from field: bool show_page_nums = 13;
+     */
+    showPageNums = false;
+    /**
+     * @generated from field: bool show_toc = 14;
+     */
+    showToc = false;
+    /**
+     * @generated from field: repeated string images = 15;
+     */
+    images = [];
+    /**
+     * @generated from field: content.ProfileModeConfig profile_mode = 16;
+     */
+    profileMode;
+    /**
+     * @generated from field: content.HomeInfoParamsConfig home_info_params = 17;
+     */
+    homeInfoParams;
+    /**
+     * @generated from field: repeated content.SocialIconConfig social_icons = 18;
+     */
+    socialIcons = [];
+    /**
+     * @generated from field: content.EditPostConfig edit_post = 19;
+     */
+    editPost;
+    /**
+     * @generated from field: content.AssetsConfig assets = 20;
+     */
+    assets;
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.ParamsConfig";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "env",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "description",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 3,
+        name: "author",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 4,
+        name: "default_theme",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 5,
+        name: "show_share_buttons",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      },
+      {
+        no: 6,
+        name: "show_reading_time",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      },
+      {
+        no: 7,
+        name: "display_full_lang_name",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      },
+      {
+        no: 8,
+        name: "show_post_nav_links",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      },
+      {
+        no: 9,
+        name: "show_bread_crumbs",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      },
+      {
+        no: 10,
+        name: "show_code_copy_buttons",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      },
+      {
+        no: 11,
+        name: "show_rss_button_in_section_term_list",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      },
+      {
+        no: 12,
+        name: "show_all_pages_in_archive",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      },
+      {
+        no: 13,
+        name: "show_page_nums",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      },
+      {
+        no: 14,
+        name: "show_toc",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      },
+      { no: 15, name: "images", kind: "scalar", T: 9, repeated: true },
+      { no: 16, name: "profile_mode", kind: "message", T: ProfileModeConfig },
+      { no: 17, name: "home_info_params", kind: "message", T: HomeInfoParamsConfig },
+      { no: 18, name: "social_icons", kind: "message", T: SocialIconConfig, repeated: true },
+      { no: 19, name: "edit_post", kind: "message", T: EditPostConfig },
+      { no: 20, name: "assets", kind: "message", T: AssetsConfig }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _ParamsConfig().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _ParamsConfig().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _ParamsConfig().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_ParamsConfig, a, b);
+    }
+  };
+  var ProfileModeConfig = class _ProfileModeConfig extends Message {
+    /**
+     * @generated from field: bool enabled = 1;
+     */
+    enabled = false;
+    /**
+     * @generated from field: string title = 2;
+     */
+    title = "";
+    /**
+     * @generated from field: string image_url = 3;
+     */
+    imageUrl = "";
+    /**
+     * @generated from field: string image_title = 4;
+     */
+    imageTitle = "";
+    /**
+     * @generated from field: repeated content.ButtonConfig buttons = 5;
+     */
+    buttons = [];
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.ProfileModeConfig";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "enabled",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      },
+      {
+        no: 2,
+        name: "title",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 3,
+        name: "image_url",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 4,
+        name: "image_title",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 5, name: "buttons", kind: "message", T: ButtonConfig, repeated: true }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _ProfileModeConfig().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _ProfileModeConfig().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _ProfileModeConfig().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_ProfileModeConfig, a, b);
+    }
+  };
+  var ButtonConfig = class _ButtonConfig extends Message {
+    /**
+     * @generated from field: string name = 1;
+     */
+    name = "";
+    /**
+     * @generated from field: string url = 2;
+     */
+    url = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.ButtonConfig";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "name",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "url",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _ButtonConfig().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _ButtonConfig().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _ButtonConfig().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_ButtonConfig, a, b);
+    }
+  };
+  var HomeInfoParamsConfig = class _HomeInfoParamsConfig extends Message {
+    /**
+     * @generated from field: string title = 1;
+     */
+    title = "";
+    /**
+     * @generated from field: string content = 2;
+     */
+    content = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.HomeInfoParamsConfig";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "title",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "content",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _HomeInfoParamsConfig().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _HomeInfoParamsConfig().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _HomeInfoParamsConfig().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_HomeInfoParamsConfig, a, b);
+    }
+  };
+  var SocialIconConfig = class _SocialIconConfig extends Message {
+    /**
+     * @generated from field: string name = 1;
+     */
+    name = "";
+    /**
+     * @generated from field: string title = 2;
+     */
+    title = "";
+    /**
+     * @generated from field: string url = 3;
+     */
+    url = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.SocialIconConfig";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "name",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "title",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 3,
+        name: "url",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _SocialIconConfig().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _SocialIconConfig().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _SocialIconConfig().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_SocialIconConfig, a, b);
+    }
+  };
+  var EditPostConfig = class _EditPostConfig extends Message {
+    /**
+     * @generated from field: string url = 1;
+     */
+    url = "";
+    /**
+     * @generated from field: string text = 2;
+     */
+    text = "";
+    /**
+     * @generated from field: bool append_file_path = 3;
+     */
+    appendFilePath = false;
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.EditPostConfig";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "url",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "text",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 3,
+        name: "append_file_path",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _EditPostConfig().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _EditPostConfig().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _EditPostConfig().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_EditPostConfig, a, b);
+    }
+  };
+  var AssetsConfig = class _AssetsConfig extends Message {
+    /**
+     * @generated from field: bool disable_hljs = 1;
+     */
+    disableHljs = false;
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.AssetsConfig";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "disable_hljs",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _AssetsConfig().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _AssetsConfig().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _AssetsConfig().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_AssetsConfig, a, b);
+    }
+  };
 
-  // site/rpc/protoflow_pb.ts
+  // rpc/protoflow_pb.ts
   var AnalyzeConversationRequest2 = class _AnalyzeConversationRequest extends Message {
     /**
      * @generated from field: string text = 1;
@@ -6104,7 +8169,7 @@
     }
   };
 
-  // site/rpc/ai_pb.ts
+  // rpc/ai_pb.ts
   var AnalyzeConversationResponse = class _AnalyzeConversationResponse extends Message {
     /**
      * Phone numbers of the participants
@@ -6184,7 +8249,7 @@
     }
   };
 
-  // site/rpc/protoflow_connect.ts
+  // rpc/protoflow_connect.ts
   var ProtoflowService = {
     typeName: "protoflow.ProtoflowService",
     methods: {
@@ -6299,7 +8364,7 @@
     }
   };
 
-  // site/rpc/content/content_connect.ts
+  // rpc/content/content_connect.ts
   var ContentService = {
     typeName: "content.ContentService",
     methods: {
@@ -6356,111 +8421,32 @@
         I: SetTagsRequest,
         O: Empty,
         kind: MethodKind.Unary
-      }
-    }
-  };
-
-  // site/rpc/user/user_connect.ts
-  var UserService = {
-    typeName: "user.UserService",
-    methods: {
+      },
       /**
-       * @generated from rpc user.UserService.Register
+       * @generated from rpc content.ContentService.Publish
        */
-      register: {
-        name: "Register",
-        I: User,
-        O: User,
+      publish: {
+        name: "Publish",
+        I: ContentIDs,
+        O: ContentIDs,
         kind: MethodKind.Unary
       },
       /**
-       * @generated from rpc user.UserService.Login
+       * @generated from rpc content.ContentService.GetSources
        */
-      login: {
-        name: "Login",
-        I: User,
-        O: User,
-        kind: MethodKind.Unary
-      },
-      /**
-       * @generated from rpc user.UserService.Logout
-       */
-      logout: {
-        name: "Logout",
+      getSources: {
+        name: "GetSources",
         I: Empty,
-        O: Empty,
+        O: Sources,
         kind: MethodKind.Unary
       },
       /**
-       * @generated from rpc user.UserService.UpdateConfig
+       * @generated from rpc content.ContentService.Types
        */
-      updateConfig: {
-        name: "UpdateConfig",
-        I: Config,
-        O: Empty,
-        kind: MethodKind.Unary
-      },
-      /**
-       * @generated from rpc user.UserService.CreateGroupInvite
-       */
-      createGroupInvite: {
-        name: "CreateGroupInvite",
-        I: GroupID,
-        O: GroupInvite,
-        kind: MethodKind.Unary
-      },
-      /**
-       * @generated from rpc user.UserService.JoinGroup
-       */
-      joinGroup: {
-        name: "JoinGroup",
-        I: GroupInvite,
-        O: Group,
-        kind: MethodKind.Unary
-      },
-      /**
-       * @generated from rpc user.UserService.GroupInfo
-       */
-      groupInfo: {
-        name: "GroupInfo",
-        I: GroupInfoRequest,
-        O: Group,
-        kind: MethodKind.Unary
-      },
-      /**
-       * @generated from rpc user.UserService.CreateGroup
-       */
-      createGroup: {
-        name: "CreateGroup",
-        I: Group,
-        O: Group,
-        kind: MethodKind.Unary
-      },
-      /**
-       * @generated from rpc user.UserService.GetGroups
-       */
-      getGroups: {
-        name: "GetGroups",
+      types: {
+        name: "Types",
         I: Empty,
-        O: Groups,
-        kind: MethodKind.Unary
-      },
-      /**
-       * @generated from rpc user.UserService.DeleteGroup
-       */
-      deleteGroup: {
-        name: "DeleteGroup",
-        I: Group,
-        O: Empty,
-        kind: MethodKind.Unary
-      },
-      /**
-       * @generated from rpc user.UserService.Share
-       */
-      share: {
-        name: "Share",
-        I: ShareRequest,
-        O: Empty,
+        O: GRPCTypeInfo,
         kind: MethodKind.Unary
       }
     }
@@ -8214,6 +10200,112 @@
     clear() {
       this.queryCache.clear();
       this.mutationCache.clear();
+    }
+  };
+
+  // rpc/user/user_connect.ts
+  var UserService = {
+    typeName: "user.UserService",
+    methods: {
+      /**
+       * @generated from rpc user.UserService.Register
+       */
+      register: {
+        name: "Register",
+        I: User,
+        O: User,
+        kind: MethodKind.Unary
+      },
+      /**
+       * @generated from rpc user.UserService.Login
+       */
+      login: {
+        name: "Login",
+        I: User,
+        O: User,
+        kind: MethodKind.Unary
+      },
+      /**
+       * @generated from rpc user.UserService.Logout
+       */
+      logout: {
+        name: "Logout",
+        I: Empty,
+        O: Empty,
+        kind: MethodKind.Unary
+      },
+      /**
+       * @generated from rpc user.UserService.UpdateConfig
+       */
+      updateConfig: {
+        name: "UpdateConfig",
+        I: Config,
+        O: Empty,
+        kind: MethodKind.Unary
+      },
+      /**
+       * @generated from rpc user.UserService.CreateGroupInvite
+       */
+      createGroupInvite: {
+        name: "CreateGroupInvite",
+        I: GroupID,
+        O: GroupInvite,
+        kind: MethodKind.Unary
+      },
+      /**
+       * @generated from rpc user.UserService.JoinGroup
+       */
+      joinGroup: {
+        name: "JoinGroup",
+        I: GroupInvite,
+        O: Group,
+        kind: MethodKind.Unary
+      },
+      /**
+       * @generated from rpc user.UserService.GroupInfo
+       */
+      groupInfo: {
+        name: "GroupInfo",
+        I: GroupInfoRequest,
+        O: Group,
+        kind: MethodKind.Unary
+      },
+      /**
+       * @generated from rpc user.UserService.CreateGroup
+       */
+      createGroup: {
+        name: "CreateGroup",
+        I: Group,
+        O: Group,
+        kind: MethodKind.Unary
+      },
+      /**
+       * @generated from rpc user.UserService.GetGroups
+       */
+      getGroups: {
+        name: "GetGroups",
+        I: Empty,
+        O: Groups,
+        kind: MethodKind.Unary
+      },
+      /**
+       * @generated from rpc user.UserService.DeleteGroup
+       */
+      deleteGroup: {
+        name: "DeleteGroup",
+        I: Group,
+        O: Empty,
+        kind: MethodKind.Unary
+      },
+      /**
+       * @generated from rpc user.UserService.Share
+       */
+      share: {
+        name: "Share",
+        I: ShareRequest,
+        O: Empty,
+        kind: MethodKind.Unary
+      }
     }
   };
 

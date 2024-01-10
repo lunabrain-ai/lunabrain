@@ -61,29 +61,41 @@ func (s *EntStore) SaveOrUpdateContent(ctx context.Context, userID, botID uuid.U
 			SetData(&contentEncoder).
 			Save(ctx)
 	}
-
 	if err != nil {
 		return nil, err
 	}
 
-	return c, nil
+	_, err = c.Update().ClearTags().Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ids, err := s.UpsertTags(ctx, data.Tags)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = c.Update().AddTagIDs(ids...).Save(ctx)
+	return c, err
 }
 
-func (s *EntStore) UpsertTags(ctx context.Context, tags []string) error {
+func (s *EntStore) UpsertTags(ctx context.Context, tags []string) ([]uuid.UUID, error) {
+	var ids []uuid.UUID
 	for _, t := range tags {
-		existingTag, err := s.client.Tag.Query().Where(tag.Name(t)).Only(ctx)
+		tg, err := s.client.Tag.Query().Where(tag.Name(t)).Only(ctx)
 		if err != nil && !ent.IsNotFound(err) {
-			return errors.Wrapf(err, "error querying tag %s", t)
+			return nil, errors.Wrapf(err, "error querying tag %s", t)
 		}
-		if existingTag == nil {
+		if tg == nil {
 			// Tag not found, create new
-			_, err = s.client.Tag.Create().SetName(t).Save(ctx)
+			tg, err = s.client.Tag.Create().SetName(t).Save(ctx)
 			if err != nil {
-				return errors.Wrapf(err, "error creating tag %s", t)
+				return nil, errors.Wrapf(err, "error creating tag %s", t)
 			}
 		}
+		ids = append(ids, tg.ID)
 	}
-	return nil
+	return ids, nil
 }
 
 func (s *EntStore) SaveContent(ctx context.Context, userID, botID uuid.UUID, data *content.Content, related []*content.Content) (uuid.UUID, error) {

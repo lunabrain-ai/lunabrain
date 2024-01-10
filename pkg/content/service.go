@@ -2,6 +2,7 @@ package content
 
 import (
 	"context"
+	"fmt"
 	connect_go "github.com/bufbuild/connect-go"
 	"github.com/go-shiori/go-readability"
 	"github.com/google/uuid"
@@ -15,9 +16,13 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/lunabrain-ai/lunabrain/pkg/publish"
+	"github.com/lunabrain-ai/lunabrain/pkg/util"
 	"github.com/pkg/errors"
+	"github.com/protoflow-labs/protoflow/pkg/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
+	"log/slog"
+	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -57,23 +62,182 @@ func NewService(
 	}
 }
 
-func (s *Service) Publish(ctx context.Context, c *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error) {
-	b := publish.NewBlog(s.builder)
-	err := b.Publish("blog", []*content.Content{
+func (s *Service) sourceToContent(ctx context.Context, cs *content.Source) ([]*content.Content, error) {
+	switch t := cs.Type.(type) {
+	case *content.Source_Server:
+		resp, err := s.Search(ctx, connect_go.NewRequest(&content.Query{}))
+		if err != nil {
+			return nil, err
+		}
+		var cnt []*content.Content
+		for _, sc := range resp.Msg.StoredContent {
+			cnt = append(cnt, sc.Content)
+		}
+		return cnt, nil
+	case *content.Source_Folder:
+		obs := util.WalkDirectory(t.Folder.Path, ".md")
+		var (
+			errs []error
+			cnt  []*content.Content
+		)
+		<-obs.ForEach(func(v any) {
+			if p, ok := v.(string); ok {
+				mc, err := parseMarkdown(p)
+				if err != nil {
+					errs = append(errs, err)
+					return
+				}
+				cnt = append(cnt, mc...)
+			}
+		}, func(err error) {
+			slog.Error("error parsing", err)
+		}, func() {
+			slog.Info("enumerated content for folder")
+		})
+		for _, err := range errs {
+			slog.Error("error parsing", err)
+		}
+		return cnt, nil
+	}
+	return nil, errors.Errorf("unhandled source type: %s", cs.Type)
+}
+
+func (s *Service) enumerateSource(ctx context.Context, src *content.Source) ([]*content.DisplayContent, error) {
+	var disCnt []*content.DisplayContent
+	cnt, err := s.sourceToContent(ctx, src)
+	if err != nil {
+		return nil, err
+	}
+	for _, cn := range cnt {
+		dc := &content.DisplayContent{
+			Content: cn,
+		}
+		switch t := cn.Type.(type) {
+		case *content.Content_Post:
+			dc.Title = fmt.Sprintf("%s | %s", t.Post.Title, t.Post.Summary)
+			dc.Description = t.Post.Content
+		case *content.Content_Site:
+			dc.Title = "site"
+			dc.Description = t.Site.HugoConfig.Title
+		case *content.Content_Data:
+			switch u := t.Data.Type.(type) {
+			case *content.Data_Url:
+				dc.Title = u.Url.Url
+			case *content.Data_Text:
+				dc.Description = u.Text.Data
+			}
+		case *content.Content_Normalized:
+			switch u := t.Normalized.Type.(type) {
+			case *content.Normalized_Article:
+				dc.Title = u.Article.Title
+				dc.Description = u.Article.Excerpt
+			case *content.Normalized_Readme:
+				dc.Description = u.Readme.Data
+			case *content.Normalized_Transcript:
+				dc.Title = u.Transcript.Name
+			}
+		}
+		disCnt = append(disCnt, dc)
+	}
+	return disCnt, nil
+}
+
+func (s *Service) GetSources(ctx context.Context, c *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Sources], error) {
+	srcs := []*content.Source{
 		{
-			Id: "1",
-			Type: &content.Content_Data{
-				Data: &content.Data{
-					Type: &content.Data_Text{
-						Text: &content.Text{
-							Data: "another one",
-						},
-					},
+			Name: "lunabrain",
+			Type: &content.Source_Server{
+				Server: &content.Server{},
+			},
+		},
+		{
+			Name: "logseq",
+			Type: &content.Source_Folder{
+				Folder: &content.Folder{
+					Path: "/Users/hacked/Documents/Github/notes/journals",
 				},
 			},
 		},
+	}
+	var enumSrc []*content.EnumeratedSource
+	for _, src := range srcs {
+		disCnt, err := s.enumerateSource(ctx, src)
+		if err != nil {
+			return nil, err
+		}
+		enumSrc = append(enumSrc, &content.EnumeratedSource{
+			Source:         src,
+			DisplayContent: disCnt,
+		})
+	}
+	return connect_go.NewResponse(&content.Sources{
+		Sources: enumSrc,
+	}), nil
+}
+
+func (s *Service) Publish(ctx context.Context, c *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error) {
+	// TODO breadchris once the flows through this code are more clear, break into smaller functions
+
+	bkt, err := bucket.NewBuilder(bucket.Config{
+		Path: "/tmp/lunabrain",
 	})
 	if err != nil {
+		return nil, err
+	}
+	b := publish.NewBlog(bkt)
+
+	resp, err := s.Search(ctx, connect_go.NewRequest(&content.Query{
+		Tags: []string{"100daystooffload"},
+	}))
+	if err != nil {
+		return nil, err
+	}
+
+	var cnt []*content.Content
+	for _, sc := range resp.Msg.StoredContent {
+		cnt = append(cnt, sc.Content)
+	}
+
+	err = b.Publish("blog", cnt)
+	if err != nil {
+		return nil, err
+	}
+
+	notes, err := bucket.NewBuilder(bucket.Config{
+		Path: "/Users/hacked/Documents/Github/notes/pages",
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	l, err := notes.File("lunabrain.md")
+	if err != nil {
+		return nil, err
+	}
+
+	out := ""
+	for _, c := range cnt {
+		createdAt, err := time.Parse(time.RFC3339, c.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+		fmtDate := createdAt.Format("Jan 2th, 2006")
+
+		var ts []string
+		for _, t := range c.Tags {
+			ts = append(ts, fmt.Sprintf("[[%s]]", t))
+		}
+		tags := strings.Join(ts, ", ")
+
+		switch t := c.Type.(type) {
+		case *content.Content_Post:
+			out += fmt.Sprintf("- %s | %s\n  created-at:: [[%s]]\n  tags:: %s\n", t.Post.Title, t.Post.Summary, fmtDate, tags)
+			out += fmt.Sprintf("\t- %s\n", t.Post.Content)
+			out += "\n"
+		}
+	}
+
+	if err = os.WriteFile(l, []byte(out), 0644); err != nil {
 		return nil, err
 	}
 
@@ -122,6 +286,26 @@ func (s *Service) Save(ctx context.Context, c *connect_go.Request[content.Conten
 	return connect_go.NewResponse(&content.ContentIDs{ContentIds: []string{cnt.String()}}), nil
 }
 
+func (s *Service) Types(ctx context.Context, c *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.GRPCTypeInfo], error) {
+	e := &content.Content{}
+	ed, err := grpc.SerializeType(e)
+	if err != nil {
+		return nil, errors.Wrapf(err, "error serializing node type")
+	}
+
+	// TODO breadchris cleanup this code, see blocks.go:76
+	tr := grpc.NewTypeResolver()
+	tr = tr.ResolveLookup(e)
+
+	sr := tr.Serialize()
+
+	return connect_go.NewResponse(&content.GRPCTypeInfo{
+		Msg:        ed.AsDescriptorProto(),
+		DescLookup: sr.DescLookup,
+		EnumLookup: sr.EnumLookup,
+	}), nil
+}
+
 func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Query]) (*connect_go.Response[content.Results], error) {
 	userID, err := s.sess.GetUserID(ctx)
 	if err != nil {
@@ -158,9 +342,14 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 	var storedContent []*content.StoredContent
 	for _, cn := range ct {
 		var tags []*content.Tag
+
+		// TODO breadchris how should tags be stored? in a Content or in a StoredContent?
+		cn.Data.Tags = []string{}
 		for _, t := range cn.Edges.Tags {
 			tags = append(tags, &content.Tag{Name: t.Name})
+			cn.Data.Tags = append(cn.Data.Tags, t.Name)
 		}
+		cn.Data.Content.CreatedAt = cn.CreatedAt.Format(time.RFC3339)
 		sc := &content.StoredContent{
 			Id:      cn.ID.String(),
 			Content: cn.Data.Content,

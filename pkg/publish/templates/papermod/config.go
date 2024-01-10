@@ -1,5 +1,7 @@
 package papermod
 
+import "github.com/lunabrain-ai/lunabrain/pkg/gen/content"
+
 type Config struct {
 	PublishDir             string                    `yaml:"publishDir"`
 	BaseURL                string                    `yaml:"baseURL"`
@@ -17,7 +19,7 @@ type Config struct {
 	Minify                 MinifyConfig              `yaml:"minify"`
 	Languages              map[string]LanguageConfig `yaml:"languages"`
 	Outputs                map[string][]string       `yaml:"outputs"`
-	Params                 ParamsConfig              `yaml:"params"`
+	Params                 *content.ParamsConfig     `yaml:"params"`
 	Markup                 MarkupConfig              `yaml:"markup"`
 	Services               ServicesConfig            `yaml:"services"`
 }
@@ -127,11 +129,11 @@ type ServiceConfig struct {
 type Option struct {
 }
 
-func New(url string) Config {
+func New(c *content.HugoConfig) Config {
 	themeName := "papermod"
 	return Config{
-		PublishDir:             "@breadchris",
-		BaseURL:                url,
+		PublishDir:             "public",
+		BaseURL:                c.BaseUrl,
 		Title:                  "Title",
 		Paginate:               5,
 		Theme:                  []string{themeName},
@@ -165,21 +167,7 @@ func New(url string) Config {
 		Outputs: map[string][]string{
 			"home": {"HTML", "RSS", "JSON"},
 		},
-		Params: ParamsConfig{
-			Env:          "production",
-			Description:  "description",
-			Author:       "author",
-			DefaultTheme: "auto",
-			ProfileMode: ProfileModeConfig{
-				Enabled: false,
-			},
-			HomeInfoParams: HomeInfoParamsConfig{
-				Title:   "title",
-				Content: "content",
-			},
-			SocialIcons: []SocialIconConfig{},
-			EditPost:    EditPostConfig{},
-		},
+		Params: c.Params,
 		Markup: MarkupConfig{
 			Goldmark: GoldmarkConfig{
 				Renderer: RendererConfig{

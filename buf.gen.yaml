@@ -20,10 +20,10 @@ plugins:
       - require_unimplemented_servers=false
   - plugin: es
     opt: target=ts
-    out: ./js/src/rpc
+    out: ./js/rpc
   - plugin: connect-es
     opt: target=ts
-    out: ./js/src/rpc
+    out: ./js/rpc
   - plugin: buf.build/bufbuild/connect-swift
     opt: >
       GenerateAsyncMethods=true,

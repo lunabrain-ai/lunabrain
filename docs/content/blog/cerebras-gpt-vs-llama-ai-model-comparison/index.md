@@ -24,7 +24,7 @@ images: [cerebras-wse-nvidia-v100-featured-image.jpg]
 -->
 
 On March 28th, Cerebras released on [HuggingFace](https://huggingface.co/cerebras/Cerebras-GPT-13B) a new Open
-Source model trained on [The Pile](https://pile.eleuther.ai/) dataset called "Cerebras-GPT" with GPT-3-like
+SourcePage model trained on [The Pile](https://pile.eleuther.ai/) dataset called "Cerebras-GPT" with GPT-3-like
 performance. (
 [Link to press release](https://www.cerebras.net/blog/cerebras-gpt-a-family-of-open-compute-efficient-large-language-models/))
 
@@ -33,7 +33,7 @@ performance. (
 While Cerebras isn't as capable of a model for performing tasks when compared directly to models like [LLaMA](https://en.wikipedia.org/wiki/LLaMA),
 ChatGPT, or GPT-4, it has one important quality that sets it apart: It's been released under the Apache 2.0 licence,
 a fully
-permissive Open Source license, and the weights are available for anybody to download and try out.
+permissive Open SourcePage license, and the weights are available for anybody to download and try out.
 
 This is different from other models like LLaMA that, while their weights are freely available, their [license](https://huggingface.co/decapoda-research/llama-7b-hf/blob/main/LICENSE)
 restricts LLaMAs usage to only "Non-Commercial" use cases like academic research or personal tinkering.
@@ -73,7 +73,7 @@ Cerebras is ~6% of the size of GPT-3 and ~25% of the size of LLaMA's full-size, 
 intentionally limited how long the model was trained in order to reach a "training compute optimal" state.
 
 That doesn't mean that it's useless though. As you'll see from the data released in the Cerebras paper, this model
-is still a welcome addition to the available Open Source models like [GPT-2 (1.5B)](https://huggingface.co/gpt2),
+is still a welcome addition to the available Open SourcePage models like [GPT-2 (1.5B)](https://huggingface.co/gpt2),
 [GPT-J (6B)](https://huggingface.co/EleutherAI/gpt-j-6B), and
 [GPT NeoX (20B)](https://huggingface.co/EleutherAI/gpt-neox-20b).
 It's also possible that the model can improve with additional tweaking by the community (like fine-tuning or

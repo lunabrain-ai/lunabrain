@@ -48,6 +48,11 @@ const (
 	ContentServiceSetTagsProcedure = "/content.ContentService/SetTags"
 	// ContentServicePublishProcedure is the fully-qualified name of the ContentService's Publish RPC.
 	ContentServicePublishProcedure = "/content.ContentService/Publish"
+	// ContentServiceGetSourcesProcedure is the fully-qualified name of the ContentService's GetSources
+	// RPC.
+	ContentServiceGetSourcesProcedure = "/content.ContentService/GetSources"
+	// ContentServiceTypesProcedure is the fully-qualified name of the ContentService's Types RPC.
+	ContentServiceTypesProcedure = "/content.ContentService/Types"
 )
 
 // ContentServiceClient is a client for the content.ContentService service.
@@ -59,6 +64,8 @@ type ContentServiceClient interface {
 	GetTags(context.Context, *connect_go.Request[content.TagRequest]) (*connect_go.Response[content.Tags], error)
 	SetTags(context.Context, *connect_go.Request[content.SetTagsRequest]) (*connect_go.Response[emptypb.Empty], error)
 	Publish(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
+	GetSources(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Sources], error)
+	Types(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.GRPCTypeInfo], error)
 }
 
 // NewContentServiceClient constructs a client for the content.ContentService service. By default,
@@ -106,18 +113,30 @@ func NewContentServiceClient(httpClient connect_go.HTTPClient, baseURL string, o
 			baseURL+ContentServicePublishProcedure,
 			opts...,
 		),
+		getSources: connect_go.NewClient[emptypb.Empty, content.Sources](
+			httpClient,
+			baseURL+ContentServiceGetSourcesProcedure,
+			opts...,
+		),
+		types: connect_go.NewClient[emptypb.Empty, content.GRPCTypeInfo](
+			httpClient,
+			baseURL+ContentServiceTypesProcedure,
+			opts...,
+		),
 	}
 }
 
 // contentServiceClient implements ContentServiceClient.
 type contentServiceClient struct {
-	save    *connect_go.Client[content.Contents, content.ContentIDs]
-	search  *connect_go.Client[content.Query, content.Results]
-	analyze *connect_go.Client[content.Content, content.Contents]
-	delete  *connect_go.Client[content.ContentIDs, content.ContentIDs]
-	getTags *connect_go.Client[content.TagRequest, content.Tags]
-	setTags *connect_go.Client[content.SetTagsRequest, emptypb.Empty]
-	publish *connect_go.Client[content.ContentIDs, content.ContentIDs]
+	save       *connect_go.Client[content.Contents, content.ContentIDs]
+	search     *connect_go.Client[content.Query, content.Results]
+	analyze    *connect_go.Client[content.Content, content.Contents]
+	delete     *connect_go.Client[content.ContentIDs, content.ContentIDs]
+	getTags    *connect_go.Client[content.TagRequest, content.Tags]
+	setTags    *connect_go.Client[content.SetTagsRequest, emptypb.Empty]
+	publish    *connect_go.Client[content.ContentIDs, content.ContentIDs]
+	getSources *connect_go.Client[emptypb.Empty, content.Sources]
+	types      *connect_go.Client[emptypb.Empty, content.GRPCTypeInfo]
 }
 
 // Save calls content.ContentService.Save.
@@ -155,6 +174,16 @@ func (c *contentServiceClient) Publish(ctx context.Context, req *connect_go.Requ
 	return c.publish.CallUnary(ctx, req)
 }
 
+// GetSources calls content.ContentService.GetSources.
+func (c *contentServiceClient) GetSources(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Sources], error) {
+	return c.getSources.CallUnary(ctx, req)
+}
+
+// Types calls content.ContentService.Types.
+func (c *contentServiceClient) Types(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.GRPCTypeInfo], error) {
+	return c.types.CallUnary(ctx, req)
+}
+
 // ContentServiceHandler is an implementation of the content.ContentService service.
 type ContentServiceHandler interface {
 	Save(context.Context, *connect_go.Request[content.Contents]) (*connect_go.Response[content.ContentIDs], error)
@@ -164,6 +193,8 @@ type ContentServiceHandler interface {
 	GetTags(context.Context, *connect_go.Request[content.TagRequest]) (*connect_go.Response[content.Tags], error)
 	SetTags(context.Context, *connect_go.Request[content.SetTagsRequest]) (*connect_go.Response[emptypb.Empty], error)
 	Publish(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
+	GetSources(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Sources], error)
+	Types(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.GRPCTypeInfo], error)
 }
 
 // NewContentServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -207,6 +238,16 @@ func NewContentServiceHandler(svc ContentServiceHandler, opts ...connect_go.Hand
 		svc.Publish,
 		opts...,
 	)
+	contentServiceGetSourcesHandler := connect_go.NewUnaryHandler(
+		ContentServiceGetSourcesProcedure,
+		svc.GetSources,
+		opts...,
+	)
+	contentServiceTypesHandler := connect_go.NewUnaryHandler(
+		ContentServiceTypesProcedure,
+		svc.Types,
+		opts...,
+	)
 	return "/content.ContentService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ContentServiceSaveProcedure:
@@ -223,6 +264,10 @@ func NewContentServiceHandler(svc ContentServiceHandler, opts ...connect_go.Hand
 			contentServiceSetTagsHandler.ServeHTTP(w, r)
 		case ContentServicePublishProcedure:
 			contentServicePublishHandler.ServeHTTP(w, r)
+		case ContentServiceGetSourcesProcedure:
+			contentServiceGetSourcesHandler.ServeHTTP(w, r)
+		case ContentServiceTypesProcedure:
+			contentServiceTypesHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -258,4 +303,12 @@ func (UnimplementedContentServiceHandler) SetTags(context.Context, *connect_go.R
 
 func (UnimplementedContentServiceHandler) Publish(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.Publish is not implemented"))
+}
+
+func (UnimplementedContentServiceHandler) GetSources(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Sources], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.GetSources is not implemented"))
+}
+
+func (UnimplementedContentServiceHandler) Types(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.GRPCTypeInfo], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.Types is not implemented"))
 }

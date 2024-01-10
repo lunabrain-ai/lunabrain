@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useProjectContext } from "@/react/ProjectProvider";
 import { Tag } from "@/rpc/content/content_pb";
 import { useDebounce } from "@uidotdev/usehooks";
-import {PlusIcon} from "@heroicons/react/24/outline";
+import {HashtagIcon, PlusIcon} from "@heroicons/react/24/outline";
 
 function flattenTag(tag: Tag): string[] {
     let names: string[] = [tag.name];
@@ -51,7 +51,7 @@ export const FilteredTagInput: React.FC<{
         <div className="flex items-center gap-2">
             <TagInput value={selectedTag} onChange={onChange} matchingOptions={matchingOptions} />
             <button onClick={() => onAddTag(selectedTag)} className="btn btn-square btn-primary">
-                <PlusIcon className={"h-6 w-6"} />
+                <HashtagIcon className={"h-6 w-6"} />
             </button>
         </div>
     )
@@ -76,15 +76,16 @@ export const TagInput: React.FC<{
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="search by tag..."
                 className="input input-bordered w-full"
+                list="tags"
             />
             {debouncedOptions.length > 0 && (
-                <ul className="menu shadow bg-base-100 rounded-box w-full mt-2">
+                <datalist id="tags">
                     {debouncedOptions.map((option) => (
-                        <li key={option} onClick={() => onChange(option)}>
-                            <a>{option}</a>
-                        </li>
+                        <option key={option} onClick={() => onChange(option)}>
+                            {option}
+                        </option>
                     ))}
-                </ul>
+                </datalist>
             )}
         </div>
     );

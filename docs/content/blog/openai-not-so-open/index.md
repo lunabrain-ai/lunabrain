@@ -1,5 +1,5 @@
 ---
-title: "OpenAI Vendor Lock-in: The Ironic Story of How OpenAI Went from Open Source to \"Open Your Wallet\""
+title: "OpenAI Vendor Lock-in: The Ironic Story of How OpenAI Went from Open SourcePage to \"Open Your Wallet\""
 description: "diving into the complicated past of openAI and their relationship with open source software"
 slug: openai-not-so-open
 date: 2023-03-24T07:00:00.000Z
@@ -45,7 +45,7 @@ code, and patents with the world.
 Fast-forward to today, and OpenAI has pivoted to a profit-driven model. Critics, including co-founder Musk,
 argue that the company is now focused on speed and profit instead of positive human impact.
 
-## Elon Musk's Worst Nightmare: Close Source, Corporate Control of AI
+## Elon Musk's Worst Nightmare: Close SourcePage, Corporate Control of AI
 Musk has long considered AI to be "fundamental existential risk for human civilization". He has spent years
 calling for strict government regulation and caution around AI research, and received some interest from regulators.
 One of Musk's main suggestions was to [learn as much as possible](https://www.theguardian.com/technology/2017/jul/17/elon-musk-regulation-ai-combat-existential-threat-tesla-spacex-ceo) to better understand the
@@ -99,7 +99,7 @@ You can [launch ChatGLM](https://colab.research.google.com/github/MarkSchmidty/C
 Colab with just one click. With far fewer neurons than ChatGPT, a smaller training
 dataset, and presumably less advanced technology, it falls noticeably short, at least in English.
 
-### [Open Source Alternatives](https://github.com/nichtdax/awesome-totally-open-chatgpt)
+### [Open SourcePage Alternatives](https://github.com/nichtdax/awesome-totally-open-chatgpt)
 Open-source alternatives: The open-source community is working on alternatives to ChatGPT, like the ones listed on this
 [awesome totally open chatgpt](https://github.com/nichtdax/awesome-totally-open-chatgpt) list.
 As shown by the categories in the list, some of these models can be trained, customized, and self-hosted, with

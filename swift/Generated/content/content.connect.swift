@@ -50,6 +50,18 @@ public protocol Content_ContentServiceClientInterface: Sendable {
 
     @available(iOS 13, *)
     func `publish`(request: Content_ContentIDs, headers: Connect.Headers) async -> ResponseMessage<Content_ContentIDs>
+
+    @discardableResult
+    func `getSources`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Content_Sources>) -> Void) -> Connect.Cancelable
+
+    @available(iOS 13, *)
+    func `getSources`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers) async -> ResponseMessage<Content_Sources>
+
+    @discardableResult
+    func `types`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Content_GRPCTypeInfo>) -> Void) -> Connect.Cancelable
+
+    @available(iOS 13, *)
+    func `types`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers) async -> ResponseMessage<Content_GRPCTypeInfo>
 }
 
 /// Concrete implementation of `Content_ContentServiceClientInterface`.
@@ -130,6 +142,26 @@ public final class Content_ContentServiceClient: Content_ContentServiceClientInt
         return await self.client.unary(path: "/content.ContentService/Publish", request: request, headers: headers)
     }
 
+    @discardableResult
+    public func `getSources`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Content_Sources>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/content.ContentService/GetSources", request: request, headers: headers, completion: completion)
+    }
+
+    @available(iOS 13, *)
+    public func `getSources`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers = [:]) async -> ResponseMessage<Content_Sources> {
+        return await self.client.unary(path: "/content.ContentService/GetSources", request: request, headers: headers)
+    }
+
+    @discardableResult
+    public func `types`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Content_GRPCTypeInfo>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/content.ContentService/Types", request: request, headers: headers, completion: completion)
+    }
+
+    @available(iOS 13, *)
+    public func `types`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers = [:]) async -> ResponseMessage<Content_GRPCTypeInfo> {
+        return await self.client.unary(path: "/content.ContentService/Types", request: request, headers: headers)
+    }
+
     public enum Metadata {
         public enum Methods {
             public static let save = Connect.MethodSpec(name: "Save", service: "content.ContentService", type: .unary)
@@ -139,6 +171,8 @@ public final class Content_ContentServiceClient: Content_ContentServiceClientInt
             public static let getTags = Connect.MethodSpec(name: "GetTags", service: "content.ContentService", type: .unary)
             public static let setTags = Connect.MethodSpec(name: "SetTags", service: "content.ContentService", type: .unary)
             public static let publish = Connect.MethodSpec(name: "Publish", service: "content.ContentService", type: .unary)
+            public static let getSources = Connect.MethodSpec(name: "GetSources", service: "content.ContentService", type: .unary)
+            public static let types = Connect.MethodSpec(name: "Types", service: "content.ContentService", type: .unary)
         }
     }
 }

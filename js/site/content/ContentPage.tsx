@@ -13,8 +13,6 @@ export const ContentPage = () => {
         setCurrentGroup(tabId);
     };
 
-    console.log('ContentPage', groups, currentGroup, showTagTree);
-
     return (
         <div>
             <div className="flex justify-between items-center w-full overflow-x-hidden">
