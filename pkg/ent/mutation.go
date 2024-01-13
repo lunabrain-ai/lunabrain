@@ -3335,6 +3335,8 @@ type UserMutation struct {
 	email              *string
 	password_hash      *string
 	data               *schema.UserEncoder
+	verified           *bool
+	verify_secret      *uuid.UUID
 	clearedFields      map[string]struct{}
 	content            map[uuid.UUID]struct{}
 	removedcontent     map[uuid.UUID]struct{}
@@ -3559,6 +3561,91 @@ func (m *UserMutation) ResetData() {
 	m.data = nil
 }
 
+// SetVerified sets the "verified" field.
+func (m *UserMutation) SetVerified(b bool) {
+	m.verified = &b
+}
+
+// Verified returns the value of the "verified" field in the mutation.
+func (m *UserMutation) Verified() (r bool, exists bool) {
+	v := m.verified
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVerified returns the old "verified" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldVerified(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVerified is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVerified requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVerified: %w", err)
+	}
+	return oldValue.Verified, nil
+}
+
+// ResetVerified resets all changes to the "verified" field.
+func (m *UserMutation) ResetVerified() {
+	m.verified = nil
+}
+
+// SetVerifySecret sets the "verify_secret" field.
+func (m *UserMutation) SetVerifySecret(u uuid.UUID) {
+	m.verify_secret = &u
+}
+
+// VerifySecret returns the value of the "verify_secret" field in the mutation.
+func (m *UserMutation) VerifySecret() (r uuid.UUID, exists bool) {
+	v := m.verify_secret
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVerifySecret returns the old "verify_secret" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldVerifySecret(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVerifySecret is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVerifySecret requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVerifySecret: %w", err)
+	}
+	return oldValue.VerifySecret, nil
+}
+
+// ClearVerifySecret clears the value of the "verify_secret" field.
+func (m *UserMutation) ClearVerifySecret() {
+	m.verify_secret = nil
+	m.clearedFields[entuser.FieldVerifySecret] = struct{}{}
+}
+
+// VerifySecretCleared returns if the "verify_secret" field was cleared in this mutation.
+func (m *UserMutation) VerifySecretCleared() bool {
+	_, ok := m.clearedFields[entuser.FieldVerifySecret]
+	return ok
+}
+
+// ResetVerifySecret resets all changes to the "verify_secret" field.
+func (m *UserMutation) ResetVerifySecret() {
+	m.verify_secret = nil
+	delete(m.clearedFields, entuser.FieldVerifySecret)
+}
+
 // AddContentIDs adds the "content" edge to the Content entity by ids.
 func (m *UserMutation) AddContentIDs(ids ...uuid.UUID) {
 	if m.content == nil {
@@ -3701,7 +3788,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 5)
 	if m.email != nil {
 		fields = append(fields, entuser.FieldEmail)
 	}
@@ -3710,6 +3797,12 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.data != nil {
 		fields = append(fields, entuser.FieldData)
+	}
+	if m.verified != nil {
+		fields = append(fields, entuser.FieldVerified)
+	}
+	if m.verify_secret != nil {
+		fields = append(fields, entuser.FieldVerifySecret)
 	}
 	return fields
 }
@@ -3725,6 +3818,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.PasswordHash()
 	case entuser.FieldData:
 		return m.Data()
+	case entuser.FieldVerified:
+		return m.Verified()
+	case entuser.FieldVerifySecret:
+		return m.VerifySecret()
 	}
 	return nil, false
 }
@@ -3740,6 +3837,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldPasswordHash(ctx)
 	case entuser.FieldData:
 		return m.OldData(ctx)
+	case entuser.FieldVerified:
+		return m.OldVerified(ctx)
+	case entuser.FieldVerifySecret:
+		return m.OldVerifySecret(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -3770,6 +3871,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetData(v)
 		return nil
+	case entuser.FieldVerified:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVerified(v)
+		return nil
+	case entuser.FieldVerifySecret:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVerifySecret(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -3799,7 +3914,11 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *UserMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(entuser.FieldVerifySecret) {
+		fields = append(fields, entuser.FieldVerifySecret)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -3812,6 +3931,11 @@ func (m *UserMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *UserMutation) ClearField(name string) error {
+	switch name {
+	case entuser.FieldVerifySecret:
+		m.ClearVerifySecret()
+		return nil
+	}
 	return fmt.Errorf("unknown User nullable field %s", name)
 }
 
@@ -3827,6 +3951,12 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case entuser.FieldData:
 		m.ResetData()
+		return nil
+	case entuser.FieldVerified:
+		m.ResetVerified()
+		return nil
+	case entuser.FieldVerifySecret:
+		m.ResetVerifySecret()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

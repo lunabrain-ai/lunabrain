@@ -1,11 +1,11 @@
 import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {contentService, projectService, userService} from "@/service";
 import {Message} from "@/content/MessageList";
-import {Code, ConnectError} from "@bufbuild/connect";
 import toast from "react-hot-toast";
 import {ChatResponse, Segment, Session} from "@/rpc/protoflow_pb";
 import { Content, StoredContent, Tag } from "@/rpc/content/content_pb";
 import {Group, User } from "@/rpc/user/user_pb";
+import {Code, ConnectError} from "@connectrpc/connect";
 
 const ProjectContext = createContext<ProjectContextType>({} as any);
 export const useProjectContext = () => useContext(ProjectContext);
@@ -136,9 +136,9 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     useEffect(() => {
         void loadContent();
         void loadTags();
-        if (user) {
-            window.history.pushState({}, '', groupURL(currentGroup));
-        }
+        // if (user) {
+        //     window.history.pushState({}, '', groupURL(currentGroup));
+        // }
     }, [user, filteredTags, currentGroup]);
 
     const loadGroups = async () => {

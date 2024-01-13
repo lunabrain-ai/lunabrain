@@ -98,6 +98,22 @@ func (s *EntStore) UpsertTags(ctx context.Context, tags []string) ([]uuid.UUID, 
 	return ids, nil
 }
 
+func (s *EntStore) RelateContent(ctx context.Context, connect bool, parentID uuid.UUID, childID ...uuid.UUID) error {
+	p, err := s.client.Content.Get(ctx, parentID)
+	if err != nil {
+		return errors.Wrapf(err, "could not get parent content")
+	}
+	if connect {
+		_, err = p.Update().AddChildIDs(childID...).Save(ctx)
+	} else {
+		_, err = p.Update().RemoveChildIDs(childID...).Save(ctx)
+	}
+	if err != nil {
+		return errors.Wrapf(err, "could not associate child content")
+	}
+	return err
+}
+
 func (s *EntStore) SaveContent(ctx context.Context, userID, botID uuid.UUID, data *content.Content, related []*content.Content) (uuid.UUID, error) {
 	c, err := s.SaveOrUpdateContent(ctx, userID, botID, data, true)
 	if err != nil {
@@ -147,7 +163,10 @@ func (s *EntStore) SearchContent(ctx context.Context, userID uuid.UUID, page, li
 }
 
 func (s *EntStore) GetContentByID(ctx context.Context, contentID uuid.UUID) (*ent.Content, error) {
-	return s.client.Content.Get(ctx, contentID)
+	return s.client.Content.Query().
+		WithTags().
+		Where(entcontent.ID(contentID)).
+		Only(ctx)
 }
 
 func (s *EntStore) SetTags(ctx context.Context, contentID uuid.UUID, tags []string) error {

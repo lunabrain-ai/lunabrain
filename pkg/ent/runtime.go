@@ -48,6 +48,10 @@ func init() {
 	tag.DefaultID = tagDescID.Default.(func() uuid.UUID)
 	entuserFields := schema.User{}.Fields()
 	_ = entuserFields
+	// entuserDescVerified is the schema descriptor for verified field.
+	entuserDescVerified := entuserFields[4].Descriptor()
+	// entuser.DefaultVerified holds the default value on creation for the verified field.
+	entuser.DefaultVerified = entuserDescVerified.Default.(bool)
 	// entuserDescID is the schema descriptor for id field.
 	entuserDescID := entuserFields[0].Descriptor()
 	// entuser.DefaultID holds the default value on creation for the id field.

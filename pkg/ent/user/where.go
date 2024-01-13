@@ -64,6 +64,16 @@ func PasswordHash(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldPasswordHash, v))
 }
 
+// Verified applies equality check predicate on the "verified" field. It's identical to VerifiedEQ.
+func Verified(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldVerified, v))
+}
+
+// VerifySecret applies equality check predicate on the "verify_secret" field. It's identical to VerifySecretEQ.
+func VerifySecret(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldVerifySecret, v))
+}
+
 // EmailEQ applies the EQ predicate on the "email" field.
 func EmailEQ(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldEmail, v))
@@ -192,6 +202,66 @@ func PasswordHashEqualFold(v string) predicate.User {
 // PasswordHashContainsFold applies the ContainsFold predicate on the "password_hash" field.
 func PasswordHashContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldPasswordHash, v))
+}
+
+// VerifiedEQ applies the EQ predicate on the "verified" field.
+func VerifiedEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldVerified, v))
+}
+
+// VerifiedNEQ applies the NEQ predicate on the "verified" field.
+func VerifiedNEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldVerified, v))
+}
+
+// VerifySecretEQ applies the EQ predicate on the "verify_secret" field.
+func VerifySecretEQ(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldVerifySecret, v))
+}
+
+// VerifySecretNEQ applies the NEQ predicate on the "verify_secret" field.
+func VerifySecretNEQ(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldVerifySecret, v))
+}
+
+// VerifySecretIn applies the In predicate on the "verify_secret" field.
+func VerifySecretIn(vs ...uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldIn(FieldVerifySecret, vs...))
+}
+
+// VerifySecretNotIn applies the NotIn predicate on the "verify_secret" field.
+func VerifySecretNotIn(vs ...uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldVerifySecret, vs...))
+}
+
+// VerifySecretGT applies the GT predicate on the "verify_secret" field.
+func VerifySecretGT(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldGT(FieldVerifySecret, v))
+}
+
+// VerifySecretGTE applies the GTE predicate on the "verify_secret" field.
+func VerifySecretGTE(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldVerifySecret, v))
+}
+
+// VerifySecretLT applies the LT predicate on the "verify_secret" field.
+func VerifySecretLT(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldLT(FieldVerifySecret, v))
+}
+
+// VerifySecretLTE applies the LTE predicate on the "verify_secret" field.
+func VerifySecretLTE(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldVerifySecret, v))
+}
+
+// VerifySecretIsNil applies the IsNil predicate on the "verify_secret" field.
+func VerifySecretIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldVerifySecret))
+}
+
+// VerifySecretNotNil applies the NotNil predicate on the "verify_secret" field.
+func VerifySecretNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldVerifySecret))
 }
 
 // HasContent applies the HasEdge predicate on the "content" edge.

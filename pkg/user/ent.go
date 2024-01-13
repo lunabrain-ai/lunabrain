@@ -50,6 +50,18 @@ func (s *EntStore) GetUserByID(ctx context.Context, id uuid.UUID) (*ent.User, er
 		Get(ctx, id)
 }
 
+func (s *EntStore) ResetPassword(ctx context.Context, id uuid.UUID, password string) error {
+	hash, err := hashPassword(password)
+	if err != nil {
+		return errors.Wrapf(err, "could not hash password")
+	}
+	_, err = s.client.User.
+		UpdateOneID(id).
+		SetPasswordHash(hash).
+		Save(ctx)
+	return err
+}
+
 func (s *EntStore) AttemptLogin(ctx context.Context, email, password string) (*ent.User, error) {
 	u, err := s.client.User.
 		Query().
@@ -81,6 +93,27 @@ func (s *EntStore) NewUser(ctx context.Context, ps *user.User, bot bool) (*ent.U
 			User: ps,
 		}).
 		Save(ctx)
+}
+
+func (s *EntStore) NewUserVerifySecret(ctx context.Context, u *ent.User) (uuid.UUID, error) {
+	secret := uuid.New()
+	_, err := s.client.User.
+		UpdateOneID(u.ID).
+		SetVerifySecret(secret).
+		Save(ctx)
+	if err != nil {
+		return uuid.UUID{}, err
+	}
+	return secret, nil
+}
+
+func (s *EntStore) VerifyUser(ctx context.Context, secret uuid.UUID) error {
+	_, err := s.client.User.
+		Update().
+		Where(entuser.VerifySecret(secret)).
+		SetVerified(true).
+		Save(ctx)
+	return err
 }
 
 func (s *EntStore) UpdateUser(ctx context.Context, id uuid.UUID, ps *user.User) error {

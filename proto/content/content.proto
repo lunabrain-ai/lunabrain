@@ -13,6 +13,7 @@ option go_package = "./gen";
 service ContentService {
   rpc Save(Contents) returns (ContentIDs);
   rpc Search(Query) returns (Results);
+  rpc Relate(RelateRequest) returns (google.protobuf.Empty);
   rpc Analyze(Content) returns (Contents);
   rpc Delete(ContentIDs) returns (ContentIDs);
   rpc GetTags(TagRequest) returns (Tags);
@@ -20,6 +21,12 @@ service ContentService {
   rpc Publish(ContentIDs) returns (ContentIDs);
   rpc GetSources(google.protobuf.Empty) returns (Sources);
   rpc Types(google.protobuf.Empty) returns (GRPCTypeInfo);
+}
+
+message RelateRequest {
+  string parent = 1;
+  repeated string children = 2;
+  bool connect = 3;
 }
 
 message Sources {
@@ -34,7 +41,8 @@ message EnumeratedSource {
 message DisplayContent {
   string title = 1;
   string description = 2;
-  Content content = 3;
+  string type = 3;
+  Content content = 4;
 }
 
 message Source {
@@ -236,6 +244,7 @@ message GRPCTypeInfo {
 
 message Site {
   HugoConfig hugo_config = 1;
+  repeated string post_tags = 2;
 }
 
 message HugoConfig {

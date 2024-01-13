@@ -28,6 +28,18 @@ public protocol User_UserServiceClientInterface: Sendable {
     func `logout`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers) async -> ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>
 
     @discardableResult
+    func `resetPassword`(request: User_User, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable
+
+    @available(iOS 13, *)
+    func `resetPassword`(request: User_User, headers: Connect.Headers) async -> ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>
+
+    @discardableResult
+    func `verifyUser`(request: User_VerifyUserRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable
+
+    @available(iOS 13, *)
+    func `verifyUser`(request: User_VerifyUserRequest, headers: Connect.Headers) async -> ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>
+
+    @discardableResult
     func `updateConfig`(request: User_Config, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
@@ -115,6 +127,26 @@ public final class User_UserServiceClient: User_UserServiceClientInterface, Send
     }
 
     @discardableResult
+    public func `resetPassword`(request: User_User, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/user.UserService/ResetPassword", request: request, headers: headers, completion: completion)
+    }
+
+    @available(iOS 13, *)
+    public func `resetPassword`(request: User_User, headers: Connect.Headers = [:]) async -> ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty> {
+        return await self.client.unary(path: "/user.UserService/ResetPassword", request: request, headers: headers)
+    }
+
+    @discardableResult
+    public func `verifyUser`(request: User_VerifyUserRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/user.UserService/VerifyUser", request: request, headers: headers, completion: completion)
+    }
+
+    @available(iOS 13, *)
+    public func `verifyUser`(request: User_VerifyUserRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty> {
+        return await self.client.unary(path: "/user.UserService/VerifyUser", request: request, headers: headers)
+    }
+
+    @discardableResult
     public func `updateConfig`(request: User_Config, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable {
         return self.client.unary(path: "/user.UserService/UpdateConfig", request: request, headers: headers, completion: completion)
     }
@@ -199,6 +231,8 @@ public final class User_UserServiceClient: User_UserServiceClientInterface, Send
             public static let register = Connect.MethodSpec(name: "Register", service: "user.UserService", type: .unary)
             public static let login = Connect.MethodSpec(name: "Login", service: "user.UserService", type: .unary)
             public static let logout = Connect.MethodSpec(name: "Logout", service: "user.UserService", type: .unary)
+            public static let resetPassword = Connect.MethodSpec(name: "ResetPassword", service: "user.UserService", type: .unary)
+            public static let verifyUser = Connect.MethodSpec(name: "VerifyUser", service: "user.UserService", type: .unary)
             public static let updateConfig = Connect.MethodSpec(name: "UpdateConfig", service: "user.UserService", type: .unary)
             public static let createGroupInvite = Connect.MethodSpec(name: "CreateGroupInvite", service: "user.UserService", type: .unary)
             public static let joinGroup = Connect.MethodSpec(name: "JoinGroup", service: "user.UserService", type: .unary)

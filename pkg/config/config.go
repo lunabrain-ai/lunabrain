@@ -6,6 +6,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
+	"github.com/lunabrain-ai/lunabrain/pkg/user"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"go.uber.org/config"
 	"log/slog"
@@ -26,6 +27,7 @@ type Config struct {
 	DB      db.Config      `yaml:"db"`
 	OpenAI  openai.Config  `yaml:"openai"`
 	Whisper whisper.Config `yaml:"config"`
+	User    user.Config    `yaml:"user"`
 }
 
 func newDefaultConfig() Config {
@@ -45,6 +47,7 @@ func newDefaultConfig() Config {
 		DB:      db.NewDefaultConfig(),
 		OpenAI:  openai.NewDefaultConfig(),
 		Whisper: whisper.NewDefaultConfig(),
+		User:    user.DefaultConfig(),
 	}
 }
 

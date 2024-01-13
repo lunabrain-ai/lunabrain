@@ -25,6 +25,10 @@ type User struct {
 	PasswordHash string `json:"password_hash,omitempty"`
 	// Data holds the value of the "data" field.
 	Data schema.UserEncoder `json:"data,omitempty"`
+	// Verified holds the value of the "verified" field.
+	Verified bool `json:"verified,omitempty"`
+	// VerifySecret holds the value of the "verify_secret" field.
+	VerifySecret uuid.UUID `json:"verify_secret,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -67,9 +71,11 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case entuser.FieldData:
 			values[i] = new([]byte)
+		case entuser.FieldVerified:
+			values[i] = new(sql.NullBool)
 		case entuser.FieldEmail, entuser.FieldPasswordHash:
 			values[i] = new(sql.NullString)
-		case entuser.FieldID:
+		case entuser.FieldID, entuser.FieldVerifySecret:
 			values[i] = new(uuid.UUID)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -111,6 +117,18 @@ func (u *User) assignValues(columns []string, values []any) error {
 				if err := json.Unmarshal(*value, &u.Data); err != nil {
 					return fmt.Errorf("unmarshal field data: %w", err)
 				}
+			}
+		case entuser.FieldVerified:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field verified", values[i])
+			} else if value.Valid {
+				u.Verified = value.Bool
+			}
+		case entuser.FieldVerifySecret:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field verify_secret", values[i])
+			} else if value != nil {
+				u.VerifySecret = *value
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -166,6 +184,12 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("data=")
 	builder.WriteString(fmt.Sprintf("%v", u.Data))
+	builder.WriteString(", ")
+	builder.WriteString("verified=")
+	builder.WriteString(fmt.Sprintf("%v", u.Verified))
+	builder.WriteString(", ")
+	builder.WriteString("verify_secret=")
+	builder.WriteString(fmt.Sprintf("%v", u.VerifySecret))
 	builder.WriteByte(')')
 	return builder.String()
 }

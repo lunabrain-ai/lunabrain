@@ -22,6 +22,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
 	"log/slog"
+	"net/url"
 	"os"
 	"regexp"
 	"strings"
@@ -116,25 +117,37 @@ func (s *Service) enumerateSource(ctx context.Context, src *content.Source) ([]*
 		case *content.Content_Post:
 			dc.Title = fmt.Sprintf("%s | %s", t.Post.Title, t.Post.Summary)
 			dc.Description = t.Post.Content
+			dc.Type = "post"
 		case *content.Content_Site:
 			dc.Title = "site"
 			dc.Description = t.Site.HugoConfig.Title
+			dc.Type = "site"
 		case *content.Content_Data:
 			switch u := t.Data.Type.(type) {
 			case *content.Data_Url:
-				dc.Title = u.Url.Url
+				ul, err := url.Parse(u.Url.Url)
+				if err != nil {
+					return nil, err
+				}
+				dc.Title = ul.Hostname()
+				dc.Description = ul.Path
+				dc.Type = "url"
 			case *content.Data_Text:
 				dc.Description = u.Text.Data
+				dc.Type = "text"
 			}
 		case *content.Content_Normalized:
 			switch u := t.Normalized.Type.(type) {
 			case *content.Normalized_Article:
 				dc.Title = u.Article.Title
 				dc.Description = u.Article.Excerpt
+				dc.Type = "article"
 			case *content.Normalized_Readme:
 				dc.Description = u.Readme.Data
+				dc.Type = "readme"
 			case *content.Normalized_Transcript:
 				dc.Title = u.Transcript.Name
+				dc.Type = "transcript"
 			}
 		}
 		disCnt = append(disCnt, dc)
@@ -178,13 +191,13 @@ func (s *Service) GetSources(ctx context.Context, c *connect_go.Request[emptypb.
 func (s *Service) Publish(ctx context.Context, c *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error) {
 	// TODO breadchris once the flows through this code are more clear, break into smaller functions
 
-	bkt, err := bucket.NewBuilder(bucket.Config{
-		Path: "/tmp/lunabrain",
-	})
-	if err != nil {
-		return nil, err
-	}
-	b := publish.NewBlog(bkt)
+	//bkt, err := bucket.NewBuilder(bucket.Config{
+	//	Path: "/tmp/lunabrain",
+	//})
+	//if err != nil {
+	//	return nil, err
+	//}
+	b := publish.NewBlog(s.builder)
 
 	resp, err := s.Search(ctx, connect_go.NewRequest(&content.Query{
 		Tags: []string{"100daystooffload"},
@@ -242,6 +255,33 @@ func (s *Service) Publish(ctx context.Context, c *connect_go.Request[content.Con
 	}
 
 	return connect_go.NewResponse(&content.ContentIDs{ContentIds: c.Msg.GetContentIds()}), nil
+}
+
+func (s *Service) Relate(ctx context.Context, c *connect_go.Request[content.RelateRequest]) (*connect_go.Response[emptypb.Empty], error) {
+	_, err := s.sess.GetUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO breadchris make sure user has access to all content
+	pid, err := uuid.Parse(c.Msg.Parent)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to parse parent id")
+	}
+
+	var ids []uuid.UUID
+	for _, ct := range c.Msg.Children {
+		id, err := uuid.Parse(ct)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to parse content id")
+		}
+		ids = append(ids, id)
+	}
+	err = s.content.RelateContent(ctx, c.Msg.Connect, pid, ids...)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to associate content")
+	}
+	return connect_go.NewResponse(&emptypb.Empty{}), nil
 }
 
 func (s *Service) Save(ctx context.Context, c *connect_go.Request[content.Contents]) (*connect_go.Response[content.ContentIDs], error) {

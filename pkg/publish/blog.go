@@ -45,8 +45,8 @@ func (s *Blog) Publish(name string, cnt []*content.Content) error {
 	}
 
 	// TODO breadchris get external URL
-	c := papermod.New(&content.HugoConfig{
-		BaseUrl: "http://localhost:8000/",
+	c := papermod.New("@breadchris", &content.HugoConfig{
+		BaseUrl: "http://localhost:8000/@breadchris",
 		Params: &content.ParamsConfig{
 			HomeInfoParams: &content.HomeInfoParamsConfig{
 				Title:   "this is a title",
@@ -54,7 +54,11 @@ func (s *Blog) Publish(name string, cnt []*content.Content) error {
 			},
 		},
 	})
-	o, err := yaml.Marshal(c)
+	nc, err := util.SnakeToCamelCase(c)
+	if err != nil {
+		return err
+	}
+	o, err := yaml.Marshal(nc)
 	if err != nil {
 		return err
 	}

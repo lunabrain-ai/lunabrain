@@ -14,6 +14,9 @@ export const ContentCard: React.FC<ContentCardProps> = ({ displayContent }) => {
         if (isChecked && displayContent.content) {
             setSelected(displayContent.content);
         }
+        if (!isChecked) {
+            setSelected(null);
+        }
     };
     return (
         <div className="card">
@@ -29,7 +32,8 @@ export const ContentCard: React.FC<ContentCardProps> = ({ displayContent }) => {
                 {displayContent.title !== '' && (
                     <h2 className="card-title">{displayContent.title}</h2>
                 )}
-                <p className={"max-h-72 overflow-y-auto"}>{displayContent.description}</p>
+                <p className="max-h-72 truncate text-gray-500 font-normal">{displayContent.description}</p>
+                <p className="max-h-72 truncate text-gray-700 text-xs font-normal">{displayContent.type}</p>
                 <div className="flex gap-3">
                     {displayContent.content?.tags.map((tag) => (
                         <span key={tag} className="badge badge-outline badge-sm">{tag}</span>

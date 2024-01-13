@@ -9332,10 +9332,10 @@
           function getOwnerDocumentFromRootContainer(rootContainerElement) {
             return rootContainerElement.nodeType === DOCUMENT_NODE ? rootContainerElement : rootContainerElement.ownerDocument;
           }
-          function noop2() {
+          function noop() {
           }
           function trapClickOnNonInteractiveElement(node) {
-            node.onclick = noop2;
+            node.onclick = noop;
           }
           function setInitialDOMProperties(tag, domElement, rootContainerElement, nextProps, isCustomComponentTag) {
             for (var propKey in nextProps) {
@@ -10314,7 +10314,7 @@
           var cancelTimeout = typeof clearTimeout === "function" ? clearTimeout : void 0;
           var noTimeout = -1;
           var localPromise = typeof Promise === "function" ? Promise : void 0;
-          var scheduleMicrotask2 = typeof queueMicrotask === "function" ? queueMicrotask : typeof localPromise !== "undefined" ? function(callback) {
+          var scheduleMicrotask = typeof queueMicrotask === "function" ? queueMicrotask : typeof localPromise !== "undefined" ? function(callback) {
             return localPromise.resolve(null).then(callback).catch(handleErrorInNextTick);
           } : scheduleTimeout;
           function handleErrorInNextTick(error2) {
@@ -20532,7 +20532,7 @@
                 if (ReactCurrentActQueue$1.current !== null) {
                   ReactCurrentActQueue$1.current.push(flushSyncCallbacks);
                 } else {
-                  scheduleMicrotask2(function() {
+                  scheduleMicrotask(function() {
                     if ((executionContext & (RenderContext | CommitContext)) === NoContext) {
                       flushSyncCallbacks();
                     }
@@ -27164,6 +27164,11 @@
     ScalarType2[ScalarType2["SINT32"] = 17] = "SINT32";
     ScalarType2[ScalarType2["SINT64"] = 18] = "SINT64";
   })(ScalarType || (ScalarType = {}));
+  var LongType;
+  (function(LongType2) {
+    LongType2[LongType2["BIGINT"] = 0] = "BIGINT";
+    LongType2[LongType2["STRING"] = 1] = "STRING";
+  })(LongType || (LongType = {}));
 
   // ../node_modules/@bufbuild/protobuf/dist/esm/google/varint.js
   function varint64read() {
@@ -27848,7 +27853,7 @@
     }
     return false;
   }
-  function scalarDefaultValue(type) {
+  function scalarDefaultValue(type, longType) {
     switch (type) {
       case ScalarType.BOOL:
         return false;
@@ -27857,7 +27862,7 @@
       case ScalarType.INT64:
       case ScalarType.SFIXED64:
       case ScalarType.SINT64:
-        return protoInt64.zero;
+        return longType == 0 ? protoInt64.zero : "0";
       case ScalarType.DOUBLE:
       case ScalarType.FLOAT:
         return 0;
@@ -27962,11 +27967,16 @@
         }
         m[unknownFieldsSymbol].push({ no, wireType, data });
       },
-      readMessage(message, reader, length, options) {
+      readMessage(message, reader, lengthOrEndTagFieldNo, options, delimitedMessageEncoding) {
         const type = message.getType();
-        const end = length === void 0 ? reader.len : reader.pos + length;
+        const end = delimitedMessageEncoding ? reader.len : reader.pos + lengthOrEndTagFieldNo;
+        let fieldNo, wireType;
         while (reader.pos < end) {
-          const [fieldNo, wireType] = reader.tag(), field = type.fields.find(fieldNo);
+          [fieldNo, wireType] = reader.tag();
+          if (wireType == WireType.EndGroup) {
+            break;
+          }
+          const field = type.fields.find(fieldNo);
           if (!field) {
             const data = reader.skip(wireType);
             if (options.readUnknownFields) {
@@ -27987,29 +27997,33 @@
             case "scalar":
             case "enum":
               const scalarType = field.kind == "enum" ? ScalarType.INT32 : field.T;
+              let read = readScalar;
+              if (field.kind == "scalar" && field.L > 0) {
+                read = readScalarLTString;
+              }
               if (repeated) {
                 let arr = target[localName];
                 if (wireType == WireType.LengthDelimited && scalarType != ScalarType.STRING && scalarType != ScalarType.BYTES) {
                   let e = reader.uint32() + reader.pos;
                   while (reader.pos < e) {
-                    arr.push(readScalar(reader, scalarType));
+                    arr.push(read(reader, scalarType));
                   }
                 } else {
-                  arr.push(readScalar(reader, scalarType));
+                  arr.push(read(reader, scalarType));
                 }
               } else {
-                target[localName] = readScalar(reader, scalarType);
+                target[localName] = read(reader, scalarType);
               }
               break;
             case "message":
               const messageType = field.T;
               if (repeated) {
-                target[localName].push(readMessageField(reader, new messageType(), options));
+                target[localName].push(readMessageField(reader, new messageType(), options, field));
               } else {
                 if (target[localName] instanceof Message) {
-                  readMessageField(reader, target[localName], options);
+                  readMessageField(reader, target[localName], options, field);
                 } else {
-                  target[localName] = readMessageField(reader, new messageType(), options);
+                  target[localName] = readMessageField(reader, new messageType(), options, field);
                   if (messageType.fieldWrapper && !field.oneof && !field.repeated) {
                     target[localName] = messageType.fieldWrapper.unwrapField(target[localName]);
                   }
@@ -28022,12 +28036,24 @@
               break;
           }
         }
+        if (delimitedMessageEncoding && // eslint-disable-line @typescript-eslint/strict-boolean-expressions
+        (wireType != WireType.EndGroup || fieldNo !== lengthOrEndTagFieldNo)) {
+          throw new Error(`invalid end group tag`);
+        }
       }
     };
   }
-  function readMessageField(reader, message, options) {
+  function readMessageField(reader, message, options, field) {
     const format = message.getType().runtime.bin;
-    format.readMessage(message, reader, reader.uint32(), options);
+    const delimited = field === null || field === void 0 ? void 0 : field.delimited;
+    format.readMessage(
+      message,
+      reader,
+      delimited ? field === null || field === void 0 ? void 0 : field.no : reader.uint32(),
+      // eslint-disable-line @typescript-eslint/strict-boolean-expressions
+      options,
+      delimited
+    );
     return message;
   }
   function readMapEntry(field, reader, options) {
@@ -28048,14 +28074,14 @@
               val = reader.int32();
               break;
             case "message":
-              val = readMessageField(reader, new field.V.T(), options);
+              val = readMessageField(reader, new field.V.T(), options, void 0);
               break;
           }
           break;
       }
     }
     if (key === void 0) {
-      let keyRaw = scalarDefaultValue(field.K);
+      let keyRaw = scalarDefaultValue(field.K, LongType.BIGINT);
       key = field.K == ScalarType.BOOL ? keyRaw.toString() : keyRaw;
     }
     if (typeof key != "string" && typeof key != "number") {
@@ -28064,7 +28090,7 @@
     if (val === void 0) {
       switch (field.V.kind) {
         case "scalar":
-          val = scalarDefaultValue(field.V.T);
+          val = scalarDefaultValue(field.V.T, LongType.BIGINT);
           break;
         case "enum":
           val = 0;
@@ -28075,6 +28101,10 @@
       }
     }
     return [key, val];
+  }
+  function readScalarLTString(reader, type) {
+    const v = readScalar(reader, type);
+    return typeof v == "bigint" ? v.toString() : v;
   }
   function readScalar(reader, type) {
     switch (type) {
@@ -28136,15 +28166,18 @@
         writeScalar(writer, ScalarType.INT32, 2, value, true);
         break;
       case "message":
-        writeMessageField(writer, options, field.V.T, 2, value);
+        writer.tag(2, WireType.LengthDelimited).bytes(value.toBinary(options));
         break;
     }
     writer.join();
   }
-  function writeMessageField(writer, options, type, fieldNo, value) {
+  function writeMessageField(writer, options, field, value) {
     if (value !== void 0) {
-      const message = wrapField(type, value);
-      writer.tag(fieldNo, WireType.LengthDelimited).bytes(message.toBinary(options));
+      const message = wrapField(field.T, value);
+      if (field === null || field === void 0 ? void 0 : field.delimited)
+        writer.tag(field.no, WireType.StartGroup).raw(message.toBinary(options)).tag(field.no, WireType.EndGroup);
+      else
+        writer.tag(field.no, WireType.LengthDelimited).bytes(message.toBinary(options));
     }
   }
   function writeScalar(writer, type, fieldNo, value, emitIntrinsicDefault) {
@@ -28201,10 +28234,10 @@
           case "message":
             if (repeated) {
               for (const item of value) {
-                writeMessageField(writer, options, field.T, field.no, item);
+                writeMessageField(writer, options, field, item);
               }
             } else {
-              writeMessageField(writer, options, field.T, field.no, value);
+              writeMessageField(writer, options, field, value);
             }
             break;
           case "map":
@@ -28395,7 +28428,7 @@
                   break;
                 case "scalar":
                   try {
-                    val = readScalar2(field.T, jsonItem);
+                    val = readScalar2(field.T, jsonItem, field.L);
                   } catch (e) {
                     let m = `cannot decode field ${type.typeName}.${field.name} from JSON: ${this.debug(jsonItem)}`;
                     if (e instanceof Error && e.message.length > 0) {
@@ -28431,7 +28464,7 @@
                   break;
                 case "scalar":
                   try {
-                    val = readScalar2(field.V.T, jsonMapValue);
+                    val = readScalar2(field.V.T, jsonMapValue, LongType.BIGINT);
                   } catch (e) {
                     let m = `cannot decode map value for field ${type.typeName}.${field.name} from JSON: ${this.debug(jsonValue)}`;
                     if (e instanceof Error && e.message.length > 0) {
@@ -28442,7 +28475,7 @@
                   break;
               }
               try {
-                targetMap[readScalar2(field.K, field.K == ScalarType.BOOL ? jsonMapKey == "true" ? true : jsonMapKey == "false" ? false : jsonMapKey : jsonMapKey).toString()] = val;
+                targetMap[readScalar2(field.K, field.K == ScalarType.BOOL ? jsonMapKey == "true" ? true : jsonMapKey == "false" ? false : jsonMapKey : jsonMapKey, LongType.BIGINT).toString()] = val;
               } catch (e) {
                 let m = `cannot decode map key for field ${type.typeName}.${field.name} from JSON: ${this.debug(jsonValue)}`;
                 if (e instanceof Error && e.message.length > 0) {
@@ -28478,7 +28511,7 @@
                 break;
               case "scalar":
                 try {
-                  target[localName] = readScalar2(field.T, jsonValue);
+                  target[localName] = readScalar2(field.T, jsonValue, field.L);
                 } catch (e) {
                   let m = `cannot decode field ${type.typeName}.${field.name} from JSON: ${this.debug(jsonValue)}`;
                   if (e instanceof Error && e.message.length > 0) {
@@ -28542,7 +28575,7 @@
         return String(json);
     }
   }
-  function readScalar2(type, json) {
+  function readScalar2(type, json, longType) {
     switch (type) {
       case ScalarType.DOUBLE:
       case ScalarType.FLOAT:
@@ -28601,14 +28634,16 @@
           return protoInt64.zero;
         if (typeof json != "number" && typeof json != "string")
           break;
-        return protoInt64.parse(json);
+        const long = protoInt64.parse(json);
+        return longType ? long.toString() : long;
       case ScalarType.FIXED64:
       case ScalarType.UINT64:
         if (json === null)
           return protoInt64.zero;
         if (typeof json != "number" && typeof json != "string")
           break;
-        return protoInt64.uParse(json);
+        const uLong = protoInt64.uParse(json);
+        return longType ? uLong.toString() : uLong;
       case ScalarType.BOOL:
         if (json === null)
           return false;
@@ -29158,7 +29193,7 @@
             t[name] = {};
             break;
           case "scalar":
-            t[name] = scalarDefaultValue(member.T);
+            t[name] = scalarDefaultValue(member.T, member.L);
             break;
           case "message":
             break;
@@ -29167,7 +29202,7 @@
     }
   }));
   function normalizeFieldInfosProto3(fieldInfos) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     const r = [];
     let o;
     for (const field of typeof fieldInfos == "function" ? fieldInfos() : fieldInfos) {
@@ -29175,7 +29210,9 @@
       f.localName = localFieldName(field.name, field.oneof !== void 0);
       f.jsonName = (_a = field.jsonName) !== null && _a !== void 0 ? _a : fieldJsonName(field.name);
       f.repeated = (_b = field.repeated) !== null && _b !== void 0 ? _b : false;
-      f.packed = (_c = field.packed) !== null && _c !== void 0 ? _c : field.kind == "enum" || field.kind == "scalar" && field.T != ScalarType.BYTES && field.T != ScalarType.STRING;
+      if (field.kind == "scalar") {
+        f.L = (_c = field.L) !== null && _c !== void 0 ? _c : LongType.BIGINT;
+      }
       if (field.oneof !== void 0) {
         const ooname = typeof field.oneof == "string" ? field.oneof : field.oneof.name;
         if (!o || o.name != ooname) {
@@ -29184,6 +29221,10 @@
         f.oneof = o;
         o.addField(f);
       }
+      if (field.kind == "message") {
+        f.delimited = false;
+      }
+      f.packed = (_d = field.packed) !== null && _d !== void 0 ? _d : field.kind == "enum" || field.kind == "scalar" && field.T != ScalarType.BYTES && field.T != ScalarType.STRING;
       r.push(f);
     }
     return r;
@@ -29230,10 +29271,10 @@
             case "message":
               if (repeated) {
                 for (const item of value) {
-                  writeMessageField(writer, options, field.T, field.no, item);
+                  writeMessageField(writer, options, field, item);
                 }
               } else {
-                writeMessageField(writer, options, field.T, field.no, value);
+                writeMessageField(writer, options, field, value);
               }
               break;
             case "map":
@@ -29353,7 +29394,7 @@
     }
   }));
   function normalizeFieldInfosProto2(fieldInfos) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d, _e;
     const r = [];
     let o;
     for (const field of typeof fieldInfos == "function" ? fieldInfos() : fieldInfos) {
@@ -29361,7 +29402,9 @@
       f.localName = localFieldName(field.name, field.oneof !== void 0);
       f.jsonName = (_a = field.jsonName) !== null && _a !== void 0 ? _a : fieldJsonName(field.name);
       f.repeated = (_b = field.repeated) !== null && _b !== void 0 ? _b : false;
-      f.packed = (_c = field.packed) !== null && _c !== void 0 ? _c : false;
+      if (field.kind == "scalar") {
+        f.L = (_c = field.L) !== null && _c !== void 0 ? _c : LongType.BIGINT;
+      }
       if (field.oneof !== void 0) {
         const ooname = typeof field.oneof == "string" ? field.oneof : field.oneof.name;
         if (!o || o.name != ooname) {
@@ -29370,6 +29413,10 @@
         f.oneof = o;
         o.addField(f);
       }
+      if (field.kind == "message") {
+        f.delimited = (_d = field.delimited) !== null && _d !== void 0 ? _d : false;
+      }
+      f.packed = (_e = field.packed) !== null && _e !== void 0 ? _e : false;
       r.push(f);
     }
     return r;
@@ -29390,6 +29437,29 @@
   })(MethodIdempotency || (MethodIdempotency = {}));
 
   // ../node_modules/@bufbuild/protobuf/dist/esm/google/protobuf/descriptor_pb.js
+  var Edition;
+  (function(Edition2) {
+    Edition2[Edition2["EDITION_UNKNOWN"] = 0] = "EDITION_UNKNOWN";
+    Edition2[Edition2["EDITION_PROTO2"] = 998] = "EDITION_PROTO2";
+    Edition2[Edition2["EDITION_PROTO3"] = 999] = "EDITION_PROTO3";
+    Edition2[Edition2["EDITION_2023"] = 1e3] = "EDITION_2023";
+    Edition2[Edition2["EDITION_1_TEST_ONLY"] = 1] = "EDITION_1_TEST_ONLY";
+    Edition2[Edition2["EDITION_2_TEST_ONLY"] = 2] = "EDITION_2_TEST_ONLY";
+    Edition2[Edition2["EDITION_99997_TEST_ONLY"] = 99997] = "EDITION_99997_TEST_ONLY";
+    Edition2[Edition2["EDITION_99998_TEST_ONLY"] = 99998] = "EDITION_99998_TEST_ONLY";
+    Edition2[Edition2["EDITION_99999_TEST_ONLY"] = 99999] = "EDITION_99999_TEST_ONLY";
+  })(Edition || (Edition = {}));
+  proto2.util.setEnumType(Edition, "google.protobuf.Edition", [
+    { no: 0, name: "EDITION_UNKNOWN" },
+    { no: 998, name: "EDITION_PROTO2" },
+    { no: 999, name: "EDITION_PROTO3" },
+    { no: 1e3, name: "EDITION_2023" },
+    { no: 1, name: "EDITION_1_TEST_ONLY" },
+    { no: 2, name: "EDITION_2_TEST_ONLY" },
+    { no: 99997, name: "EDITION_99997_TEST_ONLY" },
+    { no: 99998, name: "EDITION_99998_TEST_ONLY" },
+    { no: 99999, name: "EDITION_99999_TEST_ONLY" }
+  ]);
   var FileDescriptorSet = class _FileDescriptorSet extends Message {
     constructor(data) {
       super();
@@ -29454,7 +29524,7 @@
     { no: 8, name: "options", kind: "message", T: FileOptions, opt: true },
     { no: 9, name: "source_code_info", kind: "message", T: SourceCodeInfo, opt: true },
     { no: 12, name: "syntax", kind: "scalar", T: 9, opt: true },
-    { no: 13, name: "edition", kind: "scalar", T: 9, opt: true }
+    { no: 14, name: "edition", kind: "enum", T: proto2.getEnumType(Edition), opt: true }
   ]);
   var DescriptorProto = class _DescriptorProto extends Message {
     constructor(data) {
@@ -29570,6 +29640,7 @@
   ExtensionRangeOptions.fields = proto2.util.newFieldList(() => [
     { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true },
     { no: 2, name: "declaration", kind: "message", T: ExtensionRangeOptions_Declaration, repeated: true },
+    { no: 50, name: "features", kind: "message", T: FeatureSet, opt: true },
     { no: 3, name: "verification", kind: "enum", T: proto2.getEnumType(ExtensionRangeOptions_VerificationState), opt: true, default: ExtensionRangeOptions_VerificationState.UNVERIFIED }
   ]);
   var ExtensionRangeOptions_VerificationState;
@@ -29605,7 +29676,6 @@
     { no: 1, name: "number", kind: "scalar", T: 5, opt: true },
     { no: 2, name: "full_name", kind: "scalar", T: 9, opt: true },
     { no: 3, name: "type", kind: "scalar", T: 9, opt: true },
-    { no: 4, name: "is_repeated", kind: "scalar", T: 8, opt: true },
     { no: 5, name: "reserved", kind: "scalar", T: 8, opt: true },
     { no: 6, name: "repeated", kind: "scalar", T: 8, opt: true }
   ]);
@@ -29686,13 +29756,13 @@
   var FieldDescriptorProto_Label;
   (function(FieldDescriptorProto_Label2) {
     FieldDescriptorProto_Label2[FieldDescriptorProto_Label2["OPTIONAL"] = 1] = "OPTIONAL";
-    FieldDescriptorProto_Label2[FieldDescriptorProto_Label2["REQUIRED"] = 2] = "REQUIRED";
     FieldDescriptorProto_Label2[FieldDescriptorProto_Label2["REPEATED"] = 3] = "REPEATED";
+    FieldDescriptorProto_Label2[FieldDescriptorProto_Label2["REQUIRED"] = 2] = "REQUIRED";
   })(FieldDescriptorProto_Label || (FieldDescriptorProto_Label = {}));
   proto2.util.setEnumType(FieldDescriptorProto_Label, "google.protobuf.FieldDescriptorProto.Label", [
     { no: 1, name: "LABEL_OPTIONAL" },
-    { no: 2, name: "LABEL_REQUIRED" },
-    { no: 3, name: "LABEL_REPEATED" }
+    { no: 3, name: "LABEL_REPEATED" },
+    { no: 2, name: "LABEL_REQUIRED" }
   ]);
   var OneofDescriptorProto = class _OneofDescriptorProto extends Message {
     constructor(data) {
@@ -29893,6 +29963,7 @@
     { no: 41, name: "php_namespace", kind: "scalar", T: 9, opt: true },
     { no: 44, name: "php_metadata_namespace", kind: "scalar", T: 9, opt: true },
     { no: 45, name: "ruby_package", kind: "scalar", T: 9, opt: true },
+    { no: 50, name: "features", kind: "message", T: FeatureSet, opt: true },
     { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true }
   ]);
   var FileOptions_OptimizeMode;
@@ -29933,12 +30004,14 @@
     { no: 3, name: "deprecated", kind: "scalar", T: 8, opt: true, default: false },
     { no: 7, name: "map_entry", kind: "scalar", T: 8, opt: true },
     { no: 11, name: "deprecated_legacy_json_field_conflicts", kind: "scalar", T: 8, opt: true },
+    { no: 12, name: "features", kind: "message", T: FeatureSet, opt: true },
     { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true }
   ]);
   var FieldOptions = class _FieldOptions extends Message {
     constructor(data) {
       super();
       this.targets = [];
+      this.editionDefaults = [];
       this.uninterpretedOption = [];
       proto2.util.initPartial(data, this);
     }
@@ -29967,8 +30040,9 @@
     { no: 10, name: "weak", kind: "scalar", T: 8, opt: true, default: false },
     { no: 16, name: "debug_redact", kind: "scalar", T: 8, opt: true, default: false },
     { no: 17, name: "retention", kind: "enum", T: proto2.getEnumType(FieldOptions_OptionRetention), opt: true },
-    { no: 18, name: "target", kind: "enum", T: proto2.getEnumType(FieldOptions_OptionTargetType), opt: true },
     { no: 19, name: "targets", kind: "enum", T: proto2.getEnumType(FieldOptions_OptionTargetType), repeated: true },
+    { no: 20, name: "edition_defaults", kind: "message", T: FieldOptions_EditionDefault, repeated: true },
+    { no: 21, name: "features", kind: "message", T: FeatureSet, opt: true },
     { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true }
   ]);
   var FieldOptions_CType;
@@ -30029,6 +30103,30 @@
     { no: 8, name: "TARGET_TYPE_SERVICE" },
     { no: 9, name: "TARGET_TYPE_METHOD" }
   ]);
+  var FieldOptions_EditionDefault = class _FieldOptions_EditionDefault extends Message {
+    constructor(data) {
+      super();
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _FieldOptions_EditionDefault().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _FieldOptions_EditionDefault().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _FieldOptions_EditionDefault().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_FieldOptions_EditionDefault, a, b);
+    }
+  };
+  FieldOptions_EditionDefault.runtime = proto2;
+  FieldOptions_EditionDefault.typeName = "google.protobuf.FieldOptions.EditionDefault";
+  FieldOptions_EditionDefault.fields = proto2.util.newFieldList(() => [
+    { no: 3, name: "edition", kind: "enum", T: proto2.getEnumType(Edition), opt: true },
+    { no: 2, name: "value", kind: "scalar", T: 9, opt: true }
+  ]);
   var OneofOptions = class _OneofOptions extends Message {
     constructor(data) {
       super();
@@ -30051,6 +30149,7 @@
   OneofOptions.runtime = proto2;
   OneofOptions.typeName = "google.protobuf.OneofOptions";
   OneofOptions.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "features", kind: "message", T: FeatureSet, opt: true },
     { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true }
   ]);
   var EnumOptions = class _EnumOptions extends Message {
@@ -30078,6 +30177,7 @@
     { no: 2, name: "allow_alias", kind: "scalar", T: 8, opt: true },
     { no: 3, name: "deprecated", kind: "scalar", T: 8, opt: true, default: false },
     { no: 6, name: "deprecated_legacy_json_field_conflicts", kind: "scalar", T: 8, opt: true },
+    { no: 7, name: "features", kind: "message", T: FeatureSet, opt: true },
     { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true }
   ]);
   var EnumValueOptions = class _EnumValueOptions extends Message {
@@ -30103,6 +30203,8 @@
   EnumValueOptions.typeName = "google.protobuf.EnumValueOptions";
   EnumValueOptions.fields = proto2.util.newFieldList(() => [
     { no: 1, name: "deprecated", kind: "scalar", T: 8, opt: true, default: false },
+    { no: 2, name: "features", kind: "message", T: FeatureSet, opt: true },
+    { no: 3, name: "debug_redact", kind: "scalar", T: 8, opt: true, default: false },
     { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true }
   ]);
   var ServiceOptions = class _ServiceOptions extends Message {
@@ -30127,6 +30229,7 @@
   ServiceOptions.runtime = proto2;
   ServiceOptions.typeName = "google.protobuf.ServiceOptions";
   ServiceOptions.fields = proto2.util.newFieldList(() => [
+    { no: 34, name: "features", kind: "message", T: FeatureSet, opt: true },
     { no: 33, name: "deprecated", kind: "scalar", T: 8, opt: true, default: false },
     { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true }
   ]);
@@ -30154,6 +30257,7 @@
   MethodOptions.fields = proto2.util.newFieldList(() => [
     { no: 33, name: "deprecated", kind: "scalar", T: 8, opt: true, default: false },
     { no: 34, name: "idempotency_level", kind: "enum", T: proto2.getEnumType(MethodOptions_IdempotencyLevel), opt: true, default: MethodOptions_IdempotencyLevel.IDEMPOTENCY_UNKNOWN },
+    { no: 35, name: "features", kind: "message", T: FeatureSet, opt: true },
     { no: 999, name: "uninterpreted_option", kind: "message", T: UninterpretedOption, repeated: true }
   ]);
   var MethodOptions_IdempotencyLevel;
@@ -30232,6 +30336,152 @@
       T: 8
       /* ScalarType.BOOL */
     }
+  ]);
+  var FeatureSet = class _FeatureSet extends Message {
+    constructor(data) {
+      super();
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _FeatureSet().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _FeatureSet().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _FeatureSet().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_FeatureSet, a, b);
+    }
+  };
+  FeatureSet.runtime = proto2;
+  FeatureSet.typeName = "google.protobuf.FeatureSet";
+  FeatureSet.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "field_presence", kind: "enum", T: proto2.getEnumType(FeatureSet_FieldPresence), opt: true },
+    { no: 2, name: "enum_type", kind: "enum", T: proto2.getEnumType(FeatureSet_EnumType), opt: true },
+    { no: 3, name: "repeated_field_encoding", kind: "enum", T: proto2.getEnumType(FeatureSet_RepeatedFieldEncoding), opt: true },
+    { no: 4, name: "utf8_validation", kind: "enum", T: proto2.getEnumType(FeatureSet_Utf8Validation), opt: true },
+    { no: 5, name: "message_encoding", kind: "enum", T: proto2.getEnumType(FeatureSet_MessageEncoding), opt: true },
+    { no: 6, name: "json_format", kind: "enum", T: proto2.getEnumType(FeatureSet_JsonFormat), opt: true }
+  ]);
+  var FeatureSet_FieldPresence;
+  (function(FeatureSet_FieldPresence2) {
+    FeatureSet_FieldPresence2[FeatureSet_FieldPresence2["FIELD_PRESENCE_UNKNOWN"] = 0] = "FIELD_PRESENCE_UNKNOWN";
+    FeatureSet_FieldPresence2[FeatureSet_FieldPresence2["EXPLICIT"] = 1] = "EXPLICIT";
+    FeatureSet_FieldPresence2[FeatureSet_FieldPresence2["IMPLICIT"] = 2] = "IMPLICIT";
+    FeatureSet_FieldPresence2[FeatureSet_FieldPresence2["LEGACY_REQUIRED"] = 3] = "LEGACY_REQUIRED";
+  })(FeatureSet_FieldPresence || (FeatureSet_FieldPresence = {}));
+  proto2.util.setEnumType(FeatureSet_FieldPresence, "google.protobuf.FeatureSet.FieldPresence", [
+    { no: 0, name: "FIELD_PRESENCE_UNKNOWN" },
+    { no: 1, name: "EXPLICIT" },
+    { no: 2, name: "IMPLICIT" },
+    { no: 3, name: "LEGACY_REQUIRED" }
+  ]);
+  var FeatureSet_EnumType;
+  (function(FeatureSet_EnumType2) {
+    FeatureSet_EnumType2[FeatureSet_EnumType2["ENUM_TYPE_UNKNOWN"] = 0] = "ENUM_TYPE_UNKNOWN";
+    FeatureSet_EnumType2[FeatureSet_EnumType2["OPEN"] = 1] = "OPEN";
+    FeatureSet_EnumType2[FeatureSet_EnumType2["CLOSED"] = 2] = "CLOSED";
+  })(FeatureSet_EnumType || (FeatureSet_EnumType = {}));
+  proto2.util.setEnumType(FeatureSet_EnumType, "google.protobuf.FeatureSet.EnumType", [
+    { no: 0, name: "ENUM_TYPE_UNKNOWN" },
+    { no: 1, name: "OPEN" },
+    { no: 2, name: "CLOSED" }
+  ]);
+  var FeatureSet_RepeatedFieldEncoding;
+  (function(FeatureSet_RepeatedFieldEncoding2) {
+    FeatureSet_RepeatedFieldEncoding2[FeatureSet_RepeatedFieldEncoding2["REPEATED_FIELD_ENCODING_UNKNOWN"] = 0] = "REPEATED_FIELD_ENCODING_UNKNOWN";
+    FeatureSet_RepeatedFieldEncoding2[FeatureSet_RepeatedFieldEncoding2["PACKED"] = 1] = "PACKED";
+    FeatureSet_RepeatedFieldEncoding2[FeatureSet_RepeatedFieldEncoding2["EXPANDED"] = 2] = "EXPANDED";
+  })(FeatureSet_RepeatedFieldEncoding || (FeatureSet_RepeatedFieldEncoding = {}));
+  proto2.util.setEnumType(FeatureSet_RepeatedFieldEncoding, "google.protobuf.FeatureSet.RepeatedFieldEncoding", [
+    { no: 0, name: "REPEATED_FIELD_ENCODING_UNKNOWN" },
+    { no: 1, name: "PACKED" },
+    { no: 2, name: "EXPANDED" }
+  ]);
+  var FeatureSet_Utf8Validation;
+  (function(FeatureSet_Utf8Validation2) {
+    FeatureSet_Utf8Validation2[FeatureSet_Utf8Validation2["UTF8_VALIDATION_UNKNOWN"] = 0] = "UTF8_VALIDATION_UNKNOWN";
+    FeatureSet_Utf8Validation2[FeatureSet_Utf8Validation2["NONE"] = 1] = "NONE";
+    FeatureSet_Utf8Validation2[FeatureSet_Utf8Validation2["VERIFY"] = 2] = "VERIFY";
+  })(FeatureSet_Utf8Validation || (FeatureSet_Utf8Validation = {}));
+  proto2.util.setEnumType(FeatureSet_Utf8Validation, "google.protobuf.FeatureSet.Utf8Validation", [
+    { no: 0, name: "UTF8_VALIDATION_UNKNOWN" },
+    { no: 1, name: "NONE" },
+    { no: 2, name: "VERIFY" }
+  ]);
+  var FeatureSet_MessageEncoding;
+  (function(FeatureSet_MessageEncoding2) {
+    FeatureSet_MessageEncoding2[FeatureSet_MessageEncoding2["MESSAGE_ENCODING_UNKNOWN"] = 0] = "MESSAGE_ENCODING_UNKNOWN";
+    FeatureSet_MessageEncoding2[FeatureSet_MessageEncoding2["LENGTH_PREFIXED"] = 1] = "LENGTH_PREFIXED";
+    FeatureSet_MessageEncoding2[FeatureSet_MessageEncoding2["DELIMITED"] = 2] = "DELIMITED";
+  })(FeatureSet_MessageEncoding || (FeatureSet_MessageEncoding = {}));
+  proto2.util.setEnumType(FeatureSet_MessageEncoding, "google.protobuf.FeatureSet.MessageEncoding", [
+    { no: 0, name: "MESSAGE_ENCODING_UNKNOWN" },
+    { no: 1, name: "LENGTH_PREFIXED" },
+    { no: 2, name: "DELIMITED" }
+  ]);
+  var FeatureSet_JsonFormat;
+  (function(FeatureSet_JsonFormat2) {
+    FeatureSet_JsonFormat2[FeatureSet_JsonFormat2["JSON_FORMAT_UNKNOWN"] = 0] = "JSON_FORMAT_UNKNOWN";
+    FeatureSet_JsonFormat2[FeatureSet_JsonFormat2["ALLOW"] = 1] = "ALLOW";
+    FeatureSet_JsonFormat2[FeatureSet_JsonFormat2["LEGACY_BEST_EFFORT"] = 2] = "LEGACY_BEST_EFFORT";
+  })(FeatureSet_JsonFormat || (FeatureSet_JsonFormat = {}));
+  proto2.util.setEnumType(FeatureSet_JsonFormat, "google.protobuf.FeatureSet.JsonFormat", [
+    { no: 0, name: "JSON_FORMAT_UNKNOWN" },
+    { no: 1, name: "ALLOW" },
+    { no: 2, name: "LEGACY_BEST_EFFORT" }
+  ]);
+  var FeatureSetDefaults = class _FeatureSetDefaults extends Message {
+    constructor(data) {
+      super();
+      this.defaults = [];
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _FeatureSetDefaults().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _FeatureSetDefaults().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _FeatureSetDefaults().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_FeatureSetDefaults, a, b);
+    }
+  };
+  FeatureSetDefaults.runtime = proto2;
+  FeatureSetDefaults.typeName = "google.protobuf.FeatureSetDefaults";
+  FeatureSetDefaults.fields = proto2.util.newFieldList(() => [
+    { no: 1, name: "defaults", kind: "message", T: FeatureSetDefaults_FeatureSetEditionDefault, repeated: true },
+    { no: 4, name: "minimum_edition", kind: "enum", T: proto2.getEnumType(Edition), opt: true },
+    { no: 5, name: "maximum_edition", kind: "enum", T: proto2.getEnumType(Edition), opt: true }
+  ]);
+  var FeatureSetDefaults_FeatureSetEditionDefault = class _FeatureSetDefaults_FeatureSetEditionDefault extends Message {
+    constructor(data) {
+      super();
+      proto2.util.initPartial(data, this);
+    }
+    static fromBinary(bytes, options) {
+      return new _FeatureSetDefaults_FeatureSetEditionDefault().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _FeatureSetDefaults_FeatureSetEditionDefault().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _FeatureSetDefaults_FeatureSetEditionDefault().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto2.util.equals(_FeatureSetDefaults_FeatureSetEditionDefault, a, b);
+    }
+  };
+  FeatureSetDefaults_FeatureSetEditionDefault.runtime = proto2;
+  FeatureSetDefaults_FeatureSetEditionDefault.typeName = "google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault";
+  FeatureSetDefaults_FeatureSetEditionDefault.fields = proto2.util.newFieldList(() => [
+    { no: 3, name: "edition", kind: "enum", T: proto2.getEnumType(Edition), opt: true },
+    { no: 2, name: "features", kind: "message", T: FeatureSet, opt: true }
   ]);
   var SourceCodeInfo = class _SourceCodeInfo extends Message {
     constructor(data) {
@@ -30374,1037 +30624,40 @@
   Empty.typeName = "google.protobuf.Empty";
   Empty.fields = proto3.util.newFieldList(() => []);
 
-  // ../node_modules/@bufbuild/connect/dist/esm/code.js
-  var Code;
-  (function(Code2) {
-    Code2[Code2["Canceled"] = 1] = "Canceled";
-    Code2[Code2["Unknown"] = 2] = "Unknown";
-    Code2[Code2["InvalidArgument"] = 3] = "InvalidArgument";
-    Code2[Code2["DeadlineExceeded"] = 4] = "DeadlineExceeded";
-    Code2[Code2["NotFound"] = 5] = "NotFound";
-    Code2[Code2["AlreadyExists"] = 6] = "AlreadyExists";
-    Code2[Code2["PermissionDenied"] = 7] = "PermissionDenied";
-    Code2[Code2["ResourceExhausted"] = 8] = "ResourceExhausted";
-    Code2[Code2["FailedPrecondition"] = 9] = "FailedPrecondition";
-    Code2[Code2["Aborted"] = 10] = "Aborted";
-    Code2[Code2["OutOfRange"] = 11] = "OutOfRange";
-    Code2[Code2["Unimplemented"] = 12] = "Unimplemented";
-    Code2[Code2["Internal"] = 13] = "Internal";
-    Code2[Code2["Unavailable"] = 14] = "Unavailable";
-    Code2[Code2["DataLoss"] = 15] = "DataLoss";
-    Code2[Code2["Unauthenticated"] = 16] = "Unauthenticated";
-  })(Code || (Code = {}));
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/code-string.js
-  function codeToString(value) {
-    const name = Code[value];
-    if (typeof name != "string") {
-      return value.toString();
-    }
-    return name[0].toLowerCase() + name.substring(1).replace(/[A-Z]/g, (c) => "_" + c.toLowerCase());
-  }
-  var stringToCode;
-  function codeFromString(value) {
-    if (!stringToCode) {
-      stringToCode = {};
-      for (const value2 of Object.values(Code)) {
-        if (typeof value2 == "string") {
-          continue;
-        }
-        stringToCode[codeToString(value2)] = value2;
-      }
-    }
-    return stringToCode[value];
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/connect-error.js
-  var ConnectError = class _ConnectError extends Error {
-    /**
-     * Create a new ConnectError.
-     * If no code is provided, code "unknown" is used.
-     * Outgoing details are only relevant for the server side - a service may
-     * raise an error with details, and it is up to the protocol implementation
-     * to encode and send the details along with error.
-     */
-    constructor(message, code = Code.Unknown, metadata, outgoingDetails, cause) {
-      super(createMessage(message, code));
-      this.name = "ConnectError";
-      Object.setPrototypeOf(this, new.target.prototype);
-      this.rawMessage = message;
-      this.code = code;
-      this.metadata = new Headers(metadata !== null && metadata !== void 0 ? metadata : {});
-      this.details = outgoingDetails !== null && outgoingDetails !== void 0 ? outgoingDetails : [];
-      this.cause = cause;
-    }
-    /**
-     * Convert any value - typically a caught error into a ConnectError,
-     * following these rules:
-     * - If the value is already a ConnectError, return it as is.
-     * - If the value is an AbortError from the fetch API, return the message
-     *   of the AbortError with code Canceled.
-     * - For other Errors, return the error message with code Unknown by default.
-     * - For other values, return the values String representation as a message,
-     *   with the code Unknown by default.
-     * The original value will be used for the "cause" property for the new
-     * ConnectError.
-     */
-    static from(reason, code = Code.Unknown) {
-      if (reason instanceof _ConnectError) {
-        return reason;
-      }
-      if (reason instanceof Error) {
-        if (reason.name == "AbortError") {
-          return new _ConnectError(reason.message, Code.Canceled);
-        }
-        return new _ConnectError(reason.message, code, void 0, void 0, reason);
-      }
-      return new _ConnectError(String(reason), code, void 0, void 0, reason);
-    }
-    findDetails(typeOrRegistry) {
-      const registry = "typeName" in typeOrRegistry ? {
-        findMessage: (typeName) => typeName === typeOrRegistry.typeName ? typeOrRegistry : void 0
-      } : typeOrRegistry;
-      const details = [];
-      for (const data of this.details) {
-        if (data instanceof Message) {
-          if (registry.findMessage(data.getType().typeName)) {
-            details.push(data);
-          }
-          continue;
-        }
-        const type = registry.findMessage(data.type);
-        if (type) {
-          try {
-            details.push(type.fromBinary(data.value));
-          } catch (_) {
-          }
-        }
-      }
-      return details;
-    }
-  };
-  function createMessage(message, code) {
-    return message.length ? `[${codeToString(code)}] ${message}` : `[${codeToString(code)}]`;
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/http-headers.js
-  function appendHeaders(...headers) {
-    const h = new Headers();
-    for (const e of headers) {
-      e.forEach((value, key) => {
-        h.append(key, value);
-      });
-    }
-    return h;
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/any-client.js
-  function makeAnyClient(service, createMethod) {
-    const client = {};
-    for (const [localName, methodInfo] of Object.entries(service.methods)) {
-      const method = createMethod(Object.assign(Object.assign({}, methodInfo), {
-        localName,
-        service
-      }));
-      if (method != null) {
-        client[localName] = method;
-      }
-    }
-    return client;
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol/envelope.js
-  function createEnvelopeReadableStream(stream) {
-    let reader;
-    let buffer = new Uint8Array(0);
-    function append(chunk) {
-      const n = new Uint8Array(buffer.length + chunk.length);
-      n.set(buffer);
-      n.set(chunk, buffer.length);
-      buffer = n;
-    }
-    return new ReadableStream({
-      start() {
-        reader = stream.getReader();
-      },
-      async pull(controller) {
-        let header = void 0;
-        for (; ; ) {
-          if (header === void 0 && buffer.byteLength >= 5) {
-            let length = 0;
-            for (let i = 1; i < 5; i++) {
-              length = (length << 8) + buffer[i];
-            }
-            header = { flags: buffer[0], length };
-          }
-          if (header !== void 0 && buffer.byteLength >= header.length + 5) {
-            break;
-          }
-          const result = await reader.read();
-          if (result.done) {
-            break;
-          }
-          append(result.value);
-        }
-        if (header === void 0) {
-          if (buffer.byteLength == 0) {
-            controller.close();
-            return;
-          }
-          controller.error(new ConnectError("premature end of stream", Code.DataLoss));
-          return;
-        }
-        const data = buffer.subarray(5, 5 + header.length);
-        buffer = buffer.subarray(5 + header.length);
-        controller.enqueue({
-          flags: header.flags,
-          data
-        });
-      }
-    });
-  }
-  function encodeEnvelope(flags, data) {
-    const bytes = new Uint8Array(data.length + 5);
-    bytes.set(data, 5);
-    const v = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-    v.setUint8(0, flags);
-    v.setUint32(1, data.length);
-    return bytes;
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol/async-iterable.js
-  var __asyncValues = function(o) {
-    if (!Symbol.asyncIterator)
-      throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
-      return this;
-    }, i);
-    function verb(n) {
-      i[n] = o[n] && function(v) {
-        return new Promise(function(resolve2, reject) {
-          v = o[n](v), settle(resolve2, reject, v.done, v.value);
-        });
-      };
-    }
-    function settle(resolve2, reject, d, v) {
-      Promise.resolve(v).then(function(v2) {
-        resolve2({ value: v2, done: d });
-      }, reject);
-    }
-  };
-  var __await = function(v) {
-    return this instanceof __await ? (this.v = v, this) : new __await(v);
-  };
-  var __asyncGenerator = function(thisArg, _arguments, generator) {
-    if (!Symbol.asyncIterator)
-      throw new TypeError("Symbol.asyncIterator is not defined.");
-    var g = generator.apply(thisArg, _arguments || []), i, q = [];
-    return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
-      return this;
-    }, i;
-    function verb(n) {
-      if (g[n])
-        i[n] = function(v) {
-          return new Promise(function(a, b) {
-            q.push([n, v, a, b]) > 1 || resume(n, v);
-          });
-        };
-    }
-    function resume(n, v) {
-      try {
-        step(g[n](v));
-      } catch (e) {
-        settle(q[0][3], e);
-      }
-    }
-    function step(r) {
-      r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
-    }
-    function fulfill(value) {
-      resume("next", value);
-    }
-    function reject(value) {
-      resume("throw", value);
-    }
-    function settle(f, v) {
-      if (f(v), q.shift(), q.length)
-        resume(q[0][0], q[0][1]);
-    }
-  };
-  var __asyncDelegator = function(o) {
-    var i, p;
-    return i = {}, verb("next"), verb("throw", function(e) {
-      throw e;
-    }), verb("return"), i[Symbol.iterator] = function() {
-      return this;
-    }, i;
-    function verb(n, f) {
-      i[n] = o[n] ? function(v) {
-        return (p = !p) ? { value: __await(o[n](v)), done: false } : f ? f(v) : v;
-      } : f;
-    }
-  };
-  function createAsyncIterable(items) {
-    return __asyncGenerator(this, arguments, function* createAsyncIterable_1() {
-      yield __await(yield* __asyncDelegator(__asyncValues(items)));
-    });
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/promise-client.js
-  var __asyncValues2 = function(o) {
-    if (!Symbol.asyncIterator)
-      throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
-      return this;
-    }, i);
-    function verb(n) {
-      i[n] = o[n] && function(v) {
-        return new Promise(function(resolve2, reject) {
-          v = o[n](v), settle(resolve2, reject, v.done, v.value);
-        });
-      };
-    }
-    function settle(resolve2, reject, d, v) {
-      Promise.resolve(v).then(function(v2) {
-        resolve2({ value: v2, done: d });
-      }, reject);
-    }
-  };
-  var __await2 = function(v) {
-    return this instanceof __await2 ? (this.v = v, this) : new __await2(v);
-  };
-  var __asyncDelegator2 = function(o) {
-    var i, p;
-    return i = {}, verb("next"), verb("throw", function(e) {
-      throw e;
-    }), verb("return"), i[Symbol.iterator] = function() {
-      return this;
-    }, i;
-    function verb(n, f) {
-      i[n] = o[n] ? function(v) {
-        return (p = !p) ? { value: __await2(o[n](v)), done: false } : f ? f(v) : v;
-      } : f;
-    }
-  };
-  var __asyncGenerator2 = function(thisArg, _arguments, generator) {
-    if (!Symbol.asyncIterator)
-      throw new TypeError("Symbol.asyncIterator is not defined.");
-    var g = generator.apply(thisArg, _arguments || []), i, q = [];
-    return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
-      return this;
-    }, i;
-    function verb(n) {
-      if (g[n])
-        i[n] = function(v) {
-          return new Promise(function(a, b) {
-            q.push([n, v, a, b]) > 1 || resume(n, v);
-          });
-        };
-    }
-    function resume(n, v) {
-      try {
-        step(g[n](v));
-      } catch (e) {
-        settle(q[0][3], e);
-      }
-    }
-    function step(r) {
-      r.value instanceof __await2 ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
-    }
-    function fulfill(value) {
-      resume("next", value);
-    }
-    function reject(value) {
-      resume("throw", value);
-    }
-    function settle(f, v) {
-      if (f(v), q.shift(), q.length)
-        resume(q[0][0], q[0][1]);
-    }
-  };
-  function createPromiseClient(service, transport2) {
-    return makeAnyClient(service, (method) => {
-      switch (method.kind) {
-        case MethodKind.Unary:
-          return createUnaryFn(transport2, service, method);
-        case MethodKind.ServerStreaming:
-          return createServerStreamingFn(transport2, service, method);
-        case MethodKind.ClientStreaming:
-          return createClientStreamingFn(transport2, service, method);
-        case MethodKind.BiDiStreaming:
-          return createBiDiStreamingFn(transport2, service, method);
-        default:
-          return null;
-      }
-    });
-  }
-  function createUnaryFn(transport2, service, method) {
-    return async function(input, options) {
-      var _a, _b;
-      const response = await transport2.unary(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, input);
-      (_a = options === null || options === void 0 ? void 0 : options.onHeader) === null || _a === void 0 ? void 0 : _a.call(options, response.header);
-      (_b = options === null || options === void 0 ? void 0 : options.onTrailer) === null || _b === void 0 ? void 0 : _b.call(options, response.trailer);
-      return response.message;
-    };
-  }
-  function createServerStreamingFn(transport2, service, method) {
-    return function(input, options) {
-      return handleStreamResponse(transport2.stream(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, createAsyncIterable([input])), options);
-    };
-  }
-  function createClientStreamingFn(transport2, service, method) {
-    return async function(request, options) {
-      var _a, e_1, _b, _c;
-      var _d, _e;
-      const response = await transport2.stream(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, request);
-      (_d = options === null || options === void 0 ? void 0 : options.onHeader) === null || _d === void 0 ? void 0 : _d.call(options, response.header);
-      let singleMessage;
-      try {
-        for (var _f = true, _g = __asyncValues2(response.message), _h; _h = await _g.next(), _a = _h.done, !_a; _f = true) {
-          _c = _h.value;
-          _f = false;
-          const message = _c;
-          singleMessage = message;
-        }
-      } catch (e_1_1) {
-        e_1 = { error: e_1_1 };
-      } finally {
-        try {
-          if (!_f && !_a && (_b = _g.return))
-            await _b.call(_g);
-        } finally {
-          if (e_1)
-            throw e_1.error;
-        }
-      }
-      if (!singleMessage) {
-        throw new ConnectError("protocol error: missing response message", Code.Internal);
-      }
-      (_e = options === null || options === void 0 ? void 0 : options.onTrailer) === null || _e === void 0 ? void 0 : _e.call(options, response.trailer);
-      return singleMessage;
-    };
-  }
-  function createBiDiStreamingFn(transport2, service, method) {
-    return function(request, options) {
-      return handleStreamResponse(transport2.stream(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, request), options);
-    };
-  }
-  function handleStreamResponse(stream, options) {
-    const it = function() {
-      var _a, _b;
-      return __asyncGenerator2(this, arguments, function* () {
-        const response = yield __await2(stream);
-        (_a = options === null || options === void 0 ? void 0 : options.onHeader) === null || _a === void 0 ? void 0 : _a.call(options, response.header);
-        yield __await2(yield* __asyncDelegator2(__asyncValues2(response.message)));
-        (_b = options === null || options === void 0 ? void 0 : options.onTrailer) === null || _b === void 0 ? void 0 : _b.call(options, response.trailer);
-      });
-    }()[Symbol.asyncIterator]();
-    return {
-      [Symbol.asyncIterator]: () => ({
-        next: () => it.next()
-      })
-    };
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol/signals.js
-  function createLinkedAbortController(...signals) {
-    const controller = new AbortController();
-    const sa = signals.filter((s) => s !== void 0).concat(controller.signal);
-    for (const signal of sa) {
-      if (signal.aborted) {
-        onAbort.apply(signal);
-        break;
-      }
-      signal.addEventListener("abort", onAbort);
-    }
-    function onAbort() {
-      if (!controller.signal.aborted) {
-        controller.abort(getAbortSignalReason(this));
-      }
-      for (const signal of sa) {
-        signal.removeEventListener("abort", onAbort);
-      }
-    }
-    return controller;
-  }
-  function createDeadlineSignal(timeoutMs) {
-    const controller = new AbortController();
-    const listener = () => {
-      controller.abort(new ConnectError("the operation timed out", Code.DeadlineExceeded));
-    };
-    let timeoutId;
-    if (timeoutMs !== void 0) {
-      if (timeoutMs <= 0)
-        listener();
-      else
-        timeoutId = setTimeout(listener, timeoutMs);
-    }
-    return {
-      signal: controller.signal,
-      cleanup: () => clearTimeout(timeoutId)
-    };
-  }
-  function getAbortSignalReason(signal) {
-    if (!signal.aborted) {
-      return void 0;
-    }
-    if (signal.reason !== void 0) {
-      return signal.reason;
-    }
-    const e = new Error("This operation was aborted");
-    e.name = "AbortError";
-    return e;
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol/create-method-url.js
-  function createMethodUrl(baseUrl, service, method) {
-    const s = typeof service == "string" ? service : service.typeName;
-    const m = typeof method == "string" ? method : method.name;
-    return baseUrl.toString().replace(/\/?$/, `/${s}/${m}`);
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol/serialization.js
-  function getJsonOptions(options) {
-    var _a;
-    const o = Object.assign({}, options);
-    (_a = o.ignoreUnknownFields) !== null && _a !== void 0 ? _a : o.ignoreUnknownFields = true;
-    return o;
-  }
-  function createClientMethodSerializers(method, useBinaryFormat, jsonOptions, binaryOptions) {
-    const input = useBinaryFormat ? createBinarySerialization(method.I, binaryOptions) : createJsonSerialization(method.I, jsonOptions);
-    const output = useBinaryFormat ? createBinarySerialization(method.O, binaryOptions) : createJsonSerialization(method.O, jsonOptions);
-    return { parse: output.parse, serialize: input.serialize };
-  }
-  function createBinarySerialization(messageType, options) {
-    return {
-      parse(data) {
-        try {
-          return messageType.fromBinary(data, options);
-        } catch (e) {
-          const m = e instanceof Error ? e.message : String(e);
-          throw new ConnectError(`parse binary: ${m}`, Code.InvalidArgument);
-        }
-      },
-      serialize(data) {
-        try {
-          return data.toBinary(options);
-        } catch (e) {
-          const m = e instanceof Error ? e.message : String(e);
-          throw new ConnectError(`serialize binary: ${m}`, Code.Internal);
-        }
-      }
-    };
-  }
-  function createJsonSerialization(messageType, options) {
-    var _a, _b;
-    const textEncoder = (_a = options === null || options === void 0 ? void 0 : options.textEncoder) !== null && _a !== void 0 ? _a : new TextEncoder();
-    const textDecoder = (_b = options === null || options === void 0 ? void 0 : options.textDecoder) !== null && _b !== void 0 ? _b : new TextDecoder();
-    const o = getJsonOptions(options);
-    return {
-      parse(data) {
-        try {
-          const json = textDecoder.decode(data);
-          return messageType.fromJsonString(json, o);
-        } catch (e) {
-          throw ConnectError.from(e, Code.InvalidArgument);
-        }
-      },
-      serialize(data) {
-        try {
-          const json = data.toJsonString(o);
-          return textEncoder.encode(json);
-        } catch (e) {
-          throw ConnectError.from(e, Code.Internal);
-        }
-      }
-    };
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/content-type.js
-  var contentTypeRegExp = /^application\/(connect\+)?(?:(json)(?:; ?charset=utf-?8)?|(proto))$/i;
-  var contentTypeUnaryProto = "application/proto";
-  var contentTypeUnaryJson = "application/json";
-  var contentTypeStreamProto = "application/connect+proto";
-  var contentTypeStreamJson = "application/connect+json";
-  function parseContentType(contentType) {
-    const match = contentType === null || contentType === void 0 ? void 0 : contentType.match(contentTypeRegExp);
-    if (!match) {
-      return void 0;
-    }
-    const stream = !!match[1];
-    const binary = !!match[3];
-    return { stream, binary };
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/error-json.js
-  function errorFromJson(jsonValue, metadata, fallback2) {
-    if (metadata) {
-      new Headers(metadata).forEach((value, key) => fallback2.metadata.append(key, value));
-    }
-    if (typeof jsonValue !== "object" || jsonValue == null || Array.isArray(jsonValue) || !("code" in jsonValue) || typeof jsonValue.code !== "string") {
-      throw fallback2;
-    }
-    const code = codeFromString(jsonValue.code);
-    if (code === void 0) {
-      throw fallback2;
-    }
-    const message = jsonValue.message;
-    if (message != null && typeof message !== "string") {
-      throw fallback2;
-    }
-    const error = new ConnectError(message !== null && message !== void 0 ? message : "", code, metadata);
-    if ("details" in jsonValue && Array.isArray(jsonValue.details)) {
-      for (const detail of jsonValue.details) {
-        if (detail === null || typeof detail != "object" || Array.isArray(detail) || typeof detail.type != "string" || typeof detail.value != "string" || "debug" in detail && typeof detail.debug != "object") {
-          throw fallback2;
-        }
-        try {
-          error.details.push({
-            type: detail.type,
-            value: protoBase64.dec(detail.value),
-            debug: detail.debug
-          });
-        } catch (e) {
-          throw fallback2;
-        }
-      }
-    }
-    return error;
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/end-stream.js
-  var endStreamFlag = 2;
-  function endStreamFromJson(data) {
-    const parseErr = new ConnectError("invalid end stream", Code.InvalidArgument);
-    let jsonValue;
-    try {
-      jsonValue = JSON.parse(typeof data == "string" ? data : new TextDecoder().decode(data));
-    } catch (e) {
-      throw parseErr;
-    }
-    if (typeof jsonValue != "object" || jsonValue == null || Array.isArray(jsonValue)) {
-      throw parseErr;
-    }
-    const metadata = new Headers();
-    if ("metadata" in jsonValue) {
-      if (typeof jsonValue.metadata != "object" || jsonValue.metadata == null || Array.isArray(jsonValue.metadata)) {
-        throw parseErr;
-      }
-      for (const [key, values] of Object.entries(jsonValue.metadata)) {
-        if (!Array.isArray(values) || values.some((value) => typeof value != "string")) {
-          throw parseErr;
-        }
-        for (const value of values) {
-          metadata.append(key, value);
-        }
-      }
-    }
-    const error = "error" in jsonValue ? errorFromJson(jsonValue.error, metadata, parseErr) : void 0;
-    return { metadata, error };
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/headers.js
-  var headerContentType = "Content-Type";
-  var headerUnaryContentLength = "Content-Length";
-  var headerUnaryEncoding = "Content-Encoding";
-  var headerUnaryAcceptEncoding = "Accept-Encoding";
-  var headerTimeout = "Connect-Timeout-Ms";
-  var headerProtocolVersion = "Connect-Protocol-Version";
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/http-status.js
-  function codeFromHttpStatus(httpStatus) {
-    switch (httpStatus) {
-      case 400:
-        return Code.InvalidArgument;
-      case 401:
-        return Code.Unauthenticated;
-      case 403:
-        return Code.PermissionDenied;
-      case 404:
-        return Code.Unimplemented;
-      case 408:
-        return Code.DeadlineExceeded;
-      case 409:
-        return Code.Aborted;
-      case 412:
-        return Code.FailedPrecondition;
-      case 413:
-        return Code.ResourceExhausted;
-      case 415:
-        return Code.Internal;
-      case 429:
-        return Code.Unavailable;
-      case 431:
-        return Code.ResourceExhausted;
-      case 502:
-        return Code.Unavailable;
-      case 503:
-        return Code.Unavailable;
-      case 504:
-        return Code.Unavailable;
-      default:
-        return Code.Unknown;
-    }
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/trailer-mux.js
-  function trailerDemux(header) {
-    const h = new Headers(), t = new Headers();
-    header.forEach((value, key) => {
-      if (key.toLowerCase().startsWith("trailer-")) {
-        t.set(key.substring(8), value);
-      } else {
-        h.set(key, value);
-      }
-    });
-    return [h, t];
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/version.js
-  var protocolVersion = "1";
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/request-header.js
-  function requestHeader(methodKind, useBinaryFormat, timeoutMs, userProvidedHeaders) {
-    const result = new Headers(userProvidedHeaders !== null && userProvidedHeaders !== void 0 ? userProvidedHeaders : {});
-    if (timeoutMs !== void 0) {
-      result.set(headerTimeout, `${timeoutMs}`);
-    }
-    result.set(headerContentType, methodKind == MethodKind.Unary ? useBinaryFormat ? contentTypeUnaryProto : contentTypeUnaryJson : useBinaryFormat ? contentTypeStreamProto : contentTypeStreamJson);
-    result.set(headerProtocolVersion, protocolVersion);
-    return result;
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/validate-response.js
-  function validateResponse(methodKind, status, headers) {
-    const mimeType = headers.get("Content-Type");
-    const parsedType = parseContentType(mimeType);
-    if (status !== 200) {
-      const errorFromStatus = new ConnectError(`HTTP ${status}`, codeFromHttpStatus(status), headers);
-      if (methodKind == MethodKind.Unary && parsedType && !parsedType.binary) {
-        return { isUnaryError: true, unaryError: errorFromStatus };
-      }
-      throw errorFromStatus;
-    }
-    return { isUnaryError: false };
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol-connect/get-request.js
-  var contentTypePrefix = "application/";
-  function encodeMessageForUrl(message, useBase64) {
-    if (useBase64) {
-      return protoBase64.enc(message).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-    } else {
-      return encodeURIComponent(new TextDecoder().decode(message));
-    }
-  }
-  function transformConnectPostToGetRequest(request, message, useBase64) {
-    let query = `?connect=v${protocolVersion}`;
-    const contentType = request.header.get(headerContentType);
-    if ((contentType === null || contentType === void 0 ? void 0 : contentType.indexOf(contentTypePrefix)) === 0) {
-      query += "&encoding=" + encodeURIComponent(contentType.slice(contentTypePrefix.length));
-    }
-    const compression = request.header.get(headerUnaryEncoding);
-    if (compression !== null && compression !== "identity") {
-      query += "&compression=" + encodeURIComponent(compression);
-      useBase64 = true;
-    }
-    if (useBase64) {
-      query += "&base64=1";
-    }
-    query += "&message=" + encodeMessageForUrl(message, useBase64);
-    const url = request.url + query;
-    const header = new Headers(request.header);
-    header.delete(headerProtocolVersion);
-    header.delete(headerContentType);
-    header.delete(headerUnaryContentLength);
-    header.delete(headerUnaryEncoding);
-    header.delete(headerUnaryAcceptEncoding);
-    return Object.assign(Object.assign({}, request), {
-      init: Object.assign(Object.assign({}, request.init), { method: "GET" }),
-      url,
-      header
-    });
-  }
-
-  // ../node_modules/@bufbuild/connect/dist/esm/protocol/run-call.js
-  function runUnaryCall(opt) {
-    const next = applyInterceptors(opt.next, opt.interceptors);
-    const [signal, abort, done] = setupSignal(opt);
-    const req = Object.assign(Object.assign({}, opt.req), { message: normalize2(opt.req.method.I, opt.req.message), signal });
-    return next(req).then((res) => {
-      done();
-      return res;
-    }, abort);
-  }
-  function runStreamingCall(opt) {
-    const next = applyInterceptors(opt.next, opt.interceptors);
-    const [signal, abort, done] = setupSignal(opt);
-    const req = Object.assign(Object.assign({}, opt.req), { message: normalizeIterable(opt.req.method.I, opt.req.message), signal });
-    let doneCalled = false;
-    signal.addEventListener("abort", function() {
-      var _a, _b;
-      const it = opt.req.message[Symbol.asyncIterator]();
-      if (!doneCalled) {
-        (_a = it.throw) === null || _a === void 0 ? void 0 : _a.call(it, this.reason).catch(() => {
-        });
-      }
-      (_b = it.return) === null || _b === void 0 ? void 0 : _b.call(it).catch(() => {
-      });
-    });
-    return next(req).then((res) => {
-      return Object.assign(Object.assign({}, res), { message: {
-        [Symbol.asyncIterator]() {
-          const it = res.message[Symbol.asyncIterator]();
-          return {
-            next() {
-              return it.next().then((r) => {
-                if (r.done == true) {
-                  doneCalled = true;
-                  done();
-                }
-                return r;
-              }, abort);
-            }
-            // We deliberately omit throw/return.
-          };
-        }
-      } });
-    }, abort);
-  }
-  function setupSignal(opt) {
-    const { signal, cleanup } = createDeadlineSignal(opt.timeoutMs);
-    const controller = createLinkedAbortController(opt.signal, signal);
-    return [
-      controller.signal,
-      function abort(reason) {
-        const e = ConnectError.from(signal.aborted ? getAbortSignalReason(signal) : reason);
-        controller.abort(e);
-        cleanup();
-        return Promise.reject(e);
-      },
-      function done() {
-        cleanup();
-        controller.abort();
-      }
-    ];
-  }
-  function applyInterceptors(next, interceptors) {
-    var _a;
-    return (_a = interceptors === null || interceptors === void 0 ? void 0 : interceptors.concat().reverse().reduce(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      (n, i) => i(n),
-      next
-    )) !== null && _a !== void 0 ? _a : next;
-  }
-  function normalize2(type, message) {
-    return message instanceof type ? message : new type(message);
-  }
-  function normalizeIterable(messageType, input) {
-    function transform(result) {
-      if (result.done === true) {
-        return result;
-      }
-      return {
-        done: result.done,
-        value: normalize2(messageType, result.value)
-      };
-    }
-    return {
-      [Symbol.asyncIterator]() {
-        const it = input[Symbol.asyncIterator]();
-        const res = {
-          next: () => it.next().then(transform)
-        };
-        if (it.throw !== void 0) {
-          res.throw = (e) => it.throw(e).then(transform);
-        }
-        if (it.return !== void 0) {
-          res.return = (v) => it.return(v).then(transform);
-        }
-        return res;
-      }
-    };
-  }
-
-  // ../node_modules/@bufbuild/connect-web/dist/esm/assert-fetch-api.js
-  function assertFetchApi() {
-    try {
-      new Headers();
-    } catch (_) {
-      throw new Error("connect-web requires the fetch API. Are you running on an old version of Node.js? Node.js is not supported in Connect for Web - please stay tuned for Connect for Node.");
-    }
-  }
-
-  // ../node_modules/@bufbuild/connect-web/dist/esm/connect-transport.js
-  var __await3 = function(v) {
-    return this instanceof __await3 ? (this.v = v, this) : new __await3(v);
-  };
-  var __asyncGenerator3 = function(thisArg, _arguments, generator) {
-    if (!Symbol.asyncIterator)
-      throw new TypeError("Symbol.asyncIterator is not defined.");
-    var g = generator.apply(thisArg, _arguments || []), i, q = [];
-    return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
-      return this;
-    }, i;
-    function verb(n) {
-      if (g[n])
-        i[n] = function(v) {
-          return new Promise(function(a, b) {
-            q.push([n, v, a, b]) > 1 || resume(n, v);
-          });
-        };
-    }
-    function resume(n, v) {
-      try {
-        step(g[n](v));
-      } catch (e) {
-        settle(q[0][3], e);
-      }
-    }
-    function step(r) {
-      r.value instanceof __await3 ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
-    }
-    function fulfill(value) {
-      resume("next", value);
-    }
-    function reject(value) {
-      resume("throw", value);
-    }
-    function settle(f, v) {
-      if (f(v), q.shift(), q.length)
-        resume(q[0][0], q[0][1]);
-    }
-  };
-  function createConnectTransport(options) {
-    var _a;
-    assertFetchApi();
-    const useBinaryFormat = (_a = options.useBinaryFormat) !== null && _a !== void 0 ? _a : false;
-    return {
-      async unary(service, method, signal, timeoutMs, header, message) {
-        var _a2;
-        const { serialize, parse } = createClientMethodSerializers(method, useBinaryFormat, options.jsonOptions, options.binaryOptions);
-        return await runUnaryCall({
-          interceptors: options.interceptors,
-          signal,
-          timeoutMs,
-          req: {
-            stream: false,
-            service,
-            method,
-            url: createMethodUrl(options.baseUrl, service, method),
-            init: {
-              method: "POST",
-              credentials: (_a2 = options.credentials) !== null && _a2 !== void 0 ? _a2 : "same-origin",
-              redirect: "error",
-              mode: "cors"
-            },
-            header: requestHeader(method.kind, useBinaryFormat, timeoutMs, header),
-            message
-          },
-          next: async (req) => {
-            var _a3;
-            const useGet = options.useHttpGet === true && method.idempotency === MethodIdempotency.NoSideEffects;
-            let body = null;
-            if (useGet) {
-              req = transformConnectPostToGetRequest(req, serialize(req.message), useBinaryFormat);
-            } else {
-              body = serialize(req.message);
-            }
-            const fetch = (_a3 = options.fetch) !== null && _a3 !== void 0 ? _a3 : globalThis.fetch;
-            const response = await fetch(req.url, Object.assign(Object.assign({}, req.init), { headers: req.header, signal: req.signal, body }));
-            const { isUnaryError, unaryError } = validateResponse(method.kind, response.status, response.headers);
-            if (isUnaryError) {
-              throw errorFromJson(await response.json(), appendHeaders(...trailerDemux(response.headers)), unaryError);
-            }
-            const [demuxedHeader, demuxedTrailer] = trailerDemux(response.headers);
-            return {
-              stream: false,
-              service,
-              method,
-              header: demuxedHeader,
-              message: useBinaryFormat ? parse(new Uint8Array(await response.arrayBuffer())) : method.O.fromJson(await response.json(), getJsonOptions(options.jsonOptions)),
-              trailer: demuxedTrailer
-            };
-          }
-        });
-      },
-      async stream(service, method, signal, timeoutMs, header, input) {
-        var _a2;
-        const { serialize, parse } = createClientMethodSerializers(method, useBinaryFormat, options.jsonOptions, options.binaryOptions);
-        function parseResponseBody(body, trailerTarget) {
-          return __asyncGenerator3(this, arguments, function* parseResponseBody_1() {
-            const reader = createEnvelopeReadableStream(body).getReader();
-            let endStreamReceived = false;
-            for (; ; ) {
-              const result = yield __await3(reader.read());
-              if (result.done) {
-                break;
-              }
-              const { flags, data } = result.value;
-              if ((flags & endStreamFlag) === endStreamFlag) {
-                endStreamReceived = true;
-                const endStream = endStreamFromJson(data);
-                if (endStream.error) {
-                  throw endStream.error;
-                }
-                endStream.metadata.forEach((value, key) => trailerTarget.set(key, value));
-                continue;
-              }
-              yield yield __await3(parse(data));
-            }
-            if (!endStreamReceived) {
-              throw "missing EndStreamResponse";
-            }
-          });
-        }
-        async function createRequestBody(input2) {
-          if (method.kind != MethodKind.ServerStreaming) {
-            throw "The fetch API does not support streaming request bodies";
-          }
-          const r = await input2[Symbol.asyncIterator]().next();
-          if (r.done == true) {
-            throw "missing request message";
-          }
-          return encodeEnvelope(0, serialize(r.value));
-        }
-        return await runStreamingCall({
-          interceptors: options.interceptors,
-          timeoutMs,
-          signal,
-          req: {
-            stream: true,
-            service,
-            method,
-            url: createMethodUrl(options.baseUrl, service, method),
-            init: {
-              method: "POST",
-              credentials: (_a2 = options.credentials) !== null && _a2 !== void 0 ? _a2 : "same-origin",
-              redirect: "error",
-              mode: "cors"
-            },
-            header: requestHeader(method.kind, useBinaryFormat, timeoutMs, header),
-            message: input
-          },
-          next: async (req) => {
-            var _a3;
-            const fetch = (_a3 = options.fetch) !== null && _a3 !== void 0 ? _a3 : globalThis.fetch;
-            const fRes = await fetch(req.url, Object.assign(Object.assign({}, req.init), { headers: req.header, signal: req.signal, body: await createRequestBody(req.message) }));
-            validateResponse(method.kind, fRes.status, fRes.headers);
-            if (fRes.body === null) {
-              throw "missing response body";
-            }
-            const trailer = new Headers();
-            const res = Object.assign(Object.assign({}, req), { header: fRes.headers, trailer, message: parseResponseBody(fRes.body, trailer) });
-            return res;
-          }
-        });
-      }
-    };
-  }
-
   // rpc/user/user_pb.ts
+  var VerifyUserRequest = class _VerifyUserRequest extends Message {
+    /**
+     * @generated from field: string secret = 1;
+     */
+    secret = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "user.VerifyUserRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "secret",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _VerifyUserRequest().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _VerifyUserRequest().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _VerifyUserRequest().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_VerifyUserRequest, a, b);
+    }
+  };
   var GroupInfoRequest = class _GroupInfoRequest extends Message {
     /**
      * @generated from field: string secret = 1;
@@ -31756,6 +31009,55 @@
   };
 
   // rpc/content/content_pb.ts
+  var RelateRequest = class _RelateRequest extends Message {
+    /**
+     * @generated from field: string parent = 1;
+     */
+    parent = "";
+    /**
+     * @generated from field: repeated string children = 2;
+     */
+    children = [];
+    /**
+     * @generated from field: bool connect = 3;
+     */
+    connect = false;
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "content.RelateRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "parent",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 2, name: "children", kind: "scalar", T: 9, repeated: true },
+      {
+        no: 3,
+        name: "connect",
+        kind: "scalar",
+        T: 8
+        /* ScalarType.BOOL */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _RelateRequest().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _RelateRequest().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _RelateRequest().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_RelateRequest, a, b);
+    }
+  };
   var Sources = class _Sources extends Message {
     /**
      * @generated from field: repeated content.EnumeratedSource sources = 1;
@@ -31825,7 +31127,11 @@
      */
     description = "";
     /**
-     * @generated from field: content.Content content = 3;
+     * @generated from field: string type = 3;
+     */
+    type = "";
+    /**
+     * @generated from field: content.Content content = 4;
      */
     content;
     constructor(data) {
@@ -31849,7 +31155,14 @@
         T: 9
         /* ScalarType.STRING */
       },
-      { no: 3, name: "content", kind: "message", T: Content }
+      {
+        no: 3,
+        name: "type",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      { no: 4, name: "content", kind: "message", T: Content }
     ]);
     static fromBinary(bytes, options) {
       return new _DisplayContent().fromBinary(bytes, options);
@@ -33296,6 +32609,10 @@
      * @generated from field: content.HugoConfig hugo_config = 1;
      */
     hugoConfig;
+    /**
+     * @generated from field: repeated string post_tags = 2;
+     */
+    postTags = [];
     constructor(data) {
       super();
       proto3.util.initPartial(data, this);
@@ -33303,7 +32620,8 @@
     static runtime = proto3;
     static typeName = "content.Site";
     static fields = proto3.util.newFieldList(() => [
-      { no: 1, name: "hugo_config", kind: "message", T: HugoConfig }
+      { no: 1, name: "hugo_config", kind: "message", T: HugoConfig },
+      { no: 2, name: "post_tags", kind: "scalar", T: 9, repeated: true }
     ]);
     static fromBinary(bytes, options) {
       return new _Site().fromBinary(bytes, options);
@@ -35297,6 +34615,15 @@
         kind: MethodKind.Unary
       },
       /**
+       * @generated from rpc content.ContentService.Relate
+       */
+      relate: {
+        name: "Relate",
+        I: RelateRequest,
+        O: Empty,
+        kind: MethodKind.Unary
+      },
+      /**
        * @generated from rpc content.ContentService.Analyze
        */
       analyze: {
@@ -35362,1757 +34689,6 @@
     }
   };
 
-  // ../node_modules/@tanstack/query-core/build/lib/subscribable.mjs
-  var Subscribable = class {
-    constructor() {
-      this.listeners = /* @__PURE__ */ new Set();
-      this.subscribe = this.subscribe.bind(this);
-    }
-    subscribe(listener) {
-      const identity = {
-        listener
-      };
-      this.listeners.add(identity);
-      this.onSubscribe();
-      return () => {
-        this.listeners.delete(identity);
-        this.onUnsubscribe();
-      };
-    }
-    hasListeners() {
-      return this.listeners.size > 0;
-    }
-    onSubscribe() {
-    }
-    onUnsubscribe() {
-    }
-  };
-
-  // ../node_modules/@tanstack/query-core/build/lib/utils.mjs
-  var isServer = typeof window === "undefined" || "Deno" in window;
-  function noop() {
-    return void 0;
-  }
-  function functionalUpdate(updater, input) {
-    return typeof updater === "function" ? updater(input) : updater;
-  }
-  function isValidTimeout(value) {
-    return typeof value === "number" && value >= 0 && value !== Infinity;
-  }
-  function timeUntilStale(updatedAt, staleTime) {
-    return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0);
-  }
-  function parseQueryArgs(arg1, arg2, arg3) {
-    if (!isQueryKey(arg1)) {
-      return arg1;
-    }
-    if (typeof arg2 === "function") {
-      return {
-        ...arg3,
-        queryKey: arg1,
-        queryFn: arg2
-      };
-    }
-    return {
-      ...arg2,
-      queryKey: arg1
-    };
-  }
-  function parseFilterArgs(arg1, arg2, arg3) {
-    return isQueryKey(arg1) ? [{
-      ...arg2,
-      queryKey: arg1
-    }, arg3] : [arg1 || {}, arg2];
-  }
-  function matchQuery(filters, query) {
-    const {
-      type = "all",
-      exact,
-      fetchStatus,
-      predicate,
-      queryKey,
-      stale
-    } = filters;
-    if (isQueryKey(queryKey)) {
-      if (exact) {
-        if (query.queryHash !== hashQueryKeyByOptions(queryKey, query.options)) {
-          return false;
-        }
-      } else if (!partialMatchKey(query.queryKey, queryKey)) {
-        return false;
-      }
-    }
-    if (type !== "all") {
-      const isActive = query.isActive();
-      if (type === "active" && !isActive) {
-        return false;
-      }
-      if (type === "inactive" && isActive) {
-        return false;
-      }
-    }
-    if (typeof stale === "boolean" && query.isStale() !== stale) {
-      return false;
-    }
-    if (typeof fetchStatus !== "undefined" && fetchStatus !== query.state.fetchStatus) {
-      return false;
-    }
-    if (predicate && !predicate(query)) {
-      return false;
-    }
-    return true;
-  }
-  function matchMutation(filters, mutation) {
-    const {
-      exact,
-      fetching,
-      predicate,
-      mutationKey
-    } = filters;
-    if (isQueryKey(mutationKey)) {
-      if (!mutation.options.mutationKey) {
-        return false;
-      }
-      if (exact) {
-        if (hashQueryKey(mutation.options.mutationKey) !== hashQueryKey(mutationKey)) {
-          return false;
-        }
-      } else if (!partialMatchKey(mutation.options.mutationKey, mutationKey)) {
-        return false;
-      }
-    }
-    if (typeof fetching === "boolean" && mutation.state.status === "loading" !== fetching) {
-      return false;
-    }
-    if (predicate && !predicate(mutation)) {
-      return false;
-    }
-    return true;
-  }
-  function hashQueryKeyByOptions(queryKey, options) {
-    const hashFn = (options == null ? void 0 : options.queryKeyHashFn) || hashQueryKey;
-    return hashFn(queryKey);
-  }
-  function hashQueryKey(queryKey) {
-    return JSON.stringify(queryKey, (_, val) => isPlainObject(val) ? Object.keys(val).sort().reduce((result, key) => {
-      result[key] = val[key];
-      return result;
-    }, {}) : val);
-  }
-  function partialMatchKey(a, b) {
-    return partialDeepEqual(a, b);
-  }
-  function partialDeepEqual(a, b) {
-    if (a === b) {
-      return true;
-    }
-    if (typeof a !== typeof b) {
-      return false;
-    }
-    if (a && b && typeof a === "object" && typeof b === "object") {
-      return !Object.keys(b).some((key) => !partialDeepEqual(a[key], b[key]));
-    }
-    return false;
-  }
-  function replaceEqualDeep(a, b) {
-    if (a === b) {
-      return a;
-    }
-    const array = isPlainArray(a) && isPlainArray(b);
-    if (array || isPlainObject(a) && isPlainObject(b)) {
-      const aSize = array ? a.length : Object.keys(a).length;
-      const bItems = array ? b : Object.keys(b);
-      const bSize = bItems.length;
-      const copy = array ? [] : {};
-      let equalItems = 0;
-      for (let i = 0; i < bSize; i++) {
-        const key = array ? i : bItems[i];
-        copy[key] = replaceEqualDeep(a[key], b[key]);
-        if (copy[key] === a[key]) {
-          equalItems++;
-        }
-      }
-      return aSize === bSize && equalItems === aSize ? a : copy;
-    }
-    return b;
-  }
-  function isPlainArray(value) {
-    return Array.isArray(value) && value.length === Object.keys(value).length;
-  }
-  function isPlainObject(o) {
-    if (!hasObjectPrototype(o)) {
-      return false;
-    }
-    const ctor = o.constructor;
-    if (typeof ctor === "undefined") {
-      return true;
-    }
-    const prot = ctor.prototype;
-    if (!hasObjectPrototype(prot)) {
-      return false;
-    }
-    if (!prot.hasOwnProperty("isPrototypeOf")) {
-      return false;
-    }
-    return true;
-  }
-  function hasObjectPrototype(o) {
-    return Object.prototype.toString.call(o) === "[object Object]";
-  }
-  function isQueryKey(value) {
-    return Array.isArray(value);
-  }
-  function sleep(timeout) {
-    return new Promise((resolve2) => {
-      setTimeout(resolve2, timeout);
-    });
-  }
-  function scheduleMicrotask(callback) {
-    sleep(0).then(callback);
-  }
-  function getAbortController() {
-    if (typeof AbortController === "function") {
-      return new AbortController();
-    }
-    return;
-  }
-  function replaceData(prevData, data, options) {
-    if (options.isDataEqual != null && options.isDataEqual(prevData, data)) {
-      return prevData;
-    } else if (typeof options.structuralSharing === "function") {
-      return options.structuralSharing(prevData, data);
-    } else if (options.structuralSharing !== false) {
-      return replaceEqualDeep(prevData, data);
-    }
-    return data;
-  }
-
-  // ../node_modules/@tanstack/query-core/build/lib/focusManager.mjs
-  var FocusManager = class extends Subscribable {
-    constructor() {
-      super();
-      this.setup = (onFocus) => {
-        if (!isServer && window.addEventListener) {
-          const listener = () => onFocus();
-          window.addEventListener("visibilitychange", listener, false);
-          window.addEventListener("focus", listener, false);
-          return () => {
-            window.removeEventListener("visibilitychange", listener);
-            window.removeEventListener("focus", listener);
-          };
-        }
-        return;
-      };
-    }
-    onSubscribe() {
-      if (!this.cleanup) {
-        this.setEventListener(this.setup);
-      }
-    }
-    onUnsubscribe() {
-      if (!this.hasListeners()) {
-        var _this$cleanup;
-        (_this$cleanup = this.cleanup) == null ? void 0 : _this$cleanup.call(this);
-        this.cleanup = void 0;
-      }
-    }
-    setEventListener(setup) {
-      var _this$cleanup2;
-      this.setup = setup;
-      (_this$cleanup2 = this.cleanup) == null ? void 0 : _this$cleanup2.call(this);
-      this.cleanup = setup((focused) => {
-        if (typeof focused === "boolean") {
-          this.setFocused(focused);
-        } else {
-          this.onFocus();
-        }
-      });
-    }
-    setFocused(focused) {
-      const changed = this.focused !== focused;
-      if (changed) {
-        this.focused = focused;
-        this.onFocus();
-      }
-    }
-    onFocus() {
-      this.listeners.forEach(({
-        listener
-      }) => {
-        listener();
-      });
-    }
-    isFocused() {
-      if (typeof this.focused === "boolean") {
-        return this.focused;
-      }
-      if (typeof document === "undefined") {
-        return true;
-      }
-      return [void 0, "visible", "prerender"].includes(document.visibilityState);
-    }
-  };
-  var focusManager = new FocusManager();
-
-  // ../node_modules/@tanstack/query-core/build/lib/onlineManager.mjs
-  var onlineEvents = ["online", "offline"];
-  var OnlineManager = class extends Subscribable {
-    constructor() {
-      super();
-      this.setup = (onOnline) => {
-        if (!isServer && window.addEventListener) {
-          const listener = () => onOnline();
-          onlineEvents.forEach((event) => {
-            window.addEventListener(event, listener, false);
-          });
-          return () => {
-            onlineEvents.forEach((event) => {
-              window.removeEventListener(event, listener);
-            });
-          };
-        }
-        return;
-      };
-    }
-    onSubscribe() {
-      if (!this.cleanup) {
-        this.setEventListener(this.setup);
-      }
-    }
-    onUnsubscribe() {
-      if (!this.hasListeners()) {
-        var _this$cleanup;
-        (_this$cleanup = this.cleanup) == null ? void 0 : _this$cleanup.call(this);
-        this.cleanup = void 0;
-      }
-    }
-    setEventListener(setup) {
-      var _this$cleanup2;
-      this.setup = setup;
-      (_this$cleanup2 = this.cleanup) == null ? void 0 : _this$cleanup2.call(this);
-      this.cleanup = setup((online) => {
-        if (typeof online === "boolean") {
-          this.setOnline(online);
-        } else {
-          this.onOnline();
-        }
-      });
-    }
-    setOnline(online) {
-      const changed = this.online !== online;
-      if (changed) {
-        this.online = online;
-        this.onOnline();
-      }
-    }
-    onOnline() {
-      this.listeners.forEach(({
-        listener
-      }) => {
-        listener();
-      });
-    }
-    isOnline() {
-      if (typeof this.online === "boolean") {
-        return this.online;
-      }
-      if (typeof navigator === "undefined" || typeof navigator.onLine === "undefined") {
-        return true;
-      }
-      return navigator.onLine;
-    }
-  };
-  var onlineManager = new OnlineManager();
-
-  // ../node_modules/@tanstack/query-core/build/lib/retryer.mjs
-  function defaultRetryDelay(failureCount) {
-    return Math.min(1e3 * 2 ** failureCount, 3e4);
-  }
-  function canFetch(networkMode) {
-    return (networkMode != null ? networkMode : "online") === "online" ? onlineManager.isOnline() : true;
-  }
-  var CancelledError = class {
-    constructor(options) {
-      this.revert = options == null ? void 0 : options.revert;
-      this.silent = options == null ? void 0 : options.silent;
-    }
-  };
-  function isCancelledError(value) {
-    return value instanceof CancelledError;
-  }
-  function createRetryer(config) {
-    let isRetryCancelled = false;
-    let failureCount = 0;
-    let isResolved = false;
-    let continueFn;
-    let promiseResolve;
-    let promiseReject;
-    const promise = new Promise((outerResolve, outerReject) => {
-      promiseResolve = outerResolve;
-      promiseReject = outerReject;
-    });
-    const cancel = (cancelOptions) => {
-      if (!isResolved) {
-        reject(new CancelledError(cancelOptions));
-        config.abort == null ? void 0 : config.abort();
-      }
-    };
-    const cancelRetry = () => {
-      isRetryCancelled = true;
-    };
-    const continueRetry = () => {
-      isRetryCancelled = false;
-    };
-    const shouldPause = () => !focusManager.isFocused() || config.networkMode !== "always" && !onlineManager.isOnline();
-    const resolve2 = (value) => {
-      if (!isResolved) {
-        isResolved = true;
-        config.onSuccess == null ? void 0 : config.onSuccess(value);
-        continueFn == null ? void 0 : continueFn();
-        promiseResolve(value);
-      }
-    };
-    const reject = (value) => {
-      if (!isResolved) {
-        isResolved = true;
-        config.onError == null ? void 0 : config.onError(value);
-        continueFn == null ? void 0 : continueFn();
-        promiseReject(value);
-      }
-    };
-    const pause = () => {
-      return new Promise((continueResolve) => {
-        continueFn = (value) => {
-          const canContinue = isResolved || !shouldPause();
-          if (canContinue) {
-            continueResolve(value);
-          }
-          return canContinue;
-        };
-        config.onPause == null ? void 0 : config.onPause();
-      }).then(() => {
-        continueFn = void 0;
-        if (!isResolved) {
-          config.onContinue == null ? void 0 : config.onContinue();
-        }
-      });
-    };
-    const run = () => {
-      if (isResolved) {
-        return;
-      }
-      let promiseOrValue;
-      try {
-        promiseOrValue = config.fn();
-      } catch (error) {
-        promiseOrValue = Promise.reject(error);
-      }
-      Promise.resolve(promiseOrValue).then(resolve2).catch((error) => {
-        var _config$retry, _config$retryDelay;
-        if (isResolved) {
-          return;
-        }
-        const retry = (_config$retry = config.retry) != null ? _config$retry : 3;
-        const retryDelay = (_config$retryDelay = config.retryDelay) != null ? _config$retryDelay : defaultRetryDelay;
-        const delay = typeof retryDelay === "function" ? retryDelay(failureCount, error) : retryDelay;
-        const shouldRetry = retry === true || typeof retry === "number" && failureCount < retry || typeof retry === "function" && retry(failureCount, error);
-        if (isRetryCancelled || !shouldRetry) {
-          reject(error);
-          return;
-        }
-        failureCount++;
-        config.onFail == null ? void 0 : config.onFail(failureCount, error);
-        sleep(delay).then(() => {
-          if (shouldPause()) {
-            return pause();
-          }
-          return;
-        }).then(() => {
-          if (isRetryCancelled) {
-            reject(error);
-          } else {
-            run();
-          }
-        });
-      });
-    };
-    if (canFetch(config.networkMode)) {
-      run();
-    } else {
-      pause().then(run);
-    }
-    return {
-      promise,
-      cancel,
-      continue: () => {
-        const didContinue = continueFn == null ? void 0 : continueFn();
-        return didContinue ? promise : Promise.resolve();
-      },
-      cancelRetry,
-      continueRetry
-    };
-  }
-
-  // ../node_modules/@tanstack/query-core/build/lib/logger.mjs
-  var defaultLogger = console;
-
-  // ../node_modules/@tanstack/query-core/build/lib/notifyManager.mjs
-  function createNotifyManager() {
-    let queue = [];
-    let transactions = 0;
-    let notifyFn = (callback) => {
-      callback();
-    };
-    let batchNotifyFn = (callback) => {
-      callback();
-    };
-    const batch = (callback) => {
-      let result;
-      transactions++;
-      try {
-        result = callback();
-      } finally {
-        transactions--;
-        if (!transactions) {
-          flush();
-        }
-      }
-      return result;
-    };
-    const schedule = (callback) => {
-      if (transactions) {
-        queue.push(callback);
-      } else {
-        scheduleMicrotask(() => {
-          notifyFn(callback);
-        });
-      }
-    };
-    const batchCalls = (callback) => {
-      return (...args) => {
-        schedule(() => {
-          callback(...args);
-        });
-      };
-    };
-    const flush = () => {
-      const originalQueue = queue;
-      queue = [];
-      if (originalQueue.length) {
-        scheduleMicrotask(() => {
-          batchNotifyFn(() => {
-            originalQueue.forEach((callback) => {
-              notifyFn(callback);
-            });
-          });
-        });
-      }
-    };
-    const setNotifyFunction = (fn) => {
-      notifyFn = fn;
-    };
-    const setBatchNotifyFunction = (fn) => {
-      batchNotifyFn = fn;
-    };
-    return {
-      batch,
-      batchCalls,
-      schedule,
-      setNotifyFunction,
-      setBatchNotifyFunction
-    };
-  }
-  var notifyManager = createNotifyManager();
-
-  // ../node_modules/@tanstack/query-core/build/lib/removable.mjs
-  var Removable = class {
-    destroy() {
-      this.clearGcTimeout();
-    }
-    scheduleGc() {
-      this.clearGcTimeout();
-      if (isValidTimeout(this.cacheTime)) {
-        this.gcTimeout = setTimeout(() => {
-          this.optionalRemove();
-        }, this.cacheTime);
-      }
-    }
-    updateCacheTime(newCacheTime) {
-      this.cacheTime = Math.max(this.cacheTime || 0, newCacheTime != null ? newCacheTime : isServer ? Infinity : 5 * 60 * 1e3);
-    }
-    clearGcTimeout() {
-      if (this.gcTimeout) {
-        clearTimeout(this.gcTimeout);
-        this.gcTimeout = void 0;
-      }
-    }
-  };
-
-  // ../node_modules/@tanstack/query-core/build/lib/query.mjs
-  var Query2 = class extends Removable {
-    constructor(config) {
-      super();
-      this.abortSignalConsumed = false;
-      this.defaultOptions = config.defaultOptions;
-      this.setOptions(config.options);
-      this.observers = [];
-      this.cache = config.cache;
-      this.logger = config.logger || defaultLogger;
-      this.queryKey = config.queryKey;
-      this.queryHash = config.queryHash;
-      this.initialState = config.state || getDefaultState(this.options);
-      this.state = this.initialState;
-      this.scheduleGc();
-    }
-    get meta() {
-      return this.options.meta;
-    }
-    setOptions(options) {
-      this.options = {
-        ...this.defaultOptions,
-        ...options
-      };
-      this.updateCacheTime(this.options.cacheTime);
-    }
-    optionalRemove() {
-      if (!this.observers.length && this.state.fetchStatus === "idle") {
-        this.cache.remove(this);
-      }
-    }
-    setData(newData, options) {
-      const data = replaceData(this.state.data, newData, this.options);
-      this.dispatch({
-        data,
-        type: "success",
-        dataUpdatedAt: options == null ? void 0 : options.updatedAt,
-        manual: options == null ? void 0 : options.manual
-      });
-      return data;
-    }
-    setState(state, setStateOptions) {
-      this.dispatch({
-        type: "setState",
-        state,
-        setStateOptions
-      });
-    }
-    cancel(options) {
-      var _this$retryer;
-      const promise = this.promise;
-      (_this$retryer = this.retryer) == null ? void 0 : _this$retryer.cancel(options);
-      return promise ? promise.then(noop).catch(noop) : Promise.resolve();
-    }
-    destroy() {
-      super.destroy();
-      this.cancel({
-        silent: true
-      });
-    }
-    reset() {
-      this.destroy();
-      this.setState(this.initialState);
-    }
-    isActive() {
-      return this.observers.some((observer) => observer.options.enabled !== false);
-    }
-    isDisabled() {
-      return this.getObserversCount() > 0 && !this.isActive();
-    }
-    isStale() {
-      return this.state.isInvalidated || !this.state.dataUpdatedAt || this.observers.some((observer) => observer.getCurrentResult().isStale);
-    }
-    isStaleByTime(staleTime = 0) {
-      return this.state.isInvalidated || !this.state.dataUpdatedAt || !timeUntilStale(this.state.dataUpdatedAt, staleTime);
-    }
-    onFocus() {
-      var _this$retryer2;
-      const observer = this.observers.find((x) => x.shouldFetchOnWindowFocus());
-      if (observer) {
-        observer.refetch({
-          cancelRefetch: false
-        });
-      }
-      (_this$retryer2 = this.retryer) == null ? void 0 : _this$retryer2.continue();
-    }
-    onOnline() {
-      var _this$retryer3;
-      const observer = this.observers.find((x) => x.shouldFetchOnReconnect());
-      if (observer) {
-        observer.refetch({
-          cancelRefetch: false
-        });
-      }
-      (_this$retryer3 = this.retryer) == null ? void 0 : _this$retryer3.continue();
-    }
-    addObserver(observer) {
-      if (!this.observers.includes(observer)) {
-        this.observers.push(observer);
-        this.clearGcTimeout();
-        this.cache.notify({
-          type: "observerAdded",
-          query: this,
-          observer
-        });
-      }
-    }
-    removeObserver(observer) {
-      if (this.observers.includes(observer)) {
-        this.observers = this.observers.filter((x) => x !== observer);
-        if (!this.observers.length) {
-          if (this.retryer) {
-            if (this.abortSignalConsumed) {
-              this.retryer.cancel({
-                revert: true
-              });
-            } else {
-              this.retryer.cancelRetry();
-            }
-          }
-          this.scheduleGc();
-        }
-        this.cache.notify({
-          type: "observerRemoved",
-          query: this,
-          observer
-        });
-      }
-    }
-    getObserversCount() {
-      return this.observers.length;
-    }
-    invalidate() {
-      if (!this.state.isInvalidated) {
-        this.dispatch({
-          type: "invalidate"
-        });
-      }
-    }
-    fetch(options, fetchOptions) {
-      var _this$options$behavio, _context$fetchOptions;
-      if (this.state.fetchStatus !== "idle") {
-        if (this.state.dataUpdatedAt && fetchOptions != null && fetchOptions.cancelRefetch) {
-          this.cancel({
-            silent: true
-          });
-        } else if (this.promise) {
-          var _this$retryer4;
-          (_this$retryer4 = this.retryer) == null ? void 0 : _this$retryer4.continueRetry();
-          return this.promise;
-        }
-      }
-      if (options) {
-        this.setOptions(options);
-      }
-      if (!this.options.queryFn) {
-        const observer = this.observers.find((x) => x.options.queryFn);
-        if (observer) {
-          this.setOptions(observer.options);
-        }
-      }
-      if (true) {
-        if (!Array.isArray(this.options.queryKey)) {
-          this.logger.error("As of v4, queryKey needs to be an Array. If you are using a string like 'repoData', please change it to an Array, e.g. ['repoData']");
-        }
-      }
-      const abortController = getAbortController();
-      const queryFnContext = {
-        queryKey: this.queryKey,
-        pageParam: void 0,
-        meta: this.meta
-      };
-      const addSignalProperty = (object) => {
-        Object.defineProperty(object, "signal", {
-          enumerable: true,
-          get: () => {
-            if (abortController) {
-              this.abortSignalConsumed = true;
-              return abortController.signal;
-            }
-            return void 0;
-          }
-        });
-      };
-      addSignalProperty(queryFnContext);
-      const fetchFn = () => {
-        if (!this.options.queryFn) {
-          return Promise.reject("Missing queryFn for queryKey '" + this.options.queryHash + "'");
-        }
-        this.abortSignalConsumed = false;
-        return this.options.queryFn(queryFnContext);
-      };
-      const context = {
-        fetchOptions,
-        options: this.options,
-        queryKey: this.queryKey,
-        state: this.state,
-        fetchFn
-      };
-      addSignalProperty(context);
-      (_this$options$behavio = this.options.behavior) == null ? void 0 : _this$options$behavio.onFetch(context);
-      this.revertState = this.state;
-      if (this.state.fetchStatus === "idle" || this.state.fetchMeta !== ((_context$fetchOptions = context.fetchOptions) == null ? void 0 : _context$fetchOptions.meta)) {
-        var _context$fetchOptions2;
-        this.dispatch({
-          type: "fetch",
-          meta: (_context$fetchOptions2 = context.fetchOptions) == null ? void 0 : _context$fetchOptions2.meta
-        });
-      }
-      const onError = (error) => {
-        if (!(isCancelledError(error) && error.silent)) {
-          this.dispatch({
-            type: "error",
-            error
-          });
-        }
-        if (!isCancelledError(error)) {
-          var _this$cache$config$on, _this$cache$config, _this$cache$config$on2, _this$cache$config2;
-          (_this$cache$config$on = (_this$cache$config = this.cache.config).onError) == null ? void 0 : _this$cache$config$on.call(_this$cache$config, error, this);
-          (_this$cache$config$on2 = (_this$cache$config2 = this.cache.config).onSettled) == null ? void 0 : _this$cache$config$on2.call(_this$cache$config2, this.state.data, error, this);
-          if (true) {
-            this.logger.error(error);
-          }
-        }
-        if (!this.isFetchingOptimistic) {
-          this.scheduleGc();
-        }
-        this.isFetchingOptimistic = false;
-      };
-      this.retryer = createRetryer({
-        fn: context.fetchFn,
-        abort: abortController == null ? void 0 : abortController.abort.bind(abortController),
-        onSuccess: (data) => {
-          var _this$cache$config$on3, _this$cache$config3, _this$cache$config$on4, _this$cache$config4;
-          if (typeof data === "undefined") {
-            if (true) {
-              this.logger.error("Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: " + this.queryHash);
-            }
-            onError(new Error(this.queryHash + " data is undefined"));
-            return;
-          }
-          this.setData(data);
-          (_this$cache$config$on3 = (_this$cache$config3 = this.cache.config).onSuccess) == null ? void 0 : _this$cache$config$on3.call(_this$cache$config3, data, this);
-          (_this$cache$config$on4 = (_this$cache$config4 = this.cache.config).onSettled) == null ? void 0 : _this$cache$config$on4.call(_this$cache$config4, data, this.state.error, this);
-          if (!this.isFetchingOptimistic) {
-            this.scheduleGc();
-          }
-          this.isFetchingOptimistic = false;
-        },
-        onError,
-        onFail: (failureCount, error) => {
-          this.dispatch({
-            type: "failed",
-            failureCount,
-            error
-          });
-        },
-        onPause: () => {
-          this.dispatch({
-            type: "pause"
-          });
-        },
-        onContinue: () => {
-          this.dispatch({
-            type: "continue"
-          });
-        },
-        retry: context.options.retry,
-        retryDelay: context.options.retryDelay,
-        networkMode: context.options.networkMode
-      });
-      this.promise = this.retryer.promise;
-      return this.promise;
-    }
-    dispatch(action) {
-      const reducer = (state) => {
-        var _action$meta, _action$dataUpdatedAt;
-        switch (action.type) {
-          case "failed":
-            return {
-              ...state,
-              fetchFailureCount: action.failureCount,
-              fetchFailureReason: action.error
-            };
-          case "pause":
-            return {
-              ...state,
-              fetchStatus: "paused"
-            };
-          case "continue":
-            return {
-              ...state,
-              fetchStatus: "fetching"
-            };
-          case "fetch":
-            return {
-              ...state,
-              fetchFailureCount: 0,
-              fetchFailureReason: null,
-              fetchMeta: (_action$meta = action.meta) != null ? _action$meta : null,
-              fetchStatus: canFetch(this.options.networkMode) ? "fetching" : "paused",
-              ...!state.dataUpdatedAt && {
-                error: null,
-                status: "loading"
-              }
-            };
-          case "success":
-            return {
-              ...state,
-              data: action.data,
-              dataUpdateCount: state.dataUpdateCount + 1,
-              dataUpdatedAt: (_action$dataUpdatedAt = action.dataUpdatedAt) != null ? _action$dataUpdatedAt : Date.now(),
-              error: null,
-              isInvalidated: false,
-              status: "success",
-              ...!action.manual && {
-                fetchStatus: "idle",
-                fetchFailureCount: 0,
-                fetchFailureReason: null
-              }
-            };
-          case "error":
-            const error = action.error;
-            if (isCancelledError(error) && error.revert && this.revertState) {
-              return {
-                ...this.revertState,
-                fetchStatus: "idle"
-              };
-            }
-            return {
-              ...state,
-              error,
-              errorUpdateCount: state.errorUpdateCount + 1,
-              errorUpdatedAt: Date.now(),
-              fetchFailureCount: state.fetchFailureCount + 1,
-              fetchFailureReason: error,
-              fetchStatus: "idle",
-              status: "error"
-            };
-          case "invalidate":
-            return {
-              ...state,
-              isInvalidated: true
-            };
-          case "setState":
-            return {
-              ...state,
-              ...action.state
-            };
-        }
-      };
-      this.state = reducer(this.state);
-      notifyManager.batch(() => {
-        this.observers.forEach((observer) => {
-          observer.onQueryUpdate(action);
-        });
-        this.cache.notify({
-          query: this,
-          type: "updated",
-          action
-        });
-      });
-    }
-  };
-  function getDefaultState(options) {
-    const data = typeof options.initialData === "function" ? options.initialData() : options.initialData;
-    const hasData = typeof data !== "undefined";
-    const initialDataUpdatedAt = hasData ? typeof options.initialDataUpdatedAt === "function" ? options.initialDataUpdatedAt() : options.initialDataUpdatedAt : 0;
-    return {
-      data,
-      dataUpdateCount: 0,
-      dataUpdatedAt: hasData ? initialDataUpdatedAt != null ? initialDataUpdatedAt : Date.now() : 0,
-      error: null,
-      errorUpdateCount: 0,
-      errorUpdatedAt: 0,
-      fetchFailureCount: 0,
-      fetchFailureReason: null,
-      fetchMeta: null,
-      isInvalidated: false,
-      status: hasData ? "success" : "loading",
-      fetchStatus: "idle"
-    };
-  }
-
-  // ../node_modules/@tanstack/query-core/build/lib/queryCache.mjs
-  var QueryCache = class extends Subscribable {
-    constructor(config) {
-      super();
-      this.config = config || {};
-      this.queries = [];
-      this.queriesMap = {};
-    }
-    build(client, options, state) {
-      var _options$queryHash;
-      const queryKey = options.queryKey;
-      const queryHash = (_options$queryHash = options.queryHash) != null ? _options$queryHash : hashQueryKeyByOptions(queryKey, options);
-      let query = this.get(queryHash);
-      if (!query) {
-        query = new Query2({
-          cache: this,
-          logger: client.getLogger(),
-          queryKey,
-          queryHash,
-          options: client.defaultQueryOptions(options),
-          state,
-          defaultOptions: client.getQueryDefaults(queryKey)
-        });
-        this.add(query);
-      }
-      return query;
-    }
-    add(query) {
-      if (!this.queriesMap[query.queryHash]) {
-        this.queriesMap[query.queryHash] = query;
-        this.queries.push(query);
-        this.notify({
-          type: "added",
-          query
-        });
-      }
-    }
-    remove(query) {
-      const queryInMap = this.queriesMap[query.queryHash];
-      if (queryInMap) {
-        query.destroy();
-        this.queries = this.queries.filter((x) => x !== query);
-        if (queryInMap === query) {
-          delete this.queriesMap[query.queryHash];
-        }
-        this.notify({
-          type: "removed",
-          query
-        });
-      }
-    }
-    clear() {
-      notifyManager.batch(() => {
-        this.queries.forEach((query) => {
-          this.remove(query);
-        });
-      });
-    }
-    get(queryHash) {
-      return this.queriesMap[queryHash];
-    }
-    getAll() {
-      return this.queries;
-    }
-    find(arg1, arg2) {
-      const [filters] = parseFilterArgs(arg1, arg2);
-      if (typeof filters.exact === "undefined") {
-        filters.exact = true;
-      }
-      return this.queries.find((query) => matchQuery(filters, query));
-    }
-    findAll(arg1, arg2) {
-      const [filters] = parseFilterArgs(arg1, arg2);
-      return Object.keys(filters).length > 0 ? this.queries.filter((query) => matchQuery(filters, query)) : this.queries;
-    }
-    notify(event) {
-      notifyManager.batch(() => {
-        this.listeners.forEach(({
-          listener
-        }) => {
-          listener(event);
-        });
-      });
-    }
-    onFocus() {
-      notifyManager.batch(() => {
-        this.queries.forEach((query) => {
-          query.onFocus();
-        });
-      });
-    }
-    onOnline() {
-      notifyManager.batch(() => {
-        this.queries.forEach((query) => {
-          query.onOnline();
-        });
-      });
-    }
-  };
-
-  // ../node_modules/@tanstack/query-core/build/lib/mutation.mjs
-  var Mutation = class extends Removable {
-    constructor(config) {
-      super();
-      this.defaultOptions = config.defaultOptions;
-      this.mutationId = config.mutationId;
-      this.mutationCache = config.mutationCache;
-      this.logger = config.logger || defaultLogger;
-      this.observers = [];
-      this.state = config.state || getDefaultState2();
-      this.setOptions(config.options);
-      this.scheduleGc();
-    }
-    setOptions(options) {
-      this.options = {
-        ...this.defaultOptions,
-        ...options
-      };
-      this.updateCacheTime(this.options.cacheTime);
-    }
-    get meta() {
-      return this.options.meta;
-    }
-    setState(state) {
-      this.dispatch({
-        type: "setState",
-        state
-      });
-    }
-    addObserver(observer) {
-      if (!this.observers.includes(observer)) {
-        this.observers.push(observer);
-        this.clearGcTimeout();
-        this.mutationCache.notify({
-          type: "observerAdded",
-          mutation: this,
-          observer
-        });
-      }
-    }
-    removeObserver(observer) {
-      this.observers = this.observers.filter((x) => x !== observer);
-      this.scheduleGc();
-      this.mutationCache.notify({
-        type: "observerRemoved",
-        mutation: this,
-        observer
-      });
-    }
-    optionalRemove() {
-      if (!this.observers.length) {
-        if (this.state.status === "loading") {
-          this.scheduleGc();
-        } else {
-          this.mutationCache.remove(this);
-        }
-      }
-    }
-    continue() {
-      var _this$retryer$continu, _this$retryer;
-      return (_this$retryer$continu = (_this$retryer = this.retryer) == null ? void 0 : _this$retryer.continue()) != null ? _this$retryer$continu : this.execute();
-    }
-    async execute() {
-      const executeMutation = () => {
-        var _this$options$retry;
-        this.retryer = createRetryer({
-          fn: () => {
-            if (!this.options.mutationFn) {
-              return Promise.reject("No mutationFn found");
-            }
-            return this.options.mutationFn(this.state.variables);
-          },
-          onFail: (failureCount, error) => {
-            this.dispatch({
-              type: "failed",
-              failureCount,
-              error
-            });
-          },
-          onPause: () => {
-            this.dispatch({
-              type: "pause"
-            });
-          },
-          onContinue: () => {
-            this.dispatch({
-              type: "continue"
-            });
-          },
-          retry: (_this$options$retry = this.options.retry) != null ? _this$options$retry : 0,
-          retryDelay: this.options.retryDelay,
-          networkMode: this.options.networkMode
-        });
-        return this.retryer.promise;
-      };
-      const restored = this.state.status === "loading";
-      try {
-        var _this$mutationCache$c3, _this$mutationCache$c4, _this$options$onSucce, _this$options2, _this$mutationCache$c5, _this$mutationCache$c6, _this$options$onSettl, _this$options3;
-        if (!restored) {
-          var _this$mutationCache$c, _this$mutationCache$c2, _this$options$onMutat, _this$options;
-          this.dispatch({
-            type: "loading",
-            variables: this.options.variables
-          });
-          await ((_this$mutationCache$c = (_this$mutationCache$c2 = this.mutationCache.config).onMutate) == null ? void 0 : _this$mutationCache$c.call(_this$mutationCache$c2, this.state.variables, this));
-          const context = await ((_this$options$onMutat = (_this$options = this.options).onMutate) == null ? void 0 : _this$options$onMutat.call(_this$options, this.state.variables));
-          if (context !== this.state.context) {
-            this.dispatch({
-              type: "loading",
-              context,
-              variables: this.state.variables
-            });
-          }
-        }
-        const data = await executeMutation();
-        await ((_this$mutationCache$c3 = (_this$mutationCache$c4 = this.mutationCache.config).onSuccess) == null ? void 0 : _this$mutationCache$c3.call(_this$mutationCache$c4, data, this.state.variables, this.state.context, this));
-        await ((_this$options$onSucce = (_this$options2 = this.options).onSuccess) == null ? void 0 : _this$options$onSucce.call(_this$options2, data, this.state.variables, this.state.context));
-        await ((_this$mutationCache$c5 = (_this$mutationCache$c6 = this.mutationCache.config).onSettled) == null ? void 0 : _this$mutationCache$c5.call(_this$mutationCache$c6, data, null, this.state.variables, this.state.context, this));
-        await ((_this$options$onSettl = (_this$options3 = this.options).onSettled) == null ? void 0 : _this$options$onSettl.call(_this$options3, data, null, this.state.variables, this.state.context));
-        this.dispatch({
-          type: "success",
-          data
-        });
-        return data;
-      } catch (error) {
-        try {
-          var _this$mutationCache$c7, _this$mutationCache$c8, _this$options$onError, _this$options4, _this$mutationCache$c9, _this$mutationCache$c10, _this$options$onSettl2, _this$options5;
-          await ((_this$mutationCache$c7 = (_this$mutationCache$c8 = this.mutationCache.config).onError) == null ? void 0 : _this$mutationCache$c7.call(_this$mutationCache$c8, error, this.state.variables, this.state.context, this));
-          if (true) {
-            this.logger.error(error);
-          }
-          await ((_this$options$onError = (_this$options4 = this.options).onError) == null ? void 0 : _this$options$onError.call(_this$options4, error, this.state.variables, this.state.context));
-          await ((_this$mutationCache$c9 = (_this$mutationCache$c10 = this.mutationCache.config).onSettled) == null ? void 0 : _this$mutationCache$c9.call(_this$mutationCache$c10, void 0, error, this.state.variables, this.state.context, this));
-          await ((_this$options$onSettl2 = (_this$options5 = this.options).onSettled) == null ? void 0 : _this$options$onSettl2.call(_this$options5, void 0, error, this.state.variables, this.state.context));
-          throw error;
-        } finally {
-          this.dispatch({
-            type: "error",
-            error
-          });
-        }
-      }
-    }
-    dispatch(action) {
-      const reducer = (state) => {
-        switch (action.type) {
-          case "failed":
-            return {
-              ...state,
-              failureCount: action.failureCount,
-              failureReason: action.error
-            };
-          case "pause":
-            return {
-              ...state,
-              isPaused: true
-            };
-          case "continue":
-            return {
-              ...state,
-              isPaused: false
-            };
-          case "loading":
-            return {
-              ...state,
-              context: action.context,
-              data: void 0,
-              failureCount: 0,
-              failureReason: null,
-              error: null,
-              isPaused: !canFetch(this.options.networkMode),
-              status: "loading",
-              variables: action.variables
-            };
-          case "success":
-            return {
-              ...state,
-              data: action.data,
-              failureCount: 0,
-              failureReason: null,
-              error: null,
-              status: "success",
-              isPaused: false
-            };
-          case "error":
-            return {
-              ...state,
-              data: void 0,
-              error: action.error,
-              failureCount: state.failureCount + 1,
-              failureReason: action.error,
-              isPaused: false,
-              status: "error"
-            };
-          case "setState":
-            return {
-              ...state,
-              ...action.state
-            };
-        }
-      };
-      this.state = reducer(this.state);
-      notifyManager.batch(() => {
-        this.observers.forEach((observer) => {
-          observer.onMutationUpdate(action);
-        });
-        this.mutationCache.notify({
-          mutation: this,
-          type: "updated",
-          action
-        });
-      });
-    }
-  };
-  function getDefaultState2() {
-    return {
-      context: void 0,
-      data: void 0,
-      error: null,
-      failureCount: 0,
-      failureReason: null,
-      isPaused: false,
-      status: "idle",
-      variables: void 0
-    };
-  }
-
-  // ../node_modules/@tanstack/query-core/build/lib/mutationCache.mjs
-  var MutationCache = class extends Subscribable {
-    constructor(config) {
-      super();
-      this.config = config || {};
-      this.mutations = [];
-      this.mutationId = 0;
-    }
-    build(client, options, state) {
-      const mutation = new Mutation({
-        mutationCache: this,
-        logger: client.getLogger(),
-        mutationId: ++this.mutationId,
-        options: client.defaultMutationOptions(options),
-        state,
-        defaultOptions: options.mutationKey ? client.getMutationDefaults(options.mutationKey) : void 0
-      });
-      this.add(mutation);
-      return mutation;
-    }
-    add(mutation) {
-      this.mutations.push(mutation);
-      this.notify({
-        type: "added",
-        mutation
-      });
-    }
-    remove(mutation) {
-      this.mutations = this.mutations.filter((x) => x !== mutation);
-      this.notify({
-        type: "removed",
-        mutation
-      });
-    }
-    clear() {
-      notifyManager.batch(() => {
-        this.mutations.forEach((mutation) => {
-          this.remove(mutation);
-        });
-      });
-    }
-    getAll() {
-      return this.mutations;
-    }
-    find(filters) {
-      if (typeof filters.exact === "undefined") {
-        filters.exact = true;
-      }
-      return this.mutations.find((mutation) => matchMutation(filters, mutation));
-    }
-    findAll(filters) {
-      return this.mutations.filter((mutation) => matchMutation(filters, mutation));
-    }
-    notify(event) {
-      notifyManager.batch(() => {
-        this.listeners.forEach(({
-          listener
-        }) => {
-          listener(event);
-        });
-      });
-    }
-    resumePausedMutations() {
-      var _this$resuming;
-      this.resuming = ((_this$resuming = this.resuming) != null ? _this$resuming : Promise.resolve()).then(() => {
-        const pausedMutations = this.mutations.filter((x) => x.state.isPaused);
-        return notifyManager.batch(() => pausedMutations.reduce((promise, mutation) => promise.then(() => mutation.continue().catch(noop)), Promise.resolve()));
-      }).then(() => {
-        this.resuming = void 0;
-      });
-      return this.resuming;
-    }
-  };
-
-  // ../node_modules/@tanstack/query-core/build/lib/infiniteQueryBehavior.mjs
-  function infiniteQueryBehavior() {
-    return {
-      onFetch: (context) => {
-        context.fetchFn = () => {
-          var _context$fetchOptions, _context$fetchOptions2, _context$fetchOptions3, _context$fetchOptions4, _context$state$data, _context$state$data2;
-          const refetchPage = (_context$fetchOptions = context.fetchOptions) == null ? void 0 : (_context$fetchOptions2 = _context$fetchOptions.meta) == null ? void 0 : _context$fetchOptions2.refetchPage;
-          const fetchMore = (_context$fetchOptions3 = context.fetchOptions) == null ? void 0 : (_context$fetchOptions4 = _context$fetchOptions3.meta) == null ? void 0 : _context$fetchOptions4.fetchMore;
-          const pageParam = fetchMore == null ? void 0 : fetchMore.pageParam;
-          const isFetchingNextPage = (fetchMore == null ? void 0 : fetchMore.direction) === "forward";
-          const isFetchingPreviousPage = (fetchMore == null ? void 0 : fetchMore.direction) === "backward";
-          const oldPages = ((_context$state$data = context.state.data) == null ? void 0 : _context$state$data.pages) || [];
-          const oldPageParams = ((_context$state$data2 = context.state.data) == null ? void 0 : _context$state$data2.pageParams) || [];
-          let newPageParams = oldPageParams;
-          let cancelled = false;
-          const addSignalProperty = (object) => {
-            Object.defineProperty(object, "signal", {
-              enumerable: true,
-              get: () => {
-                var _context$signal;
-                if ((_context$signal = context.signal) != null && _context$signal.aborted) {
-                  cancelled = true;
-                } else {
-                  var _context$signal2;
-                  (_context$signal2 = context.signal) == null ? void 0 : _context$signal2.addEventListener("abort", () => {
-                    cancelled = true;
-                  });
-                }
-                return context.signal;
-              }
-            });
-          };
-          const queryFn = context.options.queryFn || (() => Promise.reject("Missing queryFn for queryKey '" + context.options.queryHash + "'"));
-          const buildNewPages = (pages, param, page, previous) => {
-            newPageParams = previous ? [param, ...newPageParams] : [...newPageParams, param];
-            return previous ? [page, ...pages] : [...pages, page];
-          };
-          const fetchPage = (pages, manual, param, previous) => {
-            if (cancelled) {
-              return Promise.reject("Cancelled");
-            }
-            if (typeof param === "undefined" && !manual && pages.length) {
-              return Promise.resolve(pages);
-            }
-            const queryFnContext = {
-              queryKey: context.queryKey,
-              pageParam: param,
-              meta: context.options.meta
-            };
-            addSignalProperty(queryFnContext);
-            const queryFnResult = queryFn(queryFnContext);
-            const promise2 = Promise.resolve(queryFnResult).then((page) => buildNewPages(pages, param, page, previous));
-            return promise2;
-          };
-          let promise;
-          if (!oldPages.length) {
-            promise = fetchPage([]);
-          } else if (isFetchingNextPage) {
-            const manual = typeof pageParam !== "undefined";
-            const param = manual ? pageParam : getNextPageParam(context.options, oldPages);
-            promise = fetchPage(oldPages, manual, param);
-          } else if (isFetchingPreviousPage) {
-            const manual = typeof pageParam !== "undefined";
-            const param = manual ? pageParam : getPreviousPageParam(context.options, oldPages);
-            promise = fetchPage(oldPages, manual, param, true);
-          } else {
-            newPageParams = [];
-            const manual = typeof context.options.getNextPageParam === "undefined";
-            const shouldFetchFirstPage = refetchPage && oldPages[0] ? refetchPage(oldPages[0], 0, oldPages) : true;
-            promise = shouldFetchFirstPage ? fetchPage([], manual, oldPageParams[0]) : Promise.resolve(buildNewPages([], oldPageParams[0], oldPages[0]));
-            for (let i = 1; i < oldPages.length; i++) {
-              promise = promise.then((pages) => {
-                const shouldFetchNextPage = refetchPage && oldPages[i] ? refetchPage(oldPages[i], i, oldPages) : true;
-                if (shouldFetchNextPage) {
-                  const param = manual ? oldPageParams[i] : getNextPageParam(context.options, pages);
-                  return fetchPage(pages, manual, param);
-                }
-                return Promise.resolve(buildNewPages(pages, oldPageParams[i], oldPages[i]));
-              });
-            }
-          }
-          const finalPromise = promise.then((pages) => ({
-            pages,
-            pageParams: newPageParams
-          }));
-          return finalPromise;
-        };
-      }
-    };
-  }
-  function getNextPageParam(options, pages) {
-    return options.getNextPageParam == null ? void 0 : options.getNextPageParam(pages[pages.length - 1], pages);
-  }
-  function getPreviousPageParam(options, pages) {
-    return options.getPreviousPageParam == null ? void 0 : options.getPreviousPageParam(pages[0], pages);
-  }
-
-  // ../node_modules/@tanstack/query-core/build/lib/queryClient.mjs
-  var QueryClient = class {
-    constructor(config = {}) {
-      this.queryCache = config.queryCache || new QueryCache();
-      this.mutationCache = config.mutationCache || new MutationCache();
-      this.logger = config.logger || defaultLogger;
-      this.defaultOptions = config.defaultOptions || {};
-      this.queryDefaults = [];
-      this.mutationDefaults = [];
-      this.mountCount = 0;
-      if (config.logger) {
-        this.logger.error("Passing a custom logger has been deprecated and will be removed in the next major version.");
-      }
-    }
-    mount() {
-      this.mountCount++;
-      if (this.mountCount !== 1)
-        return;
-      this.unsubscribeFocus = focusManager.subscribe(() => {
-        if (focusManager.isFocused()) {
-          this.resumePausedMutations();
-          this.queryCache.onFocus();
-        }
-      });
-      this.unsubscribeOnline = onlineManager.subscribe(() => {
-        if (onlineManager.isOnline()) {
-          this.resumePausedMutations();
-          this.queryCache.onOnline();
-        }
-      });
-    }
-    unmount() {
-      var _this$unsubscribeFocu, _this$unsubscribeOnli;
-      this.mountCount--;
-      if (this.mountCount !== 0)
-        return;
-      (_this$unsubscribeFocu = this.unsubscribeFocus) == null ? void 0 : _this$unsubscribeFocu.call(this);
-      this.unsubscribeFocus = void 0;
-      (_this$unsubscribeOnli = this.unsubscribeOnline) == null ? void 0 : _this$unsubscribeOnli.call(this);
-      this.unsubscribeOnline = void 0;
-    }
-    isFetching(arg1, arg2) {
-      const [filters] = parseFilterArgs(arg1, arg2);
-      filters.fetchStatus = "fetching";
-      return this.queryCache.findAll(filters).length;
-    }
-    isMutating(filters) {
-      return this.mutationCache.findAll({
-        ...filters,
-        fetching: true
-      }).length;
-    }
-    getQueryData(queryKey, filters) {
-      var _this$queryCache$find;
-      return (_this$queryCache$find = this.queryCache.find(queryKey, filters)) == null ? void 0 : _this$queryCache$find.state.data;
-    }
-    ensureQueryData(arg1, arg2, arg3) {
-      const parsedOptions = parseQueryArgs(arg1, arg2, arg3);
-      const cachedData = this.getQueryData(parsedOptions.queryKey);
-      return cachedData ? Promise.resolve(cachedData) : this.fetchQuery(parsedOptions);
-    }
-    getQueriesData(queryKeyOrFilters) {
-      return this.getQueryCache().findAll(queryKeyOrFilters).map(({
-        queryKey,
-        state
-      }) => {
-        const data = state.data;
-        return [queryKey, data];
-      });
-    }
-    setQueryData(queryKey, updater, options) {
-      const query = this.queryCache.find(queryKey);
-      const prevData = query == null ? void 0 : query.state.data;
-      const data = functionalUpdate(updater, prevData);
-      if (typeof data === "undefined") {
-        return void 0;
-      }
-      const parsedOptions = parseQueryArgs(queryKey);
-      const defaultedOptions = this.defaultQueryOptions(parsedOptions);
-      return this.queryCache.build(this, defaultedOptions).setData(data, {
-        ...options,
-        manual: true
-      });
-    }
-    setQueriesData(queryKeyOrFilters, updater, options) {
-      return notifyManager.batch(() => this.getQueryCache().findAll(queryKeyOrFilters).map(({
-        queryKey
-      }) => [queryKey, this.setQueryData(queryKey, updater, options)]));
-    }
-    getQueryState(queryKey, filters) {
-      var _this$queryCache$find2;
-      return (_this$queryCache$find2 = this.queryCache.find(queryKey, filters)) == null ? void 0 : _this$queryCache$find2.state;
-    }
-    removeQueries(arg1, arg2) {
-      const [filters] = parseFilterArgs(arg1, arg2);
-      const queryCache = this.queryCache;
-      notifyManager.batch(() => {
-        queryCache.findAll(filters).forEach((query) => {
-          queryCache.remove(query);
-        });
-      });
-    }
-    resetQueries(arg1, arg2, arg3) {
-      const [filters, options] = parseFilterArgs(arg1, arg2, arg3);
-      const queryCache = this.queryCache;
-      const refetchFilters = {
-        type: "active",
-        ...filters
-      };
-      return notifyManager.batch(() => {
-        queryCache.findAll(filters).forEach((query) => {
-          query.reset();
-        });
-        return this.refetchQueries(refetchFilters, options);
-      });
-    }
-    cancelQueries(arg1, arg2, arg3) {
-      const [filters, cancelOptions = {}] = parseFilterArgs(arg1, arg2, arg3);
-      if (typeof cancelOptions.revert === "undefined") {
-        cancelOptions.revert = true;
-      }
-      const promises = notifyManager.batch(() => this.queryCache.findAll(filters).map((query) => query.cancel(cancelOptions)));
-      return Promise.all(promises).then(noop).catch(noop);
-    }
-    invalidateQueries(arg1, arg2, arg3) {
-      const [filters, options] = parseFilterArgs(arg1, arg2, arg3);
-      return notifyManager.batch(() => {
-        var _ref, _filters$refetchType;
-        this.queryCache.findAll(filters).forEach((query) => {
-          query.invalidate();
-        });
-        if (filters.refetchType === "none") {
-          return Promise.resolve();
-        }
-        const refetchFilters = {
-          ...filters,
-          type: (_ref = (_filters$refetchType = filters.refetchType) != null ? _filters$refetchType : filters.type) != null ? _ref : "active"
-        };
-        return this.refetchQueries(refetchFilters, options);
-      });
-    }
-    refetchQueries(arg1, arg2, arg3) {
-      const [filters, options] = parseFilterArgs(arg1, arg2, arg3);
-      const promises = notifyManager.batch(() => this.queryCache.findAll(filters).filter((query) => !query.isDisabled()).map((query) => {
-        var _options$cancelRefetc;
-        return query.fetch(void 0, {
-          ...options,
-          cancelRefetch: (_options$cancelRefetc = options == null ? void 0 : options.cancelRefetch) != null ? _options$cancelRefetc : true,
-          meta: {
-            refetchPage: filters.refetchPage
-          }
-        });
-      }));
-      let promise = Promise.all(promises).then(noop);
-      if (!(options != null && options.throwOnError)) {
-        promise = promise.catch(noop);
-      }
-      return promise;
-    }
-    fetchQuery(arg1, arg2, arg3) {
-      const parsedOptions = parseQueryArgs(arg1, arg2, arg3);
-      const defaultedOptions = this.defaultQueryOptions(parsedOptions);
-      if (typeof defaultedOptions.retry === "undefined") {
-        defaultedOptions.retry = false;
-      }
-      const query = this.queryCache.build(this, defaultedOptions);
-      return query.isStaleByTime(defaultedOptions.staleTime) ? query.fetch(defaultedOptions) : Promise.resolve(query.state.data);
-    }
-    prefetchQuery(arg1, arg2, arg3) {
-      return this.fetchQuery(arg1, arg2, arg3).then(noop).catch(noop);
-    }
-    fetchInfiniteQuery(arg1, arg2, arg3) {
-      const parsedOptions = parseQueryArgs(arg1, arg2, arg3);
-      parsedOptions.behavior = infiniteQueryBehavior();
-      return this.fetchQuery(parsedOptions);
-    }
-    prefetchInfiniteQuery(arg1, arg2, arg3) {
-      return this.fetchInfiniteQuery(arg1, arg2, arg3).then(noop).catch(noop);
-    }
-    resumePausedMutations() {
-      return this.mutationCache.resumePausedMutations();
-    }
-    getQueryCache() {
-      return this.queryCache;
-    }
-    getMutationCache() {
-      return this.mutationCache;
-    }
-    getLogger() {
-      return this.logger;
-    }
-    getDefaultOptions() {
-      return this.defaultOptions;
-    }
-    setDefaultOptions(options) {
-      this.defaultOptions = options;
-    }
-    setQueryDefaults(queryKey, options) {
-      const result = this.queryDefaults.find((x) => hashQueryKey(queryKey) === hashQueryKey(x.queryKey));
-      if (result) {
-        result.defaultOptions = options;
-      } else {
-        this.queryDefaults.push({
-          queryKey,
-          defaultOptions: options
-        });
-      }
-    }
-    getQueryDefaults(queryKey) {
-      if (!queryKey) {
-        return void 0;
-      }
-      const firstMatchingDefaults = this.queryDefaults.find((x) => partialMatchKey(queryKey, x.queryKey));
-      if (true) {
-        const matchingDefaults = this.queryDefaults.filter((x) => partialMatchKey(queryKey, x.queryKey));
-        if (matchingDefaults.length > 1) {
-          this.logger.error("[QueryClient] Several query defaults match with key '" + JSON.stringify(queryKey) + "'. The first matching query defaults are used. Please check how query defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetquerydefaults.");
-        }
-      }
-      return firstMatchingDefaults == null ? void 0 : firstMatchingDefaults.defaultOptions;
-    }
-    setMutationDefaults(mutationKey, options) {
-      const result = this.mutationDefaults.find((x) => hashQueryKey(mutationKey) === hashQueryKey(x.mutationKey));
-      if (result) {
-        result.defaultOptions = options;
-      } else {
-        this.mutationDefaults.push({
-          mutationKey,
-          defaultOptions: options
-        });
-      }
-    }
-    getMutationDefaults(mutationKey) {
-      if (!mutationKey) {
-        return void 0;
-      }
-      const firstMatchingDefaults = this.mutationDefaults.find((x) => partialMatchKey(mutationKey, x.mutationKey));
-      if (true) {
-        const matchingDefaults = this.mutationDefaults.filter((x) => partialMatchKey(mutationKey, x.mutationKey));
-        if (matchingDefaults.length > 1) {
-          this.logger.error("[QueryClient] Several mutation defaults match with key '" + JSON.stringify(mutationKey) + "'. The first matching mutation defaults are used. Please check how mutation defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetmutationdefaults.");
-        }
-      }
-      return firstMatchingDefaults == null ? void 0 : firstMatchingDefaults.defaultOptions;
-    }
-    defaultQueryOptions(options) {
-      if (options != null && options._defaulted) {
-        return options;
-      }
-      const defaultedOptions = {
-        ...this.defaultOptions.queries,
-        ...this.getQueryDefaults(options == null ? void 0 : options.queryKey),
-        ...options,
-        _defaulted: true
-      };
-      if (!defaultedOptions.queryHash && defaultedOptions.queryKey) {
-        defaultedOptions.queryHash = hashQueryKeyByOptions(defaultedOptions.queryKey, defaultedOptions);
-      }
-      if (typeof defaultedOptions.refetchOnReconnect === "undefined") {
-        defaultedOptions.refetchOnReconnect = defaultedOptions.networkMode !== "always";
-      }
-      if (typeof defaultedOptions.useErrorBoundary === "undefined") {
-        defaultedOptions.useErrorBoundary = !!defaultedOptions.suspense;
-      }
-      return defaultedOptions;
-    }
-    defaultMutationOptions(options) {
-      if (options != null && options._defaulted) {
-        return options;
-      }
-      return {
-        ...this.defaultOptions.mutations,
-        ...this.getMutationDefaults(options == null ? void 0 : options.mutationKey),
-        ...options,
-        _defaulted: true
-      };
-    }
-    clear() {
-      this.queryCache.clear();
-      this.mutationCache.clear();
-    }
-  };
-
   // rpc/user/user_connect.ts
   var UserService = {
     typeName: "user.UserService",
@@ -37141,6 +34717,24 @@
       logout: {
         name: "Logout",
         I: Empty,
+        O: Empty,
+        kind: MethodKind.Unary
+      },
+      /**
+       * @generated from rpc user.UserService.ResetPassword
+       */
+      resetPassword: {
+        name: "ResetPassword",
+        I: User,
+        O: Empty,
+        kind: MethodKind.Unary
+      },
+      /**
+       * @generated from rpc user.UserService.VerifyUser
+       */
+      verifyUser: {
+        name: "VerifyUser",
+        I: VerifyUserRequest,
         O: Empty,
         kind: MethodKind.Unary
       },
@@ -37219,9 +34813,1357 @@
     }
   };
 
+  // rpc/chat/chat_pb.ts
+  var BanUserRequest = class _BanUserRequest extends Message {
+    /**
+     * @generated from field: string user = 1;
+     */
+    user = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "chat.BanUserRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "user",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _BanUserRequest().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _BanUserRequest().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _BanUserRequest().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_BanUserRequest, a, b);
+    }
+  };
+  var BanUserResponse = class _BanUserResponse extends Message {
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "chat.BanUserResponse";
+    static fields = proto3.util.newFieldList(() => []);
+    static fromBinary(bytes, options) {
+      return new _BanUserResponse().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _BanUserResponse().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _BanUserResponse().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_BanUserResponse, a, b);
+    }
+  };
+  var SendMessageRequest = class _SendMessageRequest extends Message {
+    /**
+     * @generated from field: string user = 1;
+     */
+    user = "";
+    /**
+     * @generated from field: string message = 2;
+     */
+    message = "";
+    /**
+     * @generated from field: string css = 3;
+     */
+    css = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "chat.SendMessageRequest";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "user",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "message",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 3,
+        name: "css",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _SendMessageRequest().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _SendMessageRequest().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _SendMessageRequest().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_SendMessageRequest, a, b);
+    }
+  };
+  var SendMessageResponse = class _SendMessageResponse extends Message {
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "chat.SendMessageResponse";
+    static fields = proto3.util.newFieldList(() => []);
+    static fromBinary(bytes, options) {
+      return new _SendMessageResponse().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _SendMessageResponse().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _SendMessageResponse().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_SendMessageResponse, a, b);
+    }
+  };
+  var ReceiveMessagesRequest = class _ReceiveMessagesRequest extends Message {
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "chat.ReceiveMessagesRequest";
+    static fields = proto3.util.newFieldList(() => []);
+    static fromBinary(bytes, options) {
+      return new _ReceiveMessagesRequest().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _ReceiveMessagesRequest().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _ReceiveMessagesRequest().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_ReceiveMessagesRequest, a, b);
+    }
+  };
+  var Message2 = class _Message extends Message {
+    /**
+     * @generated from field: string user = 1;
+     */
+    user = "";
+    /**
+     * @generated from field: string text = 2;
+     */
+    text = "";
+    /**
+     * @generated from field: int64 timestamp = 3;
+     */
+    timestamp = protoInt64.zero;
+    /**
+     * @generated from field: string css = 4;
+     */
+    css = "";
+    constructor(data) {
+      super();
+      proto3.util.initPartial(data, this);
+    }
+    static runtime = proto3;
+    static typeName = "chat.Message";
+    static fields = proto3.util.newFieldList(() => [
+      {
+        no: 1,
+        name: "user",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 2,
+        name: "text",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      },
+      {
+        no: 3,
+        name: "timestamp",
+        kind: "scalar",
+        T: 3
+        /* ScalarType.INT64 */
+      },
+      {
+        no: 4,
+        name: "css",
+        kind: "scalar",
+        T: 9
+        /* ScalarType.STRING */
+      }
+    ]);
+    static fromBinary(bytes, options) {
+      return new _Message().fromBinary(bytes, options);
+    }
+    static fromJson(jsonValue, options) {
+      return new _Message().fromJson(jsonValue, options);
+    }
+    static fromJsonString(jsonString, options) {
+      return new _Message().fromJsonString(jsonString, options);
+    }
+    static equals(a, b) {
+      return proto3.util.equals(_Message, a, b);
+    }
+  };
+
+  // rpc/chat/chat_connect.ts
+  var ChatService = {
+    typeName: "chat.ChatService",
+    methods: {
+      /**
+       * @generated from rpc chat.ChatService.SendMessage
+       */
+      sendMessage: {
+        name: "SendMessage",
+        I: SendMessageRequest,
+        O: SendMessageResponse,
+        kind: MethodKind.Unary
+      },
+      /**
+       * @generated from rpc chat.ChatService.ReceiveMessages
+       */
+      receiveMessages: {
+        name: "ReceiveMessages",
+        I: ReceiveMessagesRequest,
+        O: Message2,
+        kind: MethodKind.ServerStreaming
+      },
+      /**
+       * @generated from rpc chat.ChatService.BanUser
+       */
+      banUser: {
+        name: "BanUser",
+        I: BanUserRequest,
+        O: BanUserResponse,
+        kind: MethodKind.Unary
+      }
+    }
+  };
+
+  // ../node_modules/@connectrpc/connect/dist/esm/code.js
+  var Code;
+  (function(Code2) {
+    Code2[Code2["Canceled"] = 1] = "Canceled";
+    Code2[Code2["Unknown"] = 2] = "Unknown";
+    Code2[Code2["InvalidArgument"] = 3] = "InvalidArgument";
+    Code2[Code2["DeadlineExceeded"] = 4] = "DeadlineExceeded";
+    Code2[Code2["NotFound"] = 5] = "NotFound";
+    Code2[Code2["AlreadyExists"] = 6] = "AlreadyExists";
+    Code2[Code2["PermissionDenied"] = 7] = "PermissionDenied";
+    Code2[Code2["ResourceExhausted"] = 8] = "ResourceExhausted";
+    Code2[Code2["FailedPrecondition"] = 9] = "FailedPrecondition";
+    Code2[Code2["Aborted"] = 10] = "Aborted";
+    Code2[Code2["OutOfRange"] = 11] = "OutOfRange";
+    Code2[Code2["Unimplemented"] = 12] = "Unimplemented";
+    Code2[Code2["Internal"] = 13] = "Internal";
+    Code2[Code2["Unavailable"] = 14] = "Unavailable";
+    Code2[Code2["DataLoss"] = 15] = "DataLoss";
+    Code2[Code2["Unauthenticated"] = 16] = "Unauthenticated";
+  })(Code || (Code = {}));
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol-connect/code-string.js
+  function codeToString(value) {
+    const name = Code[value];
+    if (typeof name != "string") {
+      return value.toString();
+    }
+    return name[0].toLowerCase() + name.substring(1).replace(/[A-Z]/g, (c) => "_" + c.toLowerCase());
+  }
+  var stringToCode;
+  function codeFromString(value) {
+    if (!stringToCode) {
+      stringToCode = {};
+      for (const value2 of Object.values(Code)) {
+        if (typeof value2 == "string") {
+          continue;
+        }
+        stringToCode[codeToString(value2)] = value2;
+      }
+    }
+    return stringToCode[value];
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/connect-error.js
+  var ConnectError = class _ConnectError extends Error {
+    /**
+     * Create a new ConnectError.
+     * If no code is provided, code "unknown" is used.
+     * Outgoing details are only relevant for the server side - a service may
+     * raise an error with details, and it is up to the protocol implementation
+     * to encode and send the details along with error.
+     */
+    constructor(message, code = Code.Unknown, metadata, outgoingDetails, cause) {
+      super(createMessage(message, code));
+      this.name = "ConnectError";
+      Object.setPrototypeOf(this, new.target.prototype);
+      this.rawMessage = message;
+      this.code = code;
+      this.metadata = new Headers(metadata !== null && metadata !== void 0 ? metadata : {});
+      this.details = outgoingDetails !== null && outgoingDetails !== void 0 ? outgoingDetails : [];
+      this.cause = cause;
+    }
+    /**
+     * Convert any value - typically a caught error into a ConnectError,
+     * following these rules:
+     * - If the value is already a ConnectError, return it as is.
+     * - If the value is an AbortError from the fetch API, return the message
+     *   of the AbortError with code Canceled.
+     * - For other Errors, return the error message with code Unknown by default.
+     * - For other values, return the values String representation as a message,
+     *   with the code Unknown by default.
+     * The original value will be used for the "cause" property for the new
+     * ConnectError.
+     */
+    static from(reason, code = Code.Unknown) {
+      if (reason instanceof _ConnectError) {
+        return reason;
+      }
+      if (reason instanceof Error) {
+        if (reason.name == "AbortError") {
+          return new _ConnectError(reason.message, Code.Canceled);
+        }
+        return new _ConnectError(reason.message, code, void 0, void 0, reason);
+      }
+      return new _ConnectError(String(reason), code, void 0, void 0, reason);
+    }
+    static [Symbol.hasInstance](v) {
+      if (!(v instanceof Error)) {
+        return false;
+      }
+      if (Object.getPrototypeOf(v) === _ConnectError.prototype) {
+        return true;
+      }
+      return v.name === "ConnectError" && "code" in v && typeof v.code === "number" && "metadata" in v && "details" in v && Array.isArray(v.details) && "rawMessage" in v && typeof v.rawMessage == "string" && "cause" in v;
+    }
+    findDetails(typeOrRegistry) {
+      const registry = "typeName" in typeOrRegistry ? {
+        findMessage: (typeName) => typeName === typeOrRegistry.typeName ? typeOrRegistry : void 0
+      } : typeOrRegistry;
+      const details = [];
+      for (const data of this.details) {
+        if (data instanceof Message) {
+          if (registry.findMessage(data.getType().typeName)) {
+            details.push(data);
+          }
+          continue;
+        }
+        const type = registry.findMessage(data.type);
+        if (type) {
+          try {
+            details.push(type.fromBinary(data.value));
+          } catch (_) {
+          }
+        }
+      }
+      return details;
+    }
+  };
+  function createMessage(message, code) {
+    return message.length ? `[${codeToString(code)}] ${message}` : `[${codeToString(code)}]`;
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/http-headers.js
+  function appendHeaders(...headers) {
+    const h = new Headers();
+    for (const e of headers) {
+      e.forEach((value, key) => {
+        h.append(key, value);
+      });
+    }
+    return h;
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/any-client.js
+  function makeAnyClient(service, createMethod) {
+    const client = {};
+    for (const [localName, methodInfo] of Object.entries(service.methods)) {
+      const method = createMethod(Object.assign(Object.assign({}, methodInfo), {
+        localName,
+        service
+      }));
+      if (method != null) {
+        client[localName] = method;
+      }
+    }
+    return client;
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol/envelope.js
+  function createEnvelopeReadableStream(stream) {
+    let reader;
+    let buffer = new Uint8Array(0);
+    function append(chunk) {
+      const n = new Uint8Array(buffer.length + chunk.length);
+      n.set(buffer);
+      n.set(chunk, buffer.length);
+      buffer = n;
+    }
+    return new ReadableStream({
+      start() {
+        reader = stream.getReader();
+      },
+      async pull(controller) {
+        let header = void 0;
+        for (; ; ) {
+          if (header === void 0 && buffer.byteLength >= 5) {
+            let length = 0;
+            for (let i = 1; i < 5; i++) {
+              length = (length << 8) + buffer[i];
+            }
+            header = { flags: buffer[0], length };
+          }
+          if (header !== void 0 && buffer.byteLength >= header.length + 5) {
+            break;
+          }
+          const result = await reader.read();
+          if (result.done) {
+            break;
+          }
+          append(result.value);
+        }
+        if (header === void 0) {
+          if (buffer.byteLength == 0) {
+            controller.close();
+            return;
+          }
+          controller.error(new ConnectError("premature end of stream", Code.DataLoss));
+          return;
+        }
+        const data = buffer.subarray(5, 5 + header.length);
+        buffer = buffer.subarray(5 + header.length);
+        controller.enqueue({
+          flags: header.flags,
+          data
+        });
+      }
+    });
+  }
+  function encodeEnvelope(flags, data) {
+    const bytes = new Uint8Array(data.length + 5);
+    bytes.set(data, 5);
+    const v = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    v.setUint8(0, flags);
+    v.setUint32(1, data.length);
+    return bytes;
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol/async-iterable.js
+  var __asyncValues = function(o) {
+    if (!Symbol.asyncIterator)
+      throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m = o[Symbol.asyncIterator], i;
+    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
+      return this;
+    }, i);
+    function verb(n) {
+      i[n] = o[n] && function(v) {
+        return new Promise(function(resolve2, reject) {
+          v = o[n](v), settle(resolve2, reject, v.done, v.value);
+        });
+      };
+    }
+    function settle(resolve2, reject, d, v) {
+      Promise.resolve(v).then(function(v2) {
+        resolve2({ value: v2, done: d });
+      }, reject);
+    }
+  };
+  var __await = function(v) {
+    return this instanceof __await ? (this.v = v, this) : new __await(v);
+  };
+  var __asyncGenerator = function(thisArg, _arguments, generator) {
+    if (!Symbol.asyncIterator)
+      throw new TypeError("Symbol.asyncIterator is not defined.");
+    var g = generator.apply(thisArg, _arguments || []), i, q = [];
+    return i = {}, verb("next"), verb("throw"), verb("return", awaitReturn), i[Symbol.asyncIterator] = function() {
+      return this;
+    }, i;
+    function awaitReturn(f) {
+      return function(v) {
+        return Promise.resolve(v).then(f, reject);
+      };
+    }
+    function verb(n, f) {
+      if (g[n]) {
+        i[n] = function(v) {
+          return new Promise(function(a, b) {
+            q.push([n, v, a, b]) > 1 || resume(n, v);
+          });
+        };
+        if (f)
+          i[n] = f(i[n]);
+      }
+    }
+    function resume(n, v) {
+      try {
+        step(g[n](v));
+      } catch (e) {
+        settle(q[0][3], e);
+      }
+    }
+    function step(r) {
+      r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
+    }
+    function fulfill(value) {
+      resume("next", value);
+    }
+    function reject(value) {
+      resume("throw", value);
+    }
+    function settle(f, v) {
+      if (f(v), q.shift(), q.length)
+        resume(q[0][0], q[0][1]);
+    }
+  };
+  var __asyncDelegator = function(o) {
+    var i, p;
+    return i = {}, verb("next"), verb("throw", function(e) {
+      throw e;
+    }), verb("return"), i[Symbol.iterator] = function() {
+      return this;
+    }, i;
+    function verb(n, f) {
+      i[n] = o[n] ? function(v) {
+        return (p = !p) ? { value: __await(o[n](v)), done: false } : f ? f(v) : v;
+      } : f;
+    }
+  };
+  function createAsyncIterable(items) {
+    return __asyncGenerator(this, arguments, function* createAsyncIterable_1() {
+      yield __await(yield* __asyncDelegator(__asyncValues(items)));
+    });
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/promise-client.js
+  var __asyncValues2 = function(o) {
+    if (!Symbol.asyncIterator)
+      throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m = o[Symbol.asyncIterator], i;
+    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function() {
+      return this;
+    }, i);
+    function verb(n) {
+      i[n] = o[n] && function(v) {
+        return new Promise(function(resolve2, reject) {
+          v = o[n](v), settle(resolve2, reject, v.done, v.value);
+        });
+      };
+    }
+    function settle(resolve2, reject, d, v) {
+      Promise.resolve(v).then(function(v2) {
+        resolve2({ value: v2, done: d });
+      }, reject);
+    }
+  };
+  var __await2 = function(v) {
+    return this instanceof __await2 ? (this.v = v, this) : new __await2(v);
+  };
+  var __asyncDelegator2 = function(o) {
+    var i, p;
+    return i = {}, verb("next"), verb("throw", function(e) {
+      throw e;
+    }), verb("return"), i[Symbol.iterator] = function() {
+      return this;
+    }, i;
+    function verb(n, f) {
+      i[n] = o[n] ? function(v) {
+        return (p = !p) ? { value: __await2(o[n](v)), done: false } : f ? f(v) : v;
+      } : f;
+    }
+  };
+  var __asyncGenerator2 = function(thisArg, _arguments, generator) {
+    if (!Symbol.asyncIterator)
+      throw new TypeError("Symbol.asyncIterator is not defined.");
+    var g = generator.apply(thisArg, _arguments || []), i, q = [];
+    return i = {}, verb("next"), verb("throw"), verb("return", awaitReturn), i[Symbol.asyncIterator] = function() {
+      return this;
+    }, i;
+    function awaitReturn(f) {
+      return function(v) {
+        return Promise.resolve(v).then(f, reject);
+      };
+    }
+    function verb(n, f) {
+      if (g[n]) {
+        i[n] = function(v) {
+          return new Promise(function(a, b) {
+            q.push([n, v, a, b]) > 1 || resume(n, v);
+          });
+        };
+        if (f)
+          i[n] = f(i[n]);
+      }
+    }
+    function resume(n, v) {
+      try {
+        step(g[n](v));
+      } catch (e) {
+        settle(q[0][3], e);
+      }
+    }
+    function step(r) {
+      r.value instanceof __await2 ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
+    }
+    function fulfill(value) {
+      resume("next", value);
+    }
+    function reject(value) {
+      resume("throw", value);
+    }
+    function settle(f, v) {
+      if (f(v), q.shift(), q.length)
+        resume(q[0][0], q[0][1]);
+    }
+  };
+  function createPromiseClient(service, transport2) {
+    return makeAnyClient(service, (method) => {
+      switch (method.kind) {
+        case MethodKind.Unary:
+          return createUnaryFn(transport2, service, method);
+        case MethodKind.ServerStreaming:
+          return createServerStreamingFn(transport2, service, method);
+        case MethodKind.ClientStreaming:
+          return createClientStreamingFn(transport2, service, method);
+        case MethodKind.BiDiStreaming:
+          return createBiDiStreamingFn(transport2, service, method);
+        default:
+          return null;
+      }
+    });
+  }
+  function createUnaryFn(transport2, service, method) {
+    return async function(input, options) {
+      var _a, _b;
+      const response = await transport2.unary(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, input, options === null || options === void 0 ? void 0 : options.contextValues);
+      (_a = options === null || options === void 0 ? void 0 : options.onHeader) === null || _a === void 0 ? void 0 : _a.call(options, response.header);
+      (_b = options === null || options === void 0 ? void 0 : options.onTrailer) === null || _b === void 0 ? void 0 : _b.call(options, response.trailer);
+      return response.message;
+    };
+  }
+  function createServerStreamingFn(transport2, service, method) {
+    return function(input, options) {
+      return handleStreamResponse(transport2.stream(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, createAsyncIterable([input]), options === null || options === void 0 ? void 0 : options.contextValues), options);
+    };
+  }
+  function createClientStreamingFn(transport2, service, method) {
+    return async function(request, options) {
+      var _a, e_1, _b, _c;
+      var _d, _e;
+      const response = await transport2.stream(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, request, options === null || options === void 0 ? void 0 : options.contextValues);
+      (_d = options === null || options === void 0 ? void 0 : options.onHeader) === null || _d === void 0 ? void 0 : _d.call(options, response.header);
+      let singleMessage;
+      try {
+        for (var _f = true, _g = __asyncValues2(response.message), _h; _h = await _g.next(), _a = _h.done, !_a; _f = true) {
+          _c = _h.value;
+          _f = false;
+          const message = _c;
+          singleMessage = message;
+        }
+      } catch (e_1_1) {
+        e_1 = { error: e_1_1 };
+      } finally {
+        try {
+          if (!_f && !_a && (_b = _g.return))
+            await _b.call(_g);
+        } finally {
+          if (e_1)
+            throw e_1.error;
+        }
+      }
+      if (!singleMessage) {
+        throw new ConnectError("protocol error: missing response message", Code.Internal);
+      }
+      (_e = options === null || options === void 0 ? void 0 : options.onTrailer) === null || _e === void 0 ? void 0 : _e.call(options, response.trailer);
+      return singleMessage;
+    };
+  }
+  function createBiDiStreamingFn(transport2, service, method) {
+    return function(request, options) {
+      return handleStreamResponse(transport2.stream(service, method, options === null || options === void 0 ? void 0 : options.signal, options === null || options === void 0 ? void 0 : options.timeoutMs, options === null || options === void 0 ? void 0 : options.headers, request, options === null || options === void 0 ? void 0 : options.contextValues), options);
+    };
+  }
+  function handleStreamResponse(stream, options) {
+    const it = function() {
+      var _a, _b;
+      return __asyncGenerator2(this, arguments, function* () {
+        const response = yield __await2(stream);
+        (_a = options === null || options === void 0 ? void 0 : options.onHeader) === null || _a === void 0 ? void 0 : _a.call(options, response.header);
+        yield __await2(yield* __asyncDelegator2(__asyncValues2(response.message)));
+        (_b = options === null || options === void 0 ? void 0 : options.onTrailer) === null || _b === void 0 ? void 0 : _b.call(options, response.trailer);
+      });
+    }()[Symbol.asyncIterator]();
+    return {
+      [Symbol.asyncIterator]: () => ({
+        next: () => it.next()
+      })
+    };
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol/signals.js
+  function createLinkedAbortController(...signals) {
+    const controller = new AbortController();
+    const sa = signals.filter((s) => s !== void 0).concat(controller.signal);
+    for (const signal of sa) {
+      if (signal.aborted) {
+        onAbort.apply(signal);
+        break;
+      }
+      signal.addEventListener("abort", onAbort);
+    }
+    function onAbort() {
+      if (!controller.signal.aborted) {
+        controller.abort(getAbortSignalReason(this));
+      }
+      for (const signal of sa) {
+        signal.removeEventListener("abort", onAbort);
+      }
+    }
+    return controller;
+  }
+  function createDeadlineSignal(timeoutMs) {
+    const controller = new AbortController();
+    const listener = () => {
+      controller.abort(new ConnectError("the operation timed out", Code.DeadlineExceeded));
+    };
+    let timeoutId;
+    if (timeoutMs !== void 0) {
+      if (timeoutMs <= 0)
+        listener();
+      else
+        timeoutId = setTimeout(listener, timeoutMs);
+    }
+    return {
+      signal: controller.signal,
+      cleanup: () => clearTimeout(timeoutId)
+    };
+  }
+  function getAbortSignalReason(signal) {
+    if (!signal.aborted) {
+      return void 0;
+    }
+    if (signal.reason !== void 0) {
+      return signal.reason;
+    }
+    const e = new Error("This operation was aborted");
+    e.name = "AbortError";
+    return e;
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/context-values.js
+  function createContextValues() {
+    return {
+      get(key) {
+        return key.id in this ? this[key.id] : key.defaultValue;
+      },
+      set(key, value) {
+        this[key.id] = value;
+        return this;
+      },
+      delete(key) {
+        delete this[key.id];
+        return this;
+      }
+    };
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol/create-method-url.js
+  function createMethodUrl(baseUrl, service, method) {
+    const s = typeof service == "string" ? service : service.typeName;
+    const m = typeof method == "string" ? method : method.name;
+    return baseUrl.toString().replace(/\/?$/, `/${s}/${m}`);
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol/normalize.js
+  function normalize2(type, message) {
+    return message instanceof type ? message : new type(message);
+  }
+  function normalizeIterable(messageType, input) {
+    function transform(result) {
+      if (result.done === true) {
+        return result;
+      }
+      return {
+        done: result.done,
+        value: normalize2(messageType, result.value)
+      };
+    }
+    return {
+      [Symbol.asyncIterator]() {
+        const it = input[Symbol.asyncIterator]();
+        const res = {
+          next: () => it.next().then(transform)
+        };
+        if (it.throw !== void 0) {
+          res.throw = (e) => it.throw(e).then(transform);
+        }
+        if (it.return !== void 0) {
+          res.return = (v) => it.return(v).then(transform);
+        }
+        return res;
+      }
+    };
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol/serialization.js
+  function getJsonOptions(options) {
+    var _a;
+    const o = Object.assign({}, options);
+    (_a = o.ignoreUnknownFields) !== null && _a !== void 0 ? _a : o.ignoreUnknownFields = true;
+    return o;
+  }
+  function createClientMethodSerializers(method, useBinaryFormat, jsonOptions, binaryOptions) {
+    const input = useBinaryFormat ? createBinarySerialization(method.I, binaryOptions) : createJsonSerialization(method.I, jsonOptions);
+    const output = useBinaryFormat ? createBinarySerialization(method.O, binaryOptions) : createJsonSerialization(method.O, jsonOptions);
+    return { parse: output.parse, serialize: input.serialize };
+  }
+  function createBinarySerialization(messageType, options) {
+    return {
+      parse(data) {
+        try {
+          return messageType.fromBinary(data, options);
+        } catch (e) {
+          const m = e instanceof Error ? e.message : String(e);
+          throw new ConnectError(`parse binary: ${m}`, Code.InvalidArgument);
+        }
+      },
+      serialize(data) {
+        try {
+          return data.toBinary(options);
+        } catch (e) {
+          const m = e instanceof Error ? e.message : String(e);
+          throw new ConnectError(`serialize binary: ${m}`, Code.Internal);
+        }
+      }
+    };
+  }
+  function createJsonSerialization(messageType, options) {
+    var _a, _b;
+    const textEncoder = (_a = options === null || options === void 0 ? void 0 : options.textEncoder) !== null && _a !== void 0 ? _a : new TextEncoder();
+    const textDecoder = (_b = options === null || options === void 0 ? void 0 : options.textDecoder) !== null && _b !== void 0 ? _b : new TextDecoder();
+    const o = getJsonOptions(options);
+    return {
+      parse(data) {
+        try {
+          const json = textDecoder.decode(data);
+          return messageType.fromJsonString(json, o);
+        } catch (e) {
+          throw ConnectError.from(e, Code.InvalidArgument);
+        }
+      },
+      serialize(data) {
+        try {
+          const json = data.toJsonString(o);
+          return textEncoder.encode(json);
+        } catch (e) {
+          throw ConnectError.from(e, Code.Internal);
+        }
+      }
+    };
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol-connect/content-type.js
+  var contentTypeRegExp = /^application\/(connect\+)?(?:(json)(?:; ?charset=utf-?8)?|(proto))$/i;
+  var contentTypeUnaryProto = "application/proto";
+  var contentTypeUnaryJson = "application/json";
+  var contentTypeStreamProto = "application/connect+proto";
+  var contentTypeStreamJson = "application/connect+json";
+  function parseContentType(contentType) {
+    const match = contentType === null || contentType === void 0 ? void 0 : contentType.match(contentTypeRegExp);
+    if (!match) {
+      return void 0;
+    }
+    const stream = !!match[1];
+    const binary = !!match[3];
+    return { stream, binary };
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol-connect/error-json.js
+  function errorFromJson(jsonValue, metadata, fallback2) {
+    if (metadata) {
+      new Headers(metadata).forEach((value, key) => fallback2.metadata.append(key, value));
+    }
+    if (typeof jsonValue !== "object" || jsonValue == null || Array.isArray(jsonValue) || !("code" in jsonValue) || typeof jsonValue.code !== "string") {
+      throw fallback2;
+    }
+    const code = codeFromString(jsonValue.code);
+    if (code === void 0) {
+      throw fallback2;
+    }
+    const message = jsonValue.message;
+    if (message != null && typeof message !== "string") {
+      throw fallback2;
+    }
+    const error = new ConnectError(message !== null && message !== void 0 ? message : "", code, metadata);
+    if ("details" in jsonValue && Array.isArray(jsonValue.details)) {
+      for (const detail of jsonValue.details) {
+        if (detail === null || typeof detail != "object" || Array.isArray(detail) || typeof detail.type != "string" || typeof detail.value != "string" || "debug" in detail && typeof detail.debug != "object") {
+          throw fallback2;
+        }
+        try {
+          error.details.push({
+            type: detail.type,
+            value: protoBase64.dec(detail.value),
+            debug: detail.debug
+          });
+        } catch (e) {
+          throw fallback2;
+        }
+      }
+    }
+    return error;
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol-connect/end-stream.js
+  var endStreamFlag = 2;
+  function endStreamFromJson(data) {
+    const parseErr = new ConnectError("invalid end stream", Code.InvalidArgument);
+    let jsonValue;
+    try {
+      jsonValue = JSON.parse(typeof data == "string" ? data : new TextDecoder().decode(data));
+    } catch (e) {
+      throw parseErr;
+    }
+    if (typeof jsonValue != "object" || jsonValue == null || Array.isArray(jsonValue)) {
+      throw parseErr;
+    }
+    const metadata = new Headers();
+    if ("metadata" in jsonValue) {
+      if (typeof jsonValue.metadata != "object" || jsonValue.metadata == null || Array.isArray(jsonValue.metadata)) {
+        throw parseErr;
+      }
+      for (const [key, values] of Object.entries(jsonValue.metadata)) {
+        if (!Array.isArray(values) || values.some((value) => typeof value != "string")) {
+          throw parseErr;
+        }
+        for (const value of values) {
+          metadata.append(key, value);
+        }
+      }
+    }
+    const error = "error" in jsonValue ? errorFromJson(jsonValue.error, metadata, parseErr) : void 0;
+    return { metadata, error };
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol-connect/headers.js
+  var headerContentType = "Content-Type";
+  var headerUnaryContentLength = "Content-Length";
+  var headerUnaryEncoding = "Content-Encoding";
+  var headerUnaryAcceptEncoding = "Accept-Encoding";
+  var headerTimeout = "Connect-Timeout-Ms";
+  var headerProtocolVersion = "Connect-Protocol-Version";
+  var headerUserAgent = "User-Agent";
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol-connect/http-status.js
+  function codeFromHttpStatus(httpStatus) {
+    switch (httpStatus) {
+      case 400:
+        return Code.InvalidArgument;
+      case 401:
+        return Code.Unauthenticated;
+      case 403:
+        return Code.PermissionDenied;
+      case 404:
+        return Code.Unimplemented;
+      case 408:
+        return Code.DeadlineExceeded;
+      case 409:
+        return Code.Aborted;
+      case 412:
+        return Code.FailedPrecondition;
+      case 413:
+        return Code.ResourceExhausted;
+      case 415:
+        return Code.Internal;
+      case 429:
+        return Code.Unavailable;
+      case 431:
+        return Code.ResourceExhausted;
+      case 502:
+        return Code.Unavailable;
+      case 503:
+        return Code.Unavailable;
+      case 504:
+        return Code.Unavailable;
+      default:
+        return Code.Unknown;
+    }
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol-connect/trailer-mux.js
+  function trailerDemux(header) {
+    const h = new Headers(), t = new Headers();
+    header.forEach((value, key) => {
+      if (key.toLowerCase().startsWith("trailer-")) {
+        t.set(key.substring(8), value);
+      } else {
+        h.set(key, value);
+      }
+    });
+    return [h, t];
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol-connect/version.js
+  var protocolVersion = "1";
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol-connect/request-header.js
+  function requestHeader(methodKind, useBinaryFormat, timeoutMs, userProvidedHeaders, setUserAgent) {
+    const result = new Headers(userProvidedHeaders !== null && userProvidedHeaders !== void 0 ? userProvidedHeaders : {});
+    if (timeoutMs !== void 0) {
+      result.set(headerTimeout, `${timeoutMs}`);
+    }
+    result.set(headerContentType, methodKind == MethodKind.Unary ? useBinaryFormat ? contentTypeUnaryProto : contentTypeUnaryJson : useBinaryFormat ? contentTypeStreamProto : contentTypeStreamJson);
+    result.set(headerProtocolVersion, protocolVersion);
+    if (setUserAgent) {
+      result.set(headerUserAgent, "connect-es/1.3.0");
+    }
+    return result;
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol-connect/validate-response.js
+  function validateResponse(methodKind, status, headers) {
+    const mimeType = headers.get("Content-Type");
+    const parsedType = parseContentType(mimeType);
+    if (status !== 200) {
+      const errorFromStatus = new ConnectError(`HTTP ${status}`, codeFromHttpStatus(status), headers);
+      if (methodKind == MethodKind.Unary && parsedType && !parsedType.binary) {
+        return { isUnaryError: true, unaryError: errorFromStatus };
+      }
+      throw errorFromStatus;
+    }
+    return { isUnaryError: false };
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol-connect/get-request.js
+  var contentTypePrefix = "application/";
+  function encodeMessageForUrl(message, useBase64) {
+    if (useBase64) {
+      return protoBase64.enc(message).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    } else {
+      return encodeURIComponent(new TextDecoder().decode(message));
+    }
+  }
+  function transformConnectPostToGetRequest(request, message, useBase64) {
+    let query = `?connect=v${protocolVersion}`;
+    const contentType = request.header.get(headerContentType);
+    if ((contentType === null || contentType === void 0 ? void 0 : contentType.indexOf(contentTypePrefix)) === 0) {
+      query += "&encoding=" + encodeURIComponent(contentType.slice(contentTypePrefix.length));
+    }
+    const compression = request.header.get(headerUnaryEncoding);
+    if (compression !== null && compression !== "identity") {
+      query += "&compression=" + encodeURIComponent(compression);
+      useBase64 = true;
+    }
+    if (useBase64) {
+      query += "&base64=1";
+    }
+    query += "&message=" + encodeMessageForUrl(message, useBase64);
+    const url = request.url + query;
+    const header = new Headers(request.header);
+    [
+      headerProtocolVersion,
+      headerContentType,
+      headerUnaryContentLength,
+      headerUnaryEncoding,
+      headerUnaryAcceptEncoding
+    ].forEach((h) => header.delete(h));
+    return Object.assign(Object.assign({}, request), {
+      init: Object.assign(Object.assign({}, request.init), { method: "GET" }),
+      url,
+      header
+    });
+  }
+
+  // ../node_modules/@connectrpc/connect/dist/esm/protocol/run-call.js
+  function runUnaryCall(opt) {
+    const next = applyInterceptors(opt.next, opt.interceptors);
+    const [signal, abort, done] = setupSignal(opt);
+    const req = Object.assign(Object.assign({}, opt.req), { message: normalize2(opt.req.method.I, opt.req.message), signal });
+    return next(req).then((res) => {
+      done();
+      return res;
+    }, abort);
+  }
+  function runStreamingCall(opt) {
+    const next = applyInterceptors(opt.next, opt.interceptors);
+    const [signal, abort, done] = setupSignal(opt);
+    const req = Object.assign(Object.assign({}, opt.req), { message: normalizeIterable(opt.req.method.I, opt.req.message), signal });
+    let doneCalled = false;
+    signal.addEventListener("abort", function() {
+      var _a, _b;
+      const it = opt.req.message[Symbol.asyncIterator]();
+      if (!doneCalled) {
+        (_a = it.throw) === null || _a === void 0 ? void 0 : _a.call(it, this.reason).catch(() => {
+        });
+      }
+      (_b = it.return) === null || _b === void 0 ? void 0 : _b.call(it).catch(() => {
+      });
+    });
+    return next(req).then((res) => {
+      return Object.assign(Object.assign({}, res), { message: {
+        [Symbol.asyncIterator]() {
+          const it = res.message[Symbol.asyncIterator]();
+          return {
+            next() {
+              return it.next().then((r) => {
+                if (r.done == true) {
+                  doneCalled = true;
+                  done();
+                }
+                return r;
+              }, abort);
+            }
+            // We deliberately omit throw/return.
+          };
+        }
+      } });
+    }, abort);
+  }
+  function setupSignal(opt) {
+    const { signal, cleanup } = createDeadlineSignal(opt.timeoutMs);
+    const controller = createLinkedAbortController(opt.signal, signal);
+    return [
+      controller.signal,
+      function abort(reason) {
+        const e = ConnectError.from(signal.aborted ? getAbortSignalReason(signal) : reason);
+        controller.abort(e);
+        cleanup();
+        return Promise.reject(e);
+      },
+      function done() {
+        cleanup();
+        controller.abort();
+      }
+    ];
+  }
+  function applyInterceptors(next, interceptors) {
+    var _a;
+    return (_a = interceptors === null || interceptors === void 0 ? void 0 : interceptors.concat().reverse().reduce(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      (n, i) => i(n),
+      next
+    )) !== null && _a !== void 0 ? _a : next;
+  }
+
+  // ../node_modules/@connectrpc/connect-web/dist/esm/assert-fetch-api.js
+  function assertFetchApi() {
+    try {
+      new Headers();
+    } catch (_) {
+      throw new Error("connect-web requires the fetch API. Are you running on an old version of Node.js? Node.js is not supported in Connect for Web - please stay tuned for Connect for Node.");
+    }
+  }
+
+  // ../node_modules/@connectrpc/connect-web/dist/esm/connect-transport.js
+  var __await3 = function(v) {
+    return this instanceof __await3 ? (this.v = v, this) : new __await3(v);
+  };
+  var __asyncGenerator3 = function(thisArg, _arguments, generator) {
+    if (!Symbol.asyncIterator)
+      throw new TypeError("Symbol.asyncIterator is not defined.");
+    var g = generator.apply(thisArg, _arguments || []), i, q = [];
+    return i = {}, verb("next"), verb("throw"), verb("return", awaitReturn), i[Symbol.asyncIterator] = function() {
+      return this;
+    }, i;
+    function awaitReturn(f) {
+      return function(v) {
+        return Promise.resolve(v).then(f, reject);
+      };
+    }
+    function verb(n, f) {
+      if (g[n]) {
+        i[n] = function(v) {
+          return new Promise(function(a, b) {
+            q.push([n, v, a, b]) > 1 || resume(n, v);
+          });
+        };
+        if (f)
+          i[n] = f(i[n]);
+      }
+    }
+    function resume(n, v) {
+      try {
+        step(g[n](v));
+      } catch (e) {
+        settle(q[0][3], e);
+      }
+    }
+    function step(r) {
+      r.value instanceof __await3 ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
+    }
+    function fulfill(value) {
+      resume("next", value);
+    }
+    function reject(value) {
+      resume("throw", value);
+    }
+    function settle(f, v) {
+      if (f(v), q.shift(), q.length)
+        resume(q[0][0], q[0][1]);
+    }
+  };
+  function createConnectTransport(options) {
+    var _a;
+    assertFetchApi();
+    const useBinaryFormat = (_a = options.useBinaryFormat) !== null && _a !== void 0 ? _a : false;
+    return {
+      async unary(service, method, signal, timeoutMs, header, message, contextValues) {
+        var _a2;
+        const { serialize, parse } = createClientMethodSerializers(method, useBinaryFormat, options.jsonOptions, options.binaryOptions);
+        timeoutMs = timeoutMs === void 0 ? options.defaultTimeoutMs : timeoutMs <= 0 ? void 0 : timeoutMs;
+        return await runUnaryCall({
+          interceptors: options.interceptors,
+          signal,
+          timeoutMs,
+          req: {
+            stream: false,
+            service,
+            method,
+            url: createMethodUrl(options.baseUrl, service, method),
+            init: {
+              method: "POST",
+              credentials: (_a2 = options.credentials) !== null && _a2 !== void 0 ? _a2 : "same-origin",
+              redirect: "error",
+              mode: "cors"
+            },
+            header: requestHeader(method.kind, useBinaryFormat, timeoutMs, header, false),
+            contextValues: contextValues !== null && contextValues !== void 0 ? contextValues : createContextValues(),
+            message
+          },
+          next: async (req) => {
+            var _a3;
+            const useGet = options.useHttpGet === true && method.idempotency === MethodIdempotency.NoSideEffects;
+            let body = null;
+            if (useGet) {
+              req = transformConnectPostToGetRequest(req, serialize(req.message), useBinaryFormat);
+            } else {
+              body = serialize(req.message);
+            }
+            const fetch = (_a3 = options.fetch) !== null && _a3 !== void 0 ? _a3 : globalThis.fetch;
+            const response = await fetch(req.url, Object.assign(Object.assign({}, req.init), { headers: req.header, signal: req.signal, body }));
+            const { isUnaryError, unaryError } = validateResponse(method.kind, response.status, response.headers);
+            if (isUnaryError) {
+              throw errorFromJson(await response.json(), appendHeaders(...trailerDemux(response.headers)), unaryError);
+            }
+            const [demuxedHeader, demuxedTrailer] = trailerDemux(response.headers);
+            return {
+              stream: false,
+              service,
+              method,
+              header: demuxedHeader,
+              message: useBinaryFormat ? parse(new Uint8Array(await response.arrayBuffer())) : method.O.fromJson(await response.json(), getJsonOptions(options.jsonOptions)),
+              trailer: demuxedTrailer
+            };
+          }
+        });
+      },
+      async stream(service, method, signal, timeoutMs, header, input, contextValues) {
+        var _a2;
+        const { serialize, parse } = createClientMethodSerializers(method, useBinaryFormat, options.jsonOptions, options.binaryOptions);
+        function parseResponseBody(body, trailerTarget, header2) {
+          return __asyncGenerator3(this, arguments, function* parseResponseBody_1() {
+            const reader = createEnvelopeReadableStream(body).getReader();
+            let endStreamReceived = false;
+            for (; ; ) {
+              const result = yield __await3(reader.read());
+              if (result.done) {
+                break;
+              }
+              const { flags, data } = result.value;
+              if ((flags & endStreamFlag) === endStreamFlag) {
+                endStreamReceived = true;
+                const endStream = endStreamFromJson(data);
+                if (endStream.error) {
+                  const error = endStream.error;
+                  header2.forEach((value, key) => {
+                    error.metadata.append(key, value);
+                  });
+                  throw error;
+                }
+                endStream.metadata.forEach((value, key) => trailerTarget.set(key, value));
+                continue;
+              }
+              yield yield __await3(parse(data));
+            }
+            if (!endStreamReceived) {
+              throw "missing EndStreamResponse";
+            }
+          });
+        }
+        async function createRequestBody(input2) {
+          if (method.kind != MethodKind.ServerStreaming) {
+            throw "The fetch API does not support streaming request bodies";
+          }
+          const r = await input2[Symbol.asyncIterator]().next();
+          if (r.done == true) {
+            throw "missing request message";
+          }
+          return encodeEnvelope(0, serialize(r.value));
+        }
+        timeoutMs = timeoutMs === void 0 ? options.defaultTimeoutMs : timeoutMs <= 0 ? void 0 : timeoutMs;
+        return await runStreamingCall({
+          interceptors: options.interceptors,
+          timeoutMs,
+          signal,
+          req: {
+            stream: true,
+            service,
+            method,
+            url: createMethodUrl(options.baseUrl, service, method),
+            init: {
+              method: "POST",
+              credentials: (_a2 = options.credentials) !== null && _a2 !== void 0 ? _a2 : "same-origin",
+              redirect: "error",
+              mode: "cors"
+            },
+            header: requestHeader(method.kind, useBinaryFormat, timeoutMs, header, false),
+            contextValues: contextValues !== null && contextValues !== void 0 ? contextValues : createContextValues(),
+            message: input
+          },
+          next: async (req) => {
+            var _a3;
+            const fetch = (_a3 = options.fetch) !== null && _a3 !== void 0 ? _a3 : globalThis.fetch;
+            const fRes = await fetch(req.url, Object.assign(Object.assign({}, req.init), { headers: req.header, signal: req.signal, body: await createRequestBody(req.message) }));
+            validateResponse(method.kind, fRes.status, fRes.headers);
+            if (fRes.body === null) {
+              throw "missing response body";
+            }
+            const trailer = new Headers();
+            const res = Object.assign(Object.assign({}, req), { header: fRes.headers, trailer, message: parseResponseBody(fRes.body, trailer, fRes.headers) });
+            return res;
+          }
+        });
+      }
+    };
+  }
+
   // site/service.ts
   var baseURL = "https://demo.lunabrain.com";
-  var queryClient = new QueryClient();
   var transport = createConnectTransport({
     baseUrl: `${baseURL}/api` || "error"
     // credentials: "include",
@@ -37229,6 +36171,7 @@
   var projectService = createPromiseClient(ProtoflowService, transport);
   var contentService = createPromiseClient(ContentService, transport);
   var userService = createPromiseClient(UserService, transport);
+  var chatService = createPromiseClient(ChatService, transport);
 
   // extension/util.ts
   function urlContent(url, tags) {

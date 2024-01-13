@@ -3,12 +3,12 @@ import {Toaster} from "react-hot-toast";
 import {BrowserRouter, useRoutes} from "react-router-dom";
 import {ErrorBoundary} from "react-error-boundary";
 import {FallbackError} from "@/react/FallbackError";
-import {queryClient, transport} from "@/service";
-import {TransportProvider} from "@connectrpc/connect-query";
-import {QueryClientProvider} from "@tanstack/react-query";
+import {transport} from "@/service";
 import {Join} from "@/auth/JoinGroupPage";
 import React from "react";
 import {Home} from "@/home/Home";
+import {ChatPage} from "@/chat/ChatPage";
+import {VerifyPage} from "@/auth/VerifyPage";
 
 const AppRoutes = () => {
     const commonRoutes = [{
@@ -20,6 +20,15 @@ const AppRoutes = () => {
     }, {
         path: '/app/group/join/:secret',
         element: <Join />
+    }, {
+        path: '/app/chat',
+        element: <ChatPage />
+    }, {
+        path: '/app/verify/:secret',
+        element: <VerifyPage />
+    }, {
+        path: '/app/content/:id',
+        element: <Home />
     }];
 
     const element = useRoutes([...commonRoutes]);
@@ -36,11 +45,7 @@ export default function App() {
       >
           <ProjectProvider>
               <BrowserRouter>
-                  <TransportProvider transport={transport}>
-                      <QueryClientProvider client={queryClient}>
-                          <AppRoutes/>
-                      </QueryClientProvider>
-                  </TransportProvider>
+                  <AppRoutes/>
               </BrowserRouter>
               <Toaster/>
           </ProjectProvider>

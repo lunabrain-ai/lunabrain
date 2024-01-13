@@ -8,8 +8,10 @@ import (
 	"github.com/google/wire"
 	"github.com/lunabrain-ai/lunabrain/js/dist/site"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
+	"github.com/lunabrain-ai/lunabrain/pkg/chat"
 	"github.com/lunabrain-ai/lunabrain/pkg/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/content/normalize"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/chat/chatconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/gen/content/contentconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/gen/user/userconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/group"
@@ -31,6 +33,7 @@ type APIHTTPServer struct {
 	bucket         *bucket.Bucket
 	sessionManager *shttp.SessionManager
 	userService    *user.UserService
+	chatService    *chat.Service
 }
 
 type HTTPServer interface {
@@ -42,6 +45,7 @@ var (
 		content.ProviderSet,
 		group.ProviderSet,
 		user.ProviderSet,
+		chat.ProviderSet,
 		normalize.New,
 		shttp.NewSession,
 		content.NewConfig,
@@ -56,6 +60,7 @@ func New(
 	bucket *bucket.Bucket,
 	sessionManager *shttp.SessionManager,
 	userService *user.UserService,
+	chatService *chat.Service,
 ) *APIHTTPServer {
 	return &APIHTTPServer{
 		config:         config,
@@ -63,6 +68,7 @@ func New(
 		bucket:         bucket,
 		sessionManager: sessionManager,
 		userService:    userService,
+		chatService:    chatService,
 	}
 }
 
@@ -85,7 +91,17 @@ func NewLogInterceptor() connect.UnaryInterceptorFunc {
 }
 
 func loggingMiddleware(next http.Handler) http.Handler {
+	limiter := NewRateLimiter()
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		peerIP := r.Header.Get("x-forwarded-for")
+		if peerIP != "" {
+			if !limiter.Visit(peerIP) {
+				//slog.Warn("rate limit exceeded", "peerIP", peerIP)
+				http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
+				return
+			}
+		}
+
 		slog.Debug("request", "method", r.Method, "path", r.URL.Path)
 		next.ServeHTTP(w, r)
 	})
@@ -98,9 +114,11 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 
 	apiRoot.Handle(contentconnect.NewContentServiceHandler(a.contentService, interceptors))
 	apiRoot.Handle(userconnect.NewUserServiceHandler(a.userService, interceptors))
+	apiRoot.Handle(chatconnect.NewChatServiceHandler(a.chatService, interceptors))
 	reflector := grpcreflect.NewStaticReflector(
 		"content.ContentService",
 		"user.UserService",
+		"chat.ChatService",
 	)
 	recoverCall := func(_ context.Context, spec connect.Spec, _ http.Header, p any) error {
 		slog.Error("panic", "err", fmt.Sprintf("%+v", p))

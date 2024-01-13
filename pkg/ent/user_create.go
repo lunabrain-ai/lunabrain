@@ -41,6 +41,34 @@ func (uc *UserCreate) SetData(se schema.UserEncoder) *UserCreate {
 	return uc
 }
 
+// SetVerified sets the "verified" field.
+func (uc *UserCreate) SetVerified(b bool) *UserCreate {
+	uc.mutation.SetVerified(b)
+	return uc
+}
+
+// SetNillableVerified sets the "verified" field if the given value is not nil.
+func (uc *UserCreate) SetNillableVerified(b *bool) *UserCreate {
+	if b != nil {
+		uc.SetVerified(*b)
+	}
+	return uc
+}
+
+// SetVerifySecret sets the "verify_secret" field.
+func (uc *UserCreate) SetVerifySecret(u uuid.UUID) *UserCreate {
+	uc.mutation.SetVerifySecret(u)
+	return uc
+}
+
+// SetNillableVerifySecret sets the "verify_secret" field if the given value is not nil.
+func (uc *UserCreate) SetNillableVerifySecret(u *uuid.UUID) *UserCreate {
+	if u != nil {
+		uc.SetVerifySecret(*u)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(u uuid.UUID) *UserCreate {
 	uc.mutation.SetID(u)
@@ -120,6 +148,10 @@ func (uc *UserCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uc *UserCreate) defaults() {
+	if _, ok := uc.mutation.Verified(); !ok {
+		v := entuser.DefaultVerified
+		uc.mutation.SetVerified(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
 		v := entuser.DefaultID()
 		uc.mutation.SetID(v)
@@ -136,6 +168,9 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.Data(); !ok {
 		return &ValidationError{Name: "data", err: errors.New(`ent: missing required field "User.data"`)}
+	}
+	if _, ok := uc.mutation.Verified(); !ok {
+		return &ValidationError{Name: "verified", err: errors.New(`ent: missing required field "User.verified"`)}
 	}
 	return nil
 }
@@ -183,6 +218,14 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Data(); ok {
 		_spec.SetField(entuser.FieldData, field.TypeJSON, value)
 		_node.Data = value
+	}
+	if value, ok := uc.mutation.Verified(); ok {
+		_spec.SetField(entuser.FieldVerified, field.TypeBool, value)
+		_node.Verified = value
+	}
+	if value, ok := uc.mutation.VerifySecret(); ok {
+		_spec.SetField(entuser.FieldVerifySecret, field.TypeUUID, value)
+		_node.VerifySecret = value
 	}
 	if nodes := uc.mutation.ContentIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

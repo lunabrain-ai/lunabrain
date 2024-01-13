@@ -16,6 +16,8 @@ import {useForm} from "react-hook-form";
 import {GRPCInputFormProps, ProtobufMessageForm} from "@/form/ProtobufMessageForm";
 import { RichTextLink } from './rich-text-links';
 import {AddTagBadge} from "@/tag/AddTagBadge";
+import {act} from "react-dom/test-utils";
+import {SitePostSearch} from "@/source/SitePostSearch";
 
 function removeUndefinedFields<T extends object>(obj: T): T {
     Object.keys(obj).forEach(key => {
@@ -65,8 +67,8 @@ export const ContentEditor: React.FC<{}> = ({}) => {
             // }).toJson() as any,
         },
     });
-    console.log(selected && selected.toJson());
-    const [tags, setTags] = useState<string[]>([]);
+    //console.log(selected?.toJson());
+    const [tags, setTags] = useState<string[]>(selected?.tags || []);
 
     const addTag = async (tag: string) => {
         setTags([...tags, tag]);
@@ -123,7 +125,10 @@ export const ContentEditor: React.FC<{}> = ({}) => {
             ListItem,
             RichTextLink,
         ],
-        content: selected ? getContent(selected) : '<ul><li>asdf</li></ul>',
+        onUpdate: ({ editor }) => {
+            localStorage.setItem('editorContent', editor.getHTML());
+        },
+        content: selected ? getContent(selected) : localStorage.getItem('editorContent') || '',
         editorProps: {
             handleKeyDown: (view, event) => {
                 if (event.key === 'Tab') {
@@ -190,30 +195,68 @@ export const ContentEditor: React.FC<{}> = ({}) => {
 
     const myModal = useRef(null);
 
+    const getEditor = (content: Content|null) => {
+        if (!content) {
+            return null;
+        }
+        switch (content.type.case) {
+            case 'site':
+                // TODO breadchris only show oneof from this type to make the form smaller
+                return (
+                    <div role={"tablist"} className={"tabs tabs-lifted w-full"}>
+                        <input checked type={"radio"} name={"site_tabs"} role={"tab"} className={"tab"} aria-label={"posts"} />
+                        <div role={"tabpanel"} className={"tab-content"}>
+                            <SitePostSearch site={content.type.value} />
+                        </div>
+                        <input type={"radio"} name={"site_tabs"} role={"tab"} className={"tab"} aria-label={"config"} />
+                        <div role={"tabpanel"} className={"tab-content"}>
+                            {form()}
+                        </div>
+                    </div>
+                )
+        }
+        if (editor) {
+            return (
+                <>
+                    <EditorContent className={"max-h-72 overflow-y-auto"} editor={editor} />
+                    <dialog id="my_modal_1" className="modal" ref={myModal}>
+                        <div className="modal-box">
+                            {form()}
+                            <form method="dialog">
+                                <div className="modal-action">
+                                    <button className="btn">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </dialog>
+                </>
+            );
+        }
+        return null;
+    }
+
     return (
         <div>
-            {editor && <EditorContent className={"max-h-72 overflow-y-auto"} editor={editor} />}
-            <button className="btn" onClick={() => myModal.current?.showModal()}>
-                <AdjustmentsHorizontalIcon className="h-6 w-6" />
-            </button>
-            <dialog id="my_modal_1" className="modal" ref={myModal}>
-                <div className="modal-box">
-                    {form()}
-                    <form method="dialog">
-                        <div className="modal-action">
-                            <button className="btn">Close</button>
-                        </div>
-                    </form>
-                </div>
-            </dialog>
-            <button className={"btn"} onClick={handleSubmit(onSubmit)}>
-                <PaperAirplaneIcon className="h-6 w-6" />
-            </button>
-            <AddTagBadge onNewTag={addTag} />
-            <div className="flex gap-3">
+            <div className={"max-h-[300px] overflow-y-auto"}>
+                {getEditor(selected)}
+            </div>
+            <span>
                 {tags.map((tag) => (
                     <span key={tag} className="badge badge-outline badge-sm" onClick={() => removeTag(tag)}>{tag}</span>
                 ))}
+            </span>
+            <div className={"flex justify-between w-full"}>
+                <div className={"flex space-x-2"}>
+                    <AddTagBadge onNewTag={addTag} />
+                    <span>
+                        <button className={"btn"} onClick={() => myModal.current?.showModal()}>
+                            <AdjustmentsHorizontalIcon className="h-6 w-6" />
+                        </button>
+                    </span>
+                </div>
+                <button className={"btn"} onClick={handleSubmit(onSubmit)}>
+                    <PaperAirplaneIcon className="h-6 w-6" />
+                </button>
             </div>
         </div>
     );

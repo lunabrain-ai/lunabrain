@@ -40,6 +40,11 @@ const (
 	UserServiceLoginProcedure = "/user.UserService/Login"
 	// UserServiceLogoutProcedure is the fully-qualified name of the UserService's Logout RPC.
 	UserServiceLogoutProcedure = "/user.UserService/Logout"
+	// UserServiceResetPasswordProcedure is the fully-qualified name of the UserService's ResetPassword
+	// RPC.
+	UserServiceResetPasswordProcedure = "/user.UserService/ResetPassword"
+	// UserServiceVerifyUserProcedure is the fully-qualified name of the UserService's VerifyUser RPC.
+	UserServiceVerifyUserProcedure = "/user.UserService/VerifyUser"
 	// UserServiceUpdateConfigProcedure is the fully-qualified name of the UserService's UpdateConfig
 	// RPC.
 	UserServiceUpdateConfigProcedure = "/user.UserService/UpdateConfig"
@@ -65,6 +70,8 @@ type UserServiceClient interface {
 	Register(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[user.User], error)
 	Login(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[user.User], error)
 	Logout(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[emptypb.Empty], error)
+	ResetPassword(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[emptypb.Empty], error)
+	VerifyUser(context.Context, *connect_go.Request[user.VerifyUserRequest]) (*connect_go.Response[emptypb.Empty], error)
 	UpdateConfig(context.Context, *connect_go.Request[user.Config]) (*connect_go.Response[emptypb.Empty], error)
 	CreateGroupInvite(context.Context, *connect_go.Request[user.GroupID]) (*connect_go.Response[user.GroupInvite], error)
 	JoinGroup(context.Context, *connect_go.Request[user.GroupInvite]) (*connect_go.Response[user.Group], error)
@@ -98,6 +105,16 @@ func NewUserServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts
 		logout: connect_go.NewClient[emptypb.Empty, emptypb.Empty](
 			httpClient,
 			baseURL+UserServiceLogoutProcedure,
+			opts...,
+		),
+		resetPassword: connect_go.NewClient[user.User, emptypb.Empty](
+			httpClient,
+			baseURL+UserServiceResetPasswordProcedure,
+			opts...,
+		),
+		verifyUser: connect_go.NewClient[user.VerifyUserRequest, emptypb.Empty](
+			httpClient,
+			baseURL+UserServiceVerifyUserProcedure,
 			opts...,
 		),
 		updateConfig: connect_go.NewClient[user.Config, emptypb.Empty](
@@ -148,6 +165,8 @@ type userServiceClient struct {
 	register          *connect_go.Client[user.User, user.User]
 	login             *connect_go.Client[user.User, user.User]
 	logout            *connect_go.Client[emptypb.Empty, emptypb.Empty]
+	resetPassword     *connect_go.Client[user.User, emptypb.Empty]
+	verifyUser        *connect_go.Client[user.VerifyUserRequest, emptypb.Empty]
 	updateConfig      *connect_go.Client[user.Config, emptypb.Empty]
 	createGroupInvite *connect_go.Client[user.GroupID, user.GroupInvite]
 	joinGroup         *connect_go.Client[user.GroupInvite, user.Group]
@@ -171,6 +190,16 @@ func (c *userServiceClient) Login(ctx context.Context, req *connect_go.Request[u
 // Logout calls user.UserService.Logout.
 func (c *userServiceClient) Logout(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[emptypb.Empty], error) {
 	return c.logout.CallUnary(ctx, req)
+}
+
+// ResetPassword calls user.UserService.ResetPassword.
+func (c *userServiceClient) ResetPassword(ctx context.Context, req *connect_go.Request[user.User]) (*connect_go.Response[emptypb.Empty], error) {
+	return c.resetPassword.CallUnary(ctx, req)
+}
+
+// VerifyUser calls user.UserService.VerifyUser.
+func (c *userServiceClient) VerifyUser(ctx context.Context, req *connect_go.Request[user.VerifyUserRequest]) (*connect_go.Response[emptypb.Empty], error) {
+	return c.verifyUser.CallUnary(ctx, req)
 }
 
 // UpdateConfig calls user.UserService.UpdateConfig.
@@ -218,6 +247,8 @@ type UserServiceHandler interface {
 	Register(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[user.User], error)
 	Login(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[user.User], error)
 	Logout(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[emptypb.Empty], error)
+	ResetPassword(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[emptypb.Empty], error)
+	VerifyUser(context.Context, *connect_go.Request[user.VerifyUserRequest]) (*connect_go.Response[emptypb.Empty], error)
 	UpdateConfig(context.Context, *connect_go.Request[user.Config]) (*connect_go.Response[emptypb.Empty], error)
 	CreateGroupInvite(context.Context, *connect_go.Request[user.GroupID]) (*connect_go.Response[user.GroupInvite], error)
 	JoinGroup(context.Context, *connect_go.Request[user.GroupInvite]) (*connect_go.Response[user.Group], error)
@@ -247,6 +278,16 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect_go.HandlerOpt
 	userServiceLogoutHandler := connect_go.NewUnaryHandler(
 		UserServiceLogoutProcedure,
 		svc.Logout,
+		opts...,
+	)
+	userServiceResetPasswordHandler := connect_go.NewUnaryHandler(
+		UserServiceResetPasswordProcedure,
+		svc.ResetPassword,
+		opts...,
+	)
+	userServiceVerifyUserHandler := connect_go.NewUnaryHandler(
+		UserServiceVerifyUserProcedure,
+		svc.VerifyUser,
 		opts...,
 	)
 	userServiceUpdateConfigHandler := connect_go.NewUnaryHandler(
@@ -297,6 +338,10 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect_go.HandlerOpt
 			userServiceLoginHandler.ServeHTTP(w, r)
 		case UserServiceLogoutProcedure:
 			userServiceLogoutHandler.ServeHTTP(w, r)
+		case UserServiceResetPasswordProcedure:
+			userServiceResetPasswordHandler.ServeHTTP(w, r)
+		case UserServiceVerifyUserProcedure:
+			userServiceVerifyUserHandler.ServeHTTP(w, r)
 		case UserServiceUpdateConfigProcedure:
 			userServiceUpdateConfigHandler.ServeHTTP(w, r)
 		case UserServiceCreateGroupInviteProcedure:
@@ -332,6 +377,14 @@ func (UnimplementedUserServiceHandler) Login(context.Context, *connect_go.Reques
 
 func (UnimplementedUserServiceHandler) Logout(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[emptypb.Empty], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("user.UserService.Logout is not implemented"))
+}
+
+func (UnimplementedUserServiceHandler) ResetPassword(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[emptypb.Empty], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("user.UserService.ResetPassword is not implemented"))
+}
+
+func (UnimplementedUserServiceHandler) VerifyUser(context.Context, *connect_go.Request[user.VerifyUserRequest]) (*connect_go.Response[emptypb.Empty], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("user.UserService.VerifyUser is not implemented"))
 }
 
 func (UnimplementedUserServiceHandler) UpdateConfig(context.Context, *connect_go.Request[user.Config]) (*connect_go.Response[emptypb.Empty], error) {

@@ -22,6 +22,8 @@ func (User) Fields() []ent.Field {
 		field.String("email"),
 		field.String("password_hash"),
 		field.JSON("data", UserEncoder{}),
+		field.Bool("verified").Default(false),
+		field.UUID("verify_secret", uuid.UUID{}).Optional(),
 	}
 }
 

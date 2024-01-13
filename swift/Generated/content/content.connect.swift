@@ -22,6 +22,12 @@ public protocol Content_ContentServiceClientInterface: Sendable {
     func `search`(request: Content_Query, headers: Connect.Headers) async -> ResponseMessage<Content_Results>
 
     @discardableResult
+    func `relate`(request: Content_RelateRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable
+
+    @available(iOS 13, *)
+    func `relate`(request: Content_RelateRequest, headers: Connect.Headers) async -> ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>
+
+    @discardableResult
     func `analyze`(request: Content_Content, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Content_Contents>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
@@ -90,6 +96,16 @@ public final class Content_ContentServiceClient: Content_ContentServiceClientInt
     @available(iOS 13, *)
     public func `search`(request: Content_Query, headers: Connect.Headers = [:]) async -> ResponseMessage<Content_Results> {
         return await self.client.unary(path: "/content.ContentService/Search", request: request, headers: headers)
+    }
+
+    @discardableResult
+    public func `relate`(request: Content_RelateRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable {
+        return self.client.unary(path: "/content.ContentService/Relate", request: request, headers: headers, completion: completion)
+    }
+
+    @available(iOS 13, *)
+    public func `relate`(request: Content_RelateRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty> {
+        return await self.client.unary(path: "/content.ContentService/Relate", request: request, headers: headers)
     }
 
     @discardableResult
@@ -166,6 +182,7 @@ public final class Content_ContentServiceClient: Content_ContentServiceClientInt
         public enum Methods {
             public static let save = Connect.MethodSpec(name: "Save", service: "content.ContentService", type: .unary)
             public static let search = Connect.MethodSpec(name: "Search", service: "content.ContentService", type: .unary)
+            public static let relate = Connect.MethodSpec(name: "Relate", service: "content.ContentService", type: .unary)
             public static let analyze = Connect.MethodSpec(name: "Analyze", service: "content.ContentService", type: .unary)
             public static let delete = Connect.MethodSpec(name: "Delete", service: "content.ContentService", type: .unary)
             public static let getTags = Connect.MethodSpec(name: "GetTags", service: "content.ContentService", type: .unary)

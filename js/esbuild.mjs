@@ -4,6 +4,7 @@ import { spawn, spawnSync } from "child_process";
 
 const prodBuild = process.env.BUILD === 'true'
 const target = process.env.TARGET || 'site'
+const baseURL = process.env.BASE_URL ? `"${process.env.BASE_URL}"` : (prodBuild ? '"https://demo.lunabrain.com"' : '"http://localhost:8000"')
 const buildDir = prodBuild ? 'dist' : 'build'
 
 const buildExtension = target === 'extension' || prodBuild
@@ -29,7 +30,7 @@ const baseOptions = {
     sourcemap: "linked",
     define: {
         "global": "window",
-        "process.env.BASE_URL": prodBuild ? '"https://demo.lunabrain.com"' : '"http://localhost:8000"',
+        "process.env.BASE_URL": baseURL,
         "process.env.PRODUCTION": prodBuild ? '"true"' : '"false"'
     },
     entryNames: "[name]",

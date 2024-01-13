@@ -29,5 +29,10 @@ const selectedContentAtom = atom<Content|null>(null);
 
 export const useContentEditor = () => {
     const [selected, setSelected] = useAtom(selectedContentAtom);
+    useEffect(() => {
+        if (selected) {
+            window.history.pushState({}, '', `/app/content/${selected.id}`);
+        }
+    }, [selected]);
     return {selected, setSelected};
 }

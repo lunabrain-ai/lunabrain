@@ -27,6 +27,7 @@ require (
 	github.com/google/uuid v1.4.0
 	github.com/google/wire v0.5.0
 	github.com/hajimehoshi/go-mp3 v0.3.4
+	github.com/iancoleman/strcase v0.2.0
 	github.com/kkdai/youtube/v2 v2.8.3
 	github.com/ledongthuc/pdf v0.0.0-20220302134840-0c2507a12d80
 	github.com/lmittmann/tint v1.0.2
@@ -74,6 +75,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.2.3 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20230923063757-afb1ddc0824c // indirect
+	github.com/TwiN/go-away v1.6.12 // indirect
 	github.com/VividCortex/gohistogram v1.0.0 // indirect
 	github.com/acomagu/bufpipe v1.0.4 // indirect
 	github.com/agext/levenshtein v1.2.1 // indirect

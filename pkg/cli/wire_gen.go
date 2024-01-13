@@ -8,6 +8,7 @@ package cli
 
 import (
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
+	"github.com/lunabrain-ai/lunabrain/pkg/chat"
 	"github.com/lunabrain-ai/lunabrain/pkg/config"
 	"github.com/lunabrain-ai/lunabrain/pkg/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/content/normalize"
@@ -81,8 +82,13 @@ func Wire() (*cli.App, error) {
 	service := content.NewService(entStore, sessionManager, agent, normalizeNormalize, bucketBucket, builder)
 	groupEntStore := group.NewEntStore(client)
 	userEntStore := user.NewEntStore(client)
-	userService := user.NewService(groupEntStore, sessionManager, userEntStore)
-	apihttpServer := server.New(contentConfig, service, bucketBucket, sessionManager, userService)
+	userConfig, err := user.NewConfig(provider)
+	if err != nil {
+		return nil, err
+	}
+	userService := user.NewService(groupEntStore, sessionManager, userEntStore, userConfig)
+	chatService := chat.New(sessionManager)
+	apihttpServer := server.New(contentConfig, service, bucketBucket, sessionManager, userService, chatService)
 	app := NewApp(logLog, apihttpServer)
 	return app, nil
 }

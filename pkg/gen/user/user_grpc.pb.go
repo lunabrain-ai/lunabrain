@@ -26,6 +26,8 @@ type UserServiceClient interface {
 	Register(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 	Login(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ResetPassword(ctx context.Context, in *User, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	VerifyUser(ctx context.Context, in *VerifyUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	UpdateConfig(ctx context.Context, in *Config, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CreateGroupInvite(ctx context.Context, in *GroupID, opts ...grpc.CallOption) (*GroupInvite, error)
 	JoinGroup(ctx context.Context, in *GroupInvite, opts ...grpc.CallOption) (*Group, error)
@@ -65,6 +67,24 @@ func (c *userServiceClient) Login(ctx context.Context, in *User, opts ...grpc.Ca
 func (c *userServiceClient) Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/user.UserService/Logout", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) ResetPassword(ctx context.Context, in *User, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/user.UserService/ResetPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) VerifyUser(ctx context.Context, in *VerifyUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/user.UserService/VerifyUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -150,6 +170,8 @@ type UserServiceServer interface {
 	Register(context.Context, *User) (*User, error)
 	Login(context.Context, *User) (*User, error)
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	ResetPassword(context.Context, *User) (*emptypb.Empty, error)
+	VerifyUser(context.Context, *VerifyUserRequest) (*emptypb.Empty, error)
 	UpdateConfig(context.Context, *Config) (*emptypb.Empty, error)
 	CreateGroupInvite(context.Context, *GroupID) (*GroupInvite, error)
 	JoinGroup(context.Context, *GroupInvite) (*Group, error)
@@ -172,6 +194,12 @@ func (UnimplementedUserServiceServer) Login(context.Context, *User) (*User, erro
 }
 func (UnimplementedUserServiceServer) Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedUserServiceServer) ResetPassword(context.Context, *User) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetPassword not implemented")
+}
+func (UnimplementedUserServiceServer) VerifyUser(context.Context, *VerifyUserRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifyUser not implemented")
 }
 func (UnimplementedUserServiceServer) UpdateConfig(context.Context, *Config) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateConfig not implemented")
@@ -259,6 +287,42 @@ func _UserService_Logout_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).Logout(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ResetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/ResetPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ResetPassword(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_VerifyUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VerifyUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).VerifyUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/VerifyUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).VerifyUser(ctx, req.(*VerifyUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -425,6 +489,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Logout",
 			Handler:    _UserService_Logout_Handler,
+		},
+		{
+			MethodName: "ResetPassword",
+			Handler:    _UserService_ResetPassword_Handler,
+		},
+		{
+			MethodName: "VerifyUser",
+			Handler:    _UserService_VerifyUser_Handler,
 		},
 		{
 			MethodName: "UpdateConfig",

@@ -8,6 +8,8 @@ service UserService {
   rpc Register(User) returns (User);
   rpc Login(User) returns (User);
   rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc ResetPassword(User) returns (google.protobuf.Empty);
+  rpc VerifyUser(VerifyUserRequest) returns (google.protobuf.Empty);
   rpc UpdateConfig(Config) returns (google.protobuf.Empty);
 
   rpc CreateGroupInvite(GroupID) returns (GroupInvite);
@@ -17,6 +19,10 @@ service UserService {
   rpc GetGroups(google.protobuf.Empty) returns (Groups);
   rpc DeleteGroup(Group) returns (google.protobuf.Empty);
   rpc Share(ShareRequest) returns (google.protobuf.Empty);
+}
+
+message VerifyUserRequest {
+  string secret = 1;
 }
 
 message GroupInfoRequest {

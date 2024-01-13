@@ -38,6 +38,8 @@ const (
 	ContentServiceSaveProcedure = "/content.ContentService/Save"
 	// ContentServiceSearchProcedure is the fully-qualified name of the ContentService's Search RPC.
 	ContentServiceSearchProcedure = "/content.ContentService/Search"
+	// ContentServiceRelateProcedure is the fully-qualified name of the ContentService's Relate RPC.
+	ContentServiceRelateProcedure = "/content.ContentService/Relate"
 	// ContentServiceAnalyzeProcedure is the fully-qualified name of the ContentService's Analyze RPC.
 	ContentServiceAnalyzeProcedure = "/content.ContentService/Analyze"
 	// ContentServiceDeleteProcedure is the fully-qualified name of the ContentService's Delete RPC.
@@ -59,6 +61,7 @@ const (
 type ContentServiceClient interface {
 	Save(context.Context, *connect_go.Request[content.Contents]) (*connect_go.Response[content.ContentIDs], error)
 	Search(context.Context, *connect_go.Request[content.Query]) (*connect_go.Response[content.Results], error)
+	Relate(context.Context, *connect_go.Request[content.RelateRequest]) (*connect_go.Response[emptypb.Empty], error)
 	Analyze(context.Context, *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error)
 	Delete(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
 	GetTags(context.Context, *connect_go.Request[content.TagRequest]) (*connect_go.Response[content.Tags], error)
@@ -86,6 +89,11 @@ func NewContentServiceClient(httpClient connect_go.HTTPClient, baseURL string, o
 		search: connect_go.NewClient[content.Query, content.Results](
 			httpClient,
 			baseURL+ContentServiceSearchProcedure,
+			opts...,
+		),
+		relate: connect_go.NewClient[content.RelateRequest, emptypb.Empty](
+			httpClient,
+			baseURL+ContentServiceRelateProcedure,
 			opts...,
 		),
 		analyze: connect_go.NewClient[content.Content, content.Contents](
@@ -130,6 +138,7 @@ func NewContentServiceClient(httpClient connect_go.HTTPClient, baseURL string, o
 type contentServiceClient struct {
 	save       *connect_go.Client[content.Contents, content.ContentIDs]
 	search     *connect_go.Client[content.Query, content.Results]
+	relate     *connect_go.Client[content.RelateRequest, emptypb.Empty]
 	analyze    *connect_go.Client[content.Content, content.Contents]
 	delete     *connect_go.Client[content.ContentIDs, content.ContentIDs]
 	getTags    *connect_go.Client[content.TagRequest, content.Tags]
@@ -147,6 +156,11 @@ func (c *contentServiceClient) Save(ctx context.Context, req *connect_go.Request
 // Search calls content.ContentService.Search.
 func (c *contentServiceClient) Search(ctx context.Context, req *connect_go.Request[content.Query]) (*connect_go.Response[content.Results], error) {
 	return c.search.CallUnary(ctx, req)
+}
+
+// Relate calls content.ContentService.Relate.
+func (c *contentServiceClient) Relate(ctx context.Context, req *connect_go.Request[content.RelateRequest]) (*connect_go.Response[emptypb.Empty], error) {
+	return c.relate.CallUnary(ctx, req)
 }
 
 // Analyze calls content.ContentService.Analyze.
@@ -188,6 +202,7 @@ func (c *contentServiceClient) Types(ctx context.Context, req *connect_go.Reques
 type ContentServiceHandler interface {
 	Save(context.Context, *connect_go.Request[content.Contents]) (*connect_go.Response[content.ContentIDs], error)
 	Search(context.Context, *connect_go.Request[content.Query]) (*connect_go.Response[content.Results], error)
+	Relate(context.Context, *connect_go.Request[content.RelateRequest]) (*connect_go.Response[emptypb.Empty], error)
 	Analyze(context.Context, *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error)
 	Delete(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
 	GetTags(context.Context, *connect_go.Request[content.TagRequest]) (*connect_go.Response[content.Tags], error)
@@ -211,6 +226,11 @@ func NewContentServiceHandler(svc ContentServiceHandler, opts ...connect_go.Hand
 	contentServiceSearchHandler := connect_go.NewUnaryHandler(
 		ContentServiceSearchProcedure,
 		svc.Search,
+		opts...,
+	)
+	contentServiceRelateHandler := connect_go.NewUnaryHandler(
+		ContentServiceRelateProcedure,
+		svc.Relate,
 		opts...,
 	)
 	contentServiceAnalyzeHandler := connect_go.NewUnaryHandler(
@@ -254,6 +274,8 @@ func NewContentServiceHandler(svc ContentServiceHandler, opts ...connect_go.Hand
 			contentServiceSaveHandler.ServeHTTP(w, r)
 		case ContentServiceSearchProcedure:
 			contentServiceSearchHandler.ServeHTTP(w, r)
+		case ContentServiceRelateProcedure:
+			contentServiceRelateHandler.ServeHTTP(w, r)
 		case ContentServiceAnalyzeProcedure:
 			contentServiceAnalyzeHandler.ServeHTTP(w, r)
 		case ContentServiceDeleteProcedure:
@@ -283,6 +305,10 @@ func (UnimplementedContentServiceHandler) Save(context.Context, *connect_go.Requ
 
 func (UnimplementedContentServiceHandler) Search(context.Context, *connect_go.Request[content.Query]) (*connect_go.Response[content.Results], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.Search is not implemented"))
+}
+
+func (UnimplementedContentServiceHandler) Relate(context.Context, *connect_go.Request[content.RelateRequest]) (*connect_go.Response[emptypb.Empty], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.Relate is not implemented"))
 }
 
 func (UnimplementedContentServiceHandler) Analyze(context.Context, *connect_go.Request[content.Content]) (*connect_go.Response[content.Contents], error) {

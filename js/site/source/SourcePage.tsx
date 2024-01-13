@@ -1,13 +1,34 @@
 import React, {useEffect, useState} from "react";
-import {useSources} from "@/source/state";
+import {useContentEditor, useSources} from "@/source/state";
 import {Content, DisplayContent, EnumeratedSource} from "@/rpc/content/content_pb";
 import {ContentCard} from "@/source/ContentCard";
 import {CreateCard} from "@/source/CreateCard";
 import {contentService} from "@/service";
 import toast from "react-hot-toast";
+import {useParams} from "react-router";
+import {TrashIcon} from "@heroicons/react/24/outline";
+import {notEmpty} from "@/util/predicates";
 
 export const SourcePage: React.FC = () => {
     const {sources, selected, setSelected} = useSources();
+    const {setSelected: setSelectedContent} = useContentEditor();
+    const { id } = useParams();
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const res = await contentService.search({
+                    contentID: id,
+                })
+                if (res.storedContent.length === 0) {
+                    return;
+                }
+                setSelectedContent(res.storedContent[0].content || null);
+            } catch (e) {
+                console.error('failed to get sources', e);
+            }
+        })();
+    }, [id]);
 
     const handleSelectSource = (source: EnumeratedSource) => {
         setSelected(source);
@@ -34,17 +55,101 @@ export const SourcePage: React.FC = () => {
         <div className="p-5 h-[95vh] flex flex-col">
             <div className="flex-grow">
                 <div>
-                    <button className={"btn"} onClick={handlePublish}>Publish</button>
+                    <div className="navbar bg-base-100">
+                        <div className="flex-1">
+                            <p className="text-xl">Just Share.</p>
+                        </div>
+                        <div className="flex-none">
+                            <ul className="menu menu-horizontal px-1">
+                                <li>
+                                    <a onClick={handlePublish}>Publish</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                     <CreateCard />
                     <Tabs sources={sources} selected={selected} onSelectSource={handleSelectSource} />
                     {selected && (
-                        <>
-                            <ContentCards displayContent={selected.displayContent} />
-                        </>
+                        // <ContentCards displayContent={selected.displayContent} />
+                        <div className={"overflow-x-auto"}>
+                            <ContentTable displayContent={selected.displayContent} />
+                        </div>
                     )}
                 </div>
             </div>
         </div>
+    );
+}
+
+const ContentTable: React.FC<{displayContent: DisplayContent[]}> = ({displayContent}) => {
+    const {selected, setSelected} = useContentEditor();
+    const { getSources } = useSources();
+    const handleCheckboxChange = (content: Content|undefined, isChecked: boolean) => {
+        if (isChecked && content) {
+            setSelected(content);
+        }
+        if (!isChecked) {
+            setSelected(null);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!selected) {
+            return;
+        }
+        try {
+            // TODO breadchris save content to group
+            const resp = await contentService.delete({
+                contentIds: [selected.id],
+            });
+            void getSources();
+            console.log(resp);
+            toast.success('Deleted content');
+        } catch (e) {
+            toast.error('Failed to delete content');
+            console.error('failed to delete', e)
+        }
+    }
+    const cnt = selected ? [
+        displayContent.find((c) => c.content?.id === selected.id),
+        ...displayContent.filter((c) => c.content?.id !== selected.id)
+    ] : displayContent;
+    return (
+        <table className="table w-full">
+            <thead>
+            <tr>
+                <th>{selected && (
+                    <TrashIcon onClick={handleDelete} className="h-5 w-5" />
+                )}</th>
+                <th>title</th>
+                <th>description</th>
+                <th>tags</th>
+            </tr>
+            </thead>
+            <tbody>
+            {cnt.filter(notEmpty).map((item, index) => (
+                <tr key={index}>
+                    <td>
+                        <input
+                            type="checkbox"
+                            className="checkbox checkbox-accent"
+                            checked={selected?.id === item.content?.id}
+                            onChange={(e) => handleCheckboxChange(item.content, e.target.checked)}
+                        />
+                    </td>
+                    <td>{item.title}</td>
+                    <td className="max-w-xs truncate text-gray-500 font-normal">{item.description}</td>
+                    <td>
+                        <div className="flex gap-3">
+                            {item.content?.tags.map((tag) => (
+                                <span key={tag} className="badge badge-outline badge-sm">{tag}</span>
+                            ))}
+                        </div>
+                    </td>
+                </tr>
+            ))}
+            </tbody>
+        </table>
     );
 }
 

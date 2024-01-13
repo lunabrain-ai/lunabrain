@@ -49,6 +49,40 @@ func (uu *UserUpdate) SetData(se schema.UserEncoder) *UserUpdate {
 	return uu
 }
 
+// SetVerified sets the "verified" field.
+func (uu *UserUpdate) SetVerified(b bool) *UserUpdate {
+	uu.mutation.SetVerified(b)
+	return uu
+}
+
+// SetNillableVerified sets the "verified" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableVerified(b *bool) *UserUpdate {
+	if b != nil {
+		uu.SetVerified(*b)
+	}
+	return uu
+}
+
+// SetVerifySecret sets the "verify_secret" field.
+func (uu *UserUpdate) SetVerifySecret(u uuid.UUID) *UserUpdate {
+	uu.mutation.SetVerifySecret(u)
+	return uu
+}
+
+// SetNillableVerifySecret sets the "verify_secret" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableVerifySecret(u *uuid.UUID) *UserUpdate {
+	if u != nil {
+		uu.SetVerifySecret(*u)
+	}
+	return uu
+}
+
+// ClearVerifySecret clears the value of the "verify_secret" field.
+func (uu *UserUpdate) ClearVerifySecret() *UserUpdate {
+	uu.mutation.ClearVerifySecret()
+	return uu
+}
+
 // AddContentIDs adds the "content" edge to the Content entity by IDs.
 func (uu *UserUpdate) AddContentIDs(ids ...uuid.UUID) *UserUpdate {
 	uu.mutation.AddContentIDs(ids...)
@@ -170,6 +204,15 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Data(); ok {
 		_spec.SetField(entuser.FieldData, field.TypeJSON, value)
+	}
+	if value, ok := uu.mutation.Verified(); ok {
+		_spec.SetField(entuser.FieldVerified, field.TypeBool, value)
+	}
+	if value, ok := uu.mutation.VerifySecret(); ok {
+		_spec.SetField(entuser.FieldVerifySecret, field.TypeUUID, value)
+	}
+	if uu.mutation.VerifySecretCleared() {
+		_spec.ClearField(entuser.FieldVerifySecret, field.TypeUUID)
 	}
 	if uu.mutation.ContentCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -296,6 +339,40 @@ func (uuo *UserUpdateOne) SetPasswordHash(s string) *UserUpdateOne {
 // SetData sets the "data" field.
 func (uuo *UserUpdateOne) SetData(se schema.UserEncoder) *UserUpdateOne {
 	uuo.mutation.SetData(se)
+	return uuo
+}
+
+// SetVerified sets the "verified" field.
+func (uuo *UserUpdateOne) SetVerified(b bool) *UserUpdateOne {
+	uuo.mutation.SetVerified(b)
+	return uuo
+}
+
+// SetNillableVerified sets the "verified" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableVerified(b *bool) *UserUpdateOne {
+	if b != nil {
+		uuo.SetVerified(*b)
+	}
+	return uuo
+}
+
+// SetVerifySecret sets the "verify_secret" field.
+func (uuo *UserUpdateOne) SetVerifySecret(u uuid.UUID) *UserUpdateOne {
+	uuo.mutation.SetVerifySecret(u)
+	return uuo
+}
+
+// SetNillableVerifySecret sets the "verify_secret" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableVerifySecret(u *uuid.UUID) *UserUpdateOne {
+	if u != nil {
+		uuo.SetVerifySecret(*u)
+	}
+	return uuo
+}
+
+// ClearVerifySecret clears the value of the "verify_secret" field.
+func (uuo *UserUpdateOne) ClearVerifySecret() *UserUpdateOne {
+	uuo.mutation.ClearVerifySecret()
 	return uuo
 }
 
@@ -450,6 +527,15 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Data(); ok {
 		_spec.SetField(entuser.FieldData, field.TypeJSON, value)
+	}
+	if value, ok := uuo.mutation.Verified(); ok {
+		_spec.SetField(entuser.FieldVerified, field.TypeBool, value)
+	}
+	if value, ok := uuo.mutation.VerifySecret(); ok {
+		_spec.SetField(entuser.FieldVerifySecret, field.TypeUUID, value)
+	}
+	if uuo.mutation.VerifySecretCleared() {
+		_spec.ClearField(entuser.FieldVerifySecret, field.TypeUUID)
 	}
 	if uuo.mutation.ContentCleared() {
 		edge := &sqlgraph.EdgeSpec{

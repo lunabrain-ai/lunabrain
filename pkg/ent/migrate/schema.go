@@ -127,6 +127,8 @@ var (
 		{Name: "email", Type: field.TypeString},
 		{Name: "password_hash", Type: field.TypeString},
 		{Name: "data", Type: field.TypeJSON},
+		{Name: "verified", Type: field.TypeBool, Default: false},
+		{Name: "verify_secret", Type: field.TypeUUID, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{

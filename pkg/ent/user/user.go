@@ -19,6 +19,10 @@ const (
 	FieldPasswordHash = "password_hash"
 	// FieldData holds the string denoting the data field in the database.
 	FieldData = "data"
+	// FieldVerified holds the string denoting the verified field in the database.
+	FieldVerified = "verified"
+	// FieldVerifySecret holds the string denoting the verify_secret field in the database.
+	FieldVerifySecret = "verify_secret"
 	// EdgeContent holds the string denoting the content edge name in mutations.
 	EdgeContent = "content"
 	// EdgeGroupUsers holds the string denoting the group_users edge name in mutations.
@@ -47,6 +51,8 @@ var Columns = []string{
 	FieldEmail,
 	FieldPasswordHash,
 	FieldData,
+	FieldVerified,
+	FieldVerifySecret,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -60,6 +66,8 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultVerified holds the default value on creation for the "verified" field.
+	DefaultVerified bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -80,6 +88,16 @@ func ByEmail(opts ...sql.OrderTermOption) OrderOption {
 // ByPasswordHash orders the results by the password_hash field.
 func ByPasswordHash(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPasswordHash, opts...).ToFunc()
+}
+
+// ByVerified orders the results by the verified field.
+func ByVerified(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldVerified, opts...).ToFunc()
+}
+
+// ByVerifySecret orders the results by the verify_secret field.
+func ByVerifySecret(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldVerifySecret, opts...).ToFunc()
 }
 
 // ByContentCount orders the results by content count.

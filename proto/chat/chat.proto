@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package chat;
+
+service ChatService {
+  rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
+  rpc ReceiveMessages (ReceiveMessagesRequest) returns (stream Message);
+  rpc BanUser (BanUserRequest) returns (BanUserResponse);
+}
+
+message BanUserRequest {
+  string user = 1;
+}
+
+message BanUserResponse {
+}
+
+message SendMessageRequest {
+  string user = 1;
+  string message = 2;
+  string css = 3;
+}
+
+message SendMessageResponse {
+}
+
+message ReceiveMessagesRequest {
+}
+
+message Message {
+  string user = 1;
+  string text = 2;
+  int64 timestamp = 3;
+  string css = 4;
+}

@@ -129,10 +129,10 @@ type ServiceConfig struct {
 type Option struct {
 }
 
-func New(c *content.HugoConfig) Config {
+func New(username string, c *content.HugoConfig) Config {
 	themeName := "papermod"
 	return Config{
-		PublishDir:             "public",
+		PublishDir:             username,
 		BaseURL:                c.BaseUrl,
 		Title:                  "Title",
 		Paginate:               5,

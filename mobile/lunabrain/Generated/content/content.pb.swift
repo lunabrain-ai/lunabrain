@@ -20,6 +20,22 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
+public struct Content_RelateRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var parent: String = String()
+
+  public var children: [String] = []
+
+  public var connect: Bool = false
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 public struct Content_Sources {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -63,6 +79,8 @@ public struct Content_DisplayContent {
   public var title: String = String()
 
   public var description_p: String = String()
+
+  public var type: String = String()
 
   public var content: Content_Content {
     get {return _content ?? Content_Content()}
@@ -868,34 +886,25 @@ public struct Content_GRPCTypeInfo {
   // methods supported on all messages.
 
   public var msg: SwiftProtobuf.Google_Protobuf_DescriptorProto {
-    get {return _storage._msg ?? SwiftProtobuf.Google_Protobuf_DescriptorProto()}
-    set {_uniqueStorage()._msg = newValue}
+    get {return _msg ?? SwiftProtobuf.Google_Protobuf_DescriptorProto()}
+    set {_msg = newValue}
   }
   /// Returns true if `msg` has been explicitly set.
-  public var hasMsg: Bool {return _storage._msg != nil}
+  public var hasMsg: Bool {return self._msg != nil}
   /// Clears the value of `msg`. Subsequent reads from it will return its default value.
-  public mutating func clearMsg() {_uniqueStorage()._msg = nil}
+  public mutating func clearMsg() {self._msg = nil}
 
-  public var descLookup: Dictionary<String,SwiftProtobuf.Google_Protobuf_DescriptorProto> {
-    get {return _storage._descLookup}
-    set {_uniqueStorage()._descLookup = newValue}
-  }
+  public var descLookup: Dictionary<String,SwiftProtobuf.Google_Protobuf_DescriptorProto> = [:]
 
-  public var enumLookup: Dictionary<String,SwiftProtobuf.Google_Protobuf_EnumDescriptorProto> {
-    get {return _storage._enumLookup}
-    set {_uniqueStorage()._enumLookup = newValue}
-  }
+  public var enumLookup: Dictionary<String,SwiftProtobuf.Google_Protobuf_EnumDescriptorProto> = [:]
 
-  public var packageName: String {
-    get {return _storage._packageName}
-    set {_uniqueStorage()._packageName = newValue}
-  }
+  public var packageName: String = String()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
-  fileprivate var _storage = _StorageClass.defaultInstance
+  fileprivate var _msg: SwiftProtobuf.Google_Protobuf_DescriptorProto? = nil
 }
 
 public struct Content_Site {
@@ -911,6 +920,8 @@ public struct Content_Site {
   public var hasHugoConfig: Bool {return self._hugoConfig != nil}
   /// Clears the value of `hugoConfig`. Subsequent reads from it will return its default value.
   public mutating func clearHugoConfig() {self._hugoConfig = nil}
+
+  public var postTags: [String] = []
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -1167,6 +1178,7 @@ public struct Content_AssetsConfig {
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
+extension Content_RelateRequest: @unchecked Sendable {}
 extension Content_Sources: @unchecked Sendable {}
 extension Content_EnumeratedSource: @unchecked Sendable {}
 extension Content_DisplayContent: @unchecked Sendable {}
@@ -1220,6 +1232,50 @@ extension Content_AssetsConfig: @unchecked Sendable {}
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "content"
+
+extension Content_RelateRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".RelateRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "parent"),
+    2: .same(proto: "children"),
+    3: .same(proto: "connect"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.parent) }()
+      case 2: try { try decoder.decodeRepeatedStringField(value: &self.children) }()
+      case 3: try { try decoder.decodeSingularBoolField(value: &self.connect) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.parent.isEmpty {
+      try visitor.visitSingularStringField(value: self.parent, fieldNumber: 1)
+    }
+    if !self.children.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.children, fieldNumber: 2)
+    }
+    if self.connect != false {
+      try visitor.visitSingularBoolField(value: self.connect, fieldNumber: 3)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Content_RelateRequest, rhs: Content_RelateRequest) -> Bool {
+    if lhs.parent != rhs.parent {return false}
+    if lhs.children != rhs.children {return false}
+    if lhs.connect != rhs.connect {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
 
 extension Content_Sources: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Sources"
@@ -1300,7 +1356,8 @@ extension Content_DisplayContent: SwiftProtobuf.Message, SwiftProtobuf._MessageI
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "title"),
     2: .same(proto: "description"),
-    3: .same(proto: "content"),
+    3: .same(proto: "type"),
+    4: .same(proto: "content"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1311,7 +1368,8 @@ extension Content_DisplayContent: SwiftProtobuf.Message, SwiftProtobuf._MessageI
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.title) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.description_p) }()
-      case 3: try { try decoder.decodeSingularMessageField(value: &self._content) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self.type) }()
+      case 4: try { try decoder.decodeSingularMessageField(value: &self._content) }()
       default: break
       }
     }
@@ -1328,8 +1386,11 @@ extension Content_DisplayContent: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     if !self.description_p.isEmpty {
       try visitor.visitSingularStringField(value: self.description_p, fieldNumber: 2)
     }
+    if !self.type.isEmpty {
+      try visitor.visitSingularStringField(value: self.type, fieldNumber: 3)
+    }
     try { if let v = self._content {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
     } }()
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -1337,6 +1398,7 @@ extension Content_DisplayContent: SwiftProtobuf.Message, SwiftProtobuf._MessageI
   public static func ==(lhs: Content_DisplayContent, rhs: Content_DisplayContent) -> Bool {
     if lhs.title != rhs.title {return false}
     if lhs.description_p != rhs.description_p {return false}
+    if lhs.type != rhs.type {return false}
     if lhs._content != rhs._content {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
@@ -2943,93 +3005,53 @@ extension Content_GRPCTypeInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     6: .standard(proto: "package_name"),
   ]
 
-  fileprivate class _StorageClass {
-    var _msg: SwiftProtobuf.Google_Protobuf_DescriptorProto? = nil
-    var _descLookup: Dictionary<String,SwiftProtobuf.Google_Protobuf_DescriptorProto> = [:]
-    var _enumLookup: Dictionary<String,SwiftProtobuf.Google_Protobuf_EnumDescriptorProto> = [:]
-    var _packageName: String = String()
-
-    static let defaultInstance = _StorageClass()
-
-    private init() {}
-
-    init(copying source: _StorageClass) {
-      _msg = source._msg
-      _descLookup = source._descLookup
-      _enumLookup = source._enumLookup
-      _packageName = source._packageName
-    }
-  }
-
-  fileprivate mutating func _uniqueStorage() -> _StorageClass {
-    if !isKnownUniquelyReferenced(&_storage) {
-      _storage = _StorageClass(copying: _storage)
-    }
-    return _storage
-  }
-
   public var isInitialized: Bool {
-    return withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      if let v = _storage._msg, !v.isInitialized {return false}
-      if !SwiftProtobuf.Internal.areAllInitialized(_storage._descLookup) {return false}
-      if !SwiftProtobuf.Internal.areAllInitialized(_storage._enumLookup) {return false}
-      return true
-    }
+    if let v = self._msg, !v.isInitialized {return false}
+    if !SwiftProtobuf.Internal.areAllInitialized(self.descLookup) {return false}
+    if !SwiftProtobuf.Internal.areAllInitialized(self.enumLookup) {return false}
+    return true
   }
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    _ = _uniqueStorage()
-    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      while let fieldNumber = try decoder.nextFieldNumber() {
-        // The use of inline closures is to circumvent an issue where the compiler
-        // allocates stack space for every case branch when no optimizations are
-        // enabled. https://github.com/apple/swift-protobuf/issues/1034
-        switch fieldNumber {
-        case 1: try { try decoder.decodeSingularMessageField(value: &_storage._msg) }()
-        case 3: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.Google_Protobuf_DescriptorProto>.self, value: &_storage._descLookup) }()
-        case 4: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.Google_Protobuf_EnumDescriptorProto>.self, value: &_storage._enumLookup) }()
-        case 6: try { try decoder.decodeSingularStringField(value: &_storage._packageName) }()
-        default: break
-        }
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._msg) }()
+      case 3: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.Google_Protobuf_DescriptorProto>.self, value: &self.descLookup) }()
+      case 4: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.Google_Protobuf_EnumDescriptorProto>.self, value: &self.enumLookup) }()
+      case 6: try { try decoder.decodeSingularStringField(value: &self.packageName) }()
+      default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every if/case branch local when no optimizations
-      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-      // https://github.com/apple/swift-protobuf/issues/1182
-      try { if let v = _storage._msg {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-      } }()
-      if !_storage._descLookup.isEmpty {
-        try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.Google_Protobuf_DescriptorProto>.self, value: _storage._descLookup, fieldNumber: 3)
-      }
-      if !_storage._enumLookup.isEmpty {
-        try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.Google_Protobuf_EnumDescriptorProto>.self, value: _storage._enumLookup, fieldNumber: 4)
-      }
-      if !_storage._packageName.isEmpty {
-        try visitor.visitSingularStringField(value: _storage._packageName, fieldNumber: 6)
-      }
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._msg {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    if !self.descLookup.isEmpty {
+      try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.Google_Protobuf_DescriptorProto>.self, value: self.descLookup, fieldNumber: 3)
+    }
+    if !self.enumLookup.isEmpty {
+      try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.Google_Protobuf_EnumDescriptorProto>.self, value: self.enumLookup, fieldNumber: 4)
+    }
+    if !self.packageName.isEmpty {
+      try visitor.visitSingularStringField(value: self.packageName, fieldNumber: 6)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Content_GRPCTypeInfo, rhs: Content_GRPCTypeInfo) -> Bool {
-    if lhs._storage !== rhs._storage {
-      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
-        let _storage = _args.0
-        let rhs_storage = _args.1
-        if _storage._msg != rhs_storage._msg {return false}
-        if _storage._descLookup != rhs_storage._descLookup {return false}
-        if _storage._enumLookup != rhs_storage._enumLookup {return false}
-        if _storage._packageName != rhs_storage._packageName {return false}
-        return true
-      }
-      if !storagesAreEqual {return false}
-    }
+    if lhs._msg != rhs._msg {return false}
+    if lhs.descLookup != rhs.descLookup {return false}
+    if lhs.enumLookup != rhs.enumLookup {return false}
+    if lhs.packageName != rhs.packageName {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -3039,6 +3061,7 @@ extension Content_Site: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
   public static let protoMessageName: String = _protobuf_package + ".Site"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "hugo_config"),
+    2: .standard(proto: "post_tags"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -3048,6 +3071,7 @@ extension Content_Site: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularMessageField(value: &self._hugoConfig) }()
+      case 2: try { try decoder.decodeRepeatedStringField(value: &self.postTags) }()
       default: break
       }
     }
@@ -3061,11 +3085,15 @@ extension Content_Site: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     try { if let v = self._hugoConfig {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
     } }()
+    if !self.postTags.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.postTags, fieldNumber: 2)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Content_Site, rhs: Content_Site) -> Bool {
     if lhs._hugoConfig != rhs._hugoConfig {return false}
+    if lhs.postTags != rhs.postTags {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

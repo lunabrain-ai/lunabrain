@@ -25,6 +25,7 @@ const _ = grpc.SupportPackageIsVersion7
 type ContentServiceClient interface {
 	Save(ctx context.Context, in *Contents, opts ...grpc.CallOption) (*ContentIDs, error)
 	Search(ctx context.Context, in *Query, opts ...grpc.CallOption) (*Results, error)
+	Relate(ctx context.Context, in *RelateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Analyze(ctx context.Context, in *Content, opts ...grpc.CallOption) (*Contents, error)
 	Delete(ctx context.Context, in *ContentIDs, opts ...grpc.CallOption) (*ContentIDs, error)
 	GetTags(ctx context.Context, in *TagRequest, opts ...grpc.CallOption) (*Tags, error)
@@ -54,6 +55,15 @@ func (c *contentServiceClient) Save(ctx context.Context, in *Contents, opts ...g
 func (c *contentServiceClient) Search(ctx context.Context, in *Query, opts ...grpc.CallOption) (*Results, error) {
 	out := new(Results)
 	err := c.cc.Invoke(ctx, "/content.ContentService/Search", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *contentServiceClient) Relate(ctx context.Context, in *RelateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/content.ContentService/Relate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -129,6 +139,7 @@ func (c *contentServiceClient) Types(ctx context.Context, in *emptypb.Empty, opt
 type ContentServiceServer interface {
 	Save(context.Context, *Contents) (*ContentIDs, error)
 	Search(context.Context, *Query) (*Results, error)
+	Relate(context.Context, *RelateRequest) (*emptypb.Empty, error)
 	Analyze(context.Context, *Content) (*Contents, error)
 	Delete(context.Context, *ContentIDs) (*ContentIDs, error)
 	GetTags(context.Context, *TagRequest) (*Tags, error)
@@ -147,6 +158,9 @@ func (UnimplementedContentServiceServer) Save(context.Context, *Contents) (*Cont
 }
 func (UnimplementedContentServiceServer) Search(context.Context, *Query) (*Results, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Search not implemented")
+}
+func (UnimplementedContentServiceServer) Relate(context.Context, *RelateRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Relate not implemented")
 }
 func (UnimplementedContentServiceServer) Analyze(context.Context, *Content) (*Contents, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Analyze not implemented")
@@ -213,6 +227,24 @@ func _ContentService_Search_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ContentServiceServer).Search(ctx, req.(*Query))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ContentService_Relate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RelateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContentServiceServer).Relate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/content.ContentService/Relate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContentServiceServer).Relate(ctx, req.(*RelateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -357,6 +389,10 @@ var ContentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Search",
 			Handler:    _ContentService_Search_Handler,
+		},
+		{
+			MethodName: "Relate",
+			Handler:    _ContentService_Relate_Handler,
 		},
 		{
 			MethodName: "Analyze",

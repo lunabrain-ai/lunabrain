@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"fmt"
 	connectgo "github.com/bufbuild/connect-go"
 	"github.com/google/uuid"
 	"github.com/google/wire"
@@ -12,17 +13,22 @@ import (
 	"github.com/pkg/errors"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"log/slog"
+	"net/smtp"
+	"net/url"
+	"strings"
 )
 
 type UserService struct {
-	sess  *http.SessionManager
-	user  *EntStore
-	group *group.EntStore
+	sess   *http.SessionManager
+	user   *EntStore
+	group  *group.EntStore
+	config Config
 }
 
 var _ userconnect.UserServiceHandler = (*UserService)(nil)
 
 var ProviderSet = wire.NewSet(
+	NewConfig,
 	NewService,
 	NewEntStore,
 )
@@ -31,11 +37,13 @@ func NewService(
 	group *group.EntStore,
 	sess *http.SessionManager,
 	user *EntStore,
+	config Config,
 ) *UserService {
 	return &UserService{
-		group: group,
-		sess:  sess,
-		user:  user,
+		group:  group,
+		sess:   sess,
+		user:   user,
+		config: config,
 	}
 }
 
@@ -56,7 +64,40 @@ func (s *UserService) UpdateConfig(ctx context.Context, c *connectgo.Request[use
 	return connectgo.NewResponse(&emptypb.Empty{}), err
 }
 
+func (s *UserService) ResetPassword(ctx context.Context, c *connectgo.Request[user.User]) (*connectgo.Response[emptypb.Empty], error) {
+	id, err := s.sess.GetUserID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	err = s.user.ResetPassword(ctx, id, c.Msg.Password)
+	if err != nil {
+		return nil, err
+	}
+	return connectgo.NewResponse(&emptypb.Empty{}), err
+}
+
+func (s *UserService) sendVerificationEmail(
+	ctx context.Context, from string, to []string, subject string, body string) error {
+	smtpHost := s.config.SmtpHost
+	smtpPort := s.config.SmtpPort
+	auth := smtp.PlainAuth("", s.config.SmtpUsername, s.config.SmtpPassword, smtpHost)
+	message := []byte("To: " + strings.Join(to, ",") + "\r\n" +
+		"Subject: " + subject + "\r\n" +
+		"\r\n" +
+		body + "\r\n")
+
+	// Connect to the SMTP server, authenticate, and send the email
+	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, to, message)
+	if err != nil {
+		return fmt.Errorf("failed to send email: %w", err)
+	}
+	return nil
+}
+
 func (s *UserService) Register(ctx context.Context, c *connectgo.Request[user.User]) (*connectgo.Response[user.User], error) {
+	if s.config.RegistrationAllowed != "true" {
+		return nil, errors.New("registration is not allowed")
+	}
 	_, err := s.user.AttemptLogin(ctx, c.Msg.Email, c.Msg.Password)
 	if err == nil {
 		return nil, errors.New("user already exists")
@@ -66,9 +107,43 @@ func (s *UserService) Register(ctx context.Context, c *connectgo.Request[user.Us
 		return nil, errors.Wrapf(err, "could not create user")
 	}
 	s.sess.SetUserID(ctx, u.ID.String())
+	if s.config.EmailVerification == "true" {
+		secret, err := s.user.NewUserVerifySecret(ctx, u)
+		if err != nil {
+			return nil, errors.Wrapf(err, "could not create email verification secret")
+		}
+
+		from := s.config.SmtpUsername
+		to := []string{u.Email}
+		v := url.Values{
+			"secret": []string{secret.String()},
+		}
+		verifyURL := url.URL{
+			Scheme:   "https",
+			Host:     "breadchris.ngrok.io",
+			Path:     "/verify",
+			RawQuery: v.Encode(),
+		}
+		err = s.sendVerificationEmail(ctx, from, to, "auth", verifyURL.String())
+		if err != nil {
+			return nil, errors.Wrapf(err, "could not send verification email")
+		}
+	}
 	return connectgo.NewResponse(&user.User{
 		Email: u.Email,
 	}), nil
+}
+
+func (s *UserService) VerifyUser(ctx context.Context, c *connectgo.Request[user.VerifyUserRequest]) (*connectgo.Response[emptypb.Empty], error) {
+	secret, err := uuid.Parse(c.Msg.Secret)
+	if err != nil {
+		return nil, errors.Wrapf(err, "could not parse secret")
+	}
+	err = s.user.VerifyUser(ctx, secret)
+	if err != nil {
+		return nil, errors.Wrapf(err, "could not verify user")
+	}
+	return connectgo.NewResponse(&emptypb.Empty{}), nil
 }
 
 func (s *UserService) Login(ctx context.Context, c *connectgo.Request[user.User]) (*connectgo.Response[user.User], error) {
