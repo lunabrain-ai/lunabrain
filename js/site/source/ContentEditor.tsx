@@ -55,16 +55,16 @@ export const ContentEditor: React.FC<{}> = ({}) => {
         resetField,
     } = useForm({
         values: {
-            data: selected ? selected.toJson() : {},
-            // data: selected || new Content({
-            //     type: {
-            //         case: 'post',
-            //         value: new Post({
-            //             title: '',
-            //             content: '',
-            //         }),
-            //     }
-            // }).toJson() as any,
+            // data: selected ? selected.toJson() : {},
+            data: selected || new Content({
+                type: {
+                    case: 'post',
+                    value: new Post({
+                        title: '',
+                        content: '',
+                    }),
+                }
+            }).toJson() as any,
         },
     });
     //console.log(selected?.toJson());
@@ -196,24 +196,23 @@ export const ContentEditor: React.FC<{}> = ({}) => {
     const myModal = useRef(null);
 
     const getEditor = (content: Content|null) => {
-        if (!content) {
-            return null;
-        }
-        switch (content.type.case) {
-            case 'site':
-                // TODO breadchris only show oneof from this type to make the form smaller
-                return (
-                    <div role={"tablist"} className={"tabs tabs-lifted w-full"}>
-                        <input checked type={"radio"} name={"site_tabs"} role={"tab"} className={"tab"} aria-label={"posts"} />
-                        <div role={"tabpanel"} className={"tab-content"}>
-                            <SitePostSearch site={content.type.value} />
+        if (content) {
+            switch (content.type.case) {
+                case 'site':
+                    // TODO breadchris only show oneof from this type to make the form smaller
+                    return (
+                        <div role={"tablist"} className={"tabs tabs-lifted w-full"}>
+                            <input checked type={"radio"} name={"site_tabs"} role={"tab"} className={"tab"} aria-label={"posts"} />
+                            <div role={"tabpanel"} className={"tab-content"}>
+                                <SitePostSearch site={content.type.value} />
+                            </div>
+                            <input type={"radio"} name={"site_tabs"} role={"tab"} className={"tab"} aria-label={"config"} />
+                            <div role={"tabpanel"} className={"tab-content"}>
+                                {form()}
+                            </div>
                         </div>
-                        <input type={"radio"} name={"site_tabs"} role={"tab"} className={"tab"} aria-label={"config"} />
-                        <div role={"tabpanel"} className={"tab-content"}>
-                            {form()}
-                        </div>
-                    </div>
-                )
+                    )
+            }
         }
         if (editor) {
             return (

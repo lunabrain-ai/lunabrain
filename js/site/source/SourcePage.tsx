@@ -23,7 +23,7 @@ export const SourcePage: React.FC = () => {
                 if (res.storedContent.length === 0) {
                     return;
                 }
-                setSelectedContent(res.storedContent[0].content || null);
+                //setSelectedContent(res.storedContent[0].content || null);
             } catch (e) {
                 console.error('failed to get sources', e);
             }

@@ -58790,16 +58790,16 @@ img.ProseMirror-separator {
       resetField
     } = useForm({
       values: {
-        data: selected ? selected.toJson() : {}
-        // data: selected || new Content({
-        //     type: {
-        //         case: 'post',
-        //         value: new Post({
-        //             title: '',
-        //             content: '',
-        //         }),
-        //     }
-        // }).toJson() as any,
+        // data: selected ? selected.toJson() : {},
+        data: selected || new Content({
+          type: {
+            case: "post",
+            value: new Post({
+              title: "",
+              content: ""
+            })
+          }
+        }).toJson()
       }
     });
     const [tags, setTags] = (0, import_react15.useState)(selected?.tags || []);
@@ -58913,17 +58913,16 @@ img.ProseMirror-separator {
     };
     const myModal = (0, import_react15.useRef)(null);
     const getEditor = (content) => {
-      if (!content) {
-        return null;
-      }
-      switch (content.type.case) {
-        case "site":
-          return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { role: "tablist", className: "tabs tabs-lifted w-full", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { checked: true, type: "radio", name: "site_tabs", role: "tab", className: "tab", "aria-label": "posts" }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { role: "tabpanel", className: "tab-content", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SitePostSearch, { site: content.type.value }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { type: "radio", name: "site_tabs", role: "tab", className: "tab", "aria-label": "config" }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { role: "tabpanel", className: "tab-content", children: form() })
-          ] });
+      if (content) {
+        switch (content.type.case) {
+          case "site":
+            return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { role: "tablist", className: "tabs tabs-lifted w-full", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { checked: true, type: "radio", name: "site_tabs", role: "tab", className: "tab", "aria-label": "posts" }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { role: "tabpanel", className: "tab-content", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SitePostSearch, { site: content.type.value }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { type: "radio", name: "site_tabs", role: "tab", className: "tab", "aria-label": "config" }),
+              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { role: "tabpanel", className: "tab-content", children: form() })
+            ] });
+        }
       }
       if (editor) {
         return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(import_jsx_runtime14.Fragment, { children: [
@@ -58970,7 +58969,6 @@ img.ProseMirror-separator {
           if (res.storedContent.length === 0) {
             return;
           }
-          setSelectedContent(res.storedContent[0].content || null);
         } catch (e2) {
           console.error("failed to get sources", e2);
         }
