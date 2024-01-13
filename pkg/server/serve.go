@@ -91,16 +91,16 @@ func NewLogInterceptor() connect.UnaryInterceptorFunc {
 }
 
 func loggingMiddleware(next http.Handler) http.Handler {
-	limiter := NewRateLimiter()
+	//limiter := NewRateLimiter()
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		peerIP := r.Header.Get("x-forwarded-for")
-		if peerIP != "" {
-			if !limiter.Visit(peerIP) {
-				//slog.Warn("rate limit exceeded", "peerIP", peerIP)
-				http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
-				return
-			}
-		}
+		//peerIP := r.Header.Get("x-forwarded-for")
+		//if peerIP != "" {
+		//	if !limiter.Visit(peerIP) {
+		//		//slog.Warn("rate limit exceeded", "peerIP", peerIP)
+		//		http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
+		//		return
+		//	}
+		//}
 
 		slog.Debug("request", "method", r.Method, "path", r.URL.Path)
 		next.ServeHTTP(w, r)
