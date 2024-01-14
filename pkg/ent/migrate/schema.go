@@ -14,6 +14,7 @@ var (
 		{Name: "root", Type: field.TypeBool},
 		{Name: "data", Type: field.TypeJSON},
 		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "user_content", Type: field.TypeUUID, Nullable: true},
 	}
 	// ContentsTable holds the schema information for the "contents" table.
@@ -24,7 +25,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "contents_users_content",
-				Columns:    []*schema.Column{ContentsColumns[4]},
+				Columns:    []*schema.Column{ContentsColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

@@ -2,13 +2,13 @@ import esbuild from "esbuild";
 import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
 import { spawn, spawnSync } from "child_process";
 
-const prodBuild = process.env.BUILD === 'true'
-const target = process.env.TARGET || 'site'
-const baseURL = process.env.BASE_URL ? `"${process.env.BASE_URL}"` : (prodBuild ? '"https://demo.lunabrain.com"' : '"http://localhost:8000"')
-const buildDir = prodBuild ? 'dist' : 'build'
+const releaseBuild = process.env.BUILD === 'true'
+const targets = (process.env.TARGETS || '').split(',')
+const baseURL = process.env.BASE_URL ? `"${process.env.BASE_URL}"` : (releaseBuild ? '"https://demo.lunabrain.com"' : '"http://localhost:8000"')
+const buildDir = releaseBuild ? 'dist' : 'build'
 
-const buildExtension = target === 'extension' || prodBuild
-const buildSite = target === 'site' || prodBuild
+const buildExtension = targets.some(t => t === 'extension') || releaseBuild
+const buildSite = targets.some(t => t === 'site') || releaseBuild
 
 const baseOptions = {
     bundle: true,
@@ -31,14 +31,14 @@ const baseOptions = {
     define: {
         "global": "window",
         "process.env.BASE_URL": baseURL,
-        "process.env.PRODUCTION": prodBuild ? '"true"' : '"false"'
+        "process.env.PRODUCTION": releaseBuild ? '"true"' : '"false"'
     },
     entryNames: "[name]",
     logLevel: 'info',
 }
 
-const runTailwindBuild = (watch, outfile) => {
-    console.log("Building Tailwind CSS...");
+const runTailwindBuild = (target, watch, outfile) => {
+    console.log(`[${target}] building Tailwind CSS...`);
     try {
         const command = 'npx';
         const args = [
@@ -58,18 +58,18 @@ const runTailwindBuild = (watch, outfile) => {
                 stdio: 'inherit'
             });
         }
-        console.log("Tailwind CSS build successful!");
+        console.log(`[${target}] CSS build successful!`);
     } catch (error) {
         console.error("Error building Tailwind CSS:", error.message);
     }
 };
 
-async function doBuild(options, serve) {
+async function doBuild(target, options, serve) {
     // TODO breadchris support tailwind for extension
     if (buildSite) {
-        runTailwindBuild(!prodBuild, `${options.outdir}/tailwind.css`);
+        runTailwindBuild(target, !releaseBuild, `${options.outdir}/tailwind.css`);
     }
-    if (prodBuild) {
+    if (releaseBuild) {
         await esbuild.build(options);
     } else {
         try {
@@ -95,8 +95,8 @@ async function doBuild(options, serve) {
     }
 }
 
-if (buildSite) {
-    await doBuild({
+await Promise.all([
+    buildSite && doBuild('site', {
         ...baseOptions,
         entryPoints: [
             "./site/index.tsx",
@@ -105,11 +105,8 @@ if (buildSite) {
             "./site/index.html",
         ],
         outdir: `${buildDir}/site/`,
-    }, true);
-}
-
-if (buildExtension) {
-    await doBuild({
+    }, true),
+    buildExtension && doBuild('extension', {
         ...baseOptions,
         entryPoints: [
             "./extension/content.tsx",
@@ -121,5 +118,5 @@ if (buildExtension) {
             "./extension/manifest.json",
         ],
         outdir: `${buildDir}/extension/`,
-    }, false);
-}
+    }, false)
+])

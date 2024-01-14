@@ -59,6 +59,18 @@ func (cu *ContentUpdate) SetNillableCreatedAt(t *time.Time) *ContentUpdate {
 	return cu
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (cu *ContentUpdate) SetUpdatedAt(t time.Time) *ContentUpdate {
+	cu.mutation.SetUpdatedAt(t)
+	return cu
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (cu *ContentUpdate) ClearUpdatedAt() *ContentUpdate {
+	cu.mutation.ClearUpdatedAt()
+	return cu
+}
+
 // SetUserID sets the "user" edge to the User entity by ID.
 func (cu *ContentUpdate) SetUserID(id uuid.UUID) *ContentUpdate {
 	cu.mutation.SetUserID(id)
@@ -235,6 +247,7 @@ func (cu *ContentUpdate) RemoveGroups(g ...*Group) *ContentUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (cu *ContentUpdate) Save(ctx context.Context) (int, error) {
+	cu.defaults()
 	return withHooks(ctx, cu.sqlSave, cu.mutation, cu.hooks)
 }
 
@@ -260,6 +273,14 @@ func (cu *ContentUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (cu *ContentUpdate) defaults() {
+	if _, ok := cu.mutation.UpdatedAt(); !ok && !cu.mutation.UpdatedAtCleared() {
+		v := content.UpdateDefaultUpdatedAt()
+		cu.mutation.SetUpdatedAt(v)
+	}
+}
+
 func (cu *ContentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(content.Table, content.Columns, sqlgraph.NewFieldSpec(content.FieldID, field.TypeUUID))
 	if ps := cu.mutation.predicates; len(ps) > 0 {
@@ -277,6 +298,12 @@ func (cu *ContentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := cu.mutation.CreatedAt(); ok {
 		_spec.SetField(content.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := cu.mutation.UpdatedAt(); ok {
+		_spec.SetField(content.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if cu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(content.FieldUpdatedAt, field.TypeTime)
 	}
 	if cu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -533,6 +560,18 @@ func (cuo *ContentUpdateOne) SetNillableCreatedAt(t *time.Time) *ContentUpdateOn
 	return cuo
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (cuo *ContentUpdateOne) SetUpdatedAt(t time.Time) *ContentUpdateOne {
+	cuo.mutation.SetUpdatedAt(t)
+	return cuo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (cuo *ContentUpdateOne) ClearUpdatedAt() *ContentUpdateOne {
+	cuo.mutation.ClearUpdatedAt()
+	return cuo
+}
+
 // SetUserID sets the "user" edge to the User entity by ID.
 func (cuo *ContentUpdateOne) SetUserID(id uuid.UUID) *ContentUpdateOne {
 	cuo.mutation.SetUserID(id)
@@ -722,6 +761,7 @@ func (cuo *ContentUpdateOne) Select(field string, fields ...string) *ContentUpda
 
 // Save executes the query and returns the updated Content entity.
 func (cuo *ContentUpdateOne) Save(ctx context.Context) (*Content, error) {
+	cuo.defaults()
 	return withHooks(ctx, cuo.sqlSave, cuo.mutation, cuo.hooks)
 }
 
@@ -744,6 +784,14 @@ func (cuo *ContentUpdateOne) Exec(ctx context.Context) error {
 func (cuo *ContentUpdateOne) ExecX(ctx context.Context) {
 	if err := cuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (cuo *ContentUpdateOne) defaults() {
+	if _, ok := cuo.mutation.UpdatedAt(); !ok && !cuo.mutation.UpdatedAtCleared() {
+		v := content.UpdateDefaultUpdatedAt()
+		cuo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -781,6 +829,12 @@ func (cuo *ContentUpdateOne) sqlSave(ctx context.Context) (_node *Content, err e
 	}
 	if value, ok := cuo.mutation.CreatedAt(); ok {
 		_spec.SetField(content.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := cuo.mutation.UpdatedAt(); ok {
+		_spec.SetField(content.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if cuo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(content.FieldUpdatedAt, field.TypeTime)
 	}
 	if cuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

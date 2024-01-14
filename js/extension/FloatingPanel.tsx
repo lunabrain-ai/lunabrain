@@ -58,10 +58,10 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
         chrome.runtime.sendMessage(
             { action: contentSave, data: content },
             (response) => {
-                if (response.error) {
-                    console.error(response.error);
-                    return;
-                }
+                // if (response.error) {
+                //     console.error(response.error);
+                //     return;
+                // }
                 setVisible(false)
             }
         );

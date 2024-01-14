@@ -61,6 +61,7 @@ const chromeExt = () => {
             tabContent = undefined;
         }
         if (message.action === contentSave) {
+            console.log('asdf')
             const content = Content.fromJson(message.data);
             try {
                 await saveContent(content);

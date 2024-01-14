@@ -153,7 +153,7 @@ func (s *EntStore) SearchContent(ctx context.Context, userID uuid.UUID, page, li
 
 	contents, err := query.WithTags().
 		WithChildren().
-		Order(ent.Desc(entcontent.FieldCreatedAt)).
+		Order(ent.Desc(entcontent.FieldUpdatedAt)).
 		All(ctx)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not get content")

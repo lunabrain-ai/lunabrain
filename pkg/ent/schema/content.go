@@ -23,6 +23,10 @@ func (Content) Fields() []ent.Field {
 		field.Bool("root"),
 		field.JSON("data", &ContentEncoder{}),
 		field.Time("created_at").Default(time.Now),
+		field.Time("updated_at").
+			Optional().
+			Default(time.Now).
+			UpdateDefault(time.Now),
 	}
 }
 

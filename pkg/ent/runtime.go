@@ -24,6 +24,12 @@ func init() {
 	contentDescCreatedAt := contentFields[3].Descriptor()
 	// content.DefaultCreatedAt holds the default value on creation for the created_at field.
 	content.DefaultCreatedAt = contentDescCreatedAt.Default.(func() time.Time)
+	// contentDescUpdatedAt is the schema descriptor for updated_at field.
+	contentDescUpdatedAt := contentFields[4].Descriptor()
+	// content.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	content.DefaultUpdatedAt = contentDescUpdatedAt.Default.(func() time.Time)
+	// content.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	content.UpdateDefaultUpdatedAt = contentDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// contentDescID is the schema descriptor for id field.
 	contentDescID := contentFields[0].Descriptor()
 	// content.DefaultID holds the default value on creation for the id field.

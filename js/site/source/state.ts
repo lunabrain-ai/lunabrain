@@ -25,7 +25,7 @@ export const useSources = () => {
     return {sources, selected, setSelected, getSources};
 }
 
-const selectedContentAtom = atom<Content|null>(null);
+const selectedContentAtom = atom<Content|undefined>(undefined);
 
 export const useContentEditor = () => {
     const [selected, setSelected] = useAtom(selectedContentAtom);

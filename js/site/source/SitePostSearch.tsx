@@ -4,6 +4,8 @@ import {contentService} from "@/service";
 import toast from "react-hot-toast";
 import {notEmpty} from "@/util/predicates";
 import {AddTagBadge} from "@/tag/AddTagBadge";
+import {PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline";
+import {ContentEditor} from "@/source/ContentEditor";
 
 type StoredPost = {
     id: string;
@@ -22,12 +24,19 @@ function getPost(value: Content | null | undefined): StoredPost|undefined {
     return undefined;
 }
 
-export const SitePostSearch: React.FC<{site: Site}> = ({site}) => {
+// TODO breadchris it would be cool to register this component to a protobuf type that can be referenced in the options of a
+// protobuf field to be used in the form.
+export const SitePostSearch: React.FC<{site: Site, onUpdate: (s: Site) => void}> = ({site, onUpdate}) => {
     const [posts, setPosts] = useState<StoredPost[]>([]);
     const [selected, setSelected] = useState<StoredPost|undefined>(undefined);
     const [tags, setTags] = useState<string[]>(site.postTags);
+    const [viewPost, setViewPost] = useState<Post|undefined>(undefined);
 
-    const getPosts = async () => {
+    useEffect(() => {
+        void getPosts(tags);
+    }, [tags]);
+
+    const getPosts = async (tags: string[]) => {
         try {
             const res = await contentService.search({
                 tags: tags,
@@ -50,24 +59,42 @@ export const SitePostSearch: React.FC<{site: Site}> = ({site}) => {
         }
     };
 
-    useEffect(() => {
-        void getPosts();
-    }, [tags]);
+    const updateSite = async (tags: string[]) => {
+        setTags(tags);
+        onUpdate(new Site({
+            ...site,
+            postTags: tags,
+        }));
+    }
+
+    const viewContent = (post: Post) => {
+        setViewPost(post);
+    }
 
     return (
         <div>
-            <h5>Find posts for site</h5>
+            {/*{viewPost && (*/}
+            {/*    <ContentEditor content={new Content({*/}
+            {/*        id: selected?.id || '',*/}
+            {/*        type: {*/}
+            {/*            case: 'post',*/}
+            {/*            value: viewPost,*/}
+            {/*        },*/}
+            {/*        tags: selected?.tags || [],*/}
+            {/*    })} onUpdate={(s) => {}} />*/}
+            {/*)}*/}
             <AddTagBadge onNewTag={(tag) => {
-                setTags([...tags, tag]);
+                void updateSite([...tags, tag]);
             }} />
             {tags.map((tag) => (
                 <span key={tag} className="badge badge-outline badge-sm" onClick={() => {
-                    setTags(tags.filter((t) => t !== tag));
+                    void updateSite(tags.filter((t) => t !== tag));
                 }}>{tag}</span>
             ))}
             <table className="table w-full">
                 <thead>
                 <tr>
+                    {/*<th></th>*/}
                     <th>title</th>
                     <th>description</th>
                     <th>tags</th>
@@ -77,12 +104,7 @@ export const SitePostSearch: React.FC<{site: Site}> = ({site}) => {
                 {posts.filter(notEmpty).map((item, index) => (
                     <tr key={index}>
                         {/*<td>*/}
-                        {/*    <input*/}
-                        {/*        type="checkbox"*/}
-                        {/*        className="checkbox checkbox-accent"*/}
-                        {/*        checked={selected?.id === item.id}*/}
-                        {/*        onChange={(e) => handleCheckboxChange(item, e.target.checked)}*/}
-                        {/*    />*/}
+                        {/*    <PencilSquareIcon onClick={() => viewContent(item.post)} className="h-5 w-5" />*/}
                         {/*</td>*/}
                         <td>{item.post.title}</td>
                         <td className="max-w-xs truncate text-gray-500 font-normal">{item.post.summary}</td>

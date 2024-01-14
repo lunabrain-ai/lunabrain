@@ -2,16 +2,16 @@ import React, {useEffect, useState} from "react";
 import {useContentEditor, useSources} from "@/source/state";
 import {Content, DisplayContent, EnumeratedSource} from "@/rpc/content/content_pb";
 import {ContentCard} from "@/source/ContentCard";
-import {CreateCard} from "@/source/CreateCard";
 import {contentService} from "@/service";
 import toast from "react-hot-toast";
 import {useParams} from "react-router";
 import {TrashIcon} from "@heroicons/react/24/outline";
 import {notEmpty} from "@/util/predicates";
+import {ContentEditor} from "@/source/ContentEditor";
 
 export const SourcePage: React.FC = () => {
     const {sources, selected, setSelected} = useSources();
-    const {setSelected: setSelectedContent} = useContentEditor();
+    const {selected: selectedContent, setSelected: setSelectedContent} = useContentEditor();
     const { id } = useParams();
 
     useEffect(() => {
@@ -67,7 +67,13 @@ export const SourcePage: React.FC = () => {
                             </ul>
                         </div>
                     </div>
-                    <CreateCard />
+                    <div className="card bg-base-100 shadow-xl">
+                        <div className="card-body">
+                            <ContentEditor content={selectedContent} onUpdate={(c) => {
+                                setSelectedContent(c);
+                            }} />
+                        </div>
+                    </div>
                     <Tabs sources={sources} selected={selected} onSelectSource={handleSelectSource} />
                     {selected && (
                         // <ContentCards displayContent={selected.displayContent} />
@@ -89,7 +95,7 @@ const ContentTable: React.FC<{displayContent: DisplayContent[]}> = ({displayCont
             setSelected(content);
         }
         if (!isChecked) {
-            setSelected(null);
+            setSelected(undefined);
         }
     };
 
@@ -122,8 +128,8 @@ const ContentTable: React.FC<{displayContent: DisplayContent[]}> = ({displayCont
                     <TrashIcon onClick={handleDelete} className="h-5 w-5" />
                 )}</th>
                 <th>title</th>
-                <th>description</th>
                 <th>tags</th>
+                <th>description</th>
             </tr>
             </thead>
             <tbody>
@@ -138,14 +144,14 @@ const ContentTable: React.FC<{displayContent: DisplayContent[]}> = ({displayCont
                         />
                     </td>
                     <td>{item.title}</td>
-                    <td className="max-w-xs truncate text-gray-500 font-normal">{item.description}</td>
                     <td>
-                        <div className="flex gap-3">
+                        <div className="gap-3">
                             {item.content?.tags.map((tag) => (
                                 <span key={tag} className="badge badge-outline badge-sm">{tag}</span>
                             ))}
                         </div>
                     </td>
+                    <td className="max-w-xs truncate text-gray-500 font-normal">{item.description}</td>
                 </tr>
             ))}
             </tbody>

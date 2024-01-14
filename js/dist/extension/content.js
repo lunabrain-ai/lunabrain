@@ -31439,11 +31439,15 @@
      */
     content;
     /**
-     * @generated from field: repeated content.Content related = 2;
+     * @generated from field: repeated string tags = 2;
+     */
+    tags = [];
+    /**
+     * @generated from field: repeated content.Content related = 3;
      */
     related = [];
     /**
-     * @generated from field: repeated string parents = 3;
+     * @generated from field: repeated string parents = 4;
      */
     parents = [];
     constructor(data) {
@@ -31454,8 +31458,9 @@
     static typeName = "content.Contents";
     static fields = proto3.util.newFieldList(() => [
       { no: 1, name: "content", kind: "message", T: Content },
-      { no: 2, name: "related", kind: "message", T: Content, repeated: true },
-      { no: 3, name: "parents", kind: "scalar", T: 9, repeated: true }
+      { no: 2, name: "tags", kind: "scalar", T: 9, repeated: true },
+      { no: 3, name: "related", kind: "message", T: Content, repeated: true },
+      { no: 4, name: "parents", kind: "scalar", T: 9, repeated: true }
     ]);
     static fromBinary(bytes, options) {
       return new _Contents().fromBinary(bytes, options);
@@ -36246,9 +36251,7 @@
       chrome.runtime.sendMessage(
         { action: contentSave, data: content.toJson() },
         (response) => {
-          if (response && response.error) {
-            setError(response.error);
-          }
+          console.log("content", "save response", response);
         }
       );
     };
@@ -36340,10 +36343,6 @@
       chrome.runtime.sendMessage(
         { action: contentSave, data: content },
         (response) => {
-          if (response.error) {
-            console.error(response.error);
-            return;
-          }
           setVisible(false);
         }
       );

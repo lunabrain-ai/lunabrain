@@ -24384,10 +24384,10 @@
               return jsxWithValidation(type, props, key, false);
             }
           }
-          var jsx23 = jsxWithValidationDynamic;
+          var jsx22 = jsxWithValidationDynamic;
           var jsxs19 = jsxWithValidationStatic;
           exports.Fragment = REACT_FRAGMENT_TYPE;
-          exports.jsx = jsx23;
+          exports.jsx = jsx22;
           exports.jsxs = jsxs19;
         })();
       }
@@ -31429,11 +31429,15 @@
      */
     content;
     /**
-     * @generated from field: repeated content.Content related = 2;
+     * @generated from field: repeated string tags = 2;
+     */
+    tags = [];
+    /**
+     * @generated from field: repeated content.Content related = 3;
      */
     related = [];
     /**
-     * @generated from field: repeated string parents = 3;
+     * @generated from field: repeated string parents = 4;
      */
     parents = [];
     constructor(data) {
@@ -31444,8 +31448,9 @@
     static typeName = "content.Contents";
     static fields = proto3.util.newFieldList(() => [
       { no: 1, name: "content", kind: "message", T: Content },
-      { no: 2, name: "related", kind: "message", T: Content, repeated: true },
-      { no: 3, name: "parents", kind: "scalar", T: 9, repeated: true }
+      { no: 2, name: "tags", kind: "scalar", T: 9, repeated: true },
+      { no: 3, name: "related", kind: "message", T: Content, repeated: true },
+      { no: 4, name: "parents", kind: "scalar", T: 9, repeated: true }
     ]);
     static fromBinary(bytes, options) {
       return new _Contents().fromBinary(bytes, options);
@@ -39515,7 +39520,7 @@ to {
     }, []);
     return { sources, selected, setSelected, getSources };
   };
-  var selectedContentAtom = atom(null);
+  var selectedContentAtom = atom(void 0);
   var useContentEditor = () => {
     const [selected, setSelected] = useAtom(selectedContentAtom);
     (0, import_react8.useEffect)(() => {
@@ -39528,6 +39533,151 @@ to {
 
   // site/source/ContentCard.tsx
   var import_jsx_runtime7 = __toESM(require_jsx_runtime(), 1);
+
+  // ../node_modules/@heroicons/react/24/outline/esm/AdjustmentsHorizontalIcon.js
+  var React6 = __toESM(require_react(), 1);
+  function AdjustmentsHorizontalIcon({
+    title,
+    titleId,
+    ...props
+  }, svgRef) {
+    return /* @__PURE__ */ React6.createElement("svg", Object.assign({
+      xmlns: "http://www.w3.org/2000/svg",
+      fill: "none",
+      viewBox: "0 0 24 24",
+      strokeWidth: 1.5,
+      stroke: "currentColor",
+      "aria-hidden": "true",
+      "data-slot": "icon",
+      ref: svgRef,
+      "aria-labelledby": titleId
+    }, props), title ? /* @__PURE__ */ React6.createElement("title", {
+      id: titleId
+    }, title) : null, /* @__PURE__ */ React6.createElement("path", {
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      d: "M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
+    }));
+  }
+  var ForwardRef = React6.forwardRef(AdjustmentsHorizontalIcon);
+  var AdjustmentsHorizontalIcon_default = ForwardRef;
+
+  // ../node_modules/@heroicons/react/24/outline/esm/HashtagIcon.js
+  var React7 = __toESM(require_react(), 1);
+  function HashtagIcon({
+    title,
+    titleId,
+    ...props
+  }, svgRef) {
+    return /* @__PURE__ */ React7.createElement("svg", Object.assign({
+      xmlns: "http://www.w3.org/2000/svg",
+      fill: "none",
+      viewBox: "0 0 24 24",
+      strokeWidth: 1.5,
+      stroke: "currentColor",
+      "aria-hidden": "true",
+      "data-slot": "icon",
+      ref: svgRef,
+      "aria-labelledby": titleId
+    }, props), title ? /* @__PURE__ */ React7.createElement("title", {
+      id: titleId
+    }, title) : null, /* @__PURE__ */ React7.createElement("path", {
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      d: "M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5-3.9 19.5m-2.1-19.5-3.9 19.5"
+    }));
+  }
+  var ForwardRef2 = React7.forwardRef(HashtagIcon);
+  var HashtagIcon_default = ForwardRef2;
+
+  // ../node_modules/@heroicons/react/24/outline/esm/MinusCircleIcon.js
+  var React8 = __toESM(require_react(), 1);
+  function MinusCircleIcon({
+    title,
+    titleId,
+    ...props
+  }, svgRef) {
+    return /* @__PURE__ */ React8.createElement("svg", Object.assign({
+      xmlns: "http://www.w3.org/2000/svg",
+      fill: "none",
+      viewBox: "0 0 24 24",
+      strokeWidth: 1.5,
+      stroke: "currentColor",
+      "aria-hidden": "true",
+      "data-slot": "icon",
+      ref: svgRef,
+      "aria-labelledby": titleId
+    }, props), title ? /* @__PURE__ */ React8.createElement("title", {
+      id: titleId
+    }, title) : null, /* @__PURE__ */ React8.createElement("path", {
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      d: "M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+    }));
+  }
+  var ForwardRef3 = React8.forwardRef(MinusCircleIcon);
+  var MinusCircleIcon_default = ForwardRef3;
+
+  // ../node_modules/@heroicons/react/24/outline/esm/PaperAirplaneIcon.js
+  var React9 = __toESM(require_react(), 1);
+  function PaperAirplaneIcon({
+    title,
+    titleId,
+    ...props
+  }, svgRef) {
+    return /* @__PURE__ */ React9.createElement("svg", Object.assign({
+      xmlns: "http://www.w3.org/2000/svg",
+      fill: "none",
+      viewBox: "0 0 24 24",
+      strokeWidth: 1.5,
+      stroke: "currentColor",
+      "aria-hidden": "true",
+      "data-slot": "icon",
+      ref: svgRef,
+      "aria-labelledby": titleId
+    }, props), title ? /* @__PURE__ */ React9.createElement("title", {
+      id: titleId
+    }, title) : null, /* @__PURE__ */ React9.createElement("path", {
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      d: "M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
+    }));
+  }
+  var ForwardRef4 = React9.forwardRef(PaperAirplaneIcon);
+  var PaperAirplaneIcon_default = ForwardRef4;
+
+  // ../node_modules/@heroicons/react/24/outline/esm/TrashIcon.js
+  var React10 = __toESM(require_react(), 1);
+  function TrashIcon({
+    title,
+    titleId,
+    ...props
+  }, svgRef) {
+    return /* @__PURE__ */ React10.createElement("svg", Object.assign({
+      xmlns: "http://www.w3.org/2000/svg",
+      fill: "none",
+      viewBox: "0 0 24 24",
+      strokeWidth: 1.5,
+      stroke: "currentColor",
+      "aria-hidden": "true",
+      "data-slot": "icon",
+      ref: svgRef,
+      "aria-labelledby": titleId
+    }, props), title ? /* @__PURE__ */ React10.createElement("title", {
+      id: titleId
+    }, title) : null, /* @__PURE__ */ React10.createElement("path", {
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      d: "m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+    }));
+  }
+  var ForwardRef5 = React10.forwardRef(TrashIcon);
+  var TrashIcon_default = ForwardRef5;
+
+  // site/util/predicates.ts
+  function notEmpty(value) {
+    return value !== null && value !== void 0;
+  }
 
   // site/source/ContentEditor.tsx
   var import_react15 = __toESM(require_react(), 1);
@@ -55035,146 +55185,6 @@ img.ProseMirror-separator {
     content: "block+"
   });
 
-  // ../node_modules/@heroicons/react/24/outline/esm/AdjustmentsHorizontalIcon.js
-  var React7 = __toESM(require_react(), 1);
-  function AdjustmentsHorizontalIcon({
-    title,
-    titleId,
-    ...props
-  }, svgRef) {
-    return /* @__PURE__ */ React7.createElement("svg", Object.assign({
-      xmlns: "http://www.w3.org/2000/svg",
-      fill: "none",
-      viewBox: "0 0 24 24",
-      strokeWidth: 1.5,
-      stroke: "currentColor",
-      "aria-hidden": "true",
-      "data-slot": "icon",
-      ref: svgRef,
-      "aria-labelledby": titleId
-    }, props), title ? /* @__PURE__ */ React7.createElement("title", {
-      id: titleId
-    }, title) : null, /* @__PURE__ */ React7.createElement("path", {
-      strokeLinecap: "round",
-      strokeLinejoin: "round",
-      d: "M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
-    }));
-  }
-  var ForwardRef = React7.forwardRef(AdjustmentsHorizontalIcon);
-  var AdjustmentsHorizontalIcon_default = ForwardRef;
-
-  // ../node_modules/@heroicons/react/24/outline/esm/HashtagIcon.js
-  var React8 = __toESM(require_react(), 1);
-  function HashtagIcon({
-    title,
-    titleId,
-    ...props
-  }, svgRef) {
-    return /* @__PURE__ */ React8.createElement("svg", Object.assign({
-      xmlns: "http://www.w3.org/2000/svg",
-      fill: "none",
-      viewBox: "0 0 24 24",
-      strokeWidth: 1.5,
-      stroke: "currentColor",
-      "aria-hidden": "true",
-      "data-slot": "icon",
-      ref: svgRef,
-      "aria-labelledby": titleId
-    }, props), title ? /* @__PURE__ */ React8.createElement("title", {
-      id: titleId
-    }, title) : null, /* @__PURE__ */ React8.createElement("path", {
-      strokeLinecap: "round",
-      strokeLinejoin: "round",
-      d: "M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5-3.9 19.5m-2.1-19.5-3.9 19.5"
-    }));
-  }
-  var ForwardRef2 = React8.forwardRef(HashtagIcon);
-  var HashtagIcon_default = ForwardRef2;
-
-  // ../node_modules/@heroicons/react/24/outline/esm/MinusCircleIcon.js
-  var React9 = __toESM(require_react(), 1);
-  function MinusCircleIcon({
-    title,
-    titleId,
-    ...props
-  }, svgRef) {
-    return /* @__PURE__ */ React9.createElement("svg", Object.assign({
-      xmlns: "http://www.w3.org/2000/svg",
-      fill: "none",
-      viewBox: "0 0 24 24",
-      strokeWidth: 1.5,
-      stroke: "currentColor",
-      "aria-hidden": "true",
-      "data-slot": "icon",
-      ref: svgRef,
-      "aria-labelledby": titleId
-    }, props), title ? /* @__PURE__ */ React9.createElement("title", {
-      id: titleId
-    }, title) : null, /* @__PURE__ */ React9.createElement("path", {
-      strokeLinecap: "round",
-      strokeLinejoin: "round",
-      d: "M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-    }));
-  }
-  var ForwardRef3 = React9.forwardRef(MinusCircleIcon);
-  var MinusCircleIcon_default = ForwardRef3;
-
-  // ../node_modules/@heroicons/react/24/outline/esm/PaperAirplaneIcon.js
-  var React10 = __toESM(require_react(), 1);
-  function PaperAirplaneIcon({
-    title,
-    titleId,
-    ...props
-  }, svgRef) {
-    return /* @__PURE__ */ React10.createElement("svg", Object.assign({
-      xmlns: "http://www.w3.org/2000/svg",
-      fill: "none",
-      viewBox: "0 0 24 24",
-      strokeWidth: 1.5,
-      stroke: "currentColor",
-      "aria-hidden": "true",
-      "data-slot": "icon",
-      ref: svgRef,
-      "aria-labelledby": titleId
-    }, props), title ? /* @__PURE__ */ React10.createElement("title", {
-      id: titleId
-    }, title) : null, /* @__PURE__ */ React10.createElement("path", {
-      strokeLinecap: "round",
-      strokeLinejoin: "round",
-      d: "M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
-    }));
-  }
-  var ForwardRef4 = React10.forwardRef(PaperAirplaneIcon);
-  var PaperAirplaneIcon_default = ForwardRef4;
-
-  // ../node_modules/@heroicons/react/24/outline/esm/TrashIcon.js
-  var React11 = __toESM(require_react(), 1);
-  function TrashIcon({
-    title,
-    titleId,
-    ...props
-  }, svgRef) {
-    return /* @__PURE__ */ React11.createElement("svg", Object.assign({
-      xmlns: "http://www.w3.org/2000/svg",
-      fill: "none",
-      viewBox: "0 0 24 24",
-      strokeWidth: 1.5,
-      stroke: "currentColor",
-      "aria-hidden": "true",
-      "data-slot": "icon",
-      ref: svgRef,
-      "aria-labelledby": titleId
-    }, props), title ? /* @__PURE__ */ React11.createElement("title", {
-      id: titleId
-    }, title) : null, /* @__PURE__ */ React11.createElement("path", {
-      strokeLinecap: "round",
-      strokeLinejoin: "round",
-      d: "m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-    }));
-  }
-  var ForwardRef5 = React11.forwardRef(TrashIcon);
-  var TrashIcon_default = ForwardRef5;
-
   // ../node_modules/react-hook-form/dist/index.esm.mjs
   var import_react10 = __toESM(require_react(), 1);
   var isCheckBoxInput = (element) => element.type === "checkbox";
@@ -58687,13 +58697,6 @@ img.ProseMirror-separator {
 
   // site/source/SitePostSearch.tsx
   var import_react14 = __toESM(require_react(), 1);
-
-  // site/util/predicates.ts
-  function notEmpty(value) {
-    return value !== null && value !== void 0;
-  }
-
-  // site/source/SitePostSearch.tsx
   var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
   function getPost(value) {
     if (value?.type.case === "post") {
@@ -58705,14 +58708,18 @@ img.ProseMirror-separator {
     }
     return void 0;
   }
-  var SitePostSearch = ({ site }) => {
+  var SitePostSearch = ({ site, onUpdate }) => {
     const [posts, setPosts] = (0, import_react14.useState)([]);
     const [selected, setSelected] = (0, import_react14.useState)(void 0);
     const [tags, setTags] = (0, import_react14.useState)(site.postTags);
-    const getPosts = async () => {
+    const [viewPost, setViewPost] = (0, import_react14.useState)(void 0);
+    (0, import_react14.useEffect)(() => {
+      void getPosts(tags);
+    }, [tags]);
+    const getPosts = async (tags2) => {
       try {
         const res = await contentService.search({
-          tags
+          tags: tags2
         });
         setPosts(res.storedContent.map((sc) => getPost(sc.content)).filter(notEmpty));
       } catch (e2) {
@@ -58728,16 +58735,22 @@ img.ProseMirror-separator {
         setSelected(void 0);
       }
     };
-    (0, import_react14.useEffect)(() => {
-      void getPosts();
-    }, [tags]);
+    const updateSite = async (tags2) => {
+      setTags(tags2);
+      onUpdate(new Site({
+        ...site,
+        postTags: tags2
+      }));
+    };
+    const viewContent = (post) => {
+      setViewPost(post);
+    };
     return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h5", { children: "Find posts for site" }),
       /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(AddTagBadge, { onNewTag: (tag) => {
-        setTags([...tags, tag]);
+        void updateSite([...tags, tag]);
       } }),
       tags.map((tag) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "badge badge-outline badge-sm", onClick: () => {
-        setTags(tags.filter((t2) => t2 !== tag));
+        void updateSite(tags.filter((t2) => t2 !== tag));
       }, children: tag }, tag)),
       /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("table", { className: "table w-full", children: [
         /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("tr", { children: [
@@ -58778,10 +58791,18 @@ img.ProseMirror-separator {
     }
     return null;
   };
-  var ContentEditor = ({}) => {
-    const { selected } = useContentEditor();
+  var ContentEditor = ({ content, onUpdate }) => {
     const { getSources } = useSources();
     const [postType, setPostType] = (0, import_react15.useState)(null);
+    const [editedContent, setEditedContent] = (0, import_react15.useState)(content || new Content({
+      type: {
+        case: "post",
+        value: new Post({
+          title: "",
+          content: ""
+        })
+      }
+    }));
     const {
       register,
       handleSubmit,
@@ -58790,24 +58811,26 @@ img.ProseMirror-separator {
       resetField
     } = useForm({
       values: {
-        // data: selected ? selected.toJson() : {},
-        data: selected || new Content({
-          type: {
-            case: "post",
-            value: new Post({
-              title: "",
-              content: ""
-            })
-          }
-        }).toJson()
+        data: editedContent.toJson()
       }
     });
-    const [tags, setTags] = (0, import_react15.useState)(selected?.tags || []);
+    (0, import_react15.useEffect)(() => {
+      if (content) {
+        setValue("data", content.toJson());
+        setEditedContent(content);
+      }
+    }, [content]);
     const addTag = async (tag) => {
-      setTags([...tags, tag]);
+      setEditedContent(new Content({
+        ...editedContent,
+        tags: [...editedContent.tags, tag]
+      }));
     };
     const removeTag = async (tag) => {
-      setTags(tags.filter((t2) => t2 !== tag));
+      setEditedContent(new Content({
+        ...editedContent,
+        tags: editedContent.tags.filter((t2) => t2 !== tag)
+      }));
     };
     (0, import_react15.useEffect)(() => {
       (async () => {
@@ -58854,7 +58877,7 @@ img.ProseMirror-separator {
       onUpdate: ({ editor: editor2 }) => {
         localStorage.setItem("editorContent", editor2.getHTML());
       },
-      content: selected ? getContent(selected) : localStorage.getItem("editorContent") || "",
+      content: content ? getContent(content) : localStorage.getItem("editorContent") || "",
       editorProps: {
         handleKeyDown: (view, event) => {
           if (event.key === "Tab") {
@@ -58874,10 +58897,10 @@ img.ProseMirror-separator {
         }
       }
     });
-    const saveContent = async (content) => {
+    const saveContent = async (content2) => {
       try {
         const resp = await contentService.save({
-          content,
+          content: content2,
           related: []
         });
         console.log(resp);
@@ -58889,39 +58912,44 @@ img.ProseMirror-separator {
       }
     };
     (0, import_react15.useEffect)(() => {
-      if (editor && selected) {
-        editor.commands.setContent(getContent(selected));
-        switch (selected.type.case) {
+      if (editor && content) {
+        editor.commands.setContent(getContent(content));
+        switch (content.type.case) {
           case "post":
-            setValue("data", selected.type.value.toJson());
+            setValue("data", content.type.value.toJson());
             break;
         }
       }
-    }, [editor, selected]);
+    }, [editor, content]);
     const onSubmit = async (data) => {
       const c2 = removeUndefinedFields(data.data);
       console.log(c2);
-      let content = Content.fromJson(c2);
-      switch (content.type.case) {
+      let content2 = Content.fromJson(c2);
+      switch (content2.type.case) {
         case "post":
-          content.type.value.content = editor?.getHTML() || "";
+          content2.type.value.content = editor?.getHTML() || "";
           break;
       }
-      content.tags = tags;
-      content.id = selected?.id || "";
-      void saveContent(content);
+      content2.tags = editedContent.tags;
+      content2.id = content2?.id || "";
+      void saveContent(content2);
     };
     const myModal = (0, import_react15.useRef)(null);
-    const getEditor = (content) => {
-      if (content) {
-        switch (content.type.case) {
+    const getEditor = (content2) => {
+      if (content2) {
+        switch (content2.type.case) {
           case "site":
-            return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { role: "tablist", className: "tabs tabs-lifted w-full", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { checked: true, type: "radio", name: "site_tabs", role: "tab", className: "tab", "aria-label": "posts" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { role: "tabpanel", className: "tab-content", children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SitePostSearch, { site: content.type.value }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { type: "radio", name: "site_tabs", role: "tab", className: "tab", "aria-label": "config" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { role: "tabpanel", className: "tab-content", children: form() })
-            ] });
+            return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(SitePostSearch, { onUpdate: (s2) => {
+              const c2 = new Content({
+                ...content2,
+                type: {
+                  case: "site",
+                  value: s2
+                }
+              });
+              setEditedContent(c2);
+              setValue("data", c2.toJson());
+            }, site: content2.type.value });
         }
       }
       if (editor) {
@@ -58936,8 +58964,8 @@ img.ProseMirror-separator {
       return null;
     };
     return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "max-h-[300px] overflow-y-auto", children: getEditor(selected) }),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: tags.map((tag) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "badge badge-outline badge-sm", onClick: () => removeTag(tag), children: tag }, tag)) }),
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "max-h-[300px] overflow-y-auto", children: getEditor(editedContent) }),
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: editedContent.tags.map((tag) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "badge badge-outline badge-sm", onClick: () => removeTag(tag), children: tag }, tag)) }),
       /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex justify-between w-full", children: [
         /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "flex space-x-2", children: [
           /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(AddTagBadge, { onNewTag: addTag }),
@@ -58948,17 +58976,11 @@ img.ProseMirror-separator {
     ] });
   };
 
-  // site/source/CreateCard.tsx
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
-  var CreateCard = () => {
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "card bg-base-100 shadow-xl", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "card-body", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ContentEditor, {}) }) });
-  };
-
   // site/source/SourcePage.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
   var SourcePage = () => {
     const { sources, selected, setSelected } = useSources();
-    const { setSelected: setSelectedContent } = useContentEditor();
+    const { selected: selectedContent, setSelected: setSelectedContent } = useContentEditor();
     const { id } = useParams();
     (0, import_react17.useEffect)(() => {
       (async () => {
@@ -58988,17 +59010,19 @@ img.ProseMirror-separator {
       }
     };
     if (!sources) {
-      return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "loading loading-lg" });
+      return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "loading loading-lg" });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "p-5 h-[95vh] flex flex-col", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "flex-grow", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "navbar bg-base-100", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "flex-1", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { className: "text-xl", children: "Just Share." }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "flex-none", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("ul", { className: "menu menu-horizontal px-1", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("a", { onClick: handlePublish, children: "Publish" }) }) }) })
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "p-5 h-[95vh] flex flex-col", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "flex-grow", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "navbar bg-base-100", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "flex-1", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "text-xl", children: "Just Share." }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "flex-none", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("ul", { className: "menu menu-horizontal px-1", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("a", { onClick: handlePublish, children: "Publish" }) }) }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(CreateCard, {}),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Tabs, { sources, selected, onSelectSource: handleSelectSource }),
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "card bg-base-100 shadow-xl", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "card-body", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ContentEditor, { content: selectedContent, onUpdate: (c2) => {
+        setSelectedContent(c2);
+      } }) }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Tabs, { sources, selected, onSelectSource: handleSelectSource }),
       selected && // <ContentCards displayContent={selected.displayContent} />
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "overflow-x-auto", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ContentTable, { displayContent: selected.displayContent }) })
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "overflow-x-auto", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ContentTable, { displayContent: selected.displayContent }) })
     ] }) }) });
   };
   var ContentTable = ({ displayContent }) => {
@@ -59009,7 +59033,7 @@ img.ProseMirror-separator {
         setSelected(content);
       }
       if (!isChecked) {
-        setSelected(null);
+        setSelected(void 0);
       }
     };
     const handleDelete = async () => {
@@ -59032,15 +59056,15 @@ img.ProseMirror-separator {
       displayContent.find((c2) => c2.content?.id === selected.id),
       ...displayContent.filter((c2) => c2.content?.id !== selected.id)
     ] : displayContent;
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("table", { className: "table w-full", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("tr", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: selected && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(TrashIcon_default, { onClick: handleDelete, className: "h-5 w-5" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: "title" }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: "description" }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("th", { children: "tags" })
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("table", { className: "table w-full", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("tr", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: selected && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(TrashIcon_default, { onClick: handleDelete, className: "h-5 w-5" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: "title" }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: "tags" }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("th", { children: "description" })
       ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("tbody", { children: cnt.filter(notEmpty).map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("tr", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("tbody", { children: cnt.filter(notEmpty).map((item, index) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("tr", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
           "input",
           {
             type: "checkbox",
@@ -59049,14 +59073,14 @@ img.ProseMirror-separator {
             onChange: (e2) => handleCheckboxChange(item.content, e2.target.checked)
           }
         ) }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("td", { children: item.title }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("td", { className: "max-w-xs truncate text-gray-500 font-normal", children: item.description }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "flex gap-3", children: item.content?.tags.map((tag) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "badge badge-outline badge-sm", children: tag }, tag)) }) })
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("td", { children: item.title }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "gap-3", children: item.content?.tags.map((tag) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "badge badge-outline badge-sm", children: tag }, tag)) }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("td", { className: "max-w-xs truncate text-gray-500 font-normal", children: item.description })
       ] }, index)) })
     ] });
   };
   var Tabs = ({ sources, selected, onSelectSource }) => {
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "tabs tabs-bordered my-6", children: sources.map((source, index) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "tabs tabs-bordered my-6", children: sources.map((source, index) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
       "a",
       {
         className: `tab ${selected?.source?.name === source.source?.name ? "tab-active" : ""}`,
@@ -59068,17 +59092,17 @@ img.ProseMirror-separator {
   };
 
   // site/home/Home.tsx
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
   function Home() {
     const { user, loading } = useProjectContext();
     if (loading) {
-      return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "flex flex-col gap-4 w-full", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "flex-grow flex justify-center items-center", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "loading loading-spinner" }) }) });
+      return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "flex flex-col gap-4 w-full", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "flex-grow flex justify-center items-center", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "loading loading-spinner" }) }) });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "h-screen flex flex-col gap-4 w-full", children: user ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(SourcePage, {}) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(AuthLandingPage, {}) });
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "h-screen flex flex-col gap-4 w-full", children: user ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(SourcePage, {}) : /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(AuthLandingPage, {}) });
   }
 
   // site/auth/JoinGroupPage.tsx
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
   var Join = () => {
     const { setCurrentGroup, user } = useProjectContext();
     const [success, setSuccess] = (0, import_react18.useState)(false);
@@ -59102,15 +59126,15 @@ img.ProseMirror-separator {
       }
     };
     if (success) {
-      return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Home, {});
+      return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Home, {});
     }
-    const info = name ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("h3", { children: [
+    const info = name ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("h3", { children: [
       "Want to join ",
       name,
       "?"
-    ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "loading loading-spinner" });
-    const auth = !user ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(import_jsx_runtime18.Fragment, { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(AuthForm, { allowRegister: true }) }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "btn", onClick: joinGroup, children: "Join Group" });
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex flex-col gap-5 h-screen w-screen justify-center items-center", children: [
+    ] }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "loading loading-spinner" });
+    const auth = !user ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(import_jsx_runtime17.Fragment, { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(AuthForm, { allowRegister: true }) }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("button", { className: "btn", onClick: joinGroup, children: "Join Group" });
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "flex flex-col gap-5 h-screen w-screen justify-center items-center", children: [
       info,
       auth
     ] });
@@ -59118,7 +59142,7 @@ img.ProseMirror-separator {
 
   // site/chat/ChatPage.tsx
   var import_react19 = __toESM(require_react(), 1);
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
   function unixToHumanReadable(unixTimestamp) {
     const date = new Date(Number(unixTimestamp) * 1e3);
     return date.toLocaleString();
@@ -59155,25 +59179,25 @@ img.ProseMirror-separator {
       });
       setMessage("");
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "bg-opacity-0", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex flex-row gap-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { type: "text", placeholder: "username", value: user, onChange: (e2) => setUser(e2.target.value), className: "input input-bordered w-full max-w-xs" }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { type: "text", placeholder: "Type here", value: message, onChange: (e2) => setMessage(e2.target.value), className: "input input-bordered w-full max-w-xs" }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "btn", onClick: sendMsg, children: "Send" })
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "bg-opacity-0", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "flex flex-row gap-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { type: "text", placeholder: "username", value: user, onChange: (e2) => setUser(e2.target.value), className: "input input-bordered w-full max-w-xs" }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { type: "text", placeholder: "Type here", value: message, onChange: (e2) => setMessage(e2.target.value), className: "input input-bordered w-full max-w-xs" }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "btn", onClick: sendMsg, children: "Send" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "w-full", children: messages.map((m2, i2) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "chat chat-start", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "chat-header", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "mx-1", children: m2.user }),
-          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("time", { className: "text-xs opacity-50", children: unixToHumanReadable(m2.timestamp) })
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "w-full", children: messages.map((m2, i2) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "chat chat-start", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "chat-header", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "mx-1", children: m2.user }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("time", { className: "text-xs opacity-50", children: unixToHumanReadable(m2.timestamp) })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "chat-bubble " + m2.css, children: m2.text })
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "chat-bubble " + m2.css, children: m2.text })
       ] }, i2)) })
     ] });
   };
 
   // site/auth/VerifyPage.tsx
   var import_react20 = __toESM(require_react(), 1);
-  var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
   var VerifyPage = () => {
     const [success, setSuccess] = (0, import_react20.useState)(false);
     const { secret } = useParams();
@@ -59191,47 +59215,47 @@ img.ProseMirror-separator {
       void verifyUser();
     }, []);
     if (success) {
-      return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(AuthForm, {});
+      return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(AuthForm, {});
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex flex-col gap-5 h-screen w-screen justify-center items-center", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h3", { children: "Verifying..." }),
-      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "loading loading-spinner" })
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex flex-col gap-5 h-screen w-screen justify-center items-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h3", { children: "Verifying..." }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "loading loading-spinner" })
     ] });
   };
 
   // site/App.tsx
-  var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
   var AppRoutes = () => {
     const commonRoutes = [{
       path: "/app",
-      element: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Home, {})
+      element: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Home, {})
     }, {
       path: "/app/group/:groupID",
-      element: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Home, {})
+      element: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Home, {})
     }, {
       path: "/app/group/join/:secret",
-      element: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Join, {})
+      element: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Join, {})
     }, {
       path: "/app/chat",
-      element: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(ChatPage, {})
+      element: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(ChatPage, {})
     }, {
       path: "/app/verify/:secret",
-      element: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(VerifyPage, {})
+      element: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(VerifyPage, {})
     }, {
       path: "/app/content/:id",
-      element: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Home, {})
+      element: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Home, {})
     }];
     const element = useRoutes([...commonRoutes]);
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(import_jsx_runtime21.Fragment, { children: element });
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(import_jsx_runtime20.Fragment, { children: element });
   };
   function App() {
-    return /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
       ErrorBoundary,
       {
         FallbackComponent: FallbackError,
-        children: /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(ProjectProvider, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(BrowserRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(AppRoutes, {}) }),
-          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Ie, {})
+        children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(ProjectProvider, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(BrowserRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(AppRoutes, {}) }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Ie, {})
         ] })
       }
     );
@@ -59241,14 +59265,14 @@ img.ProseMirror-separator {
   require_source_map_support().install();
 
   // site/index.tsx
-  var import_jsx_runtime22 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
   window.React = import_react21.default;
   if (false) {
     new EventSource("/esbuild").addEventListener("change", () => location.reload());
   }
   var root = import_client.default.createRoot(document.getElementById("root"));
   root.render(
-    /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(import_react21.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(App, {}) })
+    /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(import_react21.default.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(App, {}) })
   );
 })();
 /*! Bundled license information:

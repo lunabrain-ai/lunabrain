@@ -51,6 +51,20 @@ func (cc *ContentCreate) SetNillableCreatedAt(t *time.Time) *ContentCreate {
 	return cc
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (cc *ContentCreate) SetUpdatedAt(t time.Time) *ContentCreate {
+	cc.mutation.SetUpdatedAt(t)
+	return cc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (cc *ContentCreate) SetNillableUpdatedAt(t *time.Time) *ContentCreate {
+	if t != nil {
+		cc.SetUpdatedAt(*t)
+	}
+	return cc
+}
+
 // SetID sets the "id" field.
 func (cc *ContentCreate) SetID(u uuid.UUID) *ContentCreate {
 	cc.mutation.SetID(u)
@@ -183,6 +197,10 @@ func (cc *ContentCreate) defaults() {
 		v := content.DefaultCreatedAt()
 		cc.mutation.SetCreatedAt(v)
 	}
+	if _, ok := cc.mutation.UpdatedAt(); !ok {
+		v := content.DefaultUpdatedAt()
+		cc.mutation.SetUpdatedAt(v)
+	}
 	if _, ok := cc.mutation.ID(); !ok {
 		v := content.DefaultID()
 		cc.mutation.SetID(v)
@@ -246,6 +264,10 @@ func (cc *ContentCreate) createSpec() (*Content, *sqlgraph.CreateSpec) {
 	if value, ok := cc.mutation.CreatedAt(); ok {
 		_spec.SetField(content.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
+	}
+	if value, ok := cc.mutation.UpdatedAt(); ok {
+		_spec.SetField(content.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
 	}
 	if nodes := cc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -7,7 +7,7 @@ import Paragraph from '@tiptap/extension-paragraph';
 import Document from "@tiptap/extension-document";
 import './editor.css';
 import {useContentEditor, useSources} from "@/source/state";
-import {Content, GRPCTypeInfo, Post} from "@/rpc/content/content_pb";
+import {Content, GRPCTypeInfo, Post, Site} from "@/rpc/content/content_pb";
 import {AdjustmentsHorizontalIcon, PaperAirplaneIcon} from "@heroicons/react/24/outline";
 import {textContent} from "../../extension/util";
 import {contentService} from "@/service";
@@ -43,10 +43,18 @@ const getContent = (content: Content) => {
     return null;
 }
 
-export const ContentEditor: React.FC<{}> = ({}) => {
-    const {selected} = useContentEditor();
+export const ContentEditor: React.FC<{content: Content|undefined, onUpdate: (content: Content) => void}> = ({content, onUpdate}) => {
     const { getSources } = useSources();
     const [postType, setPostType] = useState<GRPCTypeInfo|null>(null);
+    const [editedContent, setEditedContent] = useState<Content>(content || new Content({
+        type: {
+            case: 'post',
+            value: new Post({
+                title: '',
+                content: '',
+            }),
+        }
+    }));
     const {
         register,
         handleSubmit,
@@ -55,27 +63,29 @@ export const ContentEditor: React.FC<{}> = ({}) => {
         resetField,
     } = useForm({
         values: {
-            // data: selected ? selected.toJson() : {},
-            data: selected || new Content({
-                type: {
-                    case: 'post',
-                    value: new Post({
-                        title: '',
-                        content: '',
-                    }),
-                }
-            }).toJson() as any,
+            data: editedContent.toJson() as any,
         },
     });
-    //console.log(selected?.toJson());
-    const [tags, setTags] = useState<string[]>(selected?.tags || []);
+
+    useEffect(() => {
+        if (content) {
+            setValue('data', content.toJson() as any);
+            setEditedContent(content);
+        }
+    }, [content]);
 
     const addTag = async (tag: string) => {
-        setTags([...tags, tag]);
+        setEditedContent(new Content({
+            ...editedContent,
+            tags: [...editedContent.tags, tag],
+        }));
     }
 
     const removeTag = async (tag: string) => {
-        setTags(tags.filter((t) => t !== tag));
+        setEditedContent(new Content({
+            ...editedContent,
+            tags: editedContent.tags.filter((t) => t !== tag),
+        }));
     }
 
     useEffect(() => {
@@ -128,7 +138,7 @@ export const ContentEditor: React.FC<{}> = ({}) => {
         onUpdate: ({ editor }) => {
             localStorage.setItem('editorContent', editor.getHTML());
         },
-        content: selected ? getContent(selected) : localStorage.getItem('editorContent') || '',
+        content: content ? getContent(content) : localStorage.getItem('editorContent') || '',
         editorProps: {
             handleKeyDown: (view, event) => {
                 if (event.key === 'Tab') {
@@ -166,15 +176,15 @@ export const ContentEditor: React.FC<{}> = ({}) => {
     }
 
     useEffect(() => {
-        if (editor && selected) {
-            editor.commands.setContent(getContent(selected));
-            switch (selected.type.case) {
+        if (editor && content) {
+            editor.commands.setContent(getContent(content));
+            switch (content.type.case) {
                 case 'post':
-                    setValue('data', selected.type.value.toJson());
+                    setValue('data', content.type.value.toJson());
                     break;
             }
         }
-    }, [editor, selected]);
+    }, [editor, content]);
 
     const onSubmit = async (data: any) => {
         // TODO breadchris the editor should handle this
@@ -188,8 +198,8 @@ export const ContentEditor: React.FC<{}> = ({}) => {
                 content.type.value.content = editor?.getHTML() || '';
                 break;
         }
-        content.tags = tags;
-        content.id = selected?.id || '';
+        content.tags = editedContent.tags;
+        content.id = content?.id || '';
         void saveContent(content);
     }
 
@@ -201,16 +211,17 @@ export const ContentEditor: React.FC<{}> = ({}) => {
                 case 'site':
                     // TODO breadchris only show oneof from this type to make the form smaller
                     return (
-                        <div role={"tablist"} className={"tabs tabs-lifted w-full"}>
-                            <input checked type={"radio"} name={"site_tabs"} role={"tab"} className={"tab"} aria-label={"posts"} />
-                            <div role={"tabpanel"} className={"tab-content"}>
-                                <SitePostSearch site={content.type.value} />
-                            </div>
-                            <input type={"radio"} name={"site_tabs"} role={"tab"} className={"tab"} aria-label={"config"} />
-                            <div role={"tabpanel"} className={"tab-content"}>
-                                {form()}
-                            </div>
-                        </div>
+                        <SitePostSearch onUpdate={(s: Site) => {
+                            const c = new Content({
+                                ...content,
+                                type: {
+                                    case: 'site',
+                                    value: s,
+                                }
+                            });
+                            setEditedContent(c);
+                            setValue('data', c.toJson());}
+                        } site={content.type.value} />
                     )
             }
         }
@@ -237,10 +248,10 @@ export const ContentEditor: React.FC<{}> = ({}) => {
     return (
         <div>
             <div className={"max-h-[300px] overflow-y-auto"}>
-                {getEditor(selected)}
+                {getEditor(editedContent)}
             </div>
             <span>
-                {tags.map((tag) => (
+                {editedContent.tags.map((tag) => (
                     <span key={tag} className="badge badge-outline badge-sm" onClick={() => removeTag(tag)}>{tag}</span>
                 ))}
             </span>

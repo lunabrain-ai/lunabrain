@@ -252,6 +252,8 @@ public struct Content_Contents {
   /// Clears the value of `content`. Subsequent reads from it will return its default value.
   public mutating func clearContent() {self._content = nil}
 
+  public var tags: [String] = []
+
   public var related: [Content_Content] = []
 
   public var parents: [String] = []
@@ -1708,8 +1710,9 @@ extension Content_Contents: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
   public static let protoMessageName: String = _protobuf_package + ".Contents"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "content"),
-    2: .same(proto: "related"),
-    3: .same(proto: "parents"),
+    2: .same(proto: "tags"),
+    3: .same(proto: "related"),
+    4: .same(proto: "parents"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1719,8 +1722,9 @@ extension Content_Contents: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularMessageField(value: &self._content) }()
-      case 2: try { try decoder.decodeRepeatedMessageField(value: &self.related) }()
-      case 3: try { try decoder.decodeRepeatedStringField(value: &self.parents) }()
+      case 2: try { try decoder.decodeRepeatedStringField(value: &self.tags) }()
+      case 3: try { try decoder.decodeRepeatedMessageField(value: &self.related) }()
+      case 4: try { try decoder.decodeRepeatedStringField(value: &self.parents) }()
       default: break
       }
     }
@@ -1734,17 +1738,21 @@ extension Content_Contents: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     try { if let v = self._content {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
     } }()
+    if !self.tags.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.tags, fieldNumber: 2)
+    }
     if !self.related.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.related, fieldNumber: 2)
+      try visitor.visitRepeatedMessageField(value: self.related, fieldNumber: 3)
     }
     if !self.parents.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.parents, fieldNumber: 3)
+      try visitor.visitRepeatedStringField(value: self.parents, fieldNumber: 4)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Content_Contents, rhs: Content_Contents) -> Bool {
     if lhs._content != rhs._content {return false}
+    if lhs.tags != rhs.tags {return false}
     if lhs.related != rhs.related {return false}
     if lhs.parents != rhs.parents {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}

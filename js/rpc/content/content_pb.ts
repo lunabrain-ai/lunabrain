@@ -522,12 +522,17 @@ export class Contents extends Message<Contents> {
   content?: Content;
 
   /**
-   * @generated from field: repeated content.Content related = 2;
+   * @generated from field: repeated string tags = 2;
+   */
+  tags: string[] = [];
+
+  /**
+   * @generated from field: repeated content.Content related = 3;
    */
   related: Content[] = [];
 
   /**
-   * @generated from field: repeated string parents = 3;
+   * @generated from field: repeated string parents = 4;
    */
   parents: string[] = [];
 
@@ -540,8 +545,9 @@ export class Contents extends Message<Contents> {
   static readonly typeName = "content.Contents";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "content", kind: "message", T: Content },
-    { no: 2, name: "related", kind: "message", T: Content, repeated: true },
-    { no: 3, name: "parents", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 2, name: "tags", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 3, name: "related", kind: "message", T: Content, repeated: true },
+    { no: 4, name: "parents", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Contents {

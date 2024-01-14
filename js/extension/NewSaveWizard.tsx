@@ -115,9 +115,10 @@ export const NewSaveWizard: React.FC<SaveWizardProps> = () => {
         chrome.runtime.sendMessage(
             { action: contentSave, data: content.toJson() },
             (response) => {
-                if (response && response.error) {
-                    setError(response.error);
-                }
+                // if (response && response.error) {
+                //     setError(response.error);
+                // }
+                console.log('content', 'save response', response);
             }
         );
     }
