@@ -5,6 +5,11 @@ import {contentGet, contentSave, TabContent} from "./shared";
 import { Content } from "@/rpc/content/content_pb";
 
 let tabContent: TabContent|undefined = undefined;
+let history: {
+    from: string;
+    to: string;
+    time: number;
+}[] = [];
 
 const chromeExt = () => {
     async function saveContent(content: Content) {
@@ -77,9 +82,9 @@ const chromeExt = () => {
         if (!tab.id) {
             return;
         }
-        // console.log(`Tab with ID ${tab.id} has been created.`);
         const tabDetails = await getTabDetails(tab.id);
         if (tabDetails) {
+            console.log(`Tab with URL ${tabDetails.url} has been created.`, tabDetails);
         }
     })
 
@@ -87,7 +92,7 @@ const chromeExt = () => {
         // console.log(`Tab with ID ${tabId} has been closed.`);
         const tabDetails = await getTabDetails(tabId);
         if (tabDetails) {
-            // console.log(`Tab with URL ${tabDetails.url} has been closed.`);
+            console.log(`Tab with URL ${tabDetails.url} has been closed.`, tabDetails);
         }
     });
 

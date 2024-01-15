@@ -66081,29 +66081,62 @@ input.vis-configuration.vis-config-range:focus::-ms-fill-upper {
 
   // extension/Timeline.tsx
   var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
-  var Timeline2 = ({ items, options }) => {
+  var Timeline2 = ({ items, groups, options }) => {
     const timelineRef = (0, import_react.useRef)(null);
     (0, import_react.useEffect)(() => {
       if (timelineRef.current) {
-        const timeline = new Timeline(timelineRef.current, items, options);
+        const timeline = new Timeline(timelineRef.current, items, {
+          height: "100%",
+          ...options
+        });
+        timeline.fit();
         return () => {
           timeline.destroy();
         };
       }
     }, [items, options]);
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { ref: timelineRef, style: { width: "100%", height: "400px" } });
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { ref: timelineRef, style: { width: "100%", height: "100%" } });
   };
 
   // extension/History.tsx
   var import_jsx_runtime2 = __toESM(require_jsx_runtime(), 1);
   var transformHistoryItems = (historyItems) => {
-    return historyItems.map((item, index) => ({
-      id: index,
-      content: item.title || item.url,
-      start: new Date(item.lastVisitTime || 0)
-      // Optionally, specify an end date if available
-      // end: ...
-    }));
+    const groupsMap = /* @__PURE__ */ new Map();
+    let groupId = 0;
+    const timelineItems = historyItems.map((item, index) => {
+      const url = new URL(item.url || "");
+      const domain = url.hostname;
+      if (!groupsMap.has(domain)) {
+        groupsMap.set(domain, groupId++);
+      }
+      const itemGroupId = groupsMap.get(domain);
+      return {
+        id: index,
+        group: itemGroupId,
+        content: item.title || item.url,
+        start: new Date(item.lastVisitTime || 0)
+        // Optionally, specify an end date if available
+        // end: ...
+      };
+    });
+    const groups = Array.from(groupsMap.entries()).map(([domain, id2]) => ({
+      id: id2,
+      content: domain
+    })).sort((a, b) => {
+      const aItems = timelineItems.filter((item) => item.group === a.id);
+      const bItems = timelineItems.filter((item) => item.group === b.id);
+      const aLastVisitTime = Math.max(...aItems.map((item) => item.start.getTime()));
+      const bLastVisitTime = Math.max(...bItems.map((item) => item.start.getTime()));
+      return bLastVisitTime - aLastVisitTime;
+    }).map((group, index) => {
+      const aItems = timelineItems.filter((item) => item.group === group.id);
+      return {
+        id: group.id,
+        content: group.content,
+        start: Math.max(...aItems.map((item) => item.start.getTime()))
+      };
+    });
+    return { items: groups, groups: [] };
   };
   var History = () => {
     const [searchTerm, setSearchTerm] = (0, import_react2.useState)("");
@@ -66118,7 +66151,8 @@ input.vis-configuration.vis-config-range:focus::-ms-fill-upper {
     (0, import_react2.useEffect)(() => {
       fetchBrowserHistory();
     }, [searchTerm]);
-    return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: { height: "800px", width: "800px" }, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Timeline2, { items: transformHistoryItems(historyItems) }) });
+    const d = transformHistoryItems(historyItems);
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("div", { style: { height: "500px", width: "100%" }, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Timeline2, { items: d.items, groups: d.groups }) });
   };
 
   // extension/tab.tsx

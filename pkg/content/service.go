@@ -223,6 +223,7 @@ func (s *Service) Publish(ctx context.Context, c *connect_go.Request[content.Con
 		return nil, err
 	}
 
+	// TODO breadchris commit changes https://chat.openai.com/share/20f66a27-51f5-4396-baf1-0a60373747b2
 	l, err := notes.File("lunabrain.md")
 	if err != nil {
 		return nil, err

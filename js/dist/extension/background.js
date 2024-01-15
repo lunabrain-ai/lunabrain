@@ -9334,11 +9334,13 @@
       }
       const tabDetails = await getTabDetails(tab.id);
       if (tabDetails) {
+        console.log(`Tab with URL ${tabDetails.url} has been created.`, tabDetails);
       }
     });
     chrome.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
       const tabDetails = await getTabDetails(tabId);
       if (tabDetails) {
+        console.log(`Tab with URL ${tabDetails.url} has been closed.`, tabDetails);
       }
     });
     chrome.webRequest.onBeforeRequest.addListener(

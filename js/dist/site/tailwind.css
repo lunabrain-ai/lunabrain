@@ -858,10 +858,6 @@ html {
 }
 
 @media (hover:hover) {
-  .link-hover:hover {
-    text-decoration-line: underline;
-  }
-
   .checkbox-accent:hover {
     --tw-border-opacity: 1;
     border-color: var(--fallback-a,oklch(var(--a)/var(--tw-border-opacity)));
@@ -1000,13 +996,6 @@ html {
 
 .card-body :where(p) {
   flex-grow: 1;
-}
-
-.card-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 0.5rem;
 }
 
 .card figure {
@@ -1655,10 +1644,6 @@ html {
   text-decoration-line: underline;
 }
 
-.link-hover {
-  text-decoration-line: none;
-}
-
 .mask {
   -webkit-mask-size: contain;
           mask-size: contain;
@@ -2036,6 +2021,11 @@ html {
   align-items: flex-end;
 }
 
+.tabs-lifted:has(.tab-content[class^="rounded-"]) .\!tab:first-child:not(.tab-active),
+  .tabs-lifted:has(.tab-content[class*=" rounded-"]) .\!tab:first-child:not(.tab-active) {
+  border-bottom-color: transparent !important;
+}
+
 .tabs-lifted:has(.tab-content[class^="rounded-"]) .tab:first-child:not(.tab-active),
   .tabs-lifted:has(.tab-content[class*=" rounded-"]) .tab:first-child:not(.tab-active) {
   border-bottom-color: transparent;
@@ -2134,16 +2124,6 @@ html {
 .tab:not(input):empty {
   cursor: default;
   grid-column-start: span 9999;
-}
-
-.tab-content {
-  grid-column-start: 1;
-  grid-column-end: span 9999;
-  grid-row-start: 2;
-  margin-top: calc(var(--tab-border) * -1);
-  display: none;
-  border-color: transparent;
-  border-width: var(--tab-border, 0);
 }
 
 :checked + .tab-content:nth-child(2),
@@ -2414,19 +2394,6 @@ input.tab:checked + .tab-content,
 }
 
 @supports (color: color-mix(in oklab, black, black)) {
-  .btn-active {
-    background-color: color-mix(
-          in oklab,
-          oklch(var(--btn-color, var(--b3)) / var(--tw-bg-opacity, 1)) 90%,
-          black
-        );
-    border-color: color-mix(
-          in oklab,
-          oklch(var(--btn-color, var(--b3)) / var(--tw-border-opacity, 1)) 90%,
-          black
-        );
-  }
-
   .btn-outline.btn-primary.btn-active {
     background-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
     border-color: color-mix(in oklab, var(--fallback-p,oklch(var(--p)/1)) 90%, black);
@@ -2435,26 +2402,6 @@ input.tab:checked + .tab-content,
   .btn-outline.btn-secondary.btn-active {
     background-color: color-mix(in oklab, var(--fallback-s,oklch(var(--s)/1)) 90%, black);
     border-color: color-mix(in oklab, var(--fallback-s,oklch(var(--s)/1)) 90%, black);
-  }
-
-  .btn-outline.btn-accent.btn-active {
-    background-color: color-mix(in oklab, var(--fallback-a,oklch(var(--a)/1)) 90%, black);
-    border-color: color-mix(in oklab, var(--fallback-a,oklch(var(--a)/1)) 90%, black);
-  }
-
-  .btn-outline.btn-success.btn-active {
-    background-color: color-mix(in oklab, var(--fallback-su,oklch(var(--su)/1)) 90%, black);
-    border-color: color-mix(in oklab, var(--fallback-su,oklch(var(--su)/1)) 90%, black);
-  }
-
-  .btn-outline.btn-info.btn-active {
-    background-color: color-mix(in oklab, var(--fallback-in,oklch(var(--in)/1)) 90%, black);
-    border-color: color-mix(in oklab, var(--fallback-in,oklch(var(--in)/1)) 90%, black);
-  }
-
-  .btn-outline.btn-warning.btn-active {
-    background-color: color-mix(in oklab, var(--fallback-wa,oklch(var(--wa)/1)) 90%, black);
-    border-color: color-mix(in oklab, var(--fallback-wa,oklch(var(--wa)/1)) 90%, black);
   }
 
   .btn-outline.btn-error.btn-active {
@@ -2513,26 +2460,6 @@ input.tab:checked + .tab-content,
   --glass-border-opacity: 15%;
 }
 
-.btn-ghost.btn-active {
-  border-color: transparent;
-  background-color: var(--fallback-bc,oklch(var(--bc)/0.2));
-}
-
-.btn-link.btn-active {
-  border-color: transparent;
-  background-color: transparent;
-  text-decoration-line: underline;
-}
-
-.btn-outline.btn-active {
-  --tw-border-opacity: 1;
-  border-color: var(--fallback-bc,oklch(var(--bc)/var(--tw-border-opacity)));
-  --tw-bg-opacity: 1;
-  background-color: var(--fallback-bc,oklch(var(--bc)/var(--tw-bg-opacity)));
-  --tw-text-opacity: 1;
-  color: var(--fallback-b1,oklch(var(--b1)/var(--tw-text-opacity)));
-}
-
 .btn-outline.btn-primary {
   --tw-text-opacity: 1;
   color: var(--fallback-p,oklch(var(--p)/var(--tw-text-opacity)));
@@ -2551,26 +2478,6 @@ input.tab:checked + .tab-content,
 .btn-outline.btn-secondary.btn-active {
   --tw-text-opacity: 1;
   color: var(--fallback-sc,oklch(var(--sc)/var(--tw-text-opacity)));
-}
-
-.btn-outline.btn-accent.btn-active {
-  --tw-text-opacity: 1;
-  color: var(--fallback-ac,oklch(var(--ac)/var(--tw-text-opacity)));
-}
-
-.btn-outline.btn-success.btn-active {
-  --tw-text-opacity: 1;
-  color: var(--fallback-suc,oklch(var(--suc)/var(--tw-text-opacity)));
-}
-
-.btn-outline.btn-info.btn-active {
-  --tw-text-opacity: 1;
-  color: var(--fallback-inc,oklch(var(--inc)/var(--tw-text-opacity)));
-}
-
-.btn-outline.btn-warning.btn-active {
-  --tw-text-opacity: 1;
-  color: var(--fallback-wac,oklch(var(--wac)/var(--tw-text-opacity)));
 }
 
 .btn-outline.btn-error {
@@ -3592,14 +3499,14 @@ details.collapse summary::-webkit-details-marker {
   color: var(--fallback-erc,oklch(var(--erc)/var(--tw-text-opacity)));
 }
 
-.tabs-lifted > .tab:focus-visible {
-  border-end-end-radius: 0;
-  border-end-start-radius: 0;
-}
-
 .tabs-lifted > .\!tab:focus-visible {
   border-end-end-radius: 0 !important;
   border-end-start-radius: 0 !important;
+}
+
+.tabs-lifted > .tab:focus-visible {
+  border-end-end-radius: 0;
+  border-end-start-radius: 0;
 }
 
 .\!tab.tab-active:not(.tab-disabled):not([disabled]),
@@ -3671,6 +3578,17 @@ details.collapse summary::-webkit-details-marker {
   border-bottom-width: calc(var(--tab-border, 1px) + 1px) !important;
 }
 
+.tabs-lifted > .\!tab {
+  border: var(--tab-border, 1px) solid transparent !important;
+  border-width: 0 0 var(--tab-border, 1px) 0 !important;
+  border-start-start-radius: var(--tab-radius, 0.5rem) !important;
+  border-start-end-radius: var(--tab-radius, 0.5rem) !important;
+  border-bottom-color: var(--tab-border-color) !important;
+  padding-inline-start: var(--tab-padding, 1rem) !important;
+  padding-inline-end: var(--tab-padding, 1rem) !important;
+  padding-top: var(--tab-border, 1px) !important;
+}
+
 .tabs-lifted > .tab {
   border: var(--tab-border, 1px) solid transparent;
   border-width: 0 0 var(--tab-border, 1px) 0;
@@ -3682,15 +3600,17 @@ details.collapse summary::-webkit-details-marker {
   padding-top: var(--tab-border, 1px);
 }
 
-.tabs-lifted > .\!tab {
-  border: var(--tab-border, 1px) solid transparent !important;
-  border-width: 0 0 var(--tab-border, 1px) 0 !important;
-  border-start-start-radius: var(--tab-radius, 0.5rem) !important;
-  border-start-end-radius: var(--tab-radius, 0.5rem) !important;
-  border-bottom-color: var(--tab-border-color) !important;
-  padding-inline-start: var(--tab-padding, 1rem) !important;
-  padding-inline-end: var(--tab-padding, 1rem) !important;
-  padding-top: var(--tab-border, 1px) !important;
+.tabs-lifted > .\!tab.tab-active:not(.tab-disabled):not([disabled]),
+  .tabs-lifted > .\!tab:is(input:checked) {
+  background-color: var(--tab-bg) !important;
+  border-width: var(--tab-border, 1px) var(--tab-border, 1px) 0 var(--tab-border, 1px) !important;
+  border-inline-start-color: var(--tab-border-color) !important;
+  border-inline-end-color: var(--tab-border-color) !important;
+  border-top-color: var(--tab-border-color) !important;
+  padding-inline-start: calc(var(--tab-padding, 1rem) - var(--tab-border, 1px)) !important;
+  padding-inline-end: calc(var(--tab-padding, 1rem) - var(--tab-border, 1px)) !important;
+  padding-bottom: var(--tab-border, 1px) !important;
+  padding-top: 0 !important;
 }
 
 .tabs-lifted > .tab.tab-active:not(.tab-disabled):not([disabled]),
@@ -3717,6 +3637,36 @@ details.collapse summary::-webkit-details-marker {
   padding-inline-end: calc(var(--tab-padding, 1rem) - var(--tab-border, 1px)) !important;
   padding-bottom: var(--tab-border, 1px) !important;
   padding-top: 0 !important;
+}
+
+.tabs-lifted > .\!tab.tab-active:not(.tab-disabled):not([disabled]):before, .tabs-lifted > .\!tab:is(input:checked):before {
+  z-index: 1 !important;
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  width: calc(100% + var(--tab-radius, 0.5rem) * 2) !important;
+  height: var(--tab-radius, 0.5rem) !important;
+  bottom: 0 !important;
+  background-size: var(--tab-radius, 0.5rem) !important;
+  background-position: top left,
+        top right !important;
+  background-repeat: no-repeat !important;
+  --tab-grad: calc(69% - var(--tab-border, 1px)) !important;
+  --radius-start: radial-gradient(
+        circle at top left,
+        transparent var(--tab-grad),
+        var(--tab-border-color) calc(var(--tab-grad) + 0.25px),
+        var(--tab-border-color) calc(var(--tab-grad) + var(--tab-border, 1px)),
+        var(--tab-bg) calc(var(--tab-grad) + var(--tab-border, 1px) + 0.25px)
+      ) !important;
+  --radius-end: radial-gradient(
+        circle at top right,
+        transparent var(--tab-grad),
+        var(--tab-border-color) calc(var(--tab-grad) + 0.25px),
+        var(--tab-border-color) calc(var(--tab-grad) + var(--tab-border, 1px)),
+        var(--tab-bg) calc(var(--tab-grad) + var(--tab-border, 1px) + 0.25px)
+      ) !important;
+  background-image: var(--radius-start), var(--radius-end) !important;
 }
 
 .tabs-lifted > .tab.tab-active:not(.tab-disabled):not([disabled]):before, .tabs-lifted > .tab:is(input:checked):before {
@@ -3779,6 +3729,11 @@ details.collapse summary::-webkit-details-marker {
   background-image: var(--radius-start), var(--radius-end) !important;
 }
 
+.tabs-lifted > .\!tab.tab-active:not(.tab-disabled):not([disabled]):first-child:before, .tabs-lifted > .\!tab:is(input:checked):first-child:before {
+  background-image: var(--radius-end) !important;
+  background-position: top right !important;
+}
+
 .tabs-lifted > .tab.tab-active:not(.tab-disabled):not([disabled]):first-child:before, .tabs-lifted > .tab:is(input:checked):first-child:before {
   background-image: var(--radius-end);
   background-position: top right;
@@ -3787,6 +3742,11 @@ details.collapse summary::-webkit-details-marker {
 .tabs-lifted > .\!tab.tab-active:not(.tab-disabled):not([disabled]):first-child:before, .tabs-lifted > .\!tab:is(input:checked):first-child:before {
   background-image: var(--radius-end) !important;
   background-position: top right !important;
+}
+
+[dir="rtl"] .tabs-lifted > .\!tab.tab-active:not(.tab-disabled):not([disabled]):first-child:before, [dir="rtl"] .tabs-lifted > .\!tab:is(input:checked):first-child:before {
+  background-image: var(--radius-start) !important;
+  background-position: top left !important;
 }
 
 [dir="rtl"] .tabs-lifted > .tab.tab-active:not(.tab-disabled):not([disabled]):first-child:before, [dir="rtl"] .tabs-lifted > .tab:is(input:checked):first-child:before {
@@ -3799,6 +3759,11 @@ details.collapse summary::-webkit-details-marker {
   background-position: top left !important;
 }
 
+.tabs-lifted > .\!tab.tab-active:not(.tab-disabled):not([disabled]):last-child:before, .tabs-lifted > .\!tab:is(input:checked):last-child:before {
+  background-image: var(--radius-start) !important;
+  background-position: top left !important;
+}
+
 .tabs-lifted > .tab.tab-active:not(.tab-disabled):not([disabled]):last-child:before, .tabs-lifted > .tab:is(input:checked):last-child:before {
   background-image: var(--radius-start);
   background-position: top left;
@@ -3807,6 +3772,11 @@ details.collapse summary::-webkit-details-marker {
 .tabs-lifted > .\!tab.tab-active:not(.tab-disabled):not([disabled]):last-child:before, .tabs-lifted > .\!tab:is(input:checked):last-child:before {
   background-image: var(--radius-start) !important;
   background-position: top left !important;
+}
+
+[dir="rtl"] .tabs-lifted > .\!tab.tab-active:not(.tab-disabled):not([disabled]):last-child:before, [dir="rtl"] .tabs-lifted > .\!tab:is(input:checked):last-child:before {
+  background-image: var(--radius-end) !important;
+  background-position: top right !important;
 }
 
 [dir="rtl"] .tabs-lifted > .tab.tab-active:not(.tab-disabled):not([disabled]):last-child:before, [dir="rtl"] .tabs-lifted > .tab:is(input:checked):last-child:before {
@@ -4096,49 +4066,6 @@ details.collapse summary::-webkit-details-marker {
   opacity: 0.3;
   --togglehandleborder: 0 0 0 3px var(--fallback-bc,oklch(var(--bc)/1)) inset,
       var(--handleoffsetcalculator) 0 0 3px var(--fallback-bc,oklch(var(--bc)/1)) inset;
-}
-
-.glass,
-  .glass.btn-active {
-  border: none;
-  -webkit-backdrop-filter: blur(var(--glass-blur, 40px));
-          backdrop-filter: blur(var(--glass-blur, 40px));
-  background-color: transparent;
-  background-image: linear-gradient(
-        135deg,
-        rgb(255 255 255 / var(--glass-opacity, 30%)) 0%,
-        rgb(0 0 0 / 0%) 100%
-      ),
-      linear-gradient(
-        var(--glass-reflex-degree, 100deg),
-        rgb(255 255 255 / var(--glass-reflex-opacity, 10%)) 25%,
-        rgb(0 0 0 / 0%) 25%
-      );
-  box-shadow: 0 0 0 1px rgb(255 255 255 / var(--glass-border-opacity, 10%)) inset,
-      0 0 0 2px rgb(0 0 0 / 5%);
-  text-shadow: 0 1px rgb(0 0 0 / var(--glass-text-shadow-opacity, 5%));
-}
-
-@media (hover: hover) {
-  .glass.btn-active {
-    border: none;
-    -webkit-backdrop-filter: blur(var(--glass-blur, 40px));
-            backdrop-filter: blur(var(--glass-blur, 40px));
-    background-color: transparent;
-    background-image: linear-gradient(
-          135deg,
-          rgb(255 255 255 / var(--glass-opacity, 30%)) 0%,
-          rgb(0 0 0 / 0%) 100%
-        ),
-        linear-gradient(
-          var(--glass-reflex-degree, 100deg),
-          rgb(255 255 255 / var(--glass-reflex-opacity, 10%)) 25%,
-          rgb(0 0 0 / 0%) 25%
-        );
-    box-shadow: 0 0 0 1px rgb(255 255 255 / var(--glass-border-opacity, 10%)) inset,
-        0 0 0 2px rgb(0 0 0 / 5%);
-    text-shadow: 0 1px rgb(0 0 0 / var(--glass-text-shadow-opacity, 5%));
-  }
 }
 
 .artboard.phone-1.horizontal,
@@ -4845,18 +4772,6 @@ details.collapse summary::-webkit-details-marker {
   margin-bottom: 1rem;
 }
 
-.mb-5 {
-  margin-bottom: 1.25rem;
-}
-
-.mt-2 {
-  margin-top: 0.5rem;
-}
-
-.mt-3 {
-  margin-top: 0.75rem;
-}
-
 .mt-4 {
   margin-top: 1rem;
 }
@@ -4933,14 +4848,6 @@ details.collapse summary::-webkit-details-marker {
   max-height: 300px;
 }
 
-.max-h-\[70vh\] {
-  max-height: 70vh;
-}
-
-.w-24 {
-  width: 6rem;
-}
-
 .w-5 {
   width: 1.25rem;
 }
@@ -4951,10 +4858,6 @@ details.collapse summary::-webkit-details-marker {
 
 .w-6 {
   width: 1.5rem;
-}
-
-.w-96 {
-  width: 24rem;
 }
 
 .w-full {
@@ -5053,10 +4956,6 @@ details.collapse summary::-webkit-details-marker {
   justify-content: space-between;
 }
 
-.gap-10 {
-  gap: 2.5rem;
-}
-
 .gap-2 {
   gap: 0.5rem;
 }
@@ -5093,18 +4992,10 @@ details.collapse summary::-webkit-details-marker {
   overflow-y: auto;
 }
 
-.overflow-x-hidden {
-  overflow-x: hidden;
-}
-
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.text-ellipsis {
-  text-overflow: ellipsis;
 }
 
 .whitespace-pre-wrap {
@@ -5323,47 +5214,9 @@ details.collapse summary::-webkit-details-marker {
   a: a;
 }
 
-@media (min-width: 1024px) {
-  .lg\:card-side {
-    align-items: stretch;
-    flex-direction: row;
-  }
-
-  .lg\:card-side :where(figure:first-child) {
-    overflow: hidden;
-    border-start-start-radius: inherit;
-    border-start-end-radius: unset;
-    border-end-start-radius: inherit;
-    border-end-end-radius: unset;
-  }
-
-  .lg\:card-side :where(figure:last-child) {
-    overflow: hidden;
-    border-start-start-radius: unset;
-    border-start-end-radius: inherit;
-    border-end-start-radius: unset;
-    border-end-end-radius: inherit;
-  }
-
-  .lg\:card-side figure > * {
-    max-width: unset;
-  }
-
-  :where(.lg\:card-side figure > *) {
-    width: 100%;
-    height: 100%;
-    -o-object-fit: cover;
-       object-fit: cover;
-  }
-}
-
 @media (min-width: 768px) {
   .md\:mt-0 {
     margin-top: 0px;
-  }
-
-  .md\:flex-row {
-    flex-direction: row;
   }
 }
 
