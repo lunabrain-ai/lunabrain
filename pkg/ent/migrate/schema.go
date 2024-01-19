@@ -126,10 +126,11 @@ var (
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "email", Type: field.TypeString},
-		{Name: "password_hash", Type: field.TypeString},
+		{Name: "password_hash", Type: field.TypeString, Nullable: true},
 		{Name: "data", Type: field.TypeJSON},
 		{Name: "verified", Type: field.TypeBool, Default: false},
 		{Name: "verify_secret", Type: field.TypeUUID, Nullable: true},
+		{Name: "oauth_user", Type: field.TypeJSON, Default: "{}"},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{

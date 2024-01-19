@@ -11,6 +11,7 @@ func NewEnt(c Config) (*ent.Client, error) {
 	logFn := func(params ...any) {
 		slog.Debug("ent", params)
 	}
+	// TODO breadchris this should depend on a bucket config and the dsn changes based on the bucket config
 	client, err := ent.Open(
 		c.Type,
 		c.DSN,

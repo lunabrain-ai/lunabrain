@@ -55,6 +55,9 @@ const (
 	ContentServiceGetSourcesProcedure = "/content.ContentService/GetSources"
 	// ContentServiceTypesProcedure is the fully-qualified name of the ContentService's Types RPC.
 	ContentServiceTypesProcedure = "/content.ContentService/Types"
+	// ContentServiceVoiceInputProcedure is the fully-qualified name of the ContentService's VoiceInput
+	// RPC.
+	ContentServiceVoiceInputProcedure = "/content.ContentService/VoiceInput"
 )
 
 // ContentServiceClient is a client for the content.ContentService service.
@@ -69,6 +72,7 @@ type ContentServiceClient interface {
 	Publish(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
 	GetSources(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Sources], error)
 	Types(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.GRPCTypeInfo], error)
+	VoiceInput(context.Context, *connect_go.Request[content.VoiceInputRequest]) (*connect_go.ServerStreamForClient[content.VoiceInputResponse], error)
 }
 
 // NewContentServiceClient constructs a client for the content.ContentService service. By default,
@@ -131,6 +135,11 @@ func NewContentServiceClient(httpClient connect_go.HTTPClient, baseURL string, o
 			baseURL+ContentServiceTypesProcedure,
 			opts...,
 		),
+		voiceInput: connect_go.NewClient[content.VoiceInputRequest, content.VoiceInputResponse](
+			httpClient,
+			baseURL+ContentServiceVoiceInputProcedure,
+			opts...,
+		),
 	}
 }
 
@@ -146,6 +155,7 @@ type contentServiceClient struct {
 	publish    *connect_go.Client[content.ContentIDs, content.ContentIDs]
 	getSources *connect_go.Client[emptypb.Empty, content.Sources]
 	types      *connect_go.Client[emptypb.Empty, content.GRPCTypeInfo]
+	voiceInput *connect_go.Client[content.VoiceInputRequest, content.VoiceInputResponse]
 }
 
 // Save calls content.ContentService.Save.
@@ -198,6 +208,11 @@ func (c *contentServiceClient) Types(ctx context.Context, req *connect_go.Reques
 	return c.types.CallUnary(ctx, req)
 }
 
+// VoiceInput calls content.ContentService.VoiceInput.
+func (c *contentServiceClient) VoiceInput(ctx context.Context, req *connect_go.Request[content.VoiceInputRequest]) (*connect_go.ServerStreamForClient[content.VoiceInputResponse], error) {
+	return c.voiceInput.CallServerStream(ctx, req)
+}
+
 // ContentServiceHandler is an implementation of the content.ContentService service.
 type ContentServiceHandler interface {
 	Save(context.Context, *connect_go.Request[content.Contents]) (*connect_go.Response[content.ContentIDs], error)
@@ -210,6 +225,7 @@ type ContentServiceHandler interface {
 	Publish(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
 	GetSources(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Sources], error)
 	Types(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.GRPCTypeInfo], error)
+	VoiceInput(context.Context, *connect_go.Request[content.VoiceInputRequest], *connect_go.ServerStream[content.VoiceInputResponse]) error
 }
 
 // NewContentServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -268,6 +284,11 @@ func NewContentServiceHandler(svc ContentServiceHandler, opts ...connect_go.Hand
 		svc.Types,
 		opts...,
 	)
+	contentServiceVoiceInputHandler := connect_go.NewServerStreamHandler(
+		ContentServiceVoiceInputProcedure,
+		svc.VoiceInput,
+		opts...,
+	)
 	return "/content.ContentService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ContentServiceSaveProcedure:
@@ -290,6 +311,8 @@ func NewContentServiceHandler(svc ContentServiceHandler, opts ...connect_go.Hand
 			contentServiceGetSourcesHandler.ServeHTTP(w, r)
 		case ContentServiceTypesProcedure:
 			contentServiceTypesHandler.ServeHTTP(w, r)
+		case ContentServiceVoiceInputProcedure:
+			contentServiceVoiceInputHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -337,4 +360,8 @@ func (UnimplementedContentServiceHandler) GetSources(context.Context, *connect_g
 
 func (UnimplementedContentServiceHandler) Types(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.GRPCTypeInfo], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.Types is not implemented"))
+}
+
+func (UnimplementedContentServiceHandler) VoiceInput(context.Context, *connect_go.Request[content.VoiceInputRequest], *connect_go.ServerStream[content.VoiceInputResponse]) error {
+	return connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.VoiceInput is not implemented"))
 }

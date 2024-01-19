@@ -68,6 +68,11 @@ public protocol Content_ContentServiceClientInterface: Sendable {
 
     @available(iOS 13, *)
     func `types`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers) async -> ResponseMessage<Content_GRPCTypeInfo>
+
+    func `voiceInput`(headers: Connect.Headers, onResult: @escaping @Sendable (Connect.StreamResult<Content_VoiceInputResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Content_VoiceInputRequest>
+
+    @available(iOS 13, *)
+    func `voiceInput`(headers: Connect.Headers) -> any Connect.ServerOnlyAsyncStreamInterface<Content_VoiceInputRequest, Content_VoiceInputResponse>
 }
 
 /// Concrete implementation of `Content_ContentServiceClientInterface`.
@@ -178,6 +183,15 @@ public final class Content_ContentServiceClient: Content_ContentServiceClientInt
         return await self.client.unary(path: "/content.ContentService/Types", request: request, headers: headers)
     }
 
+    public func `voiceInput`(headers: Connect.Headers = [:], onResult: @escaping @Sendable (Connect.StreamResult<Content_VoiceInputResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Content_VoiceInputRequest> {
+        return self.client.serverOnlyStream(path: "/content.ContentService/VoiceInput", headers: headers, onResult: onResult)
+    }
+
+    @available(iOS 13, *)
+    public func `voiceInput`(headers: Connect.Headers = [:]) -> any Connect.ServerOnlyAsyncStreamInterface<Content_VoiceInputRequest, Content_VoiceInputResponse> {
+        return self.client.serverOnlyStream(path: "/content.ContentService/VoiceInput", headers: headers)
+    }
+
     public enum Metadata {
         public enum Methods {
             public static let save = Connect.MethodSpec(name: "Save", service: "content.ContentService", type: .unary)
@@ -190,6 +204,7 @@ public final class Content_ContentServiceClient: Content_ContentServiceClientInt
             public static let publish = Connect.MethodSpec(name: "Publish", service: "content.ContentService", type: .unary)
             public static let getSources = Connect.MethodSpec(name: "GetSources", service: "content.ContentService", type: .unary)
             public static let types = Connect.MethodSpec(name: "Types", service: "content.ContentService", type: .unary)
+            public static let voiceInput = Connect.MethodSpec(name: "VoiceInput", service: "content.ContentService", type: .serverStream)
         }
     }
 }

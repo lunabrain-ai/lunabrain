@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/schema"
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
+	"github.com/markbates/goth"
 )
 
 // User is the model entity for the User schema.
@@ -29,6 +30,8 @@ type User struct {
 	Verified bool `json:"verified,omitempty"`
 	// VerifySecret holds the value of the "verify_secret" field.
 	VerifySecret uuid.UUID `json:"verify_secret,omitempty"`
+	// OauthUser holds the value of the "oauth_user" field.
+	OauthUser goth.User `json:"oauth_user,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -69,7 +72,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case entuser.FieldData:
+		case entuser.FieldData, entuser.FieldOauthUser:
 			values[i] = new([]byte)
 		case entuser.FieldVerified:
 			values[i] = new(sql.NullBool)
@@ -129,6 +132,14 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field verify_secret", values[i])
 			} else if value != nil {
 				u.VerifySecret = *value
+			}
+		case entuser.FieldOauthUser:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field oauth_user", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &u.OauthUser); err != nil {
+					return fmt.Errorf("unmarshal field oauth_user: %w", err)
+				}
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -190,6 +201,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("verify_secret=")
 	builder.WriteString(fmt.Sprintf("%v", u.VerifySecret))
+	builder.WriteString(", ")
+	builder.WriteString("oauth_user=")
+	builder.WriteString(fmt.Sprintf("%v", u.OauthUser))
 	builder.WriteByte(')')
 	return builder.String()
 }

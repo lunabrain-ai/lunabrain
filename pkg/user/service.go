@@ -10,6 +10,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/gen/user/userconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/group"
 	"github.com/lunabrain-ai/lunabrain/pkg/http"
+	"github.com/markbates/goth"
 	"github.com/pkg/errors"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"log/slog"
@@ -94,6 +95,17 @@ func (s *UserService) sendVerificationEmail(
 	return nil
 }
 
+func (s *UserService) ConnectOAuthUser(ctx context.Context, u goth.User) error {
+	nu, err := s.user.GetUserByEmail(ctx, u.Email)
+	if err != nil {
+		nu, err = s.user.NewUser(ctx, &user.User{
+			Email: u.Email,
+		}, u)
+	}
+	s.sess.SetUserID(ctx, nu.ID.String())
+	return nil
+}
+
 func (s *UserService) Register(ctx context.Context, c *connectgo.Request[user.User]) (*connectgo.Response[user.User], error) {
 	if s.config.RegistrationAllowed != "true" {
 		return nil, errors.New("registration is not allowed")
@@ -102,7 +114,7 @@ func (s *UserService) Register(ctx context.Context, c *connectgo.Request[user.Us
 	if err == nil {
 		return nil, errors.New("user already exists")
 	}
-	u, err := s.user.NewUser(ctx, c.Msg, false)
+	u, err := s.user.NewUser(ctx, c.Msg, goth.User{})
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not create user")
 	}

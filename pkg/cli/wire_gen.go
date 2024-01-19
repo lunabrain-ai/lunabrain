@@ -79,7 +79,7 @@ func Wire() (*cli.App, error) {
 	}
 	whisperClient := whisper.NewClient(whisperConfig, openaiConfig, bucketBucket)
 	normalizeNormalize := normalize.New(builder, bucketBucket, whisperClient, entStore)
-	service := content.NewService(entStore, sessionManager, agent, normalizeNormalize, bucketBucket, builder)
+	service := content.NewService(entStore, sessionManager, agent, normalizeNormalize, bucketBucket, builder, whisperClient)
 	groupEntStore := group.NewEntStore(client)
 	userEntStore := user.NewEntStore(client)
 	userConfig, err := user.NewConfig(provider)
@@ -87,7 +87,7 @@ func Wire() (*cli.App, error) {
 		return nil, err
 	}
 	userService := user.NewService(groupEntStore, sessionManager, userEntStore, userConfig)
-	chatService := chat.New(sessionManager)
+	chatService := chat.New(sessionManager, userEntStore)
 	apihttpServer := server.New(contentConfig, service, bucketBucket, sessionManager, userService, chatService)
 	app := NewApp(logLog, apihttpServer)
 	return app, nil

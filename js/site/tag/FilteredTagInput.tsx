@@ -3,6 +3,7 @@ import { useProjectContext } from "@/react/ProjectProvider";
 import { Tag } from "@/rpc/content/content_pb";
 import { useDebounce } from "@uidotdev/usehooks";
 import {HashtagIcon, PlusIcon} from "@heroicons/react/24/outline";
+import {useTags} from "@/tag/state";
 
 function flattenTag(tag: Tag): string[] {
     let names: string[] = [tag.name];
@@ -31,7 +32,12 @@ export const FilteredTagInput: React.FC<{
           setSelectedTag,
           onAddTag,
       }) => {
-    const { tags } = useProjectContext();
+    const { tags, getTags } = useTags();
+
+    useEffect(() => {
+        void getTags();
+    }, []);
+
     const normalizedTags = normalizeTags(tags);
 
     const filterOptions = (tag: string) => {

@@ -286,7 +286,12 @@ export class User extends Message<User> {
   password = "";
 
   /**
-   * @generated from field: user.Config config = 3;
+   * @generated from field: string username = 3;
+   */
+  username = "";
+
+  /**
+   * @generated from field: user.Config config = 4;
    */
   config?: Config;
 
@@ -300,7 +305,8 @@ export class User extends Message<User> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "email", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "config", kind: "message", T: Config },
+    { no: 3, name: "username", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "config", kind: "message", T: Config },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): User {

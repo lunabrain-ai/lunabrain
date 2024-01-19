@@ -3,6 +3,7 @@ import {contentService, projectService, userService} from "@/service";
 import {urlContent} from "./util";
 import {contentGet, contentSave, TabContent} from "./shared";
 import { Content } from "@/rpc/content/content_pb";
+import HttpHeader = chrome.webRequest.HttpHeader;
 
 let tabContent: TabContent|undefined = undefined;
 let history: {
@@ -10,6 +11,18 @@ let history: {
     to: string;
     time: number;
 }[] = [];
+
+const tabs = new Map<number, {
+    created: number;
+    closed: number;
+    tab: chrome.tabs.Tab
+}>();
+
+function extractUuidFromUrl(url: string): string | null {
+    const regex = /https:\/\/chat\.openai\.com\/backend-api\/conversation\/([0-9a-fA-F\-]+)/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+}
 
 const chromeExt = () => {
     async function saveContent(content: Content) {
@@ -40,10 +53,8 @@ const chromeExt = () => {
         console.log('Extension Started');
     })
 
-    chrome.webNavigation.onCompleted.addListener((details) => {
-        if (details.url && details.frameType === "outermost_frame") {
-            // console.log(`Visited URL: ${details.url}`);
-        }
+    chrome.webNavigation.onCommitted.addListener((details) => {
+        console.log('completed', details.url)
     });
 
     function getTabDetails(tabId: number): Promise<chrome.tabs.Tab | undefined> {
@@ -78,21 +89,45 @@ const chromeExt = () => {
         }
     });
 
+    chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+        if (!tabId) {
+            return;
+        }
+        const tabDetails = await getTabDetails(tabId);
+        if (tabDetails) {
+            const t = tabs.get(tabId);
+            if (t) {
+                tabs.set(tabId, {
+                    ...t,
+                    tab: tabDetails
+                });
+            }
+        }
+    });
+
     chrome.tabs.onCreated.addListener(async (tab) => {
         if (!tab.id) {
             return;
         }
         const tabDetails = await getTabDetails(tab.id);
         if (tabDetails) {
-            console.log(`Tab with URL ${tabDetails.url} has been created.`, tabDetails);
+            tabs.set(tab.id, {
+                created: Date.now(),
+                closed: -1,
+                tab: tabDetails
+            });
         }
     })
 
     chrome.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
-        // console.log(`Tab with ID ${tabId} has been closed.`);
-        const tabDetails = await getTabDetails(tabId);
-        if (tabDetails) {
-            console.log(`Tab with URL ${tabDetails.url} has been closed.`, tabDetails);
+        const t = tabs.get(tabId);
+        if (t) {
+            const newTab = {
+                ...t,
+                closed: Date.now()
+            }
+            tabs.set(tabId, newTab);
+            console.log('tab was opened for', (newTab.closed - newTab.created) / 1000, 'seconds')
         }
     });
 
@@ -114,6 +149,31 @@ const chromeExt = () => {
                 }
                 // TODO breadchris auto collecting config
             }
+            console.log(`Visited URL: ${details.url}, Referrer: ${details.initiator}`);
+        }, { urls: ["<all_urls>"] }, [])
+
+    let headers: Record<string, HttpHeader[]> = {};
+    let seen: Record<string, number> = {};
+    chrome.webRequest.onCompleted.addListener(
+        (details) => {
+            const s = seen[details.url.toString()] || 0;
+            if (extractUuidFromUrl(details.url) && s < 2) {
+                const h = headers[details.url.toString()];
+                console.log('completed', details.url, details)
+                fetch(details.url, {
+                    headers: h.map((v) => {
+                        return [v.name, v.value||'']
+                    })
+                }).then((resp) => {
+                    // TODO breadchris create content and send it to the content script
+                    return resp.json();
+                }).then((json) => {
+                    console.log('json', json)
+                }).catch((e) => {
+                    console.error('failed to fetch', e)
+
+                })
+            }
         }, { urls: ["<all_urls>"] }, [])
 
     chrome.webRequest.onBeforeSendHeaders.addListener(
@@ -122,6 +182,12 @@ const chromeExt = () => {
             if (!details.requestHeaders) {
                 return;
             }
+            const s = seen[details.url.toString()] || 0;
+            if (extractUuidFromUrl(details.url)) {
+                seen[details.url.toString()] = s + 1;
+                headers[details.url.toString()] = details.requestHeaders;
+                console.log('send', details.url, details)
+            }
             for (let header of details.requestHeaders) {
                 if (header.name.toLowerCase() === "referer" && header.value) {
                     refererValue = header.value;
@@ -129,13 +195,14 @@ const chromeExt = () => {
                     break;
                 }
             }
-            //console.log(`Visited URL: ${details.url}, Referrer: ${refererValue}`);
+            // request details.url
         },
         { urls: ["<all_urls>"] }, // Monitor all URLs
         ["requestHeaders"] // Necessary to get the request headers
     );
 }
 
+console.log('asdf')
 chromeExt();
 
 export {};

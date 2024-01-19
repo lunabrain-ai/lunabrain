@@ -9,13 +9,13 @@ interface ContentCardProps {
 }
 
 export const ContentCard: React.FC<ContentCardProps> = ({ displayContent }) => {
-    const {selected, setSelected} = useContentEditor();
+    const {selected, select} = useContentEditor();
     const handleCheckboxChange = (isChecked: boolean) => {
         if (isChecked && displayContent.content) {
-            setSelected(displayContent.content);
+            select(displayContent.content);
         }
         if (!isChecked) {
-            setSelected(null);
+            select(undefined);
         }
     };
     return (

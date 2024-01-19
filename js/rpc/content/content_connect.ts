@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Content, ContentIDs, Contents, GRPCTypeInfo, Query, RelateRequest, Results, SetTagsRequest, Sources, TagRequest, Tags } from "./content_pb.js";
+import { Content, ContentIDs, Contents, GRPCTypeInfo, Query, RelateRequest, Results, SetTagsRequest, Sources, TagRequest, Tags, VoiceInputRequest, VoiceInputResponse } from "./content_pb.js";
 import { Empty, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -101,6 +101,15 @@ export const ContentService = {
       I: Empty,
       O: GRPCTypeInfo,
       kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc content.ContentService.VoiceInput
+     */
+    voiceInput: {
+      name: "VoiceInput",
+      I: VoiceInputRequest,
+      O: VoiceInputResponse,
+      kind: MethodKind.ServerStreaming,
     },
   }
 } as const;

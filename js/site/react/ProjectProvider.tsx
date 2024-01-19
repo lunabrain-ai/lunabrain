@@ -118,19 +118,19 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     }
 
     const loadContent = async () => {
-        const res = await contentService.search({
-            tags: filteredTags,
-            // TODO breadchris home is just the user's content
-            groupID: currentGroup === 'home' ? undefined : currentGroup,
-        });
-        setContent(res.storedContent);
+        // const res = await contentService.search({
+        //     tags: filteredTags,
+        //     // TODO breadchris home is just the user's content
+        //     groupID: currentGroup === 'home' ? undefined : currentGroup,
+        // });
+        // setContent(res.storedContent);
     }
 
     const loadTags = async () => {
-        const res = await contentService.getTags({
-            groupId: currentGroup === 'home' ? undefined : currentGroup,
-        });
-        setTags(res.tags);
+        // const res = await contentService.getTags({
+        //     groupId: currentGroup === 'home' ? undefined : currentGroup,
+        // });
+        // setTags(res.tags);
     }
 
     useEffect(() => {
@@ -142,27 +142,27 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
     }, [user, filteredTags, currentGroup]);
 
     const loadGroups = async () => {
-        const res = await userService.getGroups({});
-        setGroups(res.groups);
+        // const res = await userService.getGroups({});
+        // setGroups(res.groups);
     }
 
-    useEffect(() => {
-        if (!user) {
-            (async () => {
-                try {
-                    const res = await userService.login({})
-                    if (!res.email) {
-                        console.warn('no user logged in')
-                        return
-                    }
-                    setUser(res)
-                } catch (e: any) {
-                    console.error(e)
-                }
-            })();
-        }
-        void loadGroups();
-    }, [user]);
+    // useEffect(() => {
+    //     if (!user) {
+    //         (async () => {
+    //             try {
+    //                 const res = await userService.login({})
+    //                 if (!res.email) {
+    //                     console.warn('no user logged in')
+    //                     return
+    //                 }
+    //                 setUser(res)
+    //             } catch (e: any) {
+    //                 console.error(e)
+    //             }
+    //         })();
+    //     }
+    //     void loadGroups();
+    // }, [user]);
 
     const deleteContent = async (ids: string[]) => {
         const res = await contentService.delete({

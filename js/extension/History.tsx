@@ -1,6 +1,6 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
-import {Timeline} from "./Timeline";
+import {useState, useEffect, useRef, useMemo} from "react";
+import {Timeline as VisTimeline} from "vis-timeline/standalone";
 
 const transformHistoryItems = (historyItems: chrome.history.HistoryItem[]): {
     items: any[];
@@ -57,6 +57,7 @@ const transformHistoryItems = (historyItems: chrome.history.HistoryItem[]): {
 
 export const History: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState("");
+    const [domain, setDomain] = useState<string | undefined>(undefined);
     const [historyItems, setHistoryItems] = useState<chrome.history.HistoryItem[]>([]);
 
     const fetchBrowserHistory = () => {
@@ -71,11 +72,63 @@ export const History: React.FC = () => {
         fetchBrowserHistory();
     }, [searchTerm]);
 
-    const d = transformHistoryItems(historyItems);
+    const d = useMemo(() => transformHistoryItems(historyItems), [historyItems]);
+    // sort by most resently visited
+    const filteredItems = historyItems.filter((item) => {
+        if (!domain) {
+            return true;
+        }
+        const url = new URL(item.url || "");
+        return url.hostname === domain;
+    }).sort((a, b) => {
+        return (b.lastVisitTime || 0) - (a.lastVisitTime || 0);
+    });
+    const timelineRef = useRef(null);
+
+    useEffect(() => {
+        if (timelineRef.current) {
+            const timeline = new VisTimeline(timelineRef.current, d.items, {
+                height: '100%',
+            });
+            const endTime = new Date(); // current time
+            const startTime = new Date(endTime.getTime() - 60 * 60 * 1000);
+            timeline.setWindow(startTime, endTime, { animation: true });
+            // timeline.fit();
+            // console.log('asdf')
+            timeline.on('select', (props) => {
+                const i = d.items[props.items[0]];
+                setDomain(i.content);
+            });
+            return () => {
+                timeline.destroy();
+            };
+        }
+    }, [d]);
 
     return (
         <div style={{height: '500px', width: '100%'}}>
-            <Timeline items={d.items} groups={d.groups} />
+            <div ref={timelineRef} style={{ width: '100%', height: '100%' }}/>
+            <table>
+                <thead>
+                <tr>
+                    <th>Domain</th>
+                    <th>Visits</th>
+                    <th>URL</th>
+                </tr>
+                </thead>
+                <tbody>
+                {filteredItems.map((item) => {
+                    const url = new URL(item.url || "");
+                    return (
+                        <tr key={item.id}>
+                            <td>{url.hostname}</td>
+                            <td>{item.visitCount}</td>
+                            <td><a href={item.url} target={"_blank"}>{item.url}</a></td>
+                        </tr>
+                    );
+                })}
+                </tbody>
+            </table>
         </div>
     );
 };

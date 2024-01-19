@@ -6,10 +6,16 @@ import Text from '@tiptap/extension-text';
 import Paragraph from '@tiptap/extension-paragraph';
 import Document from "@tiptap/extension-document";
 import './editor.css';
-import {useContentEditor, useSources} from "@/source/state";
+import {useContentEditor, useSources, useVoice} from "@/source/state";
 import {Content, GRPCTypeInfo, Post, Site} from "@/rpc/content/content_pb";
-import {AdjustmentsHorizontalIcon, PaperAirplaneIcon} from "@heroicons/react/24/outline";
-import {textContent} from "../../extension/util";
+import {
+    AdjustmentsHorizontalIcon,
+    MicrophoneIcon,
+    PaperAirplaneIcon,
+    PlusIcon,
+    StopIcon
+} from "@heroicons/react/24/outline";
+import {postContent, textContent, urlContent} from "../../extension/util";
 import {contentService} from "@/service";
 import toast from "react-hot-toast";
 import {useForm} from "react-hook-form";
@@ -18,6 +24,8 @@ import { RichTextLink } from './rich-text-links';
 import {AddTagBadge} from "@/tag/AddTagBadge";
 import {act} from "react-dom/test-utils";
 import {SitePostSearch} from "@/source/SitePostSearch";
+import {URLEditor} from "@/source/URLEditor";
+import {LiveTranscription} from "@/media/LiveTranscription";
 
 function removeUndefinedFields<T extends object>(obj: T): T {
     Object.keys(obj).forEach(key => {
@@ -45,6 +53,7 @@ const getContent = (content: Content) => {
 
 export const ContentEditor: React.FC<{content: Content|undefined, onUpdate: (content: Content) => void}> = ({content, onUpdate}) => {
     const { getSources } = useSources();
+    const { start, stop, recording } = useVoice();
     const [postType, setPostType] = useState<GRPCTypeInfo|null>(null);
     const [editedContent, setEditedContent] = useState<Content>(content || new Content({
         type: {
@@ -68,11 +77,27 @@ export const ContentEditor: React.FC<{content: Content|undefined, onUpdate: (con
     });
 
     useEffect(() => {
+        void getSources();
+    }, []);
+
+    useEffect(() => {
         if (content) {
             setValue('data', content.toJson() as any);
             setEditedContent(content);
         }
     }, [content]);
+
+    const startRecording = async () => {
+        start((text) => {
+            if (editor) {
+                editor.chain().focus().insertContent(text).run();
+            }
+        });
+    }
+
+    const stopRecording = async () => {
+        stop();
+    }
 
     const addTag = async (tag: string) => {
         setEditedContent(new Content({
@@ -223,6 +248,32 @@ export const ContentEditor: React.FC<{content: Content|undefined, onUpdate: (con
                             setValue('data', c.toJson());}
                         } site={content.type.value} />
                     )
+                case 'data':
+                    const d = content.type.value;
+                    switch (d.type.case) {
+                        case 'url':
+                            const u = d.type.value;
+                            return <URLEditor url={u.url} onChange={(url) => {
+                                const c = new Content({
+                                    ...content,
+                                    type: {
+                                        case: 'data',
+                                        value: {
+                                            ...content.type.value,
+                                            type: {
+                                                case: 'url',
+                                                value: {
+                                                    ...u,
+                                                    url: url,
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+                                setEditedContent(c);
+                                setValue('data', c.toJson());
+                            }} />
+                    }
             }
         }
         if (editor) {
@@ -257,6 +308,22 @@ export const ContentEditor: React.FC<{content: Content|undefined, onUpdate: (con
             </span>
             <div className={"flex justify-between w-full"}>
                 <div className={"flex space-x-2"}>
+                    <details className={"dropdown"}>
+                        <summary className={"btn"}><PlusIcon className={"h-6 w-6"} /></summary>
+                        <ul className={"p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52"}>
+                            <li onClick={() => {
+                                setEditedContent(urlContent('https://example.com', []));
+                            }}>url</li>
+                            <li onClick={() => {
+                                setEditedContent(postContent(''));
+                            }}>
+                                post
+                            </li>
+                        </ul>
+                    </details>
+                    <button className={"btn"} onClick={recording ? stopRecording : startRecording}>
+                        {recording ? <StopIcon className={"h-6 w-6"} /> : <MicrophoneIcon className="h-6 w-6" />}
+                    </button>
                     <AddTagBadge onNewTag={addTag} />
                     <span>
                         <button className={"btn"} onClick={() => myModal.current?.showModal()}>

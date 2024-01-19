@@ -6,6 +6,7 @@ import (
 	"github.com/bufbuild/connect-go"
 	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
 	"github.com/google/wire"
+	"github.com/gorilla/sessions"
 	"github.com/lunabrain-ai/lunabrain/js/dist/site"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/chat"
@@ -17,6 +18,10 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/group"
 	shttp "github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/lunabrain-ai/lunabrain/pkg/user"
+	"github.com/markbates/goth"
+	"github.com/markbates/goth/gothic"
+	"github.com/markbates/goth/providers/google"
+	"github.com/pkg/errors"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 	"log/slog"
@@ -34,10 +39,7 @@ type APIHTTPServer struct {
 	sessionManager *shttp.SessionManager
 	userService    *user.UserService
 	chatService    *chat.Service
-}
-
-type HTTPServer interface {
-	Start() error
+	authStore      *sessions.CookieStore
 }
 
 var (
@@ -50,7 +52,6 @@ var (
 		shttp.NewSession,
 		content.NewConfig,
 		New,
-		wire.Bind(new(HTTPServer), new(*APIHTTPServer)),
 	)
 )
 
@@ -62,6 +63,7 @@ func New(
 	userService *user.UserService,
 	chatService *chat.Service,
 ) *APIHTTPServer {
+	os.Setenv("SESSION_SECRET", config.SessionSecret)
 	return &APIHTTPServer{
 		config:         config,
 		contentService: apiServer,
@@ -69,48 +71,59 @@ func New(
 		sessionManager: sessionManager,
 		userService:    userService,
 		chatService:    chatService,
+		authStore:      sessions.NewCookieStore([]byte(config.SessionSecret)),
 	}
 }
 
-func NewLogInterceptor() connect.UnaryInterceptorFunc {
-	// TODO breadchris support logging for stream calls
-	return func(next connect.UnaryFunc) connect.UnaryFunc {
-		return func(
-			ctx context.Context,
-			req connect.AnyRequest,
-		) (connect.AnyResponse, error) {
-			resp, err := next(ctx, req)
-			if err != nil {
-				slog.Error("connect error", "error", fmt.Sprintf("%+v", err))
-				// TODO breadchris this should only be done for local dev
-				fmt.Printf("%+v\n", err)
-			}
-			return resp, err
-		}
+func (a *APIHTTPServer) startGoogleAuth(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query()
+
+	q.Set("provider", "google")
+	// TODO breadchris update this path to take the "next url"
+	// aren't their security concerns here?
+	q.Set("redirect_to", fmt.Sprintf("%s/auth/google/callback", a.config.ExternalURL))
+	r.URL.RawQuery = q.Encode()
+	gothic.BeginAuthHandler(w, r)
+}
+
+func (a *APIHTTPServer) handleGoogleCallback(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query()
+	q.Set("provider", "google")
+	r.URL.RawQuery = q.Encode()
+	u, err := gothic.CompleteUserAuth(w, r)
+	if err != nil {
+		slog.Error("failed to complete user auth", "error", err)
+		return
 	}
+
+	err = a.userService.ConnectOAuthUser(r.Context(), u)
+	if err != nil {
+		slog.Error("failed to connect oauth user", "error", err)
+		return
+	}
+	http.Redirect(w, r, "/app/chat", http.StatusFound)
 }
 
-func loggingMiddleware(next http.Handler) http.Handler {
-	//limiter := NewRateLimiter()
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		//peerIP := r.Header.Get("x-forwarded-for")
-		//if peerIP != "" {
-		//	if !limiter.Visit(peerIP) {
-		//		//slog.Warn("rate limit exceeded", "peerIP", peerIP)
-		//		http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
-		//		return
-		//	}
-		//}
+func (a *APIHTTPServer) NewAPIHandler() (http.Handler, error) {
+	// TODO breadchris secret should be passed into use providers
+	// used for gothic
+	os.Setenv("SESSION_SECRET", "test")
 
-		slog.Debug("request", "method", r.Method, "path", r.URL.Path)
-		next.ServeHTTP(w, r)
-	})
-}
+	goth.UseProviders(
+		google.New(
+			a.config.GoogleClientID,
+			a.config.GoogleClientSecret,
+			// TODO breachris derive this from config
+			fmt.Sprintf("%s/auth/google/callback", a.config.ExternalURL),
+			"email", "profile"),
+	)
 
-func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	interceptors := connect.WithInterceptors(NewLogInterceptor())
 
 	apiRoot := http.NewServeMux()
+
+	apiRoot.HandleFunc("/auth/google", a.startGoogleAuth)
+	apiRoot.HandleFunc("/auth/google/callback", a.handleGoogleCallback)
 
 	apiRoot.Handle(contentconnect.NewContentServiceHandler(a.contentService, interceptors))
 	apiRoot.Handle(userconnect.NewUserServiceHandler(a.userService, interceptors))
@@ -146,8 +159,7 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 
 	u, err := url.Parse(a.config.Proxy)
 	if err != nil {
-		slog.Error("failed to parse proxy", "error", err)
-		return nil
+		return nil, errors.Wrapf(err, "failed to parse proxy")
 	}
 	proxy := httputil.NewSingleHostReverseProxy(u)
 
@@ -214,11 +226,14 @@ func (a *APIHTTPServer) NewAPIHandler() http.Handler {
 	//bucketRoute, handler := a.bucket.HandleSignedURLs()
 	//muxRoot.Handle(bucketRoute, handler)
 	// TODO breadchris https://github.com/alexedwards/scs/tree/master/gormstore
-	return a.sessionManager.LoadAndSave(loggingMiddleware(muxRoot))
+	return a.sessionManager.LoadAndSave(loggingMiddleware(muxRoot)), nil
 }
 
 func (a *APIHTTPServer) Start() error {
-	httpApiHandler := a.NewAPIHandler()
+	httpApiHandler, err := a.NewAPIHandler()
+	if err != nil {
+		return err
+	}
 
 	addr := fmt.Sprintf(":%s", a.config.Port)
 

@@ -1,11 +1,17 @@
-import {useProjectContext} from "@/react/ProjectProvider";
-import {ContentPage} from "@/content/ContentPage";
-import {AuthLandingPage} from "@/auth/AuthLandingPage";
 import {SourcePage} from "@/source/SourcePage";
+import {useAuth} from "@/auth/state";
+import {AuthForm} from "@/auth/AuthForm";
+import {useEffect} from "react";
 
 export function Home() {
-    const { user, loading } = useProjectContext();
-    if (loading) {
+    const { user , tryLogin} = useAuth();
+
+    useEffect(() => {
+        void tryLogin();
+    }, []);
+
+    // TODO breadchris implement loading
+    if (false) {
         return (
             <div className="flex flex-col gap-4 w-full">
                 <div className="flex-grow flex justify-center items-center">
@@ -16,7 +22,7 @@ export function Home() {
     }
     return (
         <div className="h-screen flex flex-col gap-4 w-full">
-            {user ? <SourcePage /> : <AuthLandingPage />}
+            {user ? <SourcePage /> : <AuthForm allowRegister={true} />}
         </div>
     )
 }

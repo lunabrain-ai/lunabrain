@@ -4,14 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "cd js && TARGETS=site,extension node esbuild.mjs",
-    "stream": "BASE_URL=https://breadchris.ngrok.io npm run dev",
-    "dev:site": "cd js && TARGETS=site node esbuild.mjs",
-    "dev:extension": "cd js && TARGETS=extension node esbuild.mjs",
-    "build": "cd js && BUILD=true node esbuild.mjs"
+    "dev": "concurrently \"npm run dev:site\" \"npm run dev:extension\"",
+    "dev:stream": "cd js && BASE_URL=https://breadchris.ngrok.io TARGETS=stream node esbuild.mjs",
+    "dev:site": "cd js && BASE_URL=http://localhost:8000 TARGETS=site node esbuild.mjs",
+    "dev:extension": "cd js && BASE_URL=http://localhost:8000 TARGETS=extension node esbuild.mjs",
+    "build": "cd js && BASE_URL=https://demo.lunabrain.com BUILD=true node esbuild.mjs"
   },
   "dependencies": {
     "@emotion/css": "^11.11.2",
+    "@emotion/react": "^11.11.3",
     "@heroicons/react": "^2.1.1",
     "@react-spring/web": "^9.5.5",
     "@tailwindcss/typography": "^0.5.10",
@@ -20,6 +21,7 @@
     "@tiptap/starter-kit": "^2.1.13",
     "@uidotdev/usehooks": "^2.4.0",
     "@wixc3/react-board": "^2.3.0",
+    "concurrently": "^8.2.2",
     "d3-hierarchy": "^3.1.2",
     "daisyui": "^4.4.19",
     "esbuild-plugin-swc": "^1.0.1",
@@ -28,6 +30,7 @@
     "framer-motion": "^10.12.4",
     "gpt-tokenizer": "^2.1.1",
     "jotai": "^2.6.1",
+    "jotai-devtools": "^0.7.1",
     "prismjs": "^1.29.0",
     "qrcode.react": "^3.1.0",
     "react": "18.2.0",

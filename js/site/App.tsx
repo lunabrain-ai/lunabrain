@@ -1,14 +1,14 @@
-import ProjectProvider from "@/react/ProjectProvider";
 import {Toaster} from "react-hot-toast";
 import {BrowserRouter, useRoutes} from "react-router-dom";
 import {ErrorBoundary} from "react-error-boundary";
 import {FallbackError} from "@/react/FallbackError";
-import {transport} from "@/service";
 import {Join} from "@/auth/JoinGroupPage";
 import React from "react";
 import {Home} from "@/home/Home";
 import {ChatPage} from "@/chat/ChatPage";
 import {VerifyPage} from "@/auth/VerifyPage";
+import {Provider} from "jotai";
+import {DevTools} from "jotai-devtools";
 
 const AppRoutes = () => {
     const commonRoutes = [{
@@ -38,17 +38,18 @@ const AppRoutes = () => {
     </>;
 };
 
-export default function App() {
+export const App: React.FC<{dev: boolean}> = ({dev}) => {
   return (
       <ErrorBoundary
           FallbackComponent={FallbackError}
       >
-          <ProjectProvider>
+          <Provider>
+              {dev && <DevTools />}
               <BrowserRouter>
                   <AppRoutes/>
               </BrowserRouter>
               <Toaster/>
-          </ProjectProvider>
+          </Provider>
       </ErrorBoundary>
   )
 }

@@ -22,6 +22,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/tag"
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
 	"github.com/lunabrain-ai/lunabrain/pkg/gen/user"
+	"github.com/markbates/goth"
 )
 
 const (
@@ -3413,6 +3414,7 @@ type UserMutation struct {
 	data               *schema.UserEncoder
 	verified           *bool
 	verify_secret      *uuid.UUID
+	oauth_user         *goth.User
 	clearedFields      map[string]struct{}
 	content            map[uuid.UUID]struct{}
 	removedcontent     map[uuid.UUID]struct{}
@@ -3596,9 +3598,22 @@ func (m *UserMutation) OldPasswordHash(ctx context.Context) (v string, err error
 	return oldValue.PasswordHash, nil
 }
 
+// ClearPasswordHash clears the value of the "password_hash" field.
+func (m *UserMutation) ClearPasswordHash() {
+	m.password_hash = nil
+	m.clearedFields[entuser.FieldPasswordHash] = struct{}{}
+}
+
+// PasswordHashCleared returns if the "password_hash" field was cleared in this mutation.
+func (m *UserMutation) PasswordHashCleared() bool {
+	_, ok := m.clearedFields[entuser.FieldPasswordHash]
+	return ok
+}
+
 // ResetPasswordHash resets all changes to the "password_hash" field.
 func (m *UserMutation) ResetPasswordHash() {
 	m.password_hash = nil
+	delete(m.clearedFields, entuser.FieldPasswordHash)
 }
 
 // SetData sets the "data" field.
@@ -3720,6 +3735,42 @@ func (m *UserMutation) VerifySecretCleared() bool {
 func (m *UserMutation) ResetVerifySecret() {
 	m.verify_secret = nil
 	delete(m.clearedFields, entuser.FieldVerifySecret)
+}
+
+// SetOauthUser sets the "oauth_user" field.
+func (m *UserMutation) SetOauthUser(_go goth.User) {
+	m.oauth_user = &_go
+}
+
+// OauthUser returns the value of the "oauth_user" field in the mutation.
+func (m *UserMutation) OauthUser() (r goth.User, exists bool) {
+	v := m.oauth_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOauthUser returns the old "oauth_user" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldOauthUser(ctx context.Context) (v goth.User, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOauthUser is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOauthUser requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOauthUser: %w", err)
+	}
+	return oldValue.OauthUser, nil
+}
+
+// ResetOauthUser resets all changes to the "oauth_user" field.
+func (m *UserMutation) ResetOauthUser() {
+	m.oauth_user = nil
 }
 
 // AddContentIDs adds the "content" edge to the Content entity by ids.
@@ -3864,7 +3915,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.email != nil {
 		fields = append(fields, entuser.FieldEmail)
 	}
@@ -3879,6 +3930,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.verify_secret != nil {
 		fields = append(fields, entuser.FieldVerifySecret)
+	}
+	if m.oauth_user != nil {
+		fields = append(fields, entuser.FieldOauthUser)
 	}
 	return fields
 }
@@ -3898,6 +3952,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Verified()
 	case entuser.FieldVerifySecret:
 		return m.VerifySecret()
+	case entuser.FieldOauthUser:
+		return m.OauthUser()
 	}
 	return nil, false
 }
@@ -3917,6 +3973,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldVerified(ctx)
 	case entuser.FieldVerifySecret:
 		return m.OldVerifySecret(ctx)
+	case entuser.FieldOauthUser:
+		return m.OldOauthUser(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -3961,6 +4019,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetVerifySecret(v)
 		return nil
+	case entuser.FieldOauthUser:
+		v, ok := value.(goth.User)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOauthUser(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -3991,6 +4056,9 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *UserMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(entuser.FieldPasswordHash) {
+		fields = append(fields, entuser.FieldPasswordHash)
+	}
 	if m.FieldCleared(entuser.FieldVerifySecret) {
 		fields = append(fields, entuser.FieldVerifySecret)
 	}
@@ -4008,6 +4076,9 @@ func (m *UserMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *UserMutation) ClearField(name string) error {
 	switch name {
+	case entuser.FieldPasswordHash:
+		m.ClearPasswordHash()
+		return nil
 	case entuser.FieldVerifySecret:
 		m.ClearVerifySecret()
 		return nil
@@ -4033,6 +4104,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case entuser.FieldVerifySecret:
 		m.ResetVerifySecret()
+		return nil
+	case entuser.FieldOauthUser:
+		m.ResetOauthUser()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

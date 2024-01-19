@@ -17,6 +17,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/lunabrain-ai/lunabrain/pkg/publish"
 	"github.com/lunabrain-ai/lunabrain/pkg/util"
+	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/pkg/errors"
 	"github.com/protoflow-labs/protoflow/pkg/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -36,6 +37,7 @@ type Service struct {
 	normalizer *normalize.Normalize
 	fileStore  *bucket.Bucket
 	builder    *bucket.Builder
+	whisper    *whisper.Client
 }
 
 var _ contentconnect.ContentServiceHandler = (*Service)(nil)
@@ -52,6 +54,7 @@ func NewService(
 	normalizer *normalize.Normalize,
 	fileStore *bucket.Bucket,
 	builder *bucket.Builder,
+	whisper *whisper.Client,
 ) *Service {
 	return &Service{
 		content:    db,
@@ -60,7 +63,28 @@ func NewService(
 		normalizer: normalizer,
 		fileStore:  fileStore,
 		builder:    builder,
+		whisper:    whisper,
 	}
+}
+
+func (s *Service) VoiceInput(ctx context.Context, c *connect_go.Request[content.VoiceInputRequest], c2 *connect_go.ServerStream[content.VoiceInputResponse]) error {
+	obs := s.whisper.Transcribe(ctx, "", "", 0)
+	<-obs.ForEach(func(v any) {
+		if t, ok := v.(*content.Segment); ok {
+			slog.Debug("sending voice input", "t", t)
+			// combine the segment
+			if err := c2.Send(&content.VoiceInputResponse{
+				Segment: t,
+			}); err != nil {
+				slog.Error("error sending voice input", err)
+			}
+		}
+	}, func(err error) {
+		slog.Error("error transcribing", err)
+	}, func() {
+		slog.Info("done transcribing")
+	})
+	return nil
 }
 
 func (s *Service) sourceToContent(ctx context.Context, cs *content.Source) ([]*content.Content, error) {

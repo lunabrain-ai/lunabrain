@@ -194,6 +194,16 @@ func PasswordHashHasSuffix(v string) predicate.User {
 	return predicate.User(sql.FieldHasSuffix(FieldPasswordHash, v))
 }
 
+// PasswordHashIsNil applies the IsNil predicate on the "password_hash" field.
+func PasswordHashIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldPasswordHash))
+}
+
+// PasswordHashNotNil applies the NotNil predicate on the "password_hash" field.
+func PasswordHashNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldPasswordHash))
+}
+
 // PasswordHashEqualFold applies the EqualFold predicate on the "password_hash" field.
 func PasswordHashEqualFold(v string) predicate.User {
 	return predicate.User(sql.FieldEqualFold(FieldPasswordHash, v))

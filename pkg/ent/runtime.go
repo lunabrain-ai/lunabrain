@@ -12,6 +12,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/schema"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/tag"
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
+	"github.com/markbates/goth"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -58,6 +59,10 @@ func init() {
 	entuserDescVerified := entuserFields[4].Descriptor()
 	// entuser.DefaultVerified holds the default value on creation for the verified field.
 	entuser.DefaultVerified = entuserDescVerified.Default.(bool)
+	// entuserDescOauthUser is the schema descriptor for oauth_user field.
+	entuserDescOauthUser := entuserFields[6].Descriptor()
+	// entuser.DefaultOauthUser holds the default value on creation for the oauth_user field.
+	entuser.DefaultOauthUser = entuserDescOauthUser.Default.(goth.User)
 	// entuserDescID is the schema descriptor for id field.
 	entuserDescID := entuserFields[0].Descriptor()
 	// entuser.DefaultID holds the default value on creation for the id field.

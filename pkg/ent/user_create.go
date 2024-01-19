@@ -14,6 +14,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupuser"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/schema"
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
+	"github.com/markbates/goth"
 )
 
 // UserCreate is the builder for creating a User entity.
@@ -32,6 +33,14 @@ func (uc *UserCreate) SetEmail(s string) *UserCreate {
 // SetPasswordHash sets the "password_hash" field.
 func (uc *UserCreate) SetPasswordHash(s string) *UserCreate {
 	uc.mutation.SetPasswordHash(s)
+	return uc
+}
+
+// SetNillablePasswordHash sets the "password_hash" field if the given value is not nil.
+func (uc *UserCreate) SetNillablePasswordHash(s *string) *UserCreate {
+	if s != nil {
+		uc.SetPasswordHash(*s)
+	}
 	return uc
 }
 
@@ -65,6 +74,20 @@ func (uc *UserCreate) SetVerifySecret(u uuid.UUID) *UserCreate {
 func (uc *UserCreate) SetNillableVerifySecret(u *uuid.UUID) *UserCreate {
 	if u != nil {
 		uc.SetVerifySecret(*u)
+	}
+	return uc
+}
+
+// SetOauthUser sets the "oauth_user" field.
+func (uc *UserCreate) SetOauthUser(_go goth.User) *UserCreate {
+	uc.mutation.SetOauthUser(_go)
+	return uc
+}
+
+// SetNillableOauthUser sets the "oauth_user" field if the given value is not nil.
+func (uc *UserCreate) SetNillableOauthUser(_go *goth.User) *UserCreate {
+	if _go != nil {
+		uc.SetOauthUser(*_go)
 	}
 	return uc
 }
@@ -152,6 +175,10 @@ func (uc *UserCreate) defaults() {
 		v := entuser.DefaultVerified
 		uc.mutation.SetVerified(v)
 	}
+	if _, ok := uc.mutation.OauthUser(); !ok {
+		v := entuser.DefaultOauthUser
+		uc.mutation.SetOauthUser(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
 		v := entuser.DefaultID()
 		uc.mutation.SetID(v)
@@ -163,14 +190,14 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New(`ent: missing required field "User.email"`)}
 	}
-	if _, ok := uc.mutation.PasswordHash(); !ok {
-		return &ValidationError{Name: "password_hash", err: errors.New(`ent: missing required field "User.password_hash"`)}
-	}
 	if _, ok := uc.mutation.Data(); !ok {
 		return &ValidationError{Name: "data", err: errors.New(`ent: missing required field "User.data"`)}
 	}
 	if _, ok := uc.mutation.Verified(); !ok {
 		return &ValidationError{Name: "verified", err: errors.New(`ent: missing required field "User.verified"`)}
+	}
+	if _, ok := uc.mutation.OauthUser(); !ok {
+		return &ValidationError{Name: "oauth_user", err: errors.New(`ent: missing required field "User.oauth_user"`)}
 	}
 	return nil
 }
@@ -226,6 +253,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.VerifySecret(); ok {
 		_spec.SetField(entuser.FieldVerifySecret, field.TypeUUID, value)
 		_node.VerifySecret = value
+	}
+	if value, ok := uc.mutation.OauthUser(); ok {
+		_spec.SetField(entuser.FieldOauthUser, field.TypeJSON, value)
+		_node.OauthUser = value
 	}
 	if nodes := uc.mutation.ContentIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

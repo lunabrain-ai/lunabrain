@@ -33,6 +33,7 @@ type ContentServiceClient interface {
 	Publish(ctx context.Context, in *ContentIDs, opts ...grpc.CallOption) (*ContentIDs, error)
 	GetSources(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Sources, error)
 	Types(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GRPCTypeInfo, error)
+	VoiceInput(ctx context.Context, in *VoiceInputRequest, opts ...grpc.CallOption) (ContentService_VoiceInputClient, error)
 }
 
 type contentServiceClient struct {
@@ -133,6 +134,38 @@ func (c *contentServiceClient) Types(ctx context.Context, in *emptypb.Empty, opt
 	return out, nil
 }
 
+func (c *contentServiceClient) VoiceInput(ctx context.Context, in *VoiceInputRequest, opts ...grpc.CallOption) (ContentService_VoiceInputClient, error) {
+	stream, err := c.cc.NewStream(ctx, &ContentService_ServiceDesc.Streams[0], "/content.ContentService/VoiceInput", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &contentServiceVoiceInputClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type ContentService_VoiceInputClient interface {
+	Recv() (*VoiceInputResponse, error)
+	grpc.ClientStream
+}
+
+type contentServiceVoiceInputClient struct {
+	grpc.ClientStream
+}
+
+func (x *contentServiceVoiceInputClient) Recv() (*VoiceInputResponse, error) {
+	m := new(VoiceInputResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // ContentServiceServer is the server API for ContentService service.
 // All implementations should embed UnimplementedContentServiceServer
 // for forward compatibility
@@ -147,6 +180,7 @@ type ContentServiceServer interface {
 	Publish(context.Context, *ContentIDs) (*ContentIDs, error)
 	GetSources(context.Context, *emptypb.Empty) (*Sources, error)
 	Types(context.Context, *emptypb.Empty) (*GRPCTypeInfo, error)
+	VoiceInput(*VoiceInputRequest, ContentService_VoiceInputServer) error
 }
 
 // UnimplementedContentServiceServer should be embedded to have forward compatible implementations.
@@ -182,6 +216,9 @@ func (UnimplementedContentServiceServer) GetSources(context.Context, *emptypb.Em
 }
 func (UnimplementedContentServiceServer) Types(context.Context, *emptypb.Empty) (*GRPCTypeInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Types not implemented")
+}
+func (UnimplementedContentServiceServer) VoiceInput(*VoiceInputRequest, ContentService_VoiceInputServer) error {
+	return status.Errorf(codes.Unimplemented, "method VoiceInput not implemented")
 }
 
 // UnsafeContentServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -375,6 +412,27 @@ func _ContentService_Types_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ContentService_VoiceInput_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(VoiceInputRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(ContentServiceServer).VoiceInput(m, &contentServiceVoiceInputServer{stream})
+}
+
+type ContentService_VoiceInputServer interface {
+	Send(*VoiceInputResponse) error
+	grpc.ServerStream
+}
+
+type contentServiceVoiceInputServer struct {
+	grpc.ServerStream
+}
+
+func (x *contentServiceVoiceInputServer) Send(m *VoiceInputResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // ContentService_ServiceDesc is the grpc.ServiceDesc for ContentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -423,6 +481,12 @@ var ContentService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ContentService_Types_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "VoiceInput",
+			Handler:       _ContentService_VoiceInput_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "content/content.proto",
 }

@@ -2,17 +2,23 @@ import React, {useEffect, useState} from "react";
 import {useContentEditor, useSources} from "@/source/state";
 import {Content, DisplayContent, EnumeratedSource} from "@/rpc/content/content_pb";
 import {ContentCard} from "@/source/ContentCard";
-import {contentService} from "@/service";
+import {contentService, userService} from "@/service";
 import toast from "react-hot-toast";
 import {useParams} from "react-router";
 import {TrashIcon} from "@heroicons/react/24/outline";
 import {notEmpty} from "@/util/predicates";
 import {ContentEditor} from "@/source/ContentEditor";
+import {useAuth} from "@/auth/state";
 
 export const SourcePage: React.FC = () => {
-    const {sources, selected, setSelected} = useSources();
-    const {selected: selectedContent, setSelected: setSelectedContent} = useContentEditor();
+    const {sources, selected, setSelected, getSources} = useSources();
+    const {selected: selectedContent, select: setSelectedContent} = useContentEditor();
     const { id } = useParams();
+    const { logout } = useAuth();
+
+    useEffect(() => {
+        void getSources();
+    }, []);
 
     useEffect(() => {
         (async () => {
@@ -38,7 +44,6 @@ export const SourcePage: React.FC = () => {
         try {
             // TODO breadchris save content to group
             const resp = await contentService.publish({});
-            console.log(resp);
             toast.success('Published content');
         } catch (e) {
             toast.error('Failed to publish content');
@@ -53,49 +58,46 @@ export const SourcePage: React.FC = () => {
     }
     return (
         <div className="p-5 h-[95vh] flex flex-col">
-            <div className="flex-grow">
-                <div>
-                    <div className="navbar bg-base-100">
-                        <div className="flex-1">
-                            <p className="text-xl">Just Share.</p>
-                        </div>
-                        <div className="flex-none">
-                            <ul className="menu menu-horizontal px-1">
-                                <li>
-                                    <a onClick={handlePublish}>Publish</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="card bg-base-100 shadow-xl">
-                        <div className="card-body">
-                            <ContentEditor content={selectedContent} onUpdate={(c) => {
-                                setSelectedContent(c);
-                            }} />
-                        </div>
-                    </div>
-                    <Tabs sources={sources} selected={selected} onSelectSource={handleSelectSource} />
-                    {selected && (
-                        // <ContentCards displayContent={selected.displayContent} />
-                        <div className={"overflow-x-auto"}>
-                            <ContentTable displayContent={selected.displayContent} />
-                        </div>
-                    )}
+            <div className={"navbar bg-base-100"}>
+                <div className="flex-1">
+                    <p className="text-xl">just share.</p>
                 </div>
+                <div className="flex-none">
+                    <ul className="menu menu-horizontal px-1">
+                        <li><a onClick={handlePublish}>publish</a></li>
+                        <li><a onClick={logout}>logout</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div className="flex-grow">
+                <div className="card bg-base-100 shadow-xl">
+                    <div className="card-body">
+                        <ContentEditor content={selectedContent} onUpdate={(c) => {
+                            setSelectedContent(c);
+                        }} />
+                    </div>
+                </div>
+                <Tabs sources={sources} selected={selected} onSelectSource={handleSelectSource} />
+                {selected && (
+                    // <ContentCards displayContent={selected.displayContent} />
+                    <div className={"overflow-x-auto"}>
+                        <ContentTable displayContent={selected.displayContent} />
+                    </div>
+                )}
             </div>
         </div>
     );
 }
 
 const ContentTable: React.FC<{displayContent: DisplayContent[]}> = ({displayContent}) => {
-    const {selected, setSelected} = useContentEditor();
+    const {selected, select} = useContentEditor();
     const { getSources } = useSources();
     const handleCheckboxChange = (content: Content|undefined, isChecked: boolean) => {
         if (isChecked && content) {
-            setSelected(content);
+            select(content);
         }
         if (!isChecked) {
-            setSelected(undefined);
+            select(undefined);
         }
     };
 
@@ -109,7 +111,6 @@ const ContentTable: React.FC<{displayContent: DisplayContent[]}> = ({displayCont
                 contentIds: [selected.id],
             });
             void getSources();
-            console.log(resp);
             toast.success('Deleted content');
         } catch (e) {
             toast.error('Failed to delete content');
@@ -161,7 +162,7 @@ const ContentTable: React.FC<{displayContent: DisplayContent[]}> = ({displayCont
 
 interface TabsProps {
     sources: EnumeratedSource[];
-    selected: EnumeratedSource|null;
+    selected: EnumeratedSource|undefined;
     onSelectSource: (source: EnumeratedSource) => void;
 }
 

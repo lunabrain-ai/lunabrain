@@ -32,6 +32,7 @@ require (
 	github.com/ledongthuc/pdf v0.0.0-20220302134840-0c2507a12d80
 	github.com/lmittmann/tint v1.0.2
 	github.com/makiuchi-d/arelo v1.12.0
+	github.com/markbates/goth v1.78.0
 	github.com/mattn/go-sqlite3 v1.14.18
 	github.com/pion/rtp v1.7.13
 	github.com/pion/webrtc/v3 v3.1.58
@@ -51,7 +52,7 @@ require (
 	golang.org/x/crypto v0.18.0
 	golang.org/x/net v0.20.0
 	google.golang.org/grpc v1.59.0
-	google.golang.org/protobuf v1.31.0
+	google.golang.org/protobuf v1.32.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/datatypes v1.1.1
 	gorm.io/driver/mysql v1.5.1
@@ -75,7 +76,6 @@ require (
 	github.com/Masterminds/sprig/v3 v3.2.3 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20230923063757-afb1ddc0824c // indirect
-	github.com/TwiN/go-away v1.6.12 // indirect
 	github.com/VividCortex/gohistogram v1.0.0 // indirect
 	github.com/acomagu/bufpipe v1.0.4 // indirect
 	github.com/agext/levenshtein v1.2.1 // indirect
@@ -101,6 +101,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dlclark/regexp2 v1.10.0 // indirect
 	github.com/dop251/goja v0.0.0-20230812105242-81d76064690d // indirect
+	github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/fatih/set v0.2.1 // indirect
@@ -131,7 +132,11 @@ require (
 	github.com/google/subcommands v1.2.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
+	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
+	github.com/gorilla/mux v1.7.3 // indirect
+	github.com/gorilla/securecookie v1.1.2 // indirect
+	github.com/gorilla/sessions v1.2.2 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect
 	github.com/hashicorp/hcl/v2 v2.13.0 // indirect
 	github.com/huandu/xstrings v1.3.3 // indirect
@@ -199,7 +204,7 @@ require (
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
 	golang.org/x/mod v0.14.0 // indirect
-	golang.org/x/oauth2 v0.15.0 // indirect
+	golang.org/x/oauth2 v0.16.0 // indirect
 	golang.org/x/sync v0.5.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect

@@ -47,7 +47,7 @@ func startProcess(cmd *exec.Cmd) (cleanup func(), err error) {
 	return cleanup, nil
 }
 
-func NewServeAction(httpServer server.HTTPServer) func(context *cli.Context) error {
+func NewServeAction(httpServer *server.APIHTTPServer) func(context *cli.Context) error {
 	return func(context *cli.Context) error {
 		if context.Bool("dev") {
 			return liveReload()
@@ -64,7 +64,7 @@ func NewServeAction(httpServer server.HTTPServer) func(context *cli.Context) err
 }
 
 func NewServeCommand(
-	httpServer server.HTTPServer,
+	httpServer *server.APIHTTPServer,
 ) *cli.Command {
 	return &cli.Command{
 		Name:  "start",

@@ -2,10 +2,12 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/lunabrain-ai/lunabrain/pkg/gen/user"
+	"github.com/markbates/goth"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -20,10 +22,11 @@ func (User) Fields() []ent.Field {
 		field.UUID("id", uuid.UUID{}).
 			Default(uuid.New),
 		field.String("email"),
-		field.String("password_hash"),
+		field.String("password_hash").Optional(),
 		field.JSON("data", UserEncoder{}),
 		field.Bool("verified").Default(false),
 		field.UUID("verify_secret", uuid.UUID{}).Optional(),
+		field.JSON("oauth_user", goth.User{}).Default(goth.User{}).Annotations(entsql.Default("{}")),
 	}
 }
 

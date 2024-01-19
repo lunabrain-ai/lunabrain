@@ -1,10 +1,12 @@
-import {Content, EnumeratedSource, Sources} from "@/rpc/content/content_pb";
-import {useEffect, useState} from "react";
+import {Content, EnumeratedSource, Sources, VoiceInputResponse} from "@/rpc/content/content_pb";
 import {contentService} from "@/service";
 import { atom, useAtom } from "jotai";
+import {useEffect, useState} from "react";
 
-const sourcesAtom = atom<EnumeratedSource[]|null>(null);
-const selectedSourceAtom = atom<EnumeratedSource|null>(null);
+const sourcesAtom = atom<EnumeratedSource[]|undefined>(undefined);
+sourcesAtom.debugLabel = 'sourcesAtom';
+const selectedSourceAtom = atom<EnumeratedSource|undefined>(undefined);
+selectedSourceAtom.debugLabel = 'selectedSourceAtom';
 
 export const useSources = () => {
     const [sources, setSources] = useAtom(sourcesAtom);
@@ -17,22 +19,113 @@ export const useSources = () => {
             setSelected(resp.sources[0]);
         }
     };
-
-    useEffect(() => {
-        void getSources();
-    }, []);
-
     return {sources, selected, setSelected, getSources};
 }
 
 const selectedContentAtom = atom<Content|undefined>(undefined);
+selectedContentAtom.debugLabel = 'selectedContentAtom';
 
 export const useContentEditor = () => {
     const [selected, setSelected] = useAtom(selectedContentAtom);
-    useEffect(() => {
-        if (selected) {
-            window.history.pushState({}, '', `/app/content/${selected.id}`);
+    const select = (content: Content|undefined) => {
+        if (content === undefined) {
+            window.history.pushState({}, '', `/app`);
+            setSelected(undefined);
+        } else {
+            window.history.pushState({}, '', `/app/content/${content.id}`);
+            setSelected(content);
         }
-    }, [selected]);
-    return {selected, setSelected};
+    }
+    return {selected, select};
+}
+
+const recordingAtom = atom<boolean>(false);
+recordingAtom.debugLabel = 'recordingAtom';
+
+export const useVoice = () => {
+    const [recording, setRecording] = useAtom(recordingAtom);
+    const [subscribers, setSubscribers] = useState<((r: string) => void)[]>([]);
+
+    useEffect(() => {
+        let stream: AsyncGenerator;
+        const abortController = new AbortController();
+        if (recording) {
+            const stream = contentService.voiceInput({}, {
+                signal: abortController.signal,
+            });
+            (async () => {
+                try {
+                    for await (const r of stream) {
+                        console.log(r);
+                        subscribers.forEach((s) => s(r.segment?.text || ''));
+                    }
+                } catch (e: any) {
+                    if (e.name !== 'AbortError') {
+                        console.error('Stream error:', e);
+                    }
+                }
+            })();
+        }
+
+        return () => {
+            abortController.abort();
+            if (stream) {
+                void stream.return({});
+            }
+        };
+    }, [recording]);
+
+    const start = (cb: (text: string) => void) => {
+        setRecording(true);
+        setSubscribers((s) => [...s, cb]);
+    };
+
+    const stop = () => {
+        setRecording(false);
+        // TODO breadchris this should just remove the subscriber that was added in start
+        setSubscribers([]);
+    };
+
+    return { recording, start, stop };
+};
+
+declare global {
+    interface Window {
+        webkitSpeechRecognition: any;
+        SpeechRecognition: any;
+    }
+}
+
+interface IResult {
+    resultIndex: number;
+    [index: number]: {
+        transcript: string;
+    };
+}
+
+const useInBrowserSpeechRecognition = (cb: (text: string) => void) => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        //recognition.interimResults = true;
+        recognition.onresult = (event: {results: IResult[]}) => {
+            const transcriptArray = Array.from(event.results)
+                .map((result) => result[0])
+                .map((result) => result.transcript);
+            const transcript = transcriptArray.join('');
+            cb(transcript);
+        };
+
+        recognition.onend = () => {
+        }
+
+        recognition.onerror = (event: any) => {
+            console.error('Speech recognition error', event.error);
+        };
+        return recognition;
+    } else {
+        console.error('Browser does not support speech recognition.');
+    }
+    return undefined;
 }

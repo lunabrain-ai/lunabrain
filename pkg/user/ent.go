@@ -7,6 +7,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/schema"
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
 	"github.com/lunabrain-ai/lunabrain/pkg/gen/user"
+	"github.com/markbates/goth"
 	"github.com/pkg/errors"
 	"log/slog"
 )
@@ -50,6 +51,13 @@ func (s *EntStore) GetUserByID(ctx context.Context, id uuid.UUID) (*ent.User, er
 		Get(ctx, id)
 }
 
+func (s *EntStore) GetUserByEmail(ctx context.Context, email string) (*ent.User, error) {
+	return s.client.User.
+		Query().
+		Where(entuser.Email(email)).
+		Only(ctx)
+}
+
 func (s *EntStore) ResetPassword(ctx context.Context, id uuid.UUID, password string) error {
 	hash, err := hashPassword(password)
 	if err != nil {
@@ -77,22 +85,30 @@ func (s *EntStore) AttemptLogin(ctx context.Context, email, password string) (*e
 	return u, nil
 }
 
-func (s *EntStore) NewUser(ctx context.Context, ps *user.User, bot bool) (*ent.User, error) {
-	hash, err := hashPassword(ps.Password)
-	if err != nil {
-		return nil, errors.Wrapf(err, "could not hash password")
-	}
-	ps.Password = ""
-
-	return s.client.User.
+func (s *EntStore) NewUser(ctx context.Context, ps *user.User, oauth goth.User) (*ent.User, error) {
+	u := s.client.User.
 		Create().
-		SetID(uuid.New()).
-		SetPasswordHash(hash).
-		SetEmail(ps.Email).
 		SetData(schema.UserEncoder{
 			User: ps,
-		}).
-		Save(ctx)
+		})
+
+	// TODO breadchris handle user/pass vs oauth more robustly
+	if ps.Password != "" {
+		hash, err := hashPassword(ps.Password)
+		if err != nil {
+			return nil, errors.Wrapf(err, "could not hash password")
+		}
+		ps.Password = ""
+		u.SetEmail(ps.Email).
+			SetPasswordHash(hash)
+	} else {
+		if oauth.Email != "" {
+			u.SetOauthUser(oauth).
+				SetEmail(oauth.Email).
+				SetVerified(true)
+		}
+	}
+	return u.Save(ctx)
 }
 
 func (s *EntStore) NewUserVerifySecret(ctx context.Context, u *ent.User) (uuid.UUID, error) {

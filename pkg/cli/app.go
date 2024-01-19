@@ -14,14 +14,14 @@ type Commands struct {
 func NewApp(
 	// TODO breadchris needed so wire will pick it up as a dep
 	log *log.Log,
-	httpServer server.HTTPServer,
+	apiServer *server.APIHTTPServer,
 ) *cli.App {
 	return &cli.App{
 		Name:   "lunabrain",
 		Usage:  "Save and search for information.",
-		Action: NewServeAction(httpServer),
+		Action: NewServeAction(apiServer),
 		Commands: []*cli.Command{
-			NewServeCommand(httpServer),
+			NewServeCommand(apiServer),
 		},
 	}
 }

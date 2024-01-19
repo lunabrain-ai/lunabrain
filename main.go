@@ -10,6 +10,11 @@ import (
 	"os"
 )
 
+func init() {
+	// TODO breadchris https://github.com/markbates/goth/blob/f347ee3e9478c9dee76c03d842220a14715cb3e6/gothic/gothic.go#L44C5-L44C5
+	os.Setenv("SESSION_SECRET", "test")
+}
+
 func main() {
 	app, err := cli.Wire()
 	if err != nil {

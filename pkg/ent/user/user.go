@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/google/uuid"
+	"github.com/markbates/goth"
 )
 
 const (
@@ -23,6 +24,8 @@ const (
 	FieldVerified = "verified"
 	// FieldVerifySecret holds the string denoting the verify_secret field in the database.
 	FieldVerifySecret = "verify_secret"
+	// FieldOauthUser holds the string denoting the oauth_user field in the database.
+	FieldOauthUser = "oauth_user"
 	// EdgeContent holds the string denoting the content edge name in mutations.
 	EdgeContent = "content"
 	// EdgeGroupUsers holds the string denoting the group_users edge name in mutations.
@@ -53,6 +56,7 @@ var Columns = []string{
 	FieldData,
 	FieldVerified,
 	FieldVerifySecret,
+	FieldOauthUser,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -68,6 +72,8 @@ func ValidColumn(column string) bool {
 var (
 	// DefaultVerified holds the default value on creation for the "verified" field.
 	DefaultVerified bool
+	// DefaultOauthUser holds the default value on creation for the "oauth_user" field.
+	DefaultOauthUser goth.User
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

@@ -32,15 +32,8 @@ type Config struct {
 
 func newDefaultConfig() Config {
 	return Config{
-		Bucket: bucket.Config{
-			LocalName: userConfigDir,
-			Path:      "",
-			// TODO breadchris this will break if the port is changed in the Service config
-			URLBase: "localhost:8080/bucket",
-		},
-		Service: content.Config{
-			Port: "8000",
-		},
+		Bucket:  bucket.NewDefaultConfig(),
+		Service: content.NewDefaultConfig(),
 		Scrape: scrape.Config{
 			Client: scrape.ClientHTTP,
 		},
@@ -72,7 +65,11 @@ func NewConfigProvider() (config.Provider, error) {
 		slog.Warn("unable to locate config directory", "config directory", configDir)
 	}
 
-	if f, ferr := os.Stat(configFile); ferr == nil {
+	cf := configFile
+	if lc := os.Getenv("CONFIG"); lc != "" {
+		cf = lc
+	}
+	if f, ferr := os.Stat(cf); ferr == nil {
 		slog.Info("using local config file", "config file", configFile)
 		opts = append(opts, config.File(path.Join(f.Name())))
 	}

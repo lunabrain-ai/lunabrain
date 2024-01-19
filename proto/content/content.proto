@@ -21,6 +21,15 @@ service ContentService {
   rpc Publish(ContentIDs) returns (ContentIDs);
   rpc GetSources(google.protobuf.Empty) returns (Sources);
   rpc Types(google.protobuf.Empty) returns (GRPCTypeInfo);
+  rpc VoiceInput(VoiceInputRequest) returns (stream VoiceInputResponse);
+}
+
+message VoiceInputRequest {
+  int32 capture_device = 1;
+}
+
+message VoiceInputResponse {
+  Segment segment = 1;
 }
 
 message RelateRequest {

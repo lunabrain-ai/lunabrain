@@ -47,11 +47,7 @@ public struct Chat_SendMessageRequest {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var user: String = String()
-
   public var message: String = String()
-
-  public var css: String = String()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -88,8 +84,6 @@ public struct Chat_Message {
   public var text: String = String()
 
   public var timestamp: Int64 = 0
-
-  public var css: String = String()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -163,9 +157,7 @@ extension Chat_BanUserResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
 extension Chat_SendMessageRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".SendMessageRequest"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "user"),
     2: .same(proto: "message"),
-    3: .same(proto: "css"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -174,31 +166,21 @@ extension Chat_SendMessageRequest: SwiftProtobuf.Message, SwiftProtobuf._Message
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.user) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.message) }()
-      case 3: try { try decoder.decodeSingularStringField(value: &self.css) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.user.isEmpty {
-      try visitor.visitSingularStringField(value: self.user, fieldNumber: 1)
-    }
     if !self.message.isEmpty {
       try visitor.visitSingularStringField(value: self.message, fieldNumber: 2)
-    }
-    if !self.css.isEmpty {
-      try visitor.visitSingularStringField(value: self.css, fieldNumber: 3)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Chat_SendMessageRequest, rhs: Chat_SendMessageRequest) -> Bool {
-    if lhs.user != rhs.user {return false}
     if lhs.message != rhs.message {return false}
-    if lhs.css != rhs.css {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -248,7 +230,6 @@ extension Chat_Message: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     1: .same(proto: "user"),
     2: .same(proto: "text"),
     3: .same(proto: "timestamp"),
-    4: .same(proto: "css"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -260,7 +241,6 @@ extension Chat_Message: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
       case 1: try { try decoder.decodeSingularStringField(value: &self.user) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.text) }()
       case 3: try { try decoder.decodeSingularInt64Field(value: &self.timestamp) }()
-      case 4: try { try decoder.decodeSingularStringField(value: &self.css) }()
       default: break
       }
     }
@@ -276,9 +256,6 @@ extension Chat_Message: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     if self.timestamp != 0 {
       try visitor.visitSingularInt64Field(value: self.timestamp, fieldNumber: 3)
     }
-    if !self.css.isEmpty {
-      try visitor.visitSingularStringField(value: self.css, fieldNumber: 4)
-    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -286,7 +263,6 @@ extension Chat_Message: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     if lhs.user != rhs.user {return false}
     if lhs.text != rhs.text {return false}
     if lhs.timestamp != rhs.timestamp {return false}
-    if lhs.css != rhs.css {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

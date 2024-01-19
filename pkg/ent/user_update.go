@@ -16,6 +16,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/predicate"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/schema"
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
+	"github.com/markbates/goth"
 )
 
 // UserUpdate is the builder for updating User entities.
@@ -40,6 +41,20 @@ func (uu *UserUpdate) SetEmail(s string) *UserUpdate {
 // SetPasswordHash sets the "password_hash" field.
 func (uu *UserUpdate) SetPasswordHash(s string) *UserUpdate {
 	uu.mutation.SetPasswordHash(s)
+	return uu
+}
+
+// SetNillablePasswordHash sets the "password_hash" field if the given value is not nil.
+func (uu *UserUpdate) SetNillablePasswordHash(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetPasswordHash(*s)
+	}
+	return uu
+}
+
+// ClearPasswordHash clears the value of the "password_hash" field.
+func (uu *UserUpdate) ClearPasswordHash() *UserUpdate {
+	uu.mutation.ClearPasswordHash()
 	return uu
 }
 
@@ -80,6 +95,20 @@ func (uu *UserUpdate) SetNillableVerifySecret(u *uuid.UUID) *UserUpdate {
 // ClearVerifySecret clears the value of the "verify_secret" field.
 func (uu *UserUpdate) ClearVerifySecret() *UserUpdate {
 	uu.mutation.ClearVerifySecret()
+	return uu
+}
+
+// SetOauthUser sets the "oauth_user" field.
+func (uu *UserUpdate) SetOauthUser(_go goth.User) *UserUpdate {
+	uu.mutation.SetOauthUser(_go)
+	return uu
+}
+
+// SetNillableOauthUser sets the "oauth_user" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableOauthUser(_go *goth.User) *UserUpdate {
+	if _go != nil {
+		uu.SetOauthUser(*_go)
+	}
 	return uu
 }
 
@@ -202,6 +231,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.PasswordHash(); ok {
 		_spec.SetField(entuser.FieldPasswordHash, field.TypeString, value)
 	}
+	if uu.mutation.PasswordHashCleared() {
+		_spec.ClearField(entuser.FieldPasswordHash, field.TypeString)
+	}
 	if value, ok := uu.mutation.Data(); ok {
 		_spec.SetField(entuser.FieldData, field.TypeJSON, value)
 	}
@@ -213,6 +245,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.VerifySecretCleared() {
 		_spec.ClearField(entuser.FieldVerifySecret, field.TypeUUID)
+	}
+	if value, ok := uu.mutation.OauthUser(); ok {
+		_spec.SetField(entuser.FieldOauthUser, field.TypeJSON, value)
 	}
 	if uu.mutation.ContentCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -336,6 +371,20 @@ func (uuo *UserUpdateOne) SetPasswordHash(s string) *UserUpdateOne {
 	return uuo
 }
 
+// SetNillablePasswordHash sets the "password_hash" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillablePasswordHash(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetPasswordHash(*s)
+	}
+	return uuo
+}
+
+// ClearPasswordHash clears the value of the "password_hash" field.
+func (uuo *UserUpdateOne) ClearPasswordHash() *UserUpdateOne {
+	uuo.mutation.ClearPasswordHash()
+	return uuo
+}
+
 // SetData sets the "data" field.
 func (uuo *UserUpdateOne) SetData(se schema.UserEncoder) *UserUpdateOne {
 	uuo.mutation.SetData(se)
@@ -373,6 +422,20 @@ func (uuo *UserUpdateOne) SetNillableVerifySecret(u *uuid.UUID) *UserUpdateOne {
 // ClearVerifySecret clears the value of the "verify_secret" field.
 func (uuo *UserUpdateOne) ClearVerifySecret() *UserUpdateOne {
 	uuo.mutation.ClearVerifySecret()
+	return uuo
+}
+
+// SetOauthUser sets the "oauth_user" field.
+func (uuo *UserUpdateOne) SetOauthUser(_go goth.User) *UserUpdateOne {
+	uuo.mutation.SetOauthUser(_go)
+	return uuo
+}
+
+// SetNillableOauthUser sets the "oauth_user" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableOauthUser(_go *goth.User) *UserUpdateOne {
+	if _go != nil {
+		uuo.SetOauthUser(*_go)
+	}
 	return uuo
 }
 
@@ -525,6 +588,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if value, ok := uuo.mutation.PasswordHash(); ok {
 		_spec.SetField(entuser.FieldPasswordHash, field.TypeString, value)
 	}
+	if uuo.mutation.PasswordHashCleared() {
+		_spec.ClearField(entuser.FieldPasswordHash, field.TypeString)
+	}
 	if value, ok := uuo.mutation.Data(); ok {
 		_spec.SetField(entuser.FieldData, field.TypeJSON, value)
 	}
@@ -536,6 +602,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.VerifySecretCleared() {
 		_spec.ClearField(entuser.FieldVerifySecret, field.TypeUUID)
+	}
+	if value, ok := uuo.mutation.OauthUser(); ok {
+		_spec.SetField(entuser.FieldOauthUser, field.TypeJSON, value)
 	}
 	if uuo.mutation.ContentCleared() {
 		edge := &sqlgraph.EdgeSpec{

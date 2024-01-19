@@ -115,6 +115,8 @@ public struct User_User {
 
   public var password: String = String()
 
+  public var username: String = String()
+
   public var config: User_Config {
     get {return _config ?? User_Config()}
     set {_config = newValue}
@@ -422,7 +424,8 @@ extension User_User: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "email"),
     2: .same(proto: "password"),
-    3: .same(proto: "config"),
+    3: .same(proto: "username"),
+    4: .same(proto: "config"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -433,7 +436,8 @@ extension User_User: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.email) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.password) }()
-      case 3: try { try decoder.decodeSingularMessageField(value: &self._config) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self.username) }()
+      case 4: try { try decoder.decodeSingularMessageField(value: &self._config) }()
       default: break
       }
     }
@@ -450,8 +454,11 @@ extension User_User: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     if !self.password.isEmpty {
       try visitor.visitSingularStringField(value: self.password, fieldNumber: 2)
     }
+    if !self.username.isEmpty {
+      try visitor.visitSingularStringField(value: self.username, fieldNumber: 3)
+    }
     try { if let v = self._config {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
     } }()
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -459,6 +466,7 @@ extension User_User: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
   public static func ==(lhs: User_User, rhs: User_User) -> Bool {
     if lhs.email != rhs.email {return false}
     if lhs.password != rhs.password {return false}
+    if lhs.username != rhs.username {return false}
     if lhs._config != rhs._config {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true

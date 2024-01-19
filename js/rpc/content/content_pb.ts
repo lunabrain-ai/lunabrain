@@ -8,6 +8,80 @@ import { DescriptorProto, EnumDescriptorProto, Message, proto3, protoInt64 } fro
 import { User } from "../user/user_pb.js";
 
 /**
+ * @generated from message content.VoiceInputRequest
+ */
+export class VoiceInputRequest extends Message<VoiceInputRequest> {
+  /**
+   * @generated from field: int32 capture_device = 1;
+   */
+  captureDevice = 0;
+
+  constructor(data?: PartialMessage<VoiceInputRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.VoiceInputRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "capture_device", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): VoiceInputRequest {
+    return new VoiceInputRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): VoiceInputRequest {
+    return new VoiceInputRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): VoiceInputRequest {
+    return new VoiceInputRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: VoiceInputRequest | PlainMessage<VoiceInputRequest> | undefined, b: VoiceInputRequest | PlainMessage<VoiceInputRequest> | undefined): boolean {
+    return proto3.util.equals(VoiceInputRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message content.VoiceInputResponse
+ */
+export class VoiceInputResponse extends Message<VoiceInputResponse> {
+  /**
+   * @generated from field: content.Segment segment = 1;
+   */
+  segment?: Segment;
+
+  constructor(data?: PartialMessage<VoiceInputResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.VoiceInputResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "segment", kind: "message", T: Segment },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): VoiceInputResponse {
+    return new VoiceInputResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): VoiceInputResponse {
+    return new VoiceInputResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): VoiceInputResponse {
+    return new VoiceInputResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: VoiceInputResponse | PlainMessage<VoiceInputResponse> | undefined, b: VoiceInputResponse | PlainMessage<VoiceInputResponse> | undefined): boolean {
+    return proto3.util.equals(VoiceInputResponse, a, b);
+  }
+}
+
+/**
  * @generated from message content.RelateRequest
  */
 export class RelateRequest extends Message<RelateRequest> {

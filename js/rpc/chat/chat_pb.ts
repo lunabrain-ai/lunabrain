@@ -79,19 +79,9 @@ export class BanUserResponse extends Message$1<BanUserResponse> {
  */
 export class SendMessageRequest extends Message$1<SendMessageRequest> {
   /**
-   * @generated from field: string user = 1;
-   */
-  user = "";
-
-  /**
    * @generated from field: string message = 2;
    */
   message = "";
-
-  /**
-   * @generated from field: string css = 3;
-   */
-  css = "";
 
   constructor(data?: PartialMessage<SendMessageRequest>) {
     super();
@@ -101,9 +91,7 @@ export class SendMessageRequest extends Message$1<SendMessageRequest> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "chat.SendMessageRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "user", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "message", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "css", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): SendMessageRequest {
@@ -204,11 +192,6 @@ export class Message extends Message$1<Message> {
    */
   timestamp = protoInt64.zero;
 
-  /**
-   * @generated from field: string css = 4;
-   */
-  css = "";
-
   constructor(data?: PartialMessage<Message>) {
     super();
     proto3.util.initPartial(data, this);
@@ -220,7 +203,6 @@ export class Message extends Message$1<Message> {
     { no: 1, name: "user", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "timestamp", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
-    { no: 4, name: "css", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Message {

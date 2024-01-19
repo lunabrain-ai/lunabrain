@@ -4,11 +4,20 @@ import { spawn, spawnSync } from "child_process";
 
 const releaseBuild = process.env.BUILD === 'true'
 const targets = (process.env.TARGETS || '').split(',')
-const baseURL = process.env.BASE_URL ? `"${process.env.BASE_URL}"` : (releaseBuild ? '"https://demo.lunabrain.com"' : '"http://localhost:8000"')
+const baseURL = `"${process.env.BASE_URL}"`
 const buildDir = releaseBuild ? 'dist' : 'build'
+
+if (process.env.BASE_URL === undefined) {
+    throw new Error('BASE_URL is not defined')
+}
+
+if (targets.length === 0) {
+    throw new Error('TARGETS is not defined')
+}
 
 const buildExtension = targets.some(t => t === 'extension') || releaseBuild
 const buildSite = targets.some(t => t === 'site') || releaseBuild
+const buildStream = targets.some(t => t === 'stream');
 
 const baseOptions = {
     bundle: true,
@@ -26,8 +35,8 @@ const baseOptions = {
         // swcPlugin(),
         NodeModulesPolyfillPlugin(),
     ],
-    minify: false,
-    sourcemap: "linked",
+    minify: releaseBuild || buildStream,
+    sourcemap: "external",
     define: {
         "global": "window",
         "process.env.BASE_URL": baseURL,
@@ -64,9 +73,9 @@ const runTailwindBuild = (target, watch, outfile) => {
     }
 };
 
-async function doBuild(target, options, serve) {
+async function doBuild(target, options, port) {
     // TODO breadchris support tailwind for extension
-    if (buildSite) {
+    if (buildSite||buildStream) {
         runTailwindBuild(target, !releaseBuild, `${options.outdir}/tailwind.css`);
     }
     if (releaseBuild) {
@@ -77,11 +86,11 @@ async function doBuild(target, options, serve) {
                 .context(options);
 
             await context.rebuild()
-            if (serve) {
-                console.log('serving', `${buildDir}/site`)
+            if (port !== undefined) {
+                console.log('serving', options.outdir)
                 context.serve({
-                    port: 8001,
-                    servedir: `${buildDir}/site`,
+                    port: port,
+                    servedir: options.outdir,
                     fallback: `${buildDir}/site/index.html`,
                     onRequest: args => {
                         console.log(args.method, args.path)
@@ -105,7 +114,17 @@ await Promise.all([
             "./site/index.html",
         ],
         outdir: `${buildDir}/site/`,
-    }, true),
+    }, 8001),
+    buildStream && doBuild('stream', {
+        ...baseOptions,
+        entryPoints: [
+            "./site/index.tsx",
+            "./site/styles/globals.css",
+            "./site/favicon.ico",
+            "./site/index.html",
+        ],
+        outdir: `${buildDir}/stream/`,
+    }, 9001),
     buildExtension && doBuild('extension', {
         ...baseOptions,
         entryPoints: [
@@ -118,5 +137,5 @@ await Promise.all([
             "./extension/manifest.json",
         ],
         outdir: `${buildDir}/extension/`,
-    }, false)
+    })
 ])

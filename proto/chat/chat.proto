@@ -16,9 +16,7 @@ message BanUserResponse {
 }
 
 message SendMessageRequest {
-  string user = 1;
   string message = 2;
-  string css = 3;
 }
 
 message SendMessageResponse {
@@ -31,5 +29,4 @@ message Message {
   string user = 1;
   string text = 2;
   int64 timestamp = 3;
-  string css = 4;
 }
