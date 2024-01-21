@@ -58,16 +58,16 @@ public protocol Content_ContentServiceClientInterface: Sendable {
     func `publish`(request: Content_ContentIDs, headers: Connect.Headers) async -> ResponseMessage<Content_ContentIDs>
 
     @discardableResult
-    func `getSources`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Content_Sources>) -> Void) -> Connect.Cancelable
+    func `getSources`(request: Content_GetSourcesRequest, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Content_Sources>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
-    func `getSources`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers) async -> ResponseMessage<Content_Sources>
+    func `getSources`(request: Content_GetSourcesRequest, headers: Connect.Headers) async -> ResponseMessage<Content_Sources>
 
     @discardableResult
-    func `types`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Content_GRPCTypeInfo>) -> Void) -> Connect.Cancelable
+    func `types`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Content_TypesResponse>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
-    func `types`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers) async -> ResponseMessage<Content_GRPCTypeInfo>
+    func `types`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers) async -> ResponseMessage<Content_TypesResponse>
 
     func `voiceInput`(headers: Connect.Headers, onResult: @escaping @Sendable (Connect.StreamResult<Content_VoiceInputResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Content_VoiceInputRequest>
 
@@ -164,22 +164,22 @@ public final class Content_ContentServiceClient: Content_ContentServiceClientInt
     }
 
     @discardableResult
-    public func `getSources`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Content_Sources>) -> Void) -> Connect.Cancelable {
+    public func `getSources`(request: Content_GetSourcesRequest, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Content_Sources>) -> Void) -> Connect.Cancelable {
         return self.client.unary(path: "/content.ContentService/GetSources", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
-    public func `getSources`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers = [:]) async -> ResponseMessage<Content_Sources> {
+    public func `getSources`(request: Content_GetSourcesRequest, headers: Connect.Headers = [:]) async -> ResponseMessage<Content_Sources> {
         return await self.client.unary(path: "/content.ContentService/GetSources", request: request, headers: headers)
     }
 
     @discardableResult
-    public func `types`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Content_GRPCTypeInfo>) -> Void) -> Connect.Cancelable {
+    public func `types`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Content_TypesResponse>) -> Void) -> Connect.Cancelable {
         return self.client.unary(path: "/content.ContentService/Types", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
-    public func `types`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers = [:]) async -> ResponseMessage<Content_GRPCTypeInfo> {
+    public func `types`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers = [:]) async -> ResponseMessage<Content_TypesResponse> {
         return await self.client.unary(path: "/content.ContentService/Types", request: request, headers: headers)
     }
 

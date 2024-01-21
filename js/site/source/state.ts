@@ -7,19 +7,24 @@ const sourcesAtom = atom<EnumeratedSource[]|undefined>(undefined);
 sourcesAtom.debugLabel = 'sourcesAtom';
 const selectedSourceAtom = atom<EnumeratedSource|undefined>(undefined);
 selectedSourceAtom.debugLabel = 'selectedSourceAtom';
+const typesAtom = atom<string[]>([]);
+typesAtom.debugLabel = 'typesAtom';
 
 export const useSources = () => {
     const [sources, setSources] = useAtom(sourcesAtom);
     const [selected, setSelected] = useAtom(selectedSourceAtom);
+    const [types, setTypes] = useAtom(typesAtom);
 
     const getSources = async () => {
-        const resp = await contentService.getSources({});
+        const resp = await contentService.getSources({
+            contentTypes: types,
+        });
         setSources(resp.sources);
         if (resp.sources.length > 0) {
             setSelected(resp.sources[0]);
         }
     };
-    return {sources, selected, setSelected, getSources};
+    return {sources, selected, setSelected, getSources, types, setTypes};
 }
 
 const selectedContentAtom = atom<Content|undefined>(undefined);

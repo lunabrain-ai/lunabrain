@@ -30,6 +30,11 @@ export const ProtobufMessageForm: FC<GRPCInputFormProps> = (props) => {
         return null;
     }
 
+    if (desc.options?.mapEntry) {
+        // TODO breadchris handle map entries
+        console.log('map entry', desc);
+    }
+
     const formattedFields: ProtobufFormFieldType[] = [];
     desc.field.forEach((field: FieldDescriptorProto) => {
         if (field.oneofIndex !== undefined) {
@@ -65,9 +70,9 @@ export const ProtobufMessageForm: FC<GRPCInputFormProps> = (props) => {
                     {/*</tr>*/}
                     {formattedFields.map((f) => {
                         // TODO breadchris hidden fields should be controlled by props
-                        if (f.name === 'content') {
-                            return null;
-                        }
+                        // if (f.name === 'content') {
+                        //     return null;
+                        // }
                         return (
                             <tr key={f.name} className={"message_field"}>
                                 <td className={"name"}>

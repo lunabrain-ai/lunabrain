@@ -9,6 +9,9 @@ import (
 // Content is the predicate function for content builders.
 type Content func(*sql.Selector)
 
+// Event is the predicate function for entevent builders.
+type Event func(*sql.Selector)
+
 // Group is the predicate function for group builders.
 type Group func(*sql.Selector)
 

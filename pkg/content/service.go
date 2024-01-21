@@ -20,6 +20,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/pkg/errors"
 	"github.com/protoflow-labs/protoflow/pkg/grpc"
+	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
 	"log/slog"
@@ -87,10 +88,12 @@ func (s *Service) VoiceInput(ctx context.Context, c *connect_go.Request[content.
 	return nil
 }
 
-func (s *Service) sourceToContent(ctx context.Context, cs *content.Source) ([]*content.Content, error) {
+func (s *Service) sourceToContent(ctx context.Context, cs *content.Source, r *content.GetSourcesRequest) ([]*content.Content, error) {
 	switch t := cs.Type.(type) {
 	case *content.Source_Server:
-		resp, err := s.Search(ctx, connect_go.NewRequest(&content.Query{}))
+		resp, err := s.Search(ctx, connect_go.NewRequest(&content.Query{
+			ContentTypes: r.ContentTypes,
+		}))
 		if err != nil {
 			return nil, err
 		}
@@ -127,9 +130,9 @@ func (s *Service) sourceToContent(ctx context.Context, cs *content.Source) ([]*c
 	return nil, errors.Errorf("unhandled source type: %s", cs.Type)
 }
 
-func (s *Service) enumerateSource(ctx context.Context, src *content.Source) ([]*content.DisplayContent, error) {
+func (s *Service) enumerateSource(ctx context.Context, src *content.Source, r *content.GetSourcesRequest) ([]*content.DisplayContent, error) {
 	var disCnt []*content.DisplayContent
-	cnt, err := s.sourceToContent(ctx, src)
+	cnt, err := s.sourceToContent(ctx, src, r)
 	if err != nil {
 		return nil, err
 	}
@@ -139,7 +142,7 @@ func (s *Service) enumerateSource(ctx context.Context, src *content.Source) ([]*
 		}
 		switch t := cn.Type.(type) {
 		case *content.Content_Post:
-			dc.Title = fmt.Sprintf("%s | %s", t.Post.Title, t.Post.Summary)
+			dc.Title = t.Post.Title
 			dc.Description = t.Post.Content
 			dc.Type = "post"
 		case *content.Content_Site:
@@ -179,7 +182,7 @@ func (s *Service) enumerateSource(ctx context.Context, src *content.Source) ([]*
 	return disCnt, nil
 }
 
-func (s *Service) GetSources(ctx context.Context, c *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Sources], error) {
+func (s *Service) GetSources(ctx context.Context, c *connect_go.Request[content.GetSourcesRequest]) (*connect_go.Response[content.Sources], error) {
 	srcs := []*content.Source{
 		{
 			Name: "lunabrain",
@@ -198,7 +201,7 @@ func (s *Service) GetSources(ctx context.Context, c *connect_go.Request[emptypb.
 	}
 	var enumSrc []*content.EnumeratedSource
 	for _, src := range srcs {
-		disCnt, err := s.enumerateSource(ctx, src)
+		disCnt, err := s.enumerateSource(ctx, src, c.Msg)
 		if err != nil {
 			return nil, err
 		}
@@ -230,12 +233,32 @@ func (s *Service) Publish(ctx context.Context, c *connect_go.Request[content.Con
 		return nil, err
 	}
 
+	sites, err := s.Search(ctx, connect_go.NewRequest(&content.Query{
+		ContentTypes: []string{"site"},
+	}))
+	if err != nil {
+		return nil, err
+	}
+
+	var site *content.Site
+	sc := sites.Msg.StoredContent
+	if len(sc) != 1 {
+		return nil, errors.Errorf("did not find exactly one site, found %d", len(sites.Msg.StoredContent))
+	}
+	switch t := sc[0].Content.Type.(type) {
+	case *content.Content_Site:
+		site = t.Site
+	}
+	if site == nil {
+		return nil, errors.Errorf("unable to find site")
+	}
+
 	var cnt []*content.Content
 	for _, sc := range resp.Msg.StoredContent {
 		cnt = append(cnt, sc.Content)
 	}
 
-	err = b.Publish("blog", cnt)
+	err = b.Publish("blog", site, cnt)
 	if err != nil {
 		return nil, err
 	}
@@ -351,23 +374,37 @@ func (s *Service) Save(ctx context.Context, c *connect_go.Request[content.Conten
 	return connect_go.NewResponse(&content.ContentIDs{ContentIds: []string{cnt.String()}}), nil
 }
 
-func (s *Service) Types(ctx context.Context, c *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.GRPCTypeInfo], error) {
-	e := &content.Content{}
-	ed, err := grpc.SerializeType(e)
+func getTypeInfo(m protoreflect.ProtoMessage) (*content.GRPCTypeInfo, error) {
+	ed, err := grpc.SerializeType(m)
 	if err != nil {
 		return nil, errors.Wrapf(err, "error serializing node type")
 	}
 
 	// TODO breadchris cleanup this code, see blocks.go:76
 	tr := grpc.NewTypeResolver()
-	tr = tr.ResolveLookup(e)
+	tr = tr.ResolveLookup(m)
 
 	sr := tr.Serialize()
 
-	return connect_go.NewResponse(&content.GRPCTypeInfo{
+	return &content.GRPCTypeInfo{
 		Msg:        ed.AsDescriptorProto(),
 		DescLookup: sr.DescLookup,
 		EnumLookup: sr.EnumLookup,
+	}, nil
+}
+
+func (s *Service) Types(ctx context.Context, c *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.TypesResponse], error) {
+	cntType, err := getTypeInfo(&content.Content{})
+	if err != nil {
+		return nil, err
+	}
+	siteType, err := getTypeInfo(&content.Site{})
+	if err != nil {
+		return nil, err
+	}
+	return connect_go.NewResponse(&content.TypesResponse{
+		Content: cntType,
+		Site:    siteType,
 	}), nil
 }
 
@@ -398,7 +435,7 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 			}
 		}
 		// TODO breadchris pagination
-		ct, err = s.content.SearchContent(ctx, userID, 0, 100, groupID, c.Msg.Tags)
+		ct, err = s.content.SearchContent(ctx, userID, groupID, c.Msg)
 		if err != nil {
 			return nil, errors.Wrapf(err, "unable to get stored content")
 		}

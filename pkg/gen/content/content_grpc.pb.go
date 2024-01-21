@@ -31,8 +31,8 @@ type ContentServiceClient interface {
 	GetTags(ctx context.Context, in *TagRequest, opts ...grpc.CallOption) (*Tags, error)
 	SetTags(ctx context.Context, in *SetTagsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Publish(ctx context.Context, in *ContentIDs, opts ...grpc.CallOption) (*ContentIDs, error)
-	GetSources(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Sources, error)
-	Types(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GRPCTypeInfo, error)
+	GetSources(ctx context.Context, in *GetSourcesRequest, opts ...grpc.CallOption) (*Sources, error)
+	Types(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TypesResponse, error)
 	VoiceInput(ctx context.Context, in *VoiceInputRequest, opts ...grpc.CallOption) (ContentService_VoiceInputClient, error)
 }
 
@@ -116,7 +116,7 @@ func (c *contentServiceClient) Publish(ctx context.Context, in *ContentIDs, opts
 	return out, nil
 }
 
-func (c *contentServiceClient) GetSources(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Sources, error) {
+func (c *contentServiceClient) GetSources(ctx context.Context, in *GetSourcesRequest, opts ...grpc.CallOption) (*Sources, error) {
 	out := new(Sources)
 	err := c.cc.Invoke(ctx, "/content.ContentService/GetSources", in, out, opts...)
 	if err != nil {
@@ -125,8 +125,8 @@ func (c *contentServiceClient) GetSources(ctx context.Context, in *emptypb.Empty
 	return out, nil
 }
 
-func (c *contentServiceClient) Types(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GRPCTypeInfo, error) {
-	out := new(GRPCTypeInfo)
+func (c *contentServiceClient) Types(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TypesResponse, error) {
+	out := new(TypesResponse)
 	err := c.cc.Invoke(ctx, "/content.ContentService/Types", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -178,8 +178,8 @@ type ContentServiceServer interface {
 	GetTags(context.Context, *TagRequest) (*Tags, error)
 	SetTags(context.Context, *SetTagsRequest) (*emptypb.Empty, error)
 	Publish(context.Context, *ContentIDs) (*ContentIDs, error)
-	GetSources(context.Context, *emptypb.Empty) (*Sources, error)
-	Types(context.Context, *emptypb.Empty) (*GRPCTypeInfo, error)
+	GetSources(context.Context, *GetSourcesRequest) (*Sources, error)
+	Types(context.Context, *emptypb.Empty) (*TypesResponse, error)
 	VoiceInput(*VoiceInputRequest, ContentService_VoiceInputServer) error
 }
 
@@ -211,10 +211,10 @@ func (UnimplementedContentServiceServer) SetTags(context.Context, *SetTagsReques
 func (UnimplementedContentServiceServer) Publish(context.Context, *ContentIDs) (*ContentIDs, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Publish not implemented")
 }
-func (UnimplementedContentServiceServer) GetSources(context.Context, *emptypb.Empty) (*Sources, error) {
+func (UnimplementedContentServiceServer) GetSources(context.Context, *GetSourcesRequest) (*Sources, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSources not implemented")
 }
-func (UnimplementedContentServiceServer) Types(context.Context, *emptypb.Empty) (*GRPCTypeInfo, error) {
+func (UnimplementedContentServiceServer) Types(context.Context, *emptypb.Empty) (*TypesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Types not implemented")
 }
 func (UnimplementedContentServiceServer) VoiceInput(*VoiceInputRequest, ContentService_VoiceInputServer) error {
@@ -377,7 +377,7 @@ func _ContentService_Publish_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _ContentService_GetSources_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(GetSourcesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -389,7 +389,7 @@ func _ContentService_GetSources_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: "/content.ContentService/GetSources",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ContentServiceServer).GetSources(ctx, req.(*emptypb.Empty))
+		return srv.(ContentServiceServer).GetSources(ctx, req.(*GetSourcesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

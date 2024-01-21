@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// Content is the client for interacting with the Content builders.
 	Content *ContentClient
+	// Event is the client for interacting with the Event builders.
+	Event *EventClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// GroupInvite is the client for interacting with the GroupInvite builders.
@@ -158,6 +160,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Content = NewContentClient(tx.config)
+	tx.Event = NewEventClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
 	tx.GroupInvite = NewGroupInviteClient(tx.config)
 	tx.GroupUser = NewGroupUserClient(tx.config)

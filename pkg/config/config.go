@@ -4,6 +4,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/event"
 	"github.com/lunabrain-ai/lunabrain/pkg/openai"
 	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
 	"github.com/lunabrain-ai/lunabrain/pkg/user"
@@ -28,6 +29,7 @@ type Config struct {
 	OpenAI  openai.Config  `yaml:"openai"`
 	Whisper whisper.Config `yaml:"config"`
 	User    user.Config    `yaml:"user"`
+	Event   event.Config   `yaml:"event"`
 }
 
 func newDefaultConfig() Config {
@@ -41,6 +43,7 @@ func newDefaultConfig() Config {
 		OpenAI:  openai.NewDefaultConfig(),
 		Whisper: whisper.NewDefaultConfig(),
 		User:    user.DefaultConfig(),
+		Event:   event.DefaultConfig(),
 	}
 }
 

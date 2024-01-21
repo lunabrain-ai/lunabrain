@@ -6,8 +6,8 @@ import Text from '@tiptap/extension-text';
 import Paragraph from '@tiptap/extension-paragraph';
 import Document from "@tiptap/extension-document";
 import './editor.css';
-import {useContentEditor, useSources, useVoice} from "@/source/state";
-import {Content, GRPCTypeInfo, Post, Site} from "@/rpc/content/content_pb";
+import {useSources, useVoice} from "@/source/state";
+import {Content, GRPCTypeInfo, Post, Site, TypesResponse} from "@/rpc/content/content_pb";
 import {
     AdjustmentsHorizontalIcon,
     MicrophoneIcon,
@@ -22,10 +22,56 @@ import {useForm} from "react-hook-form";
 import {GRPCInputFormProps, ProtobufMessageForm} from "@/form/ProtobufMessageForm";
 import { RichTextLink } from './rich-text-links';
 import {AddTagBadge} from "@/tag/AddTagBadge";
-import {act} from "react-dom/test-utils";
 import {SitePostSearch} from "@/source/SitePostSearch";
 import {URLEditor} from "@/source/URLEditor";
-import {LiveTranscription} from "@/media/LiveTranscription";
+import History from '@tiptap/extension-history';
+import {callbacks, walkDescriptor} from "@/form/walk";
+
+function transformObject(obj: any): any {
+    // Check if the object is actually an object or an array
+    if (typeof obj !== 'object' || obj === null) {
+        return obj;
+    }
+
+    // Process arrays
+    if (Array.isArray(obj)) {
+        if (obj.every(item => item.hasOwnProperty('key') && item.hasOwnProperty('value'))) {
+            const newObj: { [key: string]: any } = {};
+            obj.forEach((item: { key: string; value: any }) => {
+                const transformedValue = transformObject(item.value); // Recursive call for nested objects
+                if (transformedValue === '' || typeof transformedValue === 'object' && !Array.isArray(transformedValue) && Object.keys(transformedValue).length === 0) {
+                    // Skip if the transformed value is an empty object
+                } else {
+                    newObj[item.key] = transformedValue;
+                }
+            });
+            return newObj;
+        } else {
+            return obj.map(item => transformObject(item)).filter(item => !(typeof item === 'object' && !Array.isArray(item) && Object.keys(item).length === 0));
+        }
+    }
+
+    // Process objects
+    const result: { [key: string]: any } = {};
+    for (const [key, value] of Object.entries(obj)) {
+        const transformedValue = transformObject(value); // Recursive call for nested objects
+        if (transformedValue === '' || typeof transformedValue === 'object' && !Array.isArray(transformedValue) && Object.keys(transformedValue).length === 0) {
+            // Skip if the transformed value is an empty object
+        } else {
+            result[key] = transformedValue;
+        }
+    }
+
+    return result;
+}
+
+function fixMaps(data: any, type: GRPCTypeInfo): any {
+    const desc = type.msg;
+    if (!desc) {
+        return data;
+    }
+    walkDescriptor(desc, [], callbacks);
+}
 
 function removeUndefinedFields<T extends object>(obj: T): T {
     Object.keys(obj).forEach(key => {
@@ -54,7 +100,7 @@ const getContent = (content: Content) => {
 export const ContentEditor: React.FC<{content: Content|undefined, onUpdate: (content: Content) => void}> = ({content, onUpdate}) => {
     const { getSources } = useSources();
     const { start, stop, recording } = useVoice();
-    const [postType, setPostType] = useState<GRPCTypeInfo|null>(null);
+    const [formTypes, setFormTypes] = useState<TypesResponse|undefined>(undefined);
     const [editedContent, setEditedContent] = useState<Content>(content || new Content({
         type: {
             case: 'post',
@@ -117,20 +163,24 @@ export const ContentEditor: React.FC<{content: Content|undefined, onUpdate: (con
         (async () => {
             try {
                 const t = await contentService.types({});
-                setPostType(t);
+                console.log(t);
+                if (t.content) {
+                    fixMaps(t, t.content);
+                }
+                setFormTypes(t);
             } catch (e) {
                 console.error('failed to get types', e);
             }
         })()
-    }, [setPostType]);
+    }, [setFormTypes]);
 
-    const form = () => {
-        if (!postType) {
+    const form = (type: GRPCTypeInfo) => {
+        if (!formTypes) {
             return null;
         }
 
         const inputFormProps: GRPCInputFormProps = {
-            grpcInfo: postType,
+            grpcInfo: type,
             // some random key to separate data from the form
             baseFieldName: 'data',
             //@ts-ignore
@@ -139,7 +189,7 @@ export const ContentEditor: React.FC<{content: Content|undefined, onUpdate: (con
             // TODO breadchris without this ignore, my computer wants to take flight https://github.com/react-hook-form/react-hook-form/issues/6679
             //@ts-ignore
             control,
-            fieldPath: postType.packageName || '',
+            fieldPath: type.packageName || '',
             resetField,
         }
         return (
@@ -152,13 +202,12 @@ export const ContentEditor: React.FC<{content: Content|undefined, onUpdate: (con
             Document,
             Paragraph,
             Text,
-            BulletList.configure({
-                // HTMLAttributes: {
-                //     class: 'list-disc',
-                // },
-            }),
+            BulletList,
             ListItem,
             RichTextLink,
+            History.configure({
+                depth: 100,
+            })
         ],
         onUpdate: ({ editor }) => {
             localStorage.setItem('editorContent', editor.getHTML());
@@ -213,7 +262,8 @@ export const ContentEditor: React.FC<{content: Content|undefined, onUpdate: (con
 
     const onSubmit = async (data: any) => {
         // TODO breadchris the editor should handle this
-        const c = removeUndefinedFields(data.data);
+        let c = removeUndefinedFields(data.data);
+        c = transformObject(c);
         console.log(c);
         let content = Content.fromJson(c);
 
@@ -231,22 +281,59 @@ export const ContentEditor: React.FC<{content: Content|undefined, onUpdate: (con
     const myModal = useRef(null);
 
     const getEditor = (content: Content|null) => {
+        const dialog = (
+            <dialog id="my_modal_1" className="modal" ref={myModal}>
+                <div className="modal-box">
+                    {formTypes?.content && form(formTypes.content)}
+                    <form method="dialog">
+                        <div className="modal-action">
+                            <button className="btn">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </dialog>
+        );
         if (content) {
             switch (content.type.case) {
                 case 'site':
                     // TODO breadchris only show oneof from this type to make the form smaller
                     return (
-                        <SitePostSearch onUpdate={(s: Site) => {
-                            const c = new Content({
-                                ...content,
-                                type: {
-                                    case: 'site',
-                                    value: s,
-                                }
-                            });
-                            setEditedContent(c);
-                            setValue('data', c.toJson());}
-                        } site={content.type.value} />
+                        <>
+                            <SitePostSearch onUpdate={(s: Site) => {
+                                const c = new Content({
+                                    ...content,
+                                    type: {
+                                        case: 'site',
+                                        value: s,
+                                    }
+                                });
+                                setEditedContent(c);
+                                setValue('data', c.toJson());}
+                            } site={content.type.value} />
+                            {dialog}
+                        </>
+                    )
+                case 'post':
+                    const p = content.type.value;
+                    return (
+                        <div className={"space-y-2"}>
+                            <input type="text" value={p.title} onChange={(e) => {
+                                const c = new Content({
+                                    ...content,
+                                    type: {
+                                        case: 'post',
+                                        value: {
+                                            ...p,
+                                            title: e.target.value,
+                                        }
+                                    }
+                                });
+                                setEditedContent(c);
+                                setValue('data', c.toJson());
+                            }} placeholder="title" className="input w-full max-w-xs" />
+                            <EditorContent className={"max-h-72 overflow-y-auto"} editor={editor} />
+                            {dialog}
+                        </div>
                     )
                 case 'data':
                     const d = content.type.value;
@@ -280,16 +367,7 @@ export const ContentEditor: React.FC<{content: Content|undefined, onUpdate: (con
             return (
                 <>
                     <EditorContent className={"max-h-72 overflow-y-auto"} editor={editor} />
-                    <dialog id="my_modal_1" className="modal" ref={myModal}>
-                        <div className="modal-box">
-                            {form()}
-                            <form method="dialog">
-                                <div className="modal-action">
-                                    <button className="btn">Close</button>
-                                </div>
-                            </form>
-                        </div>
-                    </dialog>
+                    {dialog}
                 </>
             );
         }
@@ -298,7 +376,7 @@ export const ContentEditor: React.FC<{content: Content|undefined, onUpdate: (con
 
     return (
         <div>
-            <div className={"max-h-[300px] overflow-y-auto"}>
+            <div className={""}>
                 {getEditor(editedContent)}
             </div>
             <span>
@@ -312,10 +390,20 @@ export const ContentEditor: React.FC<{content: Content|undefined, onUpdate: (con
                         <summary className={"btn"}><PlusIcon className={"h-6 w-6"} /></summary>
                         <ul className={"p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52"}>
                             <li onClick={() => {
-                                setEditedContent(urlContent('https://example.com', []));
+                                const c = urlContent('https://example.com', []);
+                                setEditedContent(c);
+                                setValue('data', c.toJson());
+                                if (editor) {
+                                    editor.commands.setContent(getContent(c));
+                                }
                             }}>url</li>
                             <li onClick={() => {
-                                setEditedContent(postContent(''));
+                                const c = postContent("Don't think, write.");
+                                setEditedContent(c);
+                                setValue('data', c.toJson());
+                                if (editor) {
+                                    editor.commands.setContent(getContent(c));
+                                }
                             }}>
                                 post
                             </li>

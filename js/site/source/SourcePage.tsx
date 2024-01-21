@@ -5,22 +5,25 @@ import {ContentCard} from "@/source/ContentCard";
 import {contentService, userService} from "@/service";
 import toast from "react-hot-toast";
 import {useParams} from "react-router";
-import {TrashIcon} from "@heroicons/react/24/outline";
+import {PlusIcon, TrashIcon} from "@heroicons/react/24/outline";
 import {notEmpty} from "@/util/predicates";
 import {ContentEditor} from "@/source/ContentEditor";
 import {useAuth} from "@/auth/state";
 
 export const SourcePage: React.FC = () => {
-    const {sources, selected, setSelected, getSources} = useSources();
+    const {sources, types, selected, setSelected, setTypes, getSources} = useSources();
     const {selected: selectedContent, select: setSelectedContent} = useContentEditor();
     const { id } = useParams();
     const { logout } = useAuth();
 
     useEffect(() => {
         void getSources();
-    }, []);
+    }, [types]);
 
     useEffect(() => {
+        if (!id) {
+            return;
+        }
         (async () => {
             try {
                 const res = await contentService.search({
@@ -49,6 +52,15 @@ export const SourcePage: React.FC = () => {
             toast.error('Failed to publish content');
             console.error('failed to publish', e)
         }
+    }
+
+    const toggleType = (type: string) => async () => {
+        setTypes((types) => {
+            if (types.includes(type)) {
+                return types.filter((t) => t !== type);
+            }
+            return [...types, type];
+        });
     }
 
     if (!sources) {
@@ -81,6 +93,13 @@ export const SourcePage: React.FC = () => {
                 {selected && (
                     // <ContentCards displayContent={selected.displayContent} />
                     <div className={"overflow-x-auto"}>
+                        <details className={"dropdown"}>
+                            <summary className={"btn"}>type</summary>
+                            <ul className={"p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52"}>
+                                <li onClick={toggleType('site')}>site</li>
+                                <li onClick={toggleType('post')}>post</li>
+                            </ul>
+                        </details>
                         <ContentTable displayContent={selected.displayContent} />
                     </div>
                 )}

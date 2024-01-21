@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Content, ContentIDs, Contents, GRPCTypeInfo, Query, RelateRequest, Results, SetTagsRequest, Sources, TagRequest, Tags, VoiceInputRequest, VoiceInputResponse } from "./content_pb.js";
+import { Content, ContentIDs, Contents, GetSourcesRequest, Query, RelateRequest, Results, SetTagsRequest, Sources, TagRequest, Tags, TypesResponse, VoiceInputRequest, VoiceInputResponse } from "./content_pb.js";
 import { Empty, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -89,7 +89,7 @@ export const ContentService = {
      */
     getSources: {
       name: "GetSources",
-      I: Empty,
+      I: GetSourcesRequest,
       O: Sources,
       kind: MethodKind.Unary,
     },
@@ -99,7 +99,7 @@ export const ContentService = {
     types: {
       name: "Types",
       I: Empty,
-      O: GRPCTypeInfo,
+      O: TypesResponse,
       kind: MethodKind.Unary,
     },
     /**

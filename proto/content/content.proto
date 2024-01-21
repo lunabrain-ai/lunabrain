@@ -19,9 +19,18 @@ service ContentService {
   rpc GetTags(TagRequest) returns (Tags);
   rpc SetTags(SetTagsRequest) returns (google.protobuf.Empty);
   rpc Publish(ContentIDs) returns (ContentIDs);
-  rpc GetSources(google.protobuf.Empty) returns (Sources);
-  rpc Types(google.protobuf.Empty) returns (GRPCTypeInfo);
+  rpc GetSources(GetSourcesRequest) returns (Sources);
+  rpc Types(google.protobuf.Empty) returns (TypesResponse);
   rpc VoiceInput(VoiceInputRequest) returns (stream VoiceInputResponse);
+}
+
+message TypesResponse {
+  GRPCTypeInfo content = 1;
+  GRPCTypeInfo site = 2;
+}
+
+message GetSourcesRequest {
+  repeated string content_types = 1;
 }
 
 message VoiceInputRequest {
@@ -104,6 +113,7 @@ message Query {
   string contentID = 3;
   string groupID = 4;
   repeated string tags = 5;
+  repeated string content_types = 6;
 }
 
 message Results {
@@ -258,10 +268,88 @@ message Site {
 }
 
 message HugoConfig {
-  string theme = 1;
+  string publish_dir = 1;
   string base_url = 2;
   string title = 3;
-  ParamsConfig params = 4;
+  int32 paginate = 4;
+  repeated string theme = 5;
+  bool enable_inline_shortcodes = 6;
+  bool enable_robots_txt = 7;
+  bool build_drafts = 8;
+  bool build_future = 9;
+  bool build_expired = 10;
+  bool enable_emoji = 11;
+  bool pygments_use_classes = 12;
+  repeated string main_sections = 13;
+  MinifyConfig minify = 14;
+  map<string, LanguageConfig> languages = 15;
+  map<string, repeated_string> outputs = 16;
+  ParamsConfig params = 17;
+  MarkupConfig markup = 18;
+  ServicesConfig services = 19;
+}
+
+message MinifyConfig {
+  bool disable_xml = 1;
+}
+
+message LanguageConfig {
+  string language_name = 1;
+  int32 weight = 2;
+  string title = 3;
+  map<string, string> taxonomies = 4;
+  map<string, repeated_menu_item> menu = 5;
+  map<string, string> params = 6; // `interface{}` converted to string for simplicity
+}
+
+message MenuItem {
+  string name = 1;
+  string url = 2;
+  int32 weight = 3;
+}
+
+message EditPostConfig {
+  string url = 1;
+  string text = 2;
+  bool append_file_path = 3;
+}
+
+message AssetsConfig {
+  bool disable_hljs = 1;
+}
+
+message MarkupConfig {
+  GoldmarkConfig goldmark = 1;
+  HighlightConfig highlight = 2;
+}
+
+message GoldmarkConfig {
+  RendererConfig renderer = 1;
+}
+
+message RendererConfig {
+  bool unsafe = 1;
+}
+
+message HighlightConfig {
+  bool no_classes = 1;
+}
+
+message ServicesConfig {
+  ServiceConfig instagram = 1;
+  ServiceConfig twitter = 2;
+}
+
+message ServiceConfig {
+  bool disable_inline_css = 1;
+}
+
+message repeated_string {
+  repeated string values = 1;
+}
+
+message repeated_menu_item {
+  repeated MenuItem items = 1;
 }
 
 message ParamsConfig {
@@ -309,14 +397,4 @@ message SocialIconConfig {
   string name = 1;
   string title = 2;
   string url = 3;
-}
-
-message EditPostConfig {
-  string url = 1;
-  string text = 2;
-  bool append_file_path = 3;
-}
-
-message AssetsConfig {
-  bool disable_hljs = 1;
 }

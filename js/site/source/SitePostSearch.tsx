@@ -96,7 +96,6 @@ export const SitePostSearch: React.FC<{site: Site, onUpdate: (s: Site) => void}>
                 <tr>
                     {/*<th></th>*/}
                     <th>title</th>
-                    <th>description</th>
                     <th>tags</th>
                 </tr>
                 </thead>
@@ -107,7 +106,6 @@ export const SitePostSearch: React.FC<{site: Site, onUpdate: (s: Site) => void}>
                         {/*    <PencilSquareIcon onClick={() => viewContent(item.post)} className="h-5 w-5" />*/}
                         {/*</td>*/}
                         <td>{item.post.title}</td>
-                        <td className="max-w-xs truncate text-gray-500 font-normal">{item.post.summary}</td>
                         <td>
                             <div className="flex gap-3">
                                 {item.tags.map((tag) => (

@@ -31,6 +31,18 @@ var (
 			},
 		},
 	}
+	// EventsColumns holds the columns for the "events" table.
+	EventsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "data", Type: field.TypeJSON},
+		{Name: "created_at", Type: field.TypeTime},
+	}
+	// EventsTable holds the schema information for the "events" table.
+	EventsTable = &schema.Table{
+		Name:       "events",
+		Columns:    EventsColumns,
+		PrimaryKey: []*schema.Column{EventsColumns[0]},
+	}
 	// GroupsColumns holds the columns for the "groups" table.
 	GroupsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -216,6 +228,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		ContentsTable,
+		EventsTable,
 		GroupsTable,
 		GroupInvitesTable,
 		GroupUsersTable,

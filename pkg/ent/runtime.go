@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/content"
+	entevent "github.com/lunabrain-ai/lunabrain/pkg/ent/event"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupuser"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/schema"
@@ -35,6 +36,16 @@ func init() {
 	contentDescID := contentFields[0].Descriptor()
 	// content.DefaultID holds the default value on creation for the id field.
 	content.DefaultID = contentDescID.Default.(func() uuid.UUID)
+	enteventFields := schema.Event{}.Fields()
+	_ = enteventFields
+	// enteventDescCreatedAt is the schema descriptor for created_at field.
+	enteventDescCreatedAt := enteventFields[2].Descriptor()
+	// entevent.DefaultCreatedAt holds the default value on creation for the created_at field.
+	entevent.DefaultCreatedAt = enteventDescCreatedAt.Default.(func() time.Time)
+	// enteventDescID is the schema descriptor for id field.
+	enteventDescID := enteventFields[0].Descriptor()
+	// entevent.DefaultID holds the default value on creation for the id field.
+	entevent.DefaultID = enteventDescID.Default.(func() uuid.UUID)
 	groupFields := schema.Group{}.Fields()
 	_ = groupFields
 	// groupDescID is the schema descriptor for id field.

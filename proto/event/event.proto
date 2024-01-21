@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+package event;
+
+message Metric {
+  oneof type {
+    HTTPRequest http = 1;
+    RRWeb rrweb = 2;
+  }
+}
+
+message HTTPRequest {
+  string method = 1;
+  string path = 2;
+  string query = 3;
+  map<string, string> headers = 4;
+  string host = 5;
+  string remoteAddr = 6;
+  string userAgent = 7;
+  string referer = 8;
+}
+
+message RRWeb {
+  string events = 1;
+}
+
+message SendResponse {
+  string id = 1;
+}
+
+service EventService {
+  rpc Send(Metric) returns (SendResponse);
+}

@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import 'source-map-support/register';
 import {App} from "@/App";
+import * as rrweb from 'rrweb';
+import {HTMLEvents, RRWebRecorder} from "@/event/HTMLEvents";
 
 global.React = React;
 
@@ -11,6 +13,9 @@ const isDev = process.env.PRODUCTION === "false";
 if (isDev) {
     new EventSource('/esbuild').addEventListener('change', () => location.reload())
 }
+
+// const recorder = new RRWebRecorder();
+// recorder.startRecording();
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(

@@ -13,6 +13,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/content"
+
+	entevent "github.com/lunabrain-ai/lunabrain/pkg/ent/event"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupinvite"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupuser"
@@ -81,6 +83,7 @@ func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			content.Table:     content.ValidColumn,
+			entevent.Table:    entevent.ValidColumn,
 			group.Table:       group.ValidColumn,
 			groupinvite.Table: groupinvite.ValidColumn,
 			groupuser.Table:   groupuser.ValidColumn,

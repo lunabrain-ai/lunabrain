@@ -12,8 +12,10 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/chat"
 	"github.com/lunabrain-ai/lunabrain/pkg/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/content/normalize"
+	"github.com/lunabrain-ai/lunabrain/pkg/event"
 	"github.com/lunabrain-ai/lunabrain/pkg/gen/chat/chatconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/gen/content/contentconnect"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/event/eventconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/gen/user/userconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/group"
 	shttp "github.com/lunabrain-ai/lunabrain/pkg/http"
@@ -37,8 +39,9 @@ type APIHTTPServer struct {
 	contentService *content.Service
 	bucket         *bucket.Bucket
 	sessionManager *shttp.SessionManager
-	userService    *user.UserService
+	userService    *user.Service
 	chatService    *chat.Service
+	eventService   *event.Service
 	authStore      *sessions.CookieStore
 }
 
@@ -51,6 +54,7 @@ var (
 		normalize.New,
 		shttp.NewSession,
 		content.NewConfig,
+		event.ProviderSet,
 		New,
 	)
 )
@@ -60,10 +64,10 @@ func New(
 	apiServer *content.Service,
 	bucket *bucket.Bucket,
 	sessionManager *shttp.SessionManager,
-	userService *user.UserService,
+	userService *user.Service,
 	chatService *chat.Service,
+	eventService *event.Service,
 ) *APIHTTPServer {
-	os.Setenv("SESSION_SECRET", config.SessionSecret)
 	return &APIHTTPServer{
 		config:         config,
 		contentService: apiServer,
@@ -71,6 +75,7 @@ func New(
 		sessionManager: sessionManager,
 		userService:    userService,
 		chatService:    chatService,
+		eventService:   eventService,
 		authStore:      sessions.NewCookieStore([]byte(config.SessionSecret)),
 	}
 }
@@ -105,10 +110,6 @@ func (a *APIHTTPServer) handleGoogleCallback(w http.ResponseWriter, r *http.Requ
 }
 
 func (a *APIHTTPServer) NewAPIHandler() (http.Handler, error) {
-	// TODO breadchris secret should be passed into use providers
-	// used for gothic
-	os.Setenv("SESSION_SECRET", "test")
-
 	goth.UseProviders(
 		google.New(
 			a.config.GoogleClientID,
@@ -125,13 +126,16 @@ func (a *APIHTTPServer) NewAPIHandler() (http.Handler, error) {
 	apiRoot.HandleFunc("/auth/google", a.startGoogleAuth)
 	apiRoot.HandleFunc("/auth/google/callback", a.handleGoogleCallback)
 
+	// TODO breadchris services should be registered in a more modular way
 	apiRoot.Handle(contentconnect.NewContentServiceHandler(a.contentService, interceptors))
 	apiRoot.Handle(userconnect.NewUserServiceHandler(a.userService, interceptors))
 	apiRoot.Handle(chatconnect.NewChatServiceHandler(a.chatService, interceptors))
+	apiRoot.Handle(eventconnect.NewEventServiceHandler(a.eventService, interceptors))
 	reflector := grpcreflect.NewStaticReflector(
 		"content.ContentService",
-		"user.UserService",
+		"user.Service",
 		"chat.ChatService",
+		"event.Service",
 	)
 	recoverCall := func(_ context.Context, spec connect.Spec, _ http.Header, p any) error {
 		slog.Error("panic", "err", fmt.Sprintf("%+v", p))
@@ -226,7 +230,7 @@ func (a *APIHTTPServer) NewAPIHandler() (http.Handler, error) {
 	//bucketRoute, handler := a.bucket.HandleSignedURLs()
 	//muxRoot.Handle(bucketRoute, handler)
 	// TODO breadchris https://github.com/alexedwards/scs/tree/master/gormstore
-	return a.sessionManager.LoadAndSave(loggingMiddleware(muxRoot)), nil
+	return a.sessionManager.LoadAndSave(a.loggingMiddleware(muxRoot)), nil
 }
 
 func (a *APIHTTPServer) Start() error {

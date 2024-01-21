@@ -14,6 +14,7 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/content/normalize"
 	"github.com/lunabrain-ai/lunabrain/pkg/content/store"
 	"github.com/lunabrain-ai/lunabrain/pkg/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/event"
 	"github.com/lunabrain-ai/lunabrain/pkg/group"
 	"github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/lunabrain-ai/lunabrain/pkg/log"
@@ -88,7 +89,13 @@ func Wire() (*cli.App, error) {
 	}
 	userService := user.NewService(groupEntStore, sessionManager, userEntStore, userConfig)
 	chatService := chat.New(sessionManager, userEntStore)
-	apihttpServer := server.New(contentConfig, service, bucketBucket, sessionManager, userService, chatService)
+	eventEntStore := event.NewEntStore(client)
+	eventConfig, err := event.NewConfig(provider)
+	if err != nil {
+		return nil, err
+	}
+	eventService := event.NewService(sessionManager, eventEntStore, eventConfig)
+	apihttpServer := server.New(contentConfig, service, bucketBucket, sessionManager, userService, chatService, eventService)
 	app := NewApp(logLog, apihttpServer)
 	return app, nil
 }

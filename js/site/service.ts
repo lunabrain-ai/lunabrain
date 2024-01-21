@@ -2,6 +2,7 @@ import { ProtoflowService } from "@/rpc/protoflow_connect";
 import { ContentService } from "@/rpc/content/content_connect";
 import { UserService } from "@/rpc/user/user_connect";
 import {ChatService} from "@/rpc/chat/chat_connect";
+import {EventService} from "@/rpc/event/event_connect";
 import {createConnectTransport} from "@connectrpc/connect-web";
 import {createPromiseClient} from "@connectrpc/connect";
 
@@ -16,3 +17,4 @@ export const projectService = createPromiseClient(ProtoflowService, transport);
 export const contentService = createPromiseClient(ContentService, transport);
 export const userService = createPromiseClient(UserService, transport);
 export const chatService = createPromiseClient(ChatService, transport);
+export const eventService = createPromiseClient(EventService, transport);

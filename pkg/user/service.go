@@ -19,14 +19,14 @@ import (
 	"strings"
 )
 
-type UserService struct {
+type Service struct {
 	sess   *http.SessionManager
 	user   *EntStore
 	group  *group.EntStore
 	config Config
 }
 
-var _ userconnect.UserServiceHandler = (*UserService)(nil)
+var _ userconnect.UserServiceHandler = (*Service)(nil)
 
 var ProviderSet = wire.NewSet(
 	NewConfig,
@@ -39,8 +39,8 @@ func NewService(
 	sess *http.SessionManager,
 	user *EntStore,
 	config Config,
-) *UserService {
-	return &UserService{
+) *Service {
+	return &Service{
 		group:  group,
 		sess:   sess,
 		user:   user,
@@ -48,7 +48,7 @@ func NewService(
 	}
 }
 
-func (s *UserService) UpdateConfig(ctx context.Context, c *connectgo.Request[user.Config]) (*connectgo.Response[emptypb.Empty], error) {
+func (s *Service) UpdateConfig(ctx context.Context, c *connectgo.Request[user.Config]) (*connectgo.Response[emptypb.Empty], error) {
 	id, err := s.sess.GetUserID(ctx)
 	if err != nil {
 		return nil, err
@@ -65,7 +65,7 @@ func (s *UserService) UpdateConfig(ctx context.Context, c *connectgo.Request[use
 	return connectgo.NewResponse(&emptypb.Empty{}), err
 }
 
-func (s *UserService) ResetPassword(ctx context.Context, c *connectgo.Request[user.User]) (*connectgo.Response[emptypb.Empty], error) {
+func (s *Service) ResetPassword(ctx context.Context, c *connectgo.Request[user.User]) (*connectgo.Response[emptypb.Empty], error) {
 	id, err := s.sess.GetUserID(ctx)
 	if err != nil {
 		return nil, err
@@ -77,7 +77,7 @@ func (s *UserService) ResetPassword(ctx context.Context, c *connectgo.Request[us
 	return connectgo.NewResponse(&emptypb.Empty{}), err
 }
 
-func (s *UserService) sendVerificationEmail(
+func (s *Service) sendVerificationEmail(
 	ctx context.Context, from string, to []string, subject string, body string) error {
 	smtpHost := s.config.SmtpHost
 	smtpPort := s.config.SmtpPort
@@ -95,7 +95,7 @@ func (s *UserService) sendVerificationEmail(
 	return nil
 }
 
-func (s *UserService) ConnectOAuthUser(ctx context.Context, u goth.User) error {
+func (s *Service) ConnectOAuthUser(ctx context.Context, u goth.User) error {
 	nu, err := s.user.GetUserByEmail(ctx, u.Email)
 	if err != nil {
 		nu, err = s.user.NewUser(ctx, &user.User{
@@ -106,7 +106,7 @@ func (s *UserService) ConnectOAuthUser(ctx context.Context, u goth.User) error {
 	return nil
 }
 
-func (s *UserService) Register(ctx context.Context, c *connectgo.Request[user.User]) (*connectgo.Response[user.User], error) {
+func (s *Service) Register(ctx context.Context, c *connectgo.Request[user.User]) (*connectgo.Response[user.User], error) {
 	if s.config.RegistrationAllowed != "true" {
 		return nil, errors.New("registration is not allowed")
 	}
@@ -146,7 +146,7 @@ func (s *UserService) Register(ctx context.Context, c *connectgo.Request[user.Us
 	}), nil
 }
 
-func (s *UserService) VerifyUser(ctx context.Context, c *connectgo.Request[user.VerifyUserRequest]) (*connectgo.Response[emptypb.Empty], error) {
+func (s *Service) VerifyUser(ctx context.Context, c *connectgo.Request[user.VerifyUserRequest]) (*connectgo.Response[emptypb.Empty], error) {
 	secret, err := uuid.Parse(c.Msg.Secret)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not parse secret")
@@ -158,7 +158,7 @@ func (s *UserService) VerifyUser(ctx context.Context, c *connectgo.Request[user.
 	return connectgo.NewResponse(&emptypb.Empty{}), nil
 }
 
-func (s *UserService) Login(ctx context.Context, c *connectgo.Request[user.User]) (*connectgo.Response[user.User], error) {
+func (s *Service) Login(ctx context.Context, c *connectgo.Request[user.User]) (*connectgo.Response[user.User], error) {
 	if id, err := s.sess.GetUserID(ctx); err == nil {
 		u, err := s.user.GetUserByID(ctx, id)
 		if err != nil {
@@ -183,12 +183,12 @@ func (s *UserService) Login(ctx context.Context, c *connectgo.Request[user.User]
 	}), nil
 }
 
-func (s *UserService) Logout(ctx context.Context, c *connectgo.Request[emptypb.Empty]) (*connectgo.Response[emptypb.Empty], error) {
+func (s *Service) Logout(ctx context.Context, c *connectgo.Request[emptypb.Empty]) (*connectgo.Response[emptypb.Empty], error) {
 	s.sess.ClearUserID(ctx)
 	return connectgo.NewResponse(&emptypb.Empty{}), nil
 }
 
-func (s *UserService) CreateGroupInvite(ctx context.Context, c *connectgo.Request[user.GroupID]) (*connectgo.Response[user.GroupInvite], error) {
+func (s *Service) CreateGroupInvite(ctx context.Context, c *connectgo.Request[user.GroupID]) (*connectgo.Response[user.GroupInvite], error) {
 	role, err := s.userGroupRole(ctx, c.Msg.GroupId)
 	if err != nil {
 		return nil, err
@@ -206,7 +206,7 @@ func (s *UserService) CreateGroupInvite(ctx context.Context, c *connectgo.Reques
 	}), nil
 }
 
-func (s *UserService) JoinGroup(ctx context.Context, c *connectgo.Request[user.GroupInvite]) (*connectgo.Response[user.Group], error) {
+func (s *Service) JoinGroup(ctx context.Context, c *connectgo.Request[user.GroupInvite]) (*connectgo.Response[user.Group], error) {
 	id, err := s.sess.GetUserID(ctx)
 	if err != nil {
 		return nil, err
@@ -224,7 +224,7 @@ func (s *UserService) JoinGroup(ctx context.Context, c *connectgo.Request[user.G
 	}), nil
 }
 
-func (s *UserService) GroupInfo(ctx context.Context, c *connectgo.Request[user.GroupInfoRequest]) (*connectgo.Response[user.Group], error) {
+func (s *Service) GroupInfo(ctx context.Context, c *connectgo.Request[user.GroupInfoRequest]) (*connectgo.Response[user.Group], error) {
 	gID, err := s.group.ValidGroupInvite(ctx, c.Msg.Secret)
 	if err != nil {
 		return nil, errors.New("invalid group invite")
@@ -239,7 +239,7 @@ func (s *UserService) GroupInfo(ctx context.Context, c *connectgo.Request[user.G
 	}), nil
 }
 
-func (s *UserService) CreateGroup(ctx context.Context, c *connectgo.Request[user.Group]) (*connectgo.Response[user.Group], error) {
+func (s *Service) CreateGroup(ctx context.Context, c *connectgo.Request[user.Group]) (*connectgo.Response[user.Group], error) {
 	id, err := s.sess.GetUserID(ctx)
 	if err != nil {
 		return nil, err
@@ -253,7 +253,7 @@ func (s *UserService) CreateGroup(ctx context.Context, c *connectgo.Request[user
 	}), nil
 }
 
-func (s *UserService) GetGroups(ctx context.Context, c *connectgo.Request[emptypb.Empty]) (*connectgo.Response[user.Groups], error) {
+func (s *Service) GetGroups(ctx context.Context, c *connectgo.Request[emptypb.Empty]) (*connectgo.Response[user.Groups], error) {
 	id, err := s.sess.GetUserID(ctx)
 	if err != nil {
 		return nil, err
@@ -279,7 +279,7 @@ func (s *UserService) GetGroups(ctx context.Context, c *connectgo.Request[emptyp
 	}), nil
 }
 
-func (s *UserService) DeleteGroup(ctx context.Context, c *connectgo.Request[user.Group]) (*connectgo.Response[emptypb.Empty], error) {
+func (s *Service) DeleteGroup(ctx context.Context, c *connectgo.Request[user.Group]) (*connectgo.Response[emptypb.Empty], error) {
 	role, err := s.userGroupRole(ctx, c.Msg.Id)
 	if err != nil {
 		return nil, err
@@ -291,7 +291,7 @@ func (s *UserService) DeleteGroup(ctx context.Context, c *connectgo.Request[user
 	return connectgo.NewResponse(&emptypb.Empty{}), err
 }
 
-func (s *UserService) userGroupRole(ctx context.Context, groupID string) (string, error) {
+func (s *Service) userGroupRole(ctx context.Context, groupID string) (string, error) {
 	id, err := s.sess.GetUserID(ctx)
 	if err != nil {
 		return "", err
@@ -309,7 +309,7 @@ func (s *UserService) userGroupRole(ctx context.Context, groupID string) (string
 	return "", errors.Errorf("user %s is not a member of this group: %s", id, groupID)
 }
 
-func (s *UserService) Share(ctx context.Context, c *connectgo.Request[user.ShareRequest]) (*connectgo.Response[emptypb.Empty], error) {
+func (s *Service) Share(ctx context.Context, c *connectgo.Request[user.ShareRequest]) (*connectgo.Response[emptypb.Empty], error) {
 	role, err := s.userGroupRole(ctx, c.Msg.GroupId)
 	if err != nil {
 		return nil, err

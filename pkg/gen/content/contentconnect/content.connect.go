@@ -70,8 +70,8 @@ type ContentServiceClient interface {
 	GetTags(context.Context, *connect_go.Request[content.TagRequest]) (*connect_go.Response[content.Tags], error)
 	SetTags(context.Context, *connect_go.Request[content.SetTagsRequest]) (*connect_go.Response[emptypb.Empty], error)
 	Publish(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
-	GetSources(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Sources], error)
-	Types(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.GRPCTypeInfo], error)
+	GetSources(context.Context, *connect_go.Request[content.GetSourcesRequest]) (*connect_go.Response[content.Sources], error)
+	Types(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.TypesResponse], error)
 	VoiceInput(context.Context, *connect_go.Request[content.VoiceInputRequest]) (*connect_go.ServerStreamForClient[content.VoiceInputResponse], error)
 }
 
@@ -125,12 +125,12 @@ func NewContentServiceClient(httpClient connect_go.HTTPClient, baseURL string, o
 			baseURL+ContentServicePublishProcedure,
 			opts...,
 		),
-		getSources: connect_go.NewClient[emptypb.Empty, content.Sources](
+		getSources: connect_go.NewClient[content.GetSourcesRequest, content.Sources](
 			httpClient,
 			baseURL+ContentServiceGetSourcesProcedure,
 			opts...,
 		),
-		types: connect_go.NewClient[emptypb.Empty, content.GRPCTypeInfo](
+		types: connect_go.NewClient[emptypb.Empty, content.TypesResponse](
 			httpClient,
 			baseURL+ContentServiceTypesProcedure,
 			opts...,
@@ -153,8 +153,8 @@ type contentServiceClient struct {
 	getTags    *connect_go.Client[content.TagRequest, content.Tags]
 	setTags    *connect_go.Client[content.SetTagsRequest, emptypb.Empty]
 	publish    *connect_go.Client[content.ContentIDs, content.ContentIDs]
-	getSources *connect_go.Client[emptypb.Empty, content.Sources]
-	types      *connect_go.Client[emptypb.Empty, content.GRPCTypeInfo]
+	getSources *connect_go.Client[content.GetSourcesRequest, content.Sources]
+	types      *connect_go.Client[emptypb.Empty, content.TypesResponse]
 	voiceInput *connect_go.Client[content.VoiceInputRequest, content.VoiceInputResponse]
 }
 
@@ -199,12 +199,12 @@ func (c *contentServiceClient) Publish(ctx context.Context, req *connect_go.Requ
 }
 
 // GetSources calls content.ContentService.GetSources.
-func (c *contentServiceClient) GetSources(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Sources], error) {
+func (c *contentServiceClient) GetSources(ctx context.Context, req *connect_go.Request[content.GetSourcesRequest]) (*connect_go.Response[content.Sources], error) {
 	return c.getSources.CallUnary(ctx, req)
 }
 
 // Types calls content.ContentService.Types.
-func (c *contentServiceClient) Types(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.GRPCTypeInfo], error) {
+func (c *contentServiceClient) Types(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.TypesResponse], error) {
 	return c.types.CallUnary(ctx, req)
 }
 
@@ -223,8 +223,8 @@ type ContentServiceHandler interface {
 	GetTags(context.Context, *connect_go.Request[content.TagRequest]) (*connect_go.Response[content.Tags], error)
 	SetTags(context.Context, *connect_go.Request[content.SetTagsRequest]) (*connect_go.Response[emptypb.Empty], error)
 	Publish(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
-	GetSources(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Sources], error)
-	Types(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.GRPCTypeInfo], error)
+	GetSources(context.Context, *connect_go.Request[content.GetSourcesRequest]) (*connect_go.Response[content.Sources], error)
+	Types(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.TypesResponse], error)
 	VoiceInput(context.Context, *connect_go.Request[content.VoiceInputRequest], *connect_go.ServerStream[content.VoiceInputResponse]) error
 }
 
@@ -354,11 +354,11 @@ func (UnimplementedContentServiceHandler) Publish(context.Context, *connect_go.R
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.Publish is not implemented"))
 }
 
-func (UnimplementedContentServiceHandler) GetSources(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.Sources], error) {
+func (UnimplementedContentServiceHandler) GetSources(context.Context, *connect_go.Request[content.GetSourcesRequest]) (*connect_go.Response[content.Sources], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.GetSources is not implemented"))
 }
 
-func (UnimplementedContentServiceHandler) Types(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.GRPCTypeInfo], error) {
+func (UnimplementedContentServiceHandler) Types(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.TypesResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.Types is not implemented"))
 }
 

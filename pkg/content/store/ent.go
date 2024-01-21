@@ -2,10 +2,13 @@ package store
 
 import (
 	"context"
+	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"github.com/google/uuid"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent"
 	entcontent "github.com/lunabrain-ai/lunabrain/pkg/ent/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/predicate"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/schema"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/tag"
 	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
@@ -135,25 +138,45 @@ func (s *EntStore) SaveContent(ctx context.Context, userID, botID uuid.UUID, dat
 	return c.ID, nil
 }
 
-func (s *EntStore) SearchContent(ctx context.Context, userID uuid.UUID, page, limit int, groupID uuid.UUID, tags []string) ([]*ent.Content, error) {
-	query := s.client.Content.Query().
+func (s *EntStore) SearchContent(
+	ctx context.Context,
+	userID uuid.UUID,
+	groupID uuid.UUID,
+	query *content.Query,
+) ([]*ent.Content, error) {
+	q := s.client.Content.Query().
 		Where(entcontent.Root(true))
 
 	if groupID != uuid.Nil {
-		query = query.Where(entcontent.HasGroupsWith(group.ID(groupID)))
+		q = q.Where(entcontent.HasGroupsWith(group.ID(groupID)))
 	} else {
-		query = query.Where(entcontent.HasUserWith(entuser.ID(userID)))
+		q = q.Where(entcontent.HasUserWith(entuser.ID(userID)))
 	}
 
-	for _, t := range tags {
-		query = query.Where(entcontent.HasTagsWith(tag.Name(t)))
+	var tagPreds []predicate.Content
+	for _, t := range query.Tags {
+		tagPreds = append(tagPreds, entcontent.HasTagsWith(tag.Name(t)))
+	}
+	if len(tagPreds) > 0 {
+		q = q.Where(entcontent.Or(tagPreds...))
 	}
 
-	// query = query.Offset((page - 1) * limit).Limit(limit)
+	var typePreds []*sql.Predicate
+	for _, t := range query.ContentTypes {
+		typePreds = append(typePreds, sqljson.HasKey(entcontent.FieldData, sqljson.Path(t)))
+	}
+	if len(typePreds) > 0 {
+		q = q.Where(func(s *sql.Selector) {
+			s.Where(sql.Or(typePreds...))
+		})
+	}
 
-	contents, err := query.WithTags().
+	// q = q.Offset((page - 1) * limit).Limit(limit)
+
+	q = q.WithTags().
 		WithChildren().
-		Order(ent.Desc(entcontent.FieldUpdatedAt)).
+		Order(ent.Desc(entcontent.FieldUpdatedAt))
+	contents, err := q.
 		All(ctx)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not get content")

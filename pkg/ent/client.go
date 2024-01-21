@@ -17,6 +17,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/content"
+	entevent "github.com/lunabrain-ai/lunabrain/pkg/ent/event"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupinvite"
 	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupuser"
@@ -32,6 +33,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Content is the client for interacting with the Content builders.
 	Content *ContentClient
+	// Event is the client for interacting with the Event builders.
+	Event *EventClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// GroupInvite is the client for interacting with the GroupInvite builders.
@@ -58,6 +61,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Content = NewContentClient(c.config)
+	c.Event = NewEventClient(c.config)
 	c.Group = NewGroupClient(c.config)
 	c.GroupInvite = NewGroupInviteClient(c.config)
 	c.GroupUser = NewGroupUserClient(c.config)
@@ -150,6 +154,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:         ctx,
 		config:      cfg,
 		Content:     NewContentClient(cfg),
+		Event:       NewEventClient(cfg),
 		Group:       NewGroupClient(cfg),
 		GroupInvite: NewGroupInviteClient(cfg),
 		GroupUser:   NewGroupUserClient(cfg),
@@ -176,6 +181,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:         ctx,
 		config:      cfg,
 		Content:     NewContentClient(cfg),
+		Event:       NewEventClient(cfg),
 		Group:       NewGroupClient(cfg),
 		GroupInvite: NewGroupInviteClient(cfg),
 		GroupUser:   NewGroupUserClient(cfg),
@@ -211,7 +217,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Content, c.Group, c.GroupInvite, c.GroupUser, c.Session, c.Tag, c.User,
+		c.Content, c.Event, c.Group, c.GroupInvite, c.GroupUser, c.Session, c.Tag,
+		c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -221,7 +228,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Content, c.Group, c.GroupInvite, c.GroupUser, c.Session, c.Tag, c.User,
+		c.Content, c.Event, c.Group, c.GroupInvite, c.GroupUser, c.Session, c.Tag,
+		c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -232,6 +240,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *ContentMutation:
 		return c.Content.mutate(ctx, m)
+	case *EventMutation:
+		return c.Event.mutate(ctx, m)
 	case *GroupMutation:
 		return c.Group.mutate(ctx, m)
 	case *GroupInviteMutation:
@@ -459,6 +469,139 @@ func (c *ContentClient) mutate(ctx context.Context, m *ContentMutation) (Value, 
 		return (&ContentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Content mutation op: %q", m.Op())
+	}
+}
+
+// EventClient is a client for the Event schema.
+type EventClient struct {
+	config
+}
+
+// NewEventClient returns a client for the Event from the given config.
+func NewEventClient(c config) *EventClient {
+	return &EventClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `entevent.Hooks(f(g(h())))`.
+func (c *EventClient) Use(hooks ...Hook) {
+	c.hooks.Event = append(c.hooks.Event, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `entevent.Intercept(f(g(h())))`.
+func (c *EventClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Event = append(c.inters.Event, interceptors...)
+}
+
+// Create returns a builder for creating a Event entity.
+func (c *EventClient) Create() *EventCreate {
+	mutation := newEventMutation(c.config, OpCreate)
+	return &EventCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Event entities.
+func (c *EventClient) CreateBulk(builders ...*EventCreate) *EventCreateBulk {
+	return &EventCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *EventClient) MapCreateBulk(slice any, setFunc func(*EventCreate, int)) *EventCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &EventCreateBulk{err: fmt.Errorf("calling to EventClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*EventCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &EventCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Event.
+func (c *EventClient) Update() *EventUpdate {
+	mutation := newEventMutation(c.config, OpUpdate)
+	return &EventUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EventClient) UpdateOne(e *Event) *EventUpdateOne {
+	mutation := newEventMutation(c.config, OpUpdateOne, withEvent(e))
+	return &EventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EventClient) UpdateOneID(id uuid.UUID) *EventUpdateOne {
+	mutation := newEventMutation(c.config, OpUpdateOne, withEventID(id))
+	return &EventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Event.
+func (c *EventClient) Delete() *EventDelete {
+	mutation := newEventMutation(c.config, OpDelete)
+	return &EventDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EventClient) DeleteOne(e *Event) *EventDeleteOne {
+	return c.DeleteOneID(e.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *EventClient) DeleteOneID(id uuid.UUID) *EventDeleteOne {
+	builder := c.Delete().Where(entevent.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EventDeleteOne{builder}
+}
+
+// Query returns a query builder for Event.
+func (c *EventClient) Query() *EventQuery {
+	return &EventQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeEvent},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Event entity by its id.
+func (c *EventClient) Get(ctx context.Context, id uuid.UUID) (*Event, error) {
+	return c.Query().Where(entevent.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EventClient) GetX(ctx context.Context, id uuid.UUID) *Event {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *EventClient) Hooks() []Hook {
+	return c.hooks.Event
+}
+
+// Interceptors returns the client interceptors.
+func (c *EventClient) Interceptors() []Interceptor {
+	return c.inters.Event
+}
+
+func (c *EventClient) mutate(ctx context.Context, m *EventMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&EventCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&EventUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&EventUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&EventDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Event mutation op: %q", m.Op())
 	}
 }
 
@@ -1439,9 +1582,10 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Content, Group, GroupInvite, GroupUser, Session, Tag, User []ent.Hook
+		Content, Event, Group, GroupInvite, GroupUser, Session, Tag, User []ent.Hook
 	}
 	inters struct {
-		Content, Group, GroupInvite, GroupUser, Session, Tag, User []ent.Interceptor
+		Content, Event, Group, GroupInvite, GroupUser, Session, Tag,
+		User []ent.Interceptor
 	}
 )

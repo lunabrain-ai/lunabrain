@@ -5,13 +5,13 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/publish/templates"
-	"github.com/lunabrain-ai/lunabrain/pkg/publish/templates/papermod"
 	"github.com/lunabrain-ai/lunabrain/pkg/util"
 	"gopkg.in/yaml.v3"
 	"os"
 	"os/exec"
 	"path"
 	"strings"
+	"time"
 )
 
 type Blog struct {
@@ -26,7 +26,7 @@ func NewBlog(
 	}
 }
 
-func (s *Blog) Publish(name string, cnt []*content.Content) error {
+func (s *Blog) Publish(name string, site *content.Site, cnt []*content.Content) error {
 	d := s.b.Dir(name)
 	sd, err := d.Build()
 	if err != nil {
@@ -44,17 +44,7 @@ func (s *Blog) Publish(name string, cnt []*content.Content) error {
 		return err
 	}
 
-	// TODO breadchris get external URL
-	c := papermod.New("@breadchris", &content.HugoConfig{
-		BaseUrl: "http://localhost:8000/@breadchris",
-		Params: &content.ParamsConfig{
-			HomeInfoParams: &content.HomeInfoParamsConfig{
-				Title:   "this is a title",
-				Content: "this is content",
-			},
-		},
-	})
-	nc, err := util.SnakeToCamelCase(c)
+	nc, err := util.SnakeToCamelCase(site.HugoConfig)
 	if err != nil {
 		return err
 	}
@@ -80,8 +70,17 @@ func (s *Blog) Publish(name string, cnt []*content.Content) error {
 			if err != nil {
 				return err
 			}
+			d, err := time.Parse(time.RFC3339, c.CreatedAt)
+			if err != nil {
+				return err
+			}
 			sb, err := marshalArticleWithContent(Article{
 				Author: t.Post.Authors,
+				Title:  t.Post.Title,
+				Tags:   c.Tags,
+				Date: ArticleTime{
+					Time: d,
+				},
 			}, markdown)
 			if err != nil {
 				return err

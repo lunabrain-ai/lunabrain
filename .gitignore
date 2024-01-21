@@ -26,3 +26,5 @@ venv3.*/
 *.egg-info/
 
 .lunabrain.yaml
+chat.yaml
+openaif.json

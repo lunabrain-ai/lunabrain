@@ -8,6 +8,86 @@ import { DescriptorProto, EnumDescriptorProto, Message, proto3, protoInt64 } fro
 import { User } from "../user/user_pb.js";
 
 /**
+ * @generated from message content.TypesResponse
+ */
+export class TypesResponse extends Message<TypesResponse> {
+  /**
+   * @generated from field: content.GRPCTypeInfo content = 1;
+   */
+  content?: GRPCTypeInfo;
+
+  /**
+   * @generated from field: content.GRPCTypeInfo site = 2;
+   */
+  site?: GRPCTypeInfo;
+
+  constructor(data?: PartialMessage<TypesResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.TypesResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "content", kind: "message", T: GRPCTypeInfo },
+    { no: 2, name: "site", kind: "message", T: GRPCTypeInfo },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): TypesResponse {
+    return new TypesResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): TypesResponse {
+    return new TypesResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): TypesResponse {
+    return new TypesResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: TypesResponse | PlainMessage<TypesResponse> | undefined, b: TypesResponse | PlainMessage<TypesResponse> | undefined): boolean {
+    return proto3.util.equals(TypesResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message content.GetSourcesRequest
+ */
+export class GetSourcesRequest extends Message<GetSourcesRequest> {
+  /**
+   * @generated from field: repeated string content_types = 1;
+   */
+  contentTypes: string[] = [];
+
+  constructor(data?: PartialMessage<GetSourcesRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.GetSourcesRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "content_types", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSourcesRequest {
+    return new GetSourcesRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSourcesRequest {
+    return new GetSourcesRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSourcesRequest {
+    return new GetSourcesRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetSourcesRequest | PlainMessage<GetSourcesRequest> | undefined, b: GetSourcesRequest | PlainMessage<GetSourcesRequest> | undefined): boolean {
+    return proto3.util.equals(GetSourcesRequest, a, b);
+  }
+}
+
+/**
  * @generated from message content.VoiceInputRequest
  */
 export class VoiceInputRequest extends Message<VoiceInputRequest> {
@@ -670,6 +750,11 @@ export class Query extends Message<Query> {
    */
   tags: string[] = [];
 
+  /**
+   * @generated from field: repeated string content_types = 6;
+   */
+  contentTypes: string[] = [];
+
   constructor(data?: PartialMessage<Query>) {
     super();
     proto3.util.initPartial(data, this);
@@ -683,6 +768,7 @@ export class Query extends Message<Query> {
     { no: 3, name: "contentID", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "groupID", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "tags", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 6, name: "content_types", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Query {
@@ -1875,9 +1961,9 @@ export class Site extends Message<Site> {
  */
 export class HugoConfig extends Message<HugoConfig> {
   /**
-   * @generated from field: string theme = 1;
+   * @generated from field: string publish_dir = 1;
    */
-  theme = "";
+  publishDir = "";
 
   /**
    * @generated from field: string base_url = 2;
@@ -1890,9 +1976,84 @@ export class HugoConfig extends Message<HugoConfig> {
   title = "";
 
   /**
-   * @generated from field: content.ParamsConfig params = 4;
+   * @generated from field: int32 paginate = 4;
+   */
+  paginate = 0;
+
+  /**
+   * @generated from field: repeated string theme = 5;
+   */
+  theme: string[] = [];
+
+  /**
+   * @generated from field: bool enable_inline_shortcodes = 6;
+   */
+  enableInlineShortcodes = false;
+
+  /**
+   * @generated from field: bool enable_robots_txt = 7;
+   */
+  enableRobotsTxt = false;
+
+  /**
+   * @generated from field: bool build_drafts = 8;
+   */
+  buildDrafts = false;
+
+  /**
+   * @generated from field: bool build_future = 9;
+   */
+  buildFuture = false;
+
+  /**
+   * @generated from field: bool build_expired = 10;
+   */
+  buildExpired = false;
+
+  /**
+   * @generated from field: bool enable_emoji = 11;
+   */
+  enableEmoji = false;
+
+  /**
+   * @generated from field: bool pygments_use_classes = 12;
+   */
+  pygmentsUseClasses = false;
+
+  /**
+   * @generated from field: repeated string main_sections = 13;
+   */
+  mainSections: string[] = [];
+
+  /**
+   * @generated from field: content.MinifyConfig minify = 14;
+   */
+  minify?: MinifyConfig;
+
+  /**
+   * @generated from field: map<string, content.LanguageConfig> languages = 15;
+   */
+  languages: { [key: string]: LanguageConfig } = {};
+
+  /**
+   * @generated from field: map<string, content.repeated_string> outputs = 16;
+   */
+  outputs: { [key: string]: repeated_string } = {};
+
+  /**
+   * @generated from field: content.ParamsConfig params = 17;
    */
   params?: ParamsConfig;
+
+  /**
+   * @generated from field: content.MarkupConfig markup = 18;
+   */
+  markup?: MarkupConfig;
+
+  /**
+   * @generated from field: content.ServicesConfig services = 19;
+   */
+  services?: ServicesConfig;
 
   constructor(data?: PartialMessage<HugoConfig>) {
     super();
@@ -1902,10 +2063,25 @@ export class HugoConfig extends Message<HugoConfig> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "content.HugoConfig";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "theme", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "publish_dir", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "base_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "params", kind: "message", T: ParamsConfig },
+    { no: 4, name: "paginate", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 5, name: "theme", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 6, name: "enable_inline_shortcodes", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 7, name: "enable_robots_txt", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 8, name: "build_drafts", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 9, name: "build_future", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 10, name: "build_expired", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 11, name: "enable_emoji", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 12, name: "pygments_use_classes", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 13, name: "main_sections", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 14, name: "minify", kind: "message", T: MinifyConfig },
+    { no: 15, name: "languages", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "message", T: LanguageConfig} },
+    { no: 16, name: "outputs", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "message", T: repeated_string} },
+    { no: 17, name: "params", kind: "message", T: ParamsConfig },
+    { no: 18, name: "markup", kind: "message", T: MarkupConfig },
+    { no: 19, name: "services", kind: "message", T: ServicesConfig },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): HugoConfig {
@@ -1922,6 +2098,555 @@ export class HugoConfig extends Message<HugoConfig> {
 
   static equals(a: HugoConfig | PlainMessage<HugoConfig> | undefined, b: HugoConfig | PlainMessage<HugoConfig> | undefined): boolean {
     return proto3.util.equals(HugoConfig, a, b);
+  }
+}
+
+/**
+ * @generated from message content.MinifyConfig
+ */
+export class MinifyConfig extends Message<MinifyConfig> {
+  /**
+   * @generated from field: bool disable_xml = 1;
+   */
+  disableXml = false;
+
+  constructor(data?: PartialMessage<MinifyConfig>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.MinifyConfig";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "disable_xml", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): MinifyConfig {
+    return new MinifyConfig().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): MinifyConfig {
+    return new MinifyConfig().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): MinifyConfig {
+    return new MinifyConfig().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: MinifyConfig | PlainMessage<MinifyConfig> | undefined, b: MinifyConfig | PlainMessage<MinifyConfig> | undefined): boolean {
+    return proto3.util.equals(MinifyConfig, a, b);
+  }
+}
+
+/**
+ * @generated from message content.LanguageConfig
+ */
+export class LanguageConfig extends Message<LanguageConfig> {
+  /**
+   * @generated from field: string language_name = 1;
+   */
+  languageName = "";
+
+  /**
+   * @generated from field: int32 weight = 2;
+   */
+  weight = 0;
+
+  /**
+   * @generated from field: string title = 3;
+   */
+  title = "";
+
+  /**
+   * @generated from field: map<string, string> taxonomies = 4;
+   */
+  taxonomies: { [key: string]: string } = {};
+
+  /**
+   * @generated from field: map<string, content.repeated_menu_item> menu = 5;
+   */
+  menu: { [key: string]: repeated_menu_item } = {};
+
+  /**
+   * `interface{}` converted to string for simplicity
+   *
+   * @generated from field: map<string, string> params = 6;
+   */
+  params: { [key: string]: string } = {};
+
+  constructor(data?: PartialMessage<LanguageConfig>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.LanguageConfig";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "language_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "weight", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 3, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "taxonomies", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
+    { no: 5, name: "menu", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "message", T: repeated_menu_item} },
+    { no: 6, name: "params", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): LanguageConfig {
+    return new LanguageConfig().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): LanguageConfig {
+    return new LanguageConfig().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): LanguageConfig {
+    return new LanguageConfig().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: LanguageConfig | PlainMessage<LanguageConfig> | undefined, b: LanguageConfig | PlainMessage<LanguageConfig> | undefined): boolean {
+    return proto3.util.equals(LanguageConfig, a, b);
+  }
+}
+
+/**
+ * @generated from message content.MenuItem
+ */
+export class MenuItem extends Message<MenuItem> {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name = "";
+
+  /**
+   * @generated from field: string url = 2;
+   */
+  url = "";
+
+  /**
+   * @generated from field: int32 weight = 3;
+   */
+  weight = 0;
+
+  constructor(data?: PartialMessage<MenuItem>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.MenuItem";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "weight", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): MenuItem {
+    return new MenuItem().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): MenuItem {
+    return new MenuItem().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): MenuItem {
+    return new MenuItem().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: MenuItem | PlainMessage<MenuItem> | undefined, b: MenuItem | PlainMessage<MenuItem> | undefined): boolean {
+    return proto3.util.equals(MenuItem, a, b);
+  }
+}
+
+/**
+ * @generated from message content.EditPostConfig
+ */
+export class EditPostConfig extends Message<EditPostConfig> {
+  /**
+   * @generated from field: string url = 1;
+   */
+  url = "";
+
+  /**
+   * @generated from field: string text = 2;
+   */
+  text = "";
+
+  /**
+   * @generated from field: bool append_file_path = 3;
+   */
+  appendFilePath = false;
+
+  constructor(data?: PartialMessage<EditPostConfig>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.EditPostConfig";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "append_file_path", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): EditPostConfig {
+    return new EditPostConfig().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): EditPostConfig {
+    return new EditPostConfig().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): EditPostConfig {
+    return new EditPostConfig().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: EditPostConfig | PlainMessage<EditPostConfig> | undefined, b: EditPostConfig | PlainMessage<EditPostConfig> | undefined): boolean {
+    return proto3.util.equals(EditPostConfig, a, b);
+  }
+}
+
+/**
+ * @generated from message content.AssetsConfig
+ */
+export class AssetsConfig extends Message<AssetsConfig> {
+  /**
+   * @generated from field: bool disable_hljs = 1;
+   */
+  disableHljs = false;
+
+  constructor(data?: PartialMessage<AssetsConfig>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.AssetsConfig";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "disable_hljs", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AssetsConfig {
+    return new AssetsConfig().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AssetsConfig {
+    return new AssetsConfig().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AssetsConfig {
+    return new AssetsConfig().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AssetsConfig | PlainMessage<AssetsConfig> | undefined, b: AssetsConfig | PlainMessage<AssetsConfig> | undefined): boolean {
+    return proto3.util.equals(AssetsConfig, a, b);
+  }
+}
+
+/**
+ * @generated from message content.MarkupConfig
+ */
+export class MarkupConfig extends Message<MarkupConfig> {
+  /**
+   * @generated from field: content.GoldmarkConfig goldmark = 1;
+   */
+  goldmark?: GoldmarkConfig;
+
+  /**
+   * @generated from field: content.HighlightConfig highlight = 2;
+   */
+  highlight?: HighlightConfig;
+
+  constructor(data?: PartialMessage<MarkupConfig>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.MarkupConfig";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "goldmark", kind: "message", T: GoldmarkConfig },
+    { no: 2, name: "highlight", kind: "message", T: HighlightConfig },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): MarkupConfig {
+    return new MarkupConfig().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): MarkupConfig {
+    return new MarkupConfig().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): MarkupConfig {
+    return new MarkupConfig().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: MarkupConfig | PlainMessage<MarkupConfig> | undefined, b: MarkupConfig | PlainMessage<MarkupConfig> | undefined): boolean {
+    return proto3.util.equals(MarkupConfig, a, b);
+  }
+}
+
+/**
+ * @generated from message content.GoldmarkConfig
+ */
+export class GoldmarkConfig extends Message<GoldmarkConfig> {
+  /**
+   * @generated from field: content.RendererConfig renderer = 1;
+   */
+  renderer?: RendererConfig;
+
+  constructor(data?: PartialMessage<GoldmarkConfig>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.GoldmarkConfig";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "renderer", kind: "message", T: RendererConfig },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GoldmarkConfig {
+    return new GoldmarkConfig().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GoldmarkConfig {
+    return new GoldmarkConfig().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GoldmarkConfig {
+    return new GoldmarkConfig().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GoldmarkConfig | PlainMessage<GoldmarkConfig> | undefined, b: GoldmarkConfig | PlainMessage<GoldmarkConfig> | undefined): boolean {
+    return proto3.util.equals(GoldmarkConfig, a, b);
+  }
+}
+
+/**
+ * @generated from message content.RendererConfig
+ */
+export class RendererConfig extends Message<RendererConfig> {
+  /**
+   * @generated from field: bool unsafe = 1;
+   */
+  unsafe = false;
+
+  constructor(data?: PartialMessage<RendererConfig>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.RendererConfig";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "unsafe", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RendererConfig {
+    return new RendererConfig().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RendererConfig {
+    return new RendererConfig().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RendererConfig {
+    return new RendererConfig().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: RendererConfig | PlainMessage<RendererConfig> | undefined, b: RendererConfig | PlainMessage<RendererConfig> | undefined): boolean {
+    return proto3.util.equals(RendererConfig, a, b);
+  }
+}
+
+/**
+ * @generated from message content.HighlightConfig
+ */
+export class HighlightConfig extends Message<HighlightConfig> {
+  /**
+   * @generated from field: bool no_classes = 1;
+   */
+  noClasses = false;
+
+  constructor(data?: PartialMessage<HighlightConfig>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.HighlightConfig";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "no_classes", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): HighlightConfig {
+    return new HighlightConfig().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): HighlightConfig {
+    return new HighlightConfig().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): HighlightConfig {
+    return new HighlightConfig().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: HighlightConfig | PlainMessage<HighlightConfig> | undefined, b: HighlightConfig | PlainMessage<HighlightConfig> | undefined): boolean {
+    return proto3.util.equals(HighlightConfig, a, b);
+  }
+}
+
+/**
+ * @generated from message content.ServicesConfig
+ */
+export class ServicesConfig extends Message<ServicesConfig> {
+  /**
+   * @generated from field: content.ServiceConfig instagram = 1;
+   */
+  instagram?: ServiceConfig;
+
+  /**
+   * @generated from field: content.ServiceConfig twitter = 2;
+   */
+  twitter?: ServiceConfig;
+
+  constructor(data?: PartialMessage<ServicesConfig>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.ServicesConfig";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "instagram", kind: "message", T: ServiceConfig },
+    { no: 2, name: "twitter", kind: "message", T: ServiceConfig },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ServicesConfig {
+    return new ServicesConfig().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ServicesConfig {
+    return new ServicesConfig().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ServicesConfig {
+    return new ServicesConfig().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ServicesConfig | PlainMessage<ServicesConfig> | undefined, b: ServicesConfig | PlainMessage<ServicesConfig> | undefined): boolean {
+    return proto3.util.equals(ServicesConfig, a, b);
+  }
+}
+
+/**
+ * @generated from message content.ServiceConfig
+ */
+export class ServiceConfig extends Message<ServiceConfig> {
+  /**
+   * @generated from field: bool disable_inline_css = 1;
+   */
+  disableInlineCss = false;
+
+  constructor(data?: PartialMessage<ServiceConfig>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.ServiceConfig";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "disable_inline_css", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ServiceConfig {
+    return new ServiceConfig().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ServiceConfig {
+    return new ServiceConfig().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ServiceConfig {
+    return new ServiceConfig().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ServiceConfig | PlainMessage<ServiceConfig> | undefined, b: ServiceConfig | PlainMessage<ServiceConfig> | undefined): boolean {
+    return proto3.util.equals(ServiceConfig, a, b);
+  }
+}
+
+/**
+ * @generated from message content.repeated_string
+ */
+export class repeated_string extends Message<repeated_string> {
+  /**
+   * @generated from field: repeated string values = 1;
+   */
+  values: string[] = [];
+
+  constructor(data?: PartialMessage<repeated_string>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.repeated_string";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "values", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): repeated_string {
+    return new repeated_string().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): repeated_string {
+    return new repeated_string().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): repeated_string {
+    return new repeated_string().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: repeated_string | PlainMessage<repeated_string> | undefined, b: repeated_string | PlainMessage<repeated_string> | undefined): boolean {
+    return proto3.util.equals(repeated_string, a, b);
+  }
+}
+
+/**
+ * @generated from message content.repeated_menu_item
+ */
+export class repeated_menu_item extends Message<repeated_menu_item> {
+  /**
+   * @generated from field: repeated content.MenuItem items = 1;
+   */
+  items: MenuItem[] = [];
+
+  constructor(data?: PartialMessage<repeated_menu_item>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.repeated_menu_item";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "items", kind: "message", T: MenuItem, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): repeated_menu_item {
+    return new repeated_menu_item().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): repeated_menu_item {
+    return new repeated_menu_item().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): repeated_menu_item {
+    return new repeated_menu_item().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: repeated_menu_item | PlainMessage<repeated_menu_item> | undefined, b: repeated_menu_item | PlainMessage<repeated_menu_item> | undefined): boolean {
+    return proto3.util.equals(repeated_menu_item, a, b);
   }
 }
 
@@ -2269,92 +2994,6 @@ export class SocialIconConfig extends Message<SocialIconConfig> {
 
   static equals(a: SocialIconConfig | PlainMessage<SocialIconConfig> | undefined, b: SocialIconConfig | PlainMessage<SocialIconConfig> | undefined): boolean {
     return proto3.util.equals(SocialIconConfig, a, b);
-  }
-}
-
-/**
- * @generated from message content.EditPostConfig
- */
-export class EditPostConfig extends Message<EditPostConfig> {
-  /**
-   * @generated from field: string url = 1;
-   */
-  url = "";
-
-  /**
-   * @generated from field: string text = 2;
-   */
-  text = "";
-
-  /**
-   * @generated from field: bool append_file_path = 3;
-   */
-  appendFilePath = false;
-
-  constructor(data?: PartialMessage<EditPostConfig>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "content.EditPostConfig";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "append_file_path", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): EditPostConfig {
-    return new EditPostConfig().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): EditPostConfig {
-    return new EditPostConfig().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): EditPostConfig {
-    return new EditPostConfig().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: EditPostConfig | PlainMessage<EditPostConfig> | undefined, b: EditPostConfig | PlainMessage<EditPostConfig> | undefined): boolean {
-    return proto3.util.equals(EditPostConfig, a, b);
-  }
-}
-
-/**
- * @generated from message content.AssetsConfig
- */
-export class AssetsConfig extends Message<AssetsConfig> {
-  /**
-   * @generated from field: bool disable_hljs = 1;
-   */
-  disableHljs = false;
-
-  constructor(data?: PartialMessage<AssetsConfig>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "content.AssetsConfig";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "disable_hljs", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AssetsConfig {
-    return new AssetsConfig().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AssetsConfig {
-    return new AssetsConfig().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AssetsConfig {
-    return new AssetsConfig().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: AssetsConfig | PlainMessage<AssetsConfig> | undefined, b: AssetsConfig | PlainMessage<AssetsConfig> | undefined): boolean {
-    return proto3.util.equals(AssetsConfig, a, b);
   }
 }
 
