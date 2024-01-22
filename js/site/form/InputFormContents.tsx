@@ -37,7 +37,6 @@ export const InputFormContents: FC<InputFormContentsProps> = (props) => {
         control,
         fieldPath,
         parentFieldName,
-        setValue,
     } = inputFormProps;
     const { enumLookup, descLookup } = grpcInfo;
 

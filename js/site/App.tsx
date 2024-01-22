@@ -9,6 +9,7 @@ import {ChatPage} from "@/chat/ChatPage";
 import {VerifyPage} from "@/auth/VerifyPage";
 import {Provider} from "jotai";
 import {DevTools} from "jotai-devtools";
+import {Admin} from "@/admin/Admin";
 
 const AppRoutes = () => {
     const commonRoutes = [{
@@ -29,6 +30,9 @@ const AppRoutes = () => {
     }, {
         path: '/app/content/:id',
         element: <Home />
+    }, {
+        path: '/app/admin',
+        element: <Admin />
     }];
 
     const element = useRoutes([...commonRoutes]);
@@ -44,7 +48,7 @@ export const App: React.FC<{dev: boolean}> = ({dev}) => {
           FallbackComponent={FallbackError}
       >
           <Provider>
-              {dev && <DevTools />}
+              {/*{dev && <DevTools />}*/}
               <BrowserRouter>
                   <AppRoutes/>
               </BrowserRouter>

@@ -1,61 +1,139 @@
-import { DescriptorProto, FieldDescriptorProto, OneofDescriptorProto, EnumDescriptorProto } from "@bufbuild/protobuf";
+import {
+    DescriptorProto,
+    FieldDescriptorProto,
+    OneofDescriptorProto,
+    FieldList, FieldDescriptorProto_Label, FieldDescriptorProto_Type
+} from "@bufbuild/protobuf";
+import {GRPCTypeInfo} from "@/rpc/content/content_pb";
+import {notEmpty} from "@/util/predicates";
+import {getDefaultValue, typeLookup} from "@/util/proto";
 
-type Callbacks = {
-    onField: (field: FieldDescriptorProto, path: string[]) => void;
-    onOneof: (oneof: OneofDescriptorProto, fields: FieldDescriptorProto[], path: string[]) => void;
-    onNestedType: (nestedType: DescriptorProto, path: string[]) => void;
-    onEnumType: (enumType: EnumDescriptorProto, path: string[]) => void;
-};
-
-export function walkDescriptor(
-    desc: DescriptorProto,
-    path: string[] = [],
-    callbacks: Callbacks
-) {
-    // Handle fields
-    desc.field.forEach(field => {
-        if (field.oneofIndex !== undefined) {
-            // Handle oneof fields later
-            return;
-        }
-        callbacks.onField(field, path);
-    });
-
-    // Handle oneof
-    desc.oneofDecl.forEach((oneof, index) => {
-        const oneofFields = desc.field.filter(f => f.oneofIndex === index);
-        callbacks.onOneof(oneof, oneofFields, path);
-    });
-
-    // Handle nested types
-    desc.nestedType.forEach(nestedType => {
-        const nestedPath = [...path, nestedType.name || 'unknown'];
-        callbacks.onNestedType(nestedType, nestedPath);
-        walkDescriptor(nestedType, nestedPath, callbacks); // Recursive call for nested types
-    });
-
-    // Handle enum types
-    desc.enumType.forEach(enumType => {
-        callbacks.onEnumType(enumType, path);
-    });
+export type BaseField = {
+    type: string;
+    name: string;
+    fieldType: string|undefined;
 }
 
-// Usage example
-export const callbacks: Callbacks = {
-    onField: (field, path) => {
-        console.log('Field:', path.join('.'), field);
-        // Build HTML form field
-    },
-    onOneof: (oneof, fields, path) => {
-        console.log('Oneof:', path.join('.'), oneof, fields);
-        // Build HTML form for oneof
-    },
-    onNestedType: (nestedType, path) => {
-        console.log('Nested Type:', path.join('.'), nestedType);
-        // Handle nested type
-    },
-    onEnumType: (enumType, path) => {
-        console.log('Enum Type:', path.join('.'), enumType);
-        // Handle enum type
+export type RepeatedField = {
+    type: 'repeated';
+    repeatedField: FormField;
+} & BaseField;
+
+export type MsgField = {
+    type: 'msg';
+    field: FieldDescriptorProto;
+} & BaseField;
+
+export type MapField = {
+    type: 'map';
+    field: FieldDescriptorProto;
+    key: FormField;
+    value: FormField;
+} & BaseField;
+
+export type GroupField = {
+    type: 'group';
+    field: OneofDescriptorProto;
+    children: FormField[];
+    isOneOf: boolean;
+} & BaseField;
+
+export type FormField = MsgField | GroupField | MapField | RepeatedField;
+
+export const getDefaultFormFieldValue = (field: FormField): any => {
+    switch (field.type) {
+        case 'msg':
+            return getDefaultValue(field.field);
+        case 'group':
+            return {};
+        case 'map':
+            return {};
+        case 'repeated':
+            return [];
     }
-};
+}
+
+export function walkDescriptor<T>(
+    typeInfo: GRPCTypeInfo,
+    desc: DescriptorProto,
+): FormField[] {
+    const handleField = (f: FieldDescriptorProto): FormField => {
+        const name = f.name || 'unknown';
+        const type = f.type && typeLookup[f.type];
+        const isRepeated = f.label === FieldDescriptorProto_Label.REPEATED;
+
+        const wrapRepeated = (field: FormField): FormField => {
+            if (isRepeated) {
+                return {
+                    type: 'repeated',
+                    name: name,
+                    fieldType: type,
+                    repeatedField: field,
+                };
+            }
+            return field;
+        }
+
+        // TODO breadchris handle enum
+        // TODO breadchris handle recursive types
+
+        if (f.typeName === undefined) {
+            return wrapRepeated({
+                type: 'msg',
+                field: f,
+                name: name,
+                fieldType: type,
+            });
+        }
+        const tn = f.typeName.substring(1);
+        const fieldType = typeInfo.descLookup[tn];
+        if (fieldType === undefined) {
+            throw new Error(`Unknown type ${tn}`);
+        }
+
+        if (fieldType.options?.mapEntry) {
+            const children = walkDescriptor(typeInfo, fieldType);
+            if (children.length !== 2) {
+                throw new Error(`Map entry ${tn} has ${children.length} children`);
+            }
+            return {
+                type: 'map',
+                field: f,
+                name: name,
+                key: children[0],
+                value: children[1],
+                fieldType: type,
+            };
+        }
+
+        return wrapRepeated({
+            type: 'group',
+            field: f,
+            name: name,
+            children: walkDescriptor(typeInfo, fieldType),
+            fieldType: type,
+            isOneOf: false,
+        });
+    }
+
+    const fields: FormField[] = desc.field
+        .filter(f => f.oneofIndex === undefined)
+        .map(handleField);
+
+    const oneOfs: FormField[] = desc.oneofDecl.map((oneof, index) => {
+        const groupFields = desc.field
+            .filter(f => f.oneofIndex === index)
+            .flatMap(handleField)
+            .filter(notEmpty);
+        const name = oneof.name || 'unknown';
+        return {
+            type: 'group',
+            name: name,
+            field: oneof,
+            children: groupFields,
+            fieldType: undefined,
+            isOneOf: true,
+        };
+    });
+    return [...fields, ...oneOfs];
+}
