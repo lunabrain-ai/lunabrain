@@ -2,7 +2,6 @@ import {atom, useAtom} from "jotai/index";
 import {User} from "@/rpc/user/user_pb";
 import {userService} from "@/service";
 import toast from "react-hot-toast";
-import {useEffect} from "react";
 
 const userAtom = atom<User|undefined>(undefined);
 userAtom.debugLabel = 'userAtom';
@@ -27,7 +26,7 @@ export const useAuth = () => {
         try {
             // TODO breadchris save content to group
             const resp = await userService.login({email, password});
-            setUser(resp);
+            setUser(resp.user);
             toast.success('Logged in');
         } catch (e) {
             toast.error('Failed to login');
@@ -53,8 +52,8 @@ export const useAuth = () => {
         try {
             const res = await userService.login({});
             // TODO breadchris should login throw if not logged in?
-            if (res.email !== '') {
-                setUser(res);
+            if (res.success) {
+                setUser(res.user);
             }
         } catch (e: any) {
             console.error(e);

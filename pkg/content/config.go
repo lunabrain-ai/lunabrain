@@ -18,7 +18,7 @@ func NewDefaultConfig() Config {
 		Port:  "${PORT:\"8000\"}",
 		Proxy: "${PROXY:\"\"}",
 		// TODO breadchris this should be something else
-		SessionSecret: "test",
+		SessionSecret: "${:\"secret\"}",
 	}
 }
 

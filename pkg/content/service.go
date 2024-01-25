@@ -190,14 +190,14 @@ func (s *Service) GetSources(ctx context.Context, c *connect_go.Request[content.
 				Server: &content.Server{},
 			},
 		},
-		{
-			Name: "logseq",
-			Type: &content.Source_Folder{
-				Folder: &content.Folder{
-					Path: "/Users/hacked/Documents/Github/notes/journals",
-				},
-			},
-		},
+		//{
+		//	Name: "logseq",
+		//	Type: &content.Source_Folder{
+		//		Folder: &content.Folder{
+		//			Path: "/Users/hacked/Documents/Github/notes/journals",
+		//		},
+		//	},
+		//},
 	}
 	var enumSrc []*content.EnumeratedSource
 	for _, src := range srcs {
@@ -234,12 +234,14 @@ func (s *Service) Publish(ctx context.Context, c *connect_go.Request[content.Con
 	}
 
 	sites, err := s.Search(ctx, connect_go.NewRequest(&content.Query{
+		// TODO breadchris use type safe name
 		ContentTypes: []string{"site"},
 	}))
 	if err != nil {
 		return nil, err
 	}
 
+	// TODO breadchris only supporting one site right now
 	var site *content.Site
 	sc := sites.Msg.StoredContent
 	if len(sc) != 1 {
@@ -355,6 +357,7 @@ func (s *Service) Save(ctx context.Context, c *connect_go.Request[content.Conten
 				if err != nil {
 					return nil, err
 				}
+				slog.Debug("saved file", "url", t.File.Url)
 			}
 			t.File.Data = nil
 		}

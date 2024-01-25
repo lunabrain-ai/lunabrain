@@ -15,15 +15,26 @@
       "matches": ["<all_urls>"],
       "js": ["content.js"],
       "all_frames": false
+    },
+    {
+      "world": "MAIN",
+      "js": ["injected.js"],
+      "matches": ["<all_urls>"],
+      "run_at": "document_start"
     }
   ],
   "permissions": [
+    "scripting",
     "activeTab",
     "webNavigation",
     "webRequest",
     "history",
     "tabs"
   ],
+  "web_accessible_resources": [{
+    "resources": ["injected.js"],
+    "matches": ["<all_urls>"]
+  }],
   "chrome_url_overrides": {
     "newtab": "tab.html"
   },

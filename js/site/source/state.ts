@@ -27,21 +27,23 @@ export const useSources = () => {
     return {sources, selected, setSelected, getSources, types, setTypes};
 }
 
-const selectedContentAtom = atom<Content|undefined>(undefined);
-selectedContentAtom.debugLabel = 'selectedContentAtom';
+const editedContentAtom = atom<Content|undefined>(undefined);
+editedContentAtom.debugLabel = 'editedContentAtom';
 
 export const useContentEditor = () => {
-    const [selected, setSelected] = useAtom(selectedContentAtom);
-    const select = (content: Content|undefined) => {
+    const [editedContent, setEditedContent] = useAtom(editedContentAtom);
+    const editContent = (content: Content|undefined) => {
         if (content === undefined) {
             window.history.pushState({}, '', `/app`);
-            setSelected(undefined);
+            setEditedContent(undefined);
         } else {
-            window.history.pushState({}, '', `/app/content/${content.id}`);
-            setSelected(content);
+            if (content.id !== undefined || content.id !== '') {
+                window.history.pushState({}, '', `/app/content/${content.id}`);
+            }
+            setEditedContent(content);
         }
     }
-    return {selected, select};
+    return {editedContent, editContent};
 }
 
 const recordingAtom = atom<boolean>(false);

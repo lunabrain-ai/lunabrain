@@ -157,6 +157,7 @@ const chromeExt = () => {
     chrome.webRequest.onCompleted.addListener(
         (details) => {
             const s = seen[details.url.toString()] || 0;
+            console.log('completed', details.url, details)
             if (extractUuidFromUrl(details.url) && s < 2) {
                 const h = headers[details.url.toString()];
                 console.log('completed', details.url, details)

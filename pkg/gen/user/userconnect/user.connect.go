@@ -68,7 +68,7 @@ const (
 // UserServiceClient is a client for the user.UserService service.
 type UserServiceClient interface {
 	Register(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[user.User], error)
-	Login(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[user.User], error)
+	Login(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[user.LoginResponse], error)
 	Logout(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[emptypb.Empty], error)
 	ResetPassword(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[emptypb.Empty], error)
 	VerifyUser(context.Context, *connect_go.Request[user.VerifyUserRequest]) (*connect_go.Response[emptypb.Empty], error)
@@ -97,7 +97,7 @@ func NewUserServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts
 			baseURL+UserServiceRegisterProcedure,
 			opts...,
 		),
-		login: connect_go.NewClient[user.User, user.User](
+		login: connect_go.NewClient[user.User, user.LoginResponse](
 			httpClient,
 			baseURL+UserServiceLoginProcedure,
 			opts...,
@@ -163,7 +163,7 @@ func NewUserServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts
 // userServiceClient implements UserServiceClient.
 type userServiceClient struct {
 	register          *connect_go.Client[user.User, user.User]
-	login             *connect_go.Client[user.User, user.User]
+	login             *connect_go.Client[user.User, user.LoginResponse]
 	logout            *connect_go.Client[emptypb.Empty, emptypb.Empty]
 	resetPassword     *connect_go.Client[user.User, emptypb.Empty]
 	verifyUser        *connect_go.Client[user.VerifyUserRequest, emptypb.Empty]
@@ -183,7 +183,7 @@ func (c *userServiceClient) Register(ctx context.Context, req *connect_go.Reques
 }
 
 // Login calls user.UserService.Login.
-func (c *userServiceClient) Login(ctx context.Context, req *connect_go.Request[user.User]) (*connect_go.Response[user.User], error) {
+func (c *userServiceClient) Login(ctx context.Context, req *connect_go.Request[user.User]) (*connect_go.Response[user.LoginResponse], error) {
 	return c.login.CallUnary(ctx, req)
 }
 
@@ -245,7 +245,7 @@ func (c *userServiceClient) Share(ctx context.Context, req *connect_go.Request[u
 // UserServiceHandler is an implementation of the user.UserService service.
 type UserServiceHandler interface {
 	Register(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[user.User], error)
-	Login(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[user.User], error)
+	Login(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[user.LoginResponse], error)
 	Logout(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[emptypb.Empty], error)
 	ResetPassword(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[emptypb.Empty], error)
 	VerifyUser(context.Context, *connect_go.Request[user.VerifyUserRequest]) (*connect_go.Response[emptypb.Empty], error)
@@ -371,7 +371,7 @@ func (UnimplementedUserServiceHandler) Register(context.Context, *connect_go.Req
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("user.UserService.Register is not implemented"))
 }
 
-func (UnimplementedUserServiceHandler) Login(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[user.User], error) {
+func (UnimplementedUserServiceHandler) Login(context.Context, *connect_go.Request[user.User]) (*connect_go.Response[user.LoginResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("user.UserService.Login is not implemented"))
 }
 

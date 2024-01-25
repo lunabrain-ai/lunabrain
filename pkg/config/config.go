@@ -23,7 +23,7 @@ const (
 
 type Config struct {
 	Bucket  bucket.Config  `yaml:"bucket"`
-	Service content.Config `yaml:"api"`
+	Service content.Config `yaml:"service"`
 	Scrape  scrape.Config  `yaml:"scrape"`
 	DB      db.Config      `yaml:"db"`
 	OpenAI  openai.Config  `yaml:"openai"`

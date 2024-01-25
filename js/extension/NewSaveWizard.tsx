@@ -7,51 +7,6 @@ import toast from "react-hot-toast";
 
 interface SaveWizardProps {}
 
-const styles: Record<string, React.CSSProperties> = {
-    floatingPanel: {
-        padding: '10px',
-        backgroundColor: 'white',
-        border: '1px solid #ccc',
-        color: 'black',
-        width: '40vh',
-        maxHeight: '300px',
-        overflowY: 'auto',
-        zIndex: 9999,
-        right: '10px',
-        bottom: '10px',
-        position: 'fixed',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '10px'
-    },
-    buttonPrimary: {
-        backgroundColor: '#0078d4',
-        border: 'none',
-        padding: '5px 15px',
-        color: 'white',
-        cursor: 'pointer'
-    },
-    tablist: {
-        display: 'flex',
-        gap: '10px'
-    },
-    table: {
-        height: '100px',
-        overflowY: 'auto',
-        borderCollapse: 'collapse',
-        width: '100%'
-    },
-    tableRow: {
-        borderBottom: '1px solid #ccc'
-    },
-    tableCell: {
-        padding: '5px'
-    },
-    errorText: {
-        color: 'red'
-    }
-};
-
 export const NewSaveWizard: React.FC<SaveWizardProps> = () => {
     const [error, setError] = useState<string|undefined>(undefined);
     const [title, setTitle] = useState(document.title || window.location.href);

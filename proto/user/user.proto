@@ -6,7 +6,7 @@ import "google/protobuf/empty.proto";
 
 service UserService {
   rpc Register(User) returns (User);
-  rpc Login(User) returns (User);
+  rpc Login(User) returns (LoginResponse);
   rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty);
   rpc ResetPassword(User) returns (google.protobuf.Empty);
   rpc VerifyUser(VerifyUserRequest) returns (google.protobuf.Empty);
@@ -65,7 +65,10 @@ message Group {
 
 message Config {
   repeated string domain_whitelist = 1;
+  bool offline_voice = 2;
 }
 
 message LoginResponse {
+  User user = 1;
+  bool success = 2;
 }

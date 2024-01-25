@@ -1,35 +1,35 @@
 package util
 
 import (
-	"fmt"
 	"github.com/iancoleman/strcase"
 )
 
-func SnakeToCamelCase(input any) (any, error) {
-	switch input := input.(type) {
-	case map[any]any:
+func SnakeToCamelCase(input any) any {
+	switch i := input.(type) {
+	case map[string]any:
 		newMap := make(map[any]any)
-		for key, value := range input {
-			strKey, ok := key.(string)
-			if !ok {
-				return nil, fmt.Errorf("non-string key found in map")
+		for key, value := range i {
+			/*
+				TODO breadchris
+				the proto structure is this
+				 outputs:
+					 home:
+						 values: ...
+				but it is expected to be
+				 outputs:
+					 home: ...
+			*/
+			if key == "items" || key == "values" {
+				return SnakeToCamelCase(value)
 			}
-			newKey := strcase.ToCamel(strKey)
-			newValue, err := SnakeToCamelCase(value)
-			if err != nil {
-				return nil, err
-			}
-			newMap[newKey] = newValue
+			newKey := strcase.ToLowerCamel(key)
+			newMap[newKey] = SnakeToCamelCase(value)
 		}
-		return newMap, nil
+		return newMap
 	case []any:
-		for i, v := range input {
-			newValue, err := SnakeToCamelCase(v)
-			if err != nil {
-				return nil, err
-			}
-			input[i] = newValue
+		for n, v := range i {
+			i[n] = SnakeToCamelCase(v)
 		}
 	}
-	return input, nil
+	return input
 }

@@ -384,6 +384,11 @@ export class Config extends Message<Config> {
    */
   domainWhitelist: string[] = [];
 
+  /**
+   * @generated from field: bool offline_voice = 2;
+   */
+  offlineVoice = false;
+
   constructor(data?: PartialMessage<Config>) {
     super();
     proto3.util.initPartial(data, this);
@@ -393,6 +398,7 @@ export class Config extends Message<Config> {
   static readonly typeName = "user.Config";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "domain_whitelist", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 2, name: "offline_voice", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Config {
@@ -416,6 +422,16 @@ export class Config extends Message<Config> {
  * @generated from message user.LoginResponse
  */
 export class LoginResponse extends Message<LoginResponse> {
+  /**
+   * @generated from field: user.User user = 1;
+   */
+  user?: User;
+
+  /**
+   * @generated from field: bool success = 2;
+   */
+  success = false;
+
   constructor(data?: PartialMessage<LoginResponse>) {
     super();
     proto3.util.initPartial(data, this);
@@ -424,6 +440,8 @@ export class LoginResponse extends Message<LoginResponse> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "user.LoginResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "user", kind: "message", T: User },
+    { no: 2, name: "success", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): LoginResponse {

@@ -29,3 +29,8 @@ export function truncateText(text: string, maxLength: number): string {
 
     return truncatedText;
 }
+
+export function snakeToCamel(s: string): string {
+    return s.replace(/(_\w)/g, m => m[1].toUpperCase());
+}
+

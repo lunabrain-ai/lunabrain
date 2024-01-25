@@ -3,10 +3,7 @@ import React, {FC} from "react";
 import {useWatch} from "react-hook-form";
 import {GRPCInputFormProps, ProtobufMessageForm} from "@/form/ProtobufMessageForm";
 import { GRPCTypeInfo } from "@/rpc/content/content_pb";
-
-function snakeToCamel(s: string): string {
-    return s.replace(/(_\w)/g, m => m[1].toUpperCase());
-}
+import {snakeToCamel} from "@/util/text";
 
 const getFieldName = (baseFieldName: string | undefined, field: FieldDescriptorProto, idx?: number): string => {
     if (!baseFieldName) {

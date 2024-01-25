@@ -16,10 +16,10 @@ public protocol User_UserServiceClientInterface: Sendable {
     func `register`(request: User_User, headers: Connect.Headers) async -> ResponseMessage<User_User>
 
     @discardableResult
-    func `login`(request: User_User, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<User_User>) -> Void) -> Connect.Cancelable
+    func `login`(request: User_User, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<User_LoginResponse>) -> Void) -> Connect.Cancelable
 
     @available(iOS 13, *)
-    func `login`(request: User_User, headers: Connect.Headers) async -> ResponseMessage<User_User>
+    func `login`(request: User_User, headers: Connect.Headers) async -> ResponseMessage<User_LoginResponse>
 
     @discardableResult
     func `logout`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<SwiftProtobuf.Google_Protobuf_Empty>) -> Void) -> Connect.Cancelable
@@ -107,12 +107,12 @@ public final class User_UserServiceClient: User_UserServiceClientInterface, Send
     }
 
     @discardableResult
-    public func `login`(request: User_User, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<User_User>) -> Void) -> Connect.Cancelable {
+    public func `login`(request: User_User, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<User_LoginResponse>) -> Void) -> Connect.Cancelable {
         return self.client.unary(path: "/user.UserService/Login", request: request, headers: headers, completion: completion)
     }
 
     @available(iOS 13, *)
-    public func `login`(request: User_User, headers: Connect.Headers = [:]) async -> ResponseMessage<User_User> {
+    public func `login`(request: User_User, headers: Connect.Headers = [:]) async -> ResponseMessage<User_LoginResponse> {
         return await self.client.unary(path: "/user.UserService/Login", request: request, headers: headers)
     }
 

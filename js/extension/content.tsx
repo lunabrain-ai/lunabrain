@@ -23,6 +23,31 @@ rootElem.style.height = '0';
 rootElem.style.padding = '0';
 rootElem.style.margin = '0';
 
+function injectScriptFile(scriptName: string) {
+    const script = document.createElement('script');
+    const u = chrome.runtime.getURL(scriptName);
+    script.src = u;
+    (document.head || document.documentElement).appendChild(script);
+    script.onload = function() {
+        this.remove();
+    };
+}
+
+// Listen for the event from the injected script
+document.addEventListener('NEXT_JS_PARAMS', function (e) {
+    const data = JSON.parse(e.detail);
+    console.log('NEXT_JS_PARAMS', data);
+    const msgStr: string = data[20][1];
+    const msgData = JSON.parse(msgStr.substring(3));
+    const messages = msgData[3]['chat']['messages']
+    const formatted = messages.map((msg: any) => {
+        return `[${msg['role']}] ${msg['content']}`;
+    });
+    console.log(formatted);
+});
+
+// injectScriptFile('injected.js');
+
 const root = ReactDOM.createRoot(rootElem);
 root.render(
     <React.StrictMode>

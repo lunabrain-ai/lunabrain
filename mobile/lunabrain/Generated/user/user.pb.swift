@@ -156,6 +156,8 @@ public struct User_Config {
 
   public var domainWhitelist: [String] = []
 
+  public var offlineVoice: Bool = false
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -166,9 +168,22 @@ public struct User_LoginResponse {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  public var user: User_User {
+    get {return _user ?? User_User()}
+    set {_user = newValue}
+  }
+  /// Returns true if `user` has been explicitly set.
+  public var hasUser: Bool {return self._user != nil}
+  /// Clears the value of `user`. Subsequent reads from it will return its default value.
+  public mutating func clearUser() {self._user = nil}
+
+  public var success: Bool = false
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
+
+  fileprivate var _user: User_User? = nil
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
@@ -521,6 +536,7 @@ extension User_Config: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
   public static let protoMessageName: String = _protobuf_package + ".Config"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "domain_whitelist"),
+    2: .standard(proto: "offline_voice"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -530,6 +546,7 @@ extension User_Config: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeRepeatedStringField(value: &self.domainWhitelist) }()
+      case 2: try { try decoder.decodeSingularBoolField(value: &self.offlineVoice) }()
       default: break
       }
     }
@@ -539,11 +556,15 @@ extension User_Config: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     if !self.domainWhitelist.isEmpty {
       try visitor.visitRepeatedStringField(value: self.domainWhitelist, fieldNumber: 1)
     }
+    if self.offlineVoice != false {
+      try visitor.visitSingularBoolField(value: self.offlineVoice, fieldNumber: 2)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: User_Config, rhs: User_Config) -> Bool {
     if lhs.domainWhitelist != rhs.domainWhitelist {return false}
+    if lhs.offlineVoice != rhs.offlineVoice {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -551,18 +572,41 @@ extension User_Config: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
 
 extension User_LoginResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".LoginResponse"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "user"),
+    2: .same(proto: "success"),
+  ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let _ = try decoder.nextFieldNumber() {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._user) }()
+      case 2: try { try decoder.decodeSingularBoolField(value: &self.success) }()
+      default: break
+      }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._user {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    if self.success != false {
+      try visitor.visitSingularBoolField(value: self.success, fieldNumber: 2)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: User_LoginResponse, rhs: User_LoginResponse) -> Bool {
+    if lhs._user != rhs._user {return false}
+    if lhs.success != rhs.success {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

@@ -1918,14 +1918,14 @@ export class GRPCTypeInfo extends Message<GRPCTypeInfo> {
  */
 export class Site extends Message<Site> {
   /**
-   * @generated from field: content.HugoConfig hugo_config = 1;
+   * @generated from field: repeated content.Section sections = 1;
    */
-  hugoConfig?: HugoConfig;
+  sections: Section[] = [];
 
   /**
-   * @generated from field: repeated string post_tags = 2;
+   * @generated from field: content.HugoConfig hugo_config = 2;
    */
-  postTags: string[] = [];
+  hugoConfig?: HugoConfig;
 
   constructor(data?: PartialMessage<Site>) {
     super();
@@ -1935,8 +1935,8 @@ export class Site extends Message<Site> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "content.Site";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "hugo_config", kind: "message", T: HugoConfig },
-    { no: 2, name: "post_tags", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 1, name: "sections", kind: "message", T: Section, repeated: true },
+    { no: 2, name: "hugo_config", kind: "message", T: HugoConfig },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Site {
@@ -1953,6 +1953,51 @@ export class Site extends Message<Site> {
 
   static equals(a: Site | PlainMessage<Site> | undefined, b: Site | PlainMessage<Site> | undefined): boolean {
     return proto3.util.equals(Site, a, b);
+  }
+}
+
+/**
+ * @generated from message content.Section
+ */
+export class Section extends Message<Section> {
+  /**
+   * TODO breadchris tags should be a filter that can have AND, OR, regex?
+   *
+   * @generated from field: repeated string tags = 1;
+   */
+  tags: string[] = [];
+
+  /**
+   * @generated from field: content.MenuItem menu = 2;
+   */
+  menu?: MenuItem;
+
+  constructor(data?: PartialMessage<Section>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.Section";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "tags", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 2, name: "menu", kind: "message", T: MenuItem },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Section {
+    return new Section().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Section {
+    return new Section().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Section {
+    return new Section().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Section | PlainMessage<Section> | undefined, b: Section | PlainMessage<Section> | undefined): boolean {
+    return proto3.util.equals(Section, a, b);
   }
 }
 
@@ -2168,8 +2213,6 @@ export class LanguageConfig extends Message<LanguageConfig> {
   menu: { [key: string]: repeated_menu_item } = {};
 
   /**
-   * `interface{}` converted to string for simplicity
-   *
    * @generated from field: map<string, string> params = 6;
    */
   params: { [key: string]: string } = {};

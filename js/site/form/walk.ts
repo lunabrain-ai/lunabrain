@@ -7,6 +7,7 @@ import {
 import {GRPCTypeInfo} from "@/rpc/content/content_pb";
 import {notEmpty} from "@/util/predicates";
 import {getDefaultValue, typeLookup} from "@/util/proto";
+import {snakeToCamel} from "@/util/text";
 
 export type BaseField = {
     type: string;
@@ -16,6 +17,7 @@ export type BaseField = {
 
 export type RepeatedField = {
     type: 'repeated';
+    field: FieldDescriptorProto;
     repeatedField: FormField;
 } & BaseField;
 
@@ -58,7 +60,7 @@ export function walkDescriptor<T>(
     desc: DescriptorProto,
 ): FormField[] {
     const handleField = (f: FieldDescriptorProto): FormField => {
-        const name = f.name || 'unknown';
+        const name = snakeToCamel(f.name || 'unknown');
         const type = f.type && typeLookup[f.type];
         const isRepeated = f.label === FieldDescriptorProto_Label.REPEATED;
 
@@ -68,6 +70,7 @@ export function walkDescriptor<T>(
                     type: 'repeated',
                     name: name,
                     fieldType: type,
+                    field: f,
                     repeatedField: field,
                 };
             }
@@ -125,7 +128,7 @@ export function walkDescriptor<T>(
             .filter(f => f.oneofIndex === index)
             .flatMap(handleField)
             .filter(notEmpty);
-        const name = oneof.name || 'unknown';
+        const name = snakeToCamel(oneof.name || 'unknown');
         return {
             type: 'group',
             name: name,

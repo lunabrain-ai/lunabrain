@@ -992,6 +992,8 @@ public struct Content_Site {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  public var sections: [Content_Section] = []
+
   public var hugoConfig: Content_HugoConfig {
     get {return _hugoConfig ?? Content_HugoConfig()}
     set {_hugoConfig = newValue}
@@ -1001,13 +1003,35 @@ public struct Content_Site {
   /// Clears the value of `hugoConfig`. Subsequent reads from it will return its default value.
   public mutating func clearHugoConfig() {self._hugoConfig = nil}
 
-  public var postTags: [String] = []
-
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
   fileprivate var _hugoConfig: Content_HugoConfig? = nil
+}
+
+public struct Content_Section {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// TODO breadchris tags should be a filter that can have AND, OR, regex?
+  public var tags: [String] = []
+
+  public var menu: Content_MenuItem {
+    get {return _menu ?? Content_MenuItem()}
+    set {_menu = newValue}
+  }
+  /// Returns true if `menu` has been explicitly set.
+  public var hasMenu: Bool {return self._menu != nil}
+  /// Clears the value of `menu`. Subsequent reads from it will return its default value.
+  public mutating func clearMenu() {self._menu = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _menu: Content_MenuItem? = nil
 }
 
 public struct Content_HugoConfig {
@@ -1160,7 +1184,6 @@ public struct Content_LanguageConfig {
 
   public var menu: Dictionary<String,Content_repeated_menu_item> = [:]
 
-  /// `interface{}` converted to string for simplicity
   public var params: Dictionary<String,String> = [:]
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -1593,6 +1616,7 @@ extension Content_Segment: @unchecked Sendable {}
 extension Content_Transcript: @unchecked Sendable {}
 extension Content_GRPCTypeInfo: @unchecked Sendable {}
 extension Content_Site: @unchecked Sendable {}
+extension Content_Section: @unchecked Sendable {}
 extension Content_HugoConfig: @unchecked Sendable {}
 extension Content_MinifyConfig: @unchecked Sendable {}
 extension Content_LanguageConfig: @unchecked Sendable {}
@@ -1613,6 +1637,55 @@ extension Content_ButtonConfig: @unchecked Sendable {}
 extension Content_HomeInfoParamsConfig: @unchecked Sendable {}
 extension Content_SocialIconConfig: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
+
+// MARK: - Extension support defined in content.proto.
+
+// MARK: - Extension Properties
+
+// Swift Extensions on the exteneded Messages to add easy access to the declared
+// extension fields. The names are based on the extension field name from the proto
+// declaration. To avoid naming collisions, the names are prefixed with the name of
+// the scope where the extend directive occurs.
+
+extension SwiftProtobuf.Google_Protobuf_FieldOptions {
+
+  /// TODO breadchris make this a message for more robust settings?
+  public var Content_uiHideField: Bool {
+    get {return getExtensionValue(ext: Content_Extensions_ui_hide_field) ?? false}
+    set {setExtensionValue(ext: Content_Extensions_ui_hide_field, value: newValue)}
+  }
+  /// Returns true if extension `Content_Extensions_ui_hide_field`
+  /// has been explicitly set.
+  public var hasContent_uiHideField: Bool {
+    return hasExtensionValue(ext: Content_Extensions_ui_hide_field)
+  }
+  /// Clears the value of extension `Content_Extensions_ui_hide_field`.
+  /// Subsequent reads from it will return its default value.
+  public mutating func clearContent_uiHideField() {
+    clearExtensionValue(ext: Content_Extensions_ui_hide_field)
+  }
+
+}
+
+// MARK: - File's ExtensionMap: Content_Content_Extensions
+
+/// A `SwiftProtobuf.SimpleExtensionMap` that includes all of the extensions defined by
+/// this .proto file. It can be used any place an `SwiftProtobuf.ExtensionMap` is needed
+/// in parsing, or it can be combined with other `SwiftProtobuf.SimpleExtensionMap`s to create
+/// a larger `SwiftProtobuf.SimpleExtensionMap`.
+public let Content_Content_Extensions: SwiftProtobuf.SimpleExtensionMap = [
+  Content_Extensions_ui_hide_field
+]
+
+// Extension Objects - The only reason these might be needed is when manually
+// constructing a `SimpleExtensionMap`, otherwise, use the above _Extension Properties_
+// accessors for the extension fields on the messages directly.
+
+/// TODO breadchris make this a message for more robust settings?
+public let Content_Extensions_ui_hide_field = SwiftProtobuf.MessageExtension<SwiftProtobuf.OptionalExtensionField<SwiftProtobuf.ProtobufBool>, SwiftProtobuf.Google_Protobuf_FieldOptions>(
+  _protobuf_fieldNumber: 50001,
+  fieldName: "content.ui_hide_field"
+)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
@@ -3605,8 +3678,8 @@ extension Content_GRPCTypeInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
 extension Content_Site: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Site"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "hugo_config"),
-    2: .standard(proto: "post_tags"),
+    1: .same(proto: "sections"),
+    2: .standard(proto: "hugo_config"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -3615,8 +3688,8 @@ extension Content_Site: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularMessageField(value: &self._hugoConfig) }()
-      case 2: try { try decoder.decodeRepeatedStringField(value: &self.postTags) }()
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.sections) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._hugoConfig) }()
       default: break
       }
     }
@@ -3627,18 +3700,60 @@ extension Content_Site: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     // allocates stack space for every if/case branch local when no optimizations
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._hugoConfig {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    } }()
-    if !self.postTags.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.postTags, fieldNumber: 2)
+    if !self.sections.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.sections, fieldNumber: 1)
     }
+    try { if let v = self._hugoConfig {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Content_Site, rhs: Content_Site) -> Bool {
+    if lhs.sections != rhs.sections {return false}
     if lhs._hugoConfig != rhs._hugoConfig {return false}
-    if lhs.postTags != rhs.postTags {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Content_Section: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".Section"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "tags"),
+    2: .same(proto: "menu"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedStringField(value: &self.tags) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._menu) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if !self.tags.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.tags, fieldNumber: 1)
+    }
+    try { if let v = self._menu {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Content_Section, rhs: Content_Section) -> Bool {
+    if lhs.tags != rhs.tags {return false}
+    if lhs._menu != rhs._menu {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

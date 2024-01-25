@@ -20,7 +20,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/group"
 	shttp "github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/lunabrain-ai/lunabrain/pkg/user"
-	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/google"
 	"github.com/pkg/errors"
@@ -42,7 +41,7 @@ type APIHTTPServer struct {
 	userService    *user.Service
 	chatService    *chat.Service
 	eventService   *event.Service
-	authStore      *sessions.CookieStore
+	handler        *gothic.Handler
 }
 
 var (
@@ -76,7 +75,17 @@ func New(
 		userService:    userService,
 		chatService:    chatService,
 		eventService:   eventService,
-		authStore:      sessions.NewCookieStore([]byte(config.SessionSecret)),
+		handler: gothic.NewHandler(
+			sessions.NewCookieStore([]byte(config.SessionSecret)),
+			gothic.WithProviders(
+				google.New(
+					config.GoogleClientID,
+					config.GoogleClientSecret,
+					// TODO breachris derive this from config
+					fmt.Sprintf("%s/auth/google/callback", config.ExternalURL),
+					"email", "profile"),
+			),
+		),
 	}
 }
 
@@ -88,14 +97,14 @@ func (a *APIHTTPServer) startGoogleAuth(w http.ResponseWriter, r *http.Request) 
 	// aren't their security concerns here?
 	q.Set("redirect_to", fmt.Sprintf("%s/auth/google/callback", a.config.ExternalURL))
 	r.URL.RawQuery = q.Encode()
-	gothic.BeginAuthHandler(w, r)
+	a.handler.BeginAuthHandler(w, r)
 }
 
 func (a *APIHTTPServer) handleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	q.Set("provider", "google")
 	r.URL.RawQuery = q.Encode()
-	u, err := gothic.CompleteUserAuth(w, r)
+	u, err := a.handler.CompleteUserAuth(w, r)
 	if err != nil {
 		slog.Error("failed to complete user auth", "error", err)
 		return
@@ -109,16 +118,8 @@ func (a *APIHTTPServer) handleGoogleCallback(w http.ResponseWriter, r *http.Requ
 	http.Redirect(w, r, "/app/chat", http.StatusFound)
 }
 
+// TODO breadchris the initialization of this feels awkward
 func (a *APIHTTPServer) NewAPIHandler() (http.Handler, error) {
-	goth.UseProviders(
-		google.New(
-			a.config.GoogleClientID,
-			a.config.GoogleClientSecret,
-			// TODO breachris derive this from config
-			fmt.Sprintf("%s/auth/google/callback", a.config.ExternalURL),
-			"email", "profile"),
-	)
-
 	interceptors := connect.WithInterceptors(NewLogInterceptor())
 
 	apiRoot := http.NewServeMux()

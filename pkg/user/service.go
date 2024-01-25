@@ -6,6 +6,7 @@ import (
 	connectgo "github.com/bufbuild/connect-go"
 	"github.com/google/uuid"
 	"github.com/google/wire"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent"
 	"github.com/lunabrain-ai/lunabrain/pkg/gen/user"
 	"github.com/lunabrain-ai/lunabrain/pkg/gen/user/userconnect"
 	"github.com/lunabrain-ai/lunabrain/pkg/group"
@@ -158,28 +159,40 @@ func (s *Service) VerifyUser(ctx context.Context, c *connectgo.Request[user.Veri
 	return connectgo.NewResponse(&emptypb.Empty{}), nil
 }
 
-func (s *Service) Login(ctx context.Context, c *connectgo.Request[user.User]) (*connectgo.Response[user.User], error) {
+func (s *Service) Login(ctx context.Context, c *connectgo.Request[user.User]) (*connectgo.Response[user.LoginResponse], error) {
+	getUser := func(u *ent.User) *user.User {
+		cfg := u.Data.Config
+		if cfg == nil {
+			cfg = &user.Config{}
+		}
+		cfg.OfflineVoice = s.config.OfflineVoice == "true"
+		return &user.User{
+			Email:  u.Email,
+			Config: cfg,
+		}
+	}
 	if id, err := s.sess.GetUserID(ctx); err == nil {
 		u, err := s.user.GetUserByID(ctx, id)
 		if err != nil {
 			return nil, err
 		}
-		return connectgo.NewResponse(&user.User{
-			Email:  u.Email,
-			Config: u.Data.Config,
+		return connectgo.NewResponse(&user.LoginResponse{
+			Success: true,
+			User:    getUser(u),
 		}), nil
 	}
 
 	u, err := s.user.AttemptLogin(ctx, c.Msg.Email, c.Msg.Password)
 	if err != nil {
 		slog.Warn("could not find user", "error", err)
-		return connectgo.NewResponse(&user.User{
-			Email: "",
+		return connectgo.NewResponse(&user.LoginResponse{
+			Success: false,
 		}), nil
 	}
 	s.sess.SetUserID(ctx, u.ID.String())
-	return connectgo.NewResponse(&user.User{
-		Email: u.Email,
+	return connectgo.NewResponse(&user.LoginResponse{
+		Success: true,
+		User:    getUser(u),
 	}), nil
 }
 

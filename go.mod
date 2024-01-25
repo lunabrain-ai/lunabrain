@@ -2,6 +2,8 @@ module github.com/lunabrain-ai/lunabrain
 
 go 1.21
 
+replace github.com/markbates/goth v1.78.0 => github.com/breadchris/goth v0.0.0-20240124074835-212cf2f446d3
+
 require (
 	entgo.io/ent v0.12.4
 	github.com/JohannesKaufmann/html-to-markdown v1.5.0
@@ -17,6 +19,7 @@ require (
 	github.com/chromedp/chromedp v0.9.1
 	github.com/cosmtrek/air v1.29.0
 	github.com/dominikbraun/graph v0.23.0
+	github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
 	github.com/geziyor/geziyor v0.0.0-20230315135110-a242b58aaa65
 	github.com/go-audio/wav v1.1.0
 	github.com/go-git/go-git/v5 v5.9.0
@@ -26,6 +29,7 @@ require (
 	github.com/golang/protobuf v1.5.3
 	github.com/google/uuid v1.4.0
 	github.com/google/wire v0.5.0
+	github.com/gorilla/sessions v1.2.2
 	github.com/hajimehoshi/go-mp3 v0.3.4
 	github.com/iancoleman/strcase v0.2.0
 	github.com/kkdai/youtube/v2 v2.8.3
@@ -42,6 +46,7 @@ require (
 	github.com/samber/lo v1.38.1
 	github.com/sashabaranov/go-openai v1.15.2
 	github.com/slack-go/slack v0.12.3
+	github.com/smacker/go-tree-sitter v0.0.0-20231219031718-233c2f923ac7
 	github.com/tmc/langchaingo v0.0.0-20230910230029-9c8845b2b019
 	github.com/twilio/twilio-go v1.13.0
 	github.com/u2takey/ffmpeg-go v0.4.1
@@ -101,7 +106,6 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dlclark/regexp2 v1.10.0 // indirect
 	github.com/dop251/goja v0.0.0-20230812105242-81d76064690d // indirect
-	github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/fatih/set v0.2.1 // indirect
@@ -132,11 +136,9 @@ require (
 	github.com/google/subcommands v1.2.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
-	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/gorilla/mux v1.7.3 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
-	github.com/gorilla/sessions v1.2.2 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect
 	github.com/hashicorp/hcl/v2 v2.13.0 // indirect
 	github.com/huandu/xstrings v1.3.3 // indirect

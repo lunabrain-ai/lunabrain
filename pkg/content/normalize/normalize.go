@@ -172,3 +172,20 @@ func (s *Normalize) observeSegments(
 		slog.Info("transcription complete")
 	})
 }
+
+//func ExtractTextFromImage(imagePath string) (string, error) {
+//	client := gosseract.NewClient()
+//	defer client.Close()
+//
+//	err := client.SetImage(imagePath)
+//	if err != nil {
+//		return "", err
+//	}
+//
+//	text, err := client.Text()
+//	if err != nil {
+//		return "", err
+//	}
+//
+//	return text, nil
+//}

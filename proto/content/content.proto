@@ -138,9 +138,14 @@ message Edge {
   string to = 2;
 }
 
+extend google.protobuf.FieldOptions {
+  // TODO breadchris make this a message for more robust settings?
+  bool ui_hide_field = 50001;
+}
+
 // Content has data and metadata
 message Content {
-  repeated string tags = 1;
+  repeated string tags = 1 [(ui_hide_field) = true];
   string created_at = 2;
   string uri = 3;
   string id = 4;
@@ -263,8 +268,14 @@ message GRPCTypeInfo {
 }
 
 message Site {
-  HugoConfig hugo_config = 1;
-  repeated string post_tags = 2;
+  repeated Section sections = 1;
+  HugoConfig hugo_config = 2;
+}
+
+message Section {
+  // TODO breadchris tags should be a filter that can have AND, OR, regex?
+  repeated string tags = 1;
+  MenuItem menu = 2;
 }
 
 message HugoConfig {
@@ -299,7 +310,7 @@ message LanguageConfig {
   string title = 3;
   map<string, string> taxonomies = 4;
   map<string, repeated_menu_item> menu = 5;
-  map<string, string> params = 6; // `interface{}` converted to string for simplicity
+  map<string, string> params = 6;
 }
 
 message MenuItem {
@@ -349,7 +360,7 @@ message repeated_string {
 }
 
 message repeated_menu_item {
-  repeated MenuItem items = 1;
+  repeated MenuItem items = 1 [(ui_hide_field) = true];
 }
 
 message ParamsConfig {

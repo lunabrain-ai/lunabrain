@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Config, Group, GroupID, GroupInfoRequest, GroupInvite, Groups, ShareRequest, User, VerifyUserRequest } from "./user_pb.js";
+import { Config, Group, GroupID, GroupInfoRequest, GroupInvite, Groups, LoginResponse, ShareRequest, User, VerifyUserRequest } from "./user_pb.js";
 import { Empty, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -27,7 +27,7 @@ export const UserService = {
     login: {
       name: "Login",
       I: User,
-      O: User,
+      O: LoginResponse,
       kind: MethodKind.Unary,
     },
     /**

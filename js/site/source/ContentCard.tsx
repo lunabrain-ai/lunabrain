@@ -9,13 +9,13 @@ interface ContentCardProps {
 }
 
 export const ContentCard: React.FC<ContentCardProps> = ({ displayContent }) => {
-    const {selected, select} = useContentEditor();
+    const {editedContent, editContent} = useContentEditor();
     const handleCheckboxChange = (isChecked: boolean) => {
         if (isChecked && displayContent.content) {
-            select(displayContent.content);
+            editContent(displayContent.content);
         }
         if (!isChecked) {
-            select(undefined);
+            editContent(undefined);
         }
     };
     return (
@@ -24,7 +24,7 @@ export const ContentCard: React.FC<ContentCardProps> = ({ displayContent }) => {
                 <input
                     type="checkbox"
                     className="checkbox checkbox-accent"
-                    checked={selected?.id === displayContent.content?.id}
+                    checked={editedContent?.id === displayContent.content?.id}
                     onChange={(e) => handleCheckboxChange(e.target.checked)}
                 />
             </div>

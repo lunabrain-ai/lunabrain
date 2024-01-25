@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useContentEditor, useSources} from "@/source/state";
-import {Content, DisplayContent, EnumeratedSource} from "@/rpc/content/content_pb";
+import {Content, DisplayContent, EnumeratedSource, Post} from "@/rpc/content/content_pb";
 import {ContentCard} from "@/source/ContentCard";
 import {contentService, userService} from "@/service";
 import toast from "react-hot-toast";
@@ -9,10 +9,11 @@ import {PlusIcon, TrashIcon} from "@heroicons/react/24/outline";
 import {notEmpty} from "@/util/predicates";
 import {ContentEditor} from "@/source/ContentEditor";
 import {useAuth} from "@/auth/state";
+import {FileDrop} from "@/file/FileDrop";
 
 export const SourcePage: React.FC = () => {
     const {sources, types, selected, setSelected, setTypes, getSources} = useSources();
-    const {selected: selectedContent, select: setSelectedContent} = useContentEditor();
+    const {editContent} = useContentEditor();
     const { id } = useParams();
     const { logout } = useAuth();
 
@@ -32,7 +33,7 @@ export const SourcePage: React.FC = () => {
                 if (res.storedContent.length === 0) {
                     return;
                 }
-                //setSelectedContent(res.storedContent[0].content || null);
+                editContent(res.storedContent[0].content || undefined);
             } catch (e) {
                 console.error('failed to get sources', e);
             }
@@ -82,14 +83,16 @@ export const SourcePage: React.FC = () => {
                 </div>
             </div>
             <div className="flex-grow">
-                <div className="card bg-base-100 shadow-xl">
-                    <div className="card-body">
-                        <ContentEditor content={selectedContent} onUpdate={(c) => {
-                            setSelectedContent(c);
-                        }} />
+                <FileDrop>
+                    <div className="card bg-base-100 shadow-xl">
+                        <div className="card-body">
+                            <ContentEditor />
+                        </div>
                     </div>
-                </div>
-                <Tabs sources={sources} selected={selected} onSelectSource={handleSelectSource} />
+                </FileDrop>
+                {sources.length > 1 && (
+                    <Tabs sources={sources} selected={selected} onSelectSource={handleSelectSource} />
+                )}
                 {selected && (
                     // <ContentCards displayContent={selected.displayContent} />
                     <div className={"overflow-x-auto"}>
@@ -109,25 +112,25 @@ export const SourcePage: React.FC = () => {
 }
 
 const ContentTable: React.FC<{displayContent: DisplayContent[]}> = ({displayContent}) => {
-    const {selected, select} = useContentEditor();
+    const {editedContent, editContent} = useContentEditor();
     const { getSources } = useSources();
     const handleCheckboxChange = (content: Content|undefined, isChecked: boolean) => {
         if (isChecked && content) {
-            select(content);
+            editContent(content);
         }
         if (!isChecked) {
-            select(undefined);
+            editContent(undefined);
         }
     };
 
     const handleDelete = async () => {
-        if (!selected) {
+        if (!editedContent) {
             return;
         }
         try {
             // TODO breadchris save content to group
             const resp = await contentService.delete({
-                contentIds: [selected.id],
+                contentIds: [editedContent.id],
             });
             void getSources();
             toast.success('Deleted content');
@@ -136,15 +139,15 @@ const ContentTable: React.FC<{displayContent: DisplayContent[]}> = ({displayCont
             console.error('failed to delete', e)
         }
     }
-    const cnt = selected ? [
-        displayContent.find((c) => c.content?.id === selected.id),
-        ...displayContent.filter((c) => c.content?.id !== selected.id)
+    const cnt = editedContent ? [
+        displayContent.find((c) => c.content?.id === editedContent.id),
+        ...displayContent.filter((c) => c.content?.id !== editedContent.id)
     ] : displayContent;
     return (
         <table className="table w-full">
             <thead>
             <tr>
-                <th>{selected && (
+                <th>{editedContent && (
                     <TrashIcon onClick={handleDelete} className="h-5 w-5" />
                 )}</th>
                 <th>title</th>
@@ -159,7 +162,7 @@ const ContentTable: React.FC<{displayContent: DisplayContent[]}> = ({displayCont
                         <input
                             type="checkbox"
                             className="checkbox checkbox-accent"
-                            checked={selected?.id === item.content?.id}
+                            checked={editedContent?.id === item.content?.id}
                             onChange={(e) => handleCheckboxChange(item.content, e.target.checked)}
                         />
                     </td>

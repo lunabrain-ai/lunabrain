@@ -1,6 +1,8 @@
 package publish
 
 import (
+	"encoding/json"
+	"fmt"
 	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
@@ -44,10 +46,19 @@ func (s *Blog) Publish(name string, site *content.Site, cnt []*content.Content) 
 		return err
 	}
 
-	nc, err := util.SnakeToCamelCase(site.HugoConfig)
+	jsonBytes, err := json.Marshal(site.HugoConfig)
 	if err != nil {
-		return err
+		return fmt.Errorf("error serializing HugoConfig to JSON: %w", err)
 	}
+
+	var deserializedMap map[string]any
+	err = json.Unmarshal(jsonBytes, &deserializedMap)
+	if err != nil {
+		return fmt.Errorf("error deserializing JSON to map: %w", err)
+	}
+
+	nc := util.SnakeToCamelCase(deserializedMap)
+
 	o, err := yaml.Marshal(nc)
 	if err != nil {
 		return err

@@ -36,7 +36,7 @@ const baseOptions = {
         NodeModulesPolyfillPlugin(),
     ],
     minify: releaseBuild || buildStream,
-    sourcemap: 'both',
+    sourcemap: 'external',
     define: {
         "global": "window",
         "process.env.BASE_URL": baseURL,
@@ -128,6 +128,7 @@ await Promise.all([
     buildExtension && doBuild('extension', {
         ...baseOptions,
         entryPoints: [
+            "./extension/injected.ts",
             "./extension/content.tsx",
             "./extension/tab.tsx",
             "./extension/options.tsx",

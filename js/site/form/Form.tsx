@@ -1,31 +1,78 @@
-import React, {FC, useState} from "react";
-import {FormField, getDefaultFormFieldValue, GroupField, MapField, MsgField, RepeatedField} from "@/form/walk";
+import React, {FC, useEffect, useMemo, useState} from "react";
+import {
+    FormField,
+    getDefaultFormFieldValue,
+    GroupField,
+    MapField,
+    MsgField,
+    RepeatedField,
+    walkDescriptor
+} from "@/form/walk";
 import "./styles.css";
-import {useFieldArray, useWatch} from "react-hook-form";
-import {getDefaultValue} from "@/util/proto";
+import {
+    Control,
+    FieldValues,
+    useFieldArray,
+    useForm,
+    UseFormRegister,
+    UseFormResetField,
+    useWatch
+} from "react-hook-form";
 import {FieldDescriptorProto_Type} from "@bufbuild/protobuf";
-import { Control, useForm, UseFormRegister, UseFormResetField } from 'react-hook-form';
-import {transformObject} from "@/util/form";
+import {atom, createStore, Provider, useAtom} from "jotai";
+import {Content, TypesResponse} from "@/rpc/content/content_pb";
+import {contentService} from "@/service";
+import {cleanObject} from "@/util/form";
 
 export type FormControl = {
     control: Control;
     register: UseFormRegister<any>;
     resetField: UseFormResetField<any>;
     setValue: (name: any, value: any) => void;
+    getValues: (name?: string | string[]) => FieldValues;
 };
 
 type FormControlProps = {
     fc: FormControl
 }
 
+export const formControlAtom = atom<FormControl|undefined>(undefined);
+formControlAtom.debugLabel = "formControlAtom";
+
+export const formTypesAtom = atom<TypesResponse|undefined>(undefined);
+formTypesAtom.debugLabel = "formTypesAtom";
+
+export const useProtoForm = () => {
+    const [formTypes, setFormTypes] = useAtom(formTypesAtom);
+
+    const loadFormTypes = async () => {
+        const t = await contentService.types({});
+        setFormTypes(t);
+    }
+
+    const fields = useMemo(() => {
+        if (!formTypes || !formTypes.content?.msg) {
+            return undefined;
+        }
+        return walkDescriptor(formTypes.content, formTypes.content.msg)
+    }, [formTypes]);
+    return {
+        fields,
+        loadFormTypes,
+    }
+}
+
 export const Form: FC<{
     fields: FormField[],
-    onSubmit: (data: any) => void,
-}> = ({fields, onSubmit}) => {
-    const fc = useForm({
-        values: {} as any,
-    });
-    const path: string[] = [];
+}> = ({fields}) => {
+    const [formControl] = useAtom(formControlAtom);
+
+    if (formControl === undefined) {
+        return null;
+    }
+
+    // TODO breadchris react hook form requires useValue to have a name, so we default to 'data' https://react-hook-form.com/docs/useform/setvalue
+    const path: string[] = ['data'];
 
     return (
         <div className={"grpc-request-form"}>
@@ -39,7 +86,7 @@ export const Form: FC<{
                         <td>
                             <div className="input_container two-of-2 three-of-3 two-of-4 one-of-5">
                                 <div className="field-content">
-                                    <FieldDisplay fc={fc} field={f} path={[...path, f.name]} />
+                                    <FieldDisplay fc={formControl} field={f} path={[...path, f.name]} />
                                 </div>
                             </div>
                         </td>
@@ -47,9 +94,6 @@ export const Form: FC<{
                 ))}
                 </tbody>
             </table>
-            <button className={"btn btn-primary"} onClick={(e) => {
-                onSubmit(transformObject(fc.getValues()));
-            }}>Submit</button>
         </div>
     )
 }
@@ -111,6 +155,8 @@ const FieldInput: FC<{field: MsgField, path: string[]} & FormControlProps> = ({f
             return <input type={"text"} className={"input input-bordered"} value={value} {...register(fieldPath)} />;
         case FieldDescriptorProto_Type.BOOL:
             return <input type={"checkbox"} checked={value} {...register(fieldPath)} />;
+        case FieldDescriptorProto_Type.INT32:
+            return <input type={"number"} className={"input input-bordered"} value={value} {...register(fieldPath)} />;
         default:
             console.warn("Unhandled field type", field.field.type);
             return <input type={"text"} className={"input input-bordered"} value={value} {...register(fieldPath)} />;
@@ -118,34 +164,30 @@ const FieldInput: FC<{field: MsgField, path: string[]} & FormControlProps> = ({f
 }
 
 const MapField: FC<{field: MapField, path: string[]} & FormControlProps> = ({fc, path, field}) => {
-    const {resetField} = fc;
+    const {resetField, setValue} = fc;
     // TODO breadchris can maps have keys that aren't strings?
-    const [entries, setEntries] = useState<[string, any][]>([]);
+    const fieldPath = path.join('.');
+    const fieldValue = useWatch({
+        control: fc.control,
+        name: fieldPath,
+    }) || {};
     return (
         <table>
             <tbody>
-            {entries.map((e, idx) => {
-                const valuePath = path.concat(e[0]);
-                const key = e[0];
+            {Object.keys(fieldValue).filter((k) => fieldValue[k] !== undefined).map((key, idx) => {
+                const valuePath = path.concat(key);
                 return (
-                    <tr className={"array_element"} key={path.concat(idx.toString()).join('.')}>
+                    <tr className={"array_element"} key={path.concat(key.toString()).join('.')}>
                         <td>
                             <button className="btn btn-error" onClick={() => {
-                                resetField(valuePath.join('.'));
-                                setEntries((entries) => {
-                                    const newEntries = entries.slice();
-                                    newEntries.splice(idx, 1);
-                                    return newEntries;
-                                });
+                                setValue(valuePath.join('.'), undefined);
                             }}>Remove</button>
                             <div className={"map_key"}>
                                 <input type={"text"} className={"input input-bordered"} value={key} onChange={(e) => {
                                     resetField(valuePath.join('.'));
-                                    setEntries((entries) => {
-                                        const newEntries = entries.slice();
-                                        newEntries[idx][0] = e.target.value;
-                                        return newEntries;
-                                    });
+
+                                    const newKey = e.target.value;
+                                    setValue(path.concat(newKey).join('.'), fieldValue);
                                 }} />
                             </div>
                             {key !== '' && (
@@ -160,7 +202,7 @@ const MapField: FC<{field: MapField, path: string[]} & FormControlProps> = ({fc,
             <tr>
                 <td>
                     <button onClick={() => {
-                        setEntries((entries) => [...entries, ['', {}]]);
+                        setValue(path.concat('key').join('.'), {});
                     }}>New</button>
                 </td>
             </tr>
@@ -222,6 +264,16 @@ const GroupChildField: FC<{
     onSelect: (name: string) => void}
     & FormControlProps
 > = ({field, path, isOneOf, checked, onSelect, fc}) => {
+    const fieldPath = path.join('.');
+    const fieldValue = useWatch({
+        control: fc.control,
+        name: fieldPath,
+    });
+    useEffect(() => {
+        if (!checked && fieldValue !== undefined) {
+            onSelect(field.name);
+        }
+    }, [fieldValue]);
     return (
         <tr>
             <td className={"name"}>

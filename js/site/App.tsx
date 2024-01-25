@@ -48,7 +48,6 @@ export const App: React.FC<{dev: boolean}> = ({dev}) => {
           FallbackComponent={FallbackError}
       >
           <Provider>
-              {/*{dev && <DevTools />}*/}
               <BrowserRouter>
                   <AppRoutes/>
               </BrowserRouter>

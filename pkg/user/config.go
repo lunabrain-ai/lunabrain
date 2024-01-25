@@ -12,6 +12,8 @@ type Config struct {
 	SmtpPort     string `yaml:"smtp_port"`
 	SmtpUsername string `yaml:"smtp_username"`
 	SmtpPassword string `yaml:"smtp_password"`
+
+	OfflineVoice string `yaml:"offline_voice"`
 }
 
 func DefaultConfig() Config {
@@ -20,6 +22,7 @@ func DefaultConfig() Config {
 		EmailVerification:   "false",
 		SmtpHost:            "smtp.gmail.com",
 		SmtpPort:            "587",
+		OfflineVoice:        "false",
 	}
 }
 

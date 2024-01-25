@@ -1,9 +1,9 @@
 import React, {useEffect, useMemo} from 'react';
-import {Form} from "@/form/Form";
-import {contentService} from "@/service";
+import {Form, formControlAtom, useProtoForm} from "@/form/Form";
 import {Content, TypesResponse} from "@/rpc/content/content_pb";
-import {walkDescriptor} from "@/form/walk";
-import {transformObject} from "@/util/form";
+import {cleanObject} from "@/util/form";
+import {Provider, useAtom} from "jotai";
+import {useForm} from "react-hook-form";
 
 const tabs = ["ui"] as const;
 type Tab = typeof tabs[number];
@@ -46,36 +46,34 @@ const TabDisplay: React.FC<{tab: Tab}> = ({tab}) => {
 const UI: React.FC = () => {
     return (
         <div className="container mx-auto">
-            <UIFormTest />
+            <Provider>
+                <UIFormTest />
+            </Provider>
         </div>
     )
 }
 
 const UIFormTest: React.FC = () => {
-    const [formTypes, setFormTypes] = React.useState<TypesResponse|undefined>(undefined);
+    const [formControl, setFormControl] = useAtom(formControlAtom);
+    const {fields, loadFormTypes} = useProtoForm();
+    const fc = useForm();
 
     useEffect(() => {
-        (async () => {
-            const t = await contentService.types({});
-            setFormTypes(t);
-        })()
-    }, [setFormTypes]);
+        void loadFormTypes();
+        setFormControl(fc);
+    }, []);
 
-    const fields = useMemo(() => {
-        if (!formTypes || !formTypes.content?.msg) {
-            return null;
-        }
-        return walkDescriptor(formTypes.content, formTypes.content.msg, [])
-    }, [formTypes]);
-    if (!fields) {
+    if (fields === undefined) {
         return null;
     }
 
     return (
         <>
-            <Form fields={fields} onSubmit={(data) => {
-                console.log(Content.fromJson(data))
-            }} />
+            <Form fields={fields} />
+            <button className="btn btn-primary" onClick={() => {
+                const c = cleanObject(formControl?.getValues().data);
+                console.log(Content.fromJson(c));
+            }}>submit</button>
         </>
     )
 }
