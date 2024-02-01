@@ -1,15 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {Content, MenuItem, Post, Section, Site} from "@/rpc/content/content_pb";
+import {Content, Post, Section, Site} from "@/rpc/content/content_pb";
 import {contentService} from "@/service";
 import toast from "react-hot-toast";
 import {notEmpty} from "@/util/predicates";
 import {AddTagBadge} from "@/tag/AddTagBadge";
 import {MagnifyingGlassIcon, MagnifyingGlassMinusIcon, TrashIcon} from "@heroicons/react/24/outline";
-import {Provider} from "jotai";
-import {useAtom} from "jotai/index";
-import {Form, FormControl, formControlAtom, useProtoForm} from "@/form/Form";
 import {useForm} from "react-hook-form";
-import {cleanObject} from "@/util/form";
+import {MenuItem} from "@/rpc/content/blog_pb";
 
 type StoredPost = {
     id: string;

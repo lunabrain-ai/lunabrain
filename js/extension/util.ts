@@ -2,6 +2,18 @@ import {Content, Data, Post,} from "@/rpc/content/content_pb";
 
 const ITEMS_PER_PAGE = 100; // Adjust as required
 
+export function siteContent(): Content {
+    return new Content({
+        tags: [],
+        type: {
+            case: 'site',
+            value: {
+                sections: [],
+            }
+        }
+    });
+}
+
 export function postContent(text: string): Content {
     return new Content({
         tags: [],
@@ -31,8 +43,17 @@ export function textContent(text: string, tags: string[]): Content {
     })
 }
 
+export function uuidv4(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0,
+            v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
 export function urlContent(url: string, tags: string[]): Content {
     return new Content({
+        id: uuidv4(),
         tags: tags,
         type: {
             case: 'data',

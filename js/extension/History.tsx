@@ -1,6 +1,10 @@
 import * as React from "react";
 import {useState, useEffect, useRef, useMemo} from "react";
 import {Timeline as VisTimeline} from "vis-timeline/standalone";
+import {PlusIcon} from "@heroicons/react/24/outline";
+import {useAtom} from "jotai/index";
+import {contentAtom} from "./FloatingPanel";
+import {urlContent} from "./util";
 
 const transformHistoryItems = (historyItems: chrome.history.HistoryItem[]): {
     items: any[];
@@ -59,6 +63,7 @@ export const History: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [domain, setDomain] = useState<string | undefined>(undefined);
     const [historyItems, setHistoryItems] = useState<chrome.history.HistoryItem[]>([]);
+    const [content, setContent] = useAtom(contentAtom);
 
     const fetchBrowserHistory = () => {
         if (chrome && chrome.history) {
@@ -111,6 +116,7 @@ export const History: React.FC = () => {
             <table>
                 <thead>
                 <tr>
+                    <th>Add</th>
                     <th>Domain</th>
                     <th>Visits</th>
                     <th>URL</th>
@@ -121,6 +127,14 @@ export const History: React.FC = () => {
                     const url = new URL(item.url || "");
                     return (
                         <tr key={item.id}>
+                            <td><PlusIcon className={"h-3 w-3"} onClick={() => {
+                                setContent((prev) => {
+                                    if (item.url) {
+                                        return [...prev, urlContent(item.url, [])]
+                                    }
+                                    return prev;
+                                });
+                            }} /></td>
                             <td>{url.hostname}</td>
                             <td>{item.visitCount}</td>
                             <td><a href={item.url} target={"_blank"}>{item.url}</a></td>

@@ -2,10 +2,15 @@ import React, { useState, useEffect } from 'react';
 import {contentGet, contentSave, TabContent} from "./shared";
 import {NewSaveWizard} from "./NewSaveWizard";
 import {urlContent} from "./util";
+import {atom} from "jotai";
+import {Content} from "@/rpc/content/content_pb";
+import {useAtom} from "jotai/index";
 
 interface FloatingPanelProps {}
 
 // TODO breadchris get page content https://github.com/omnivore-app/omnivore/blob/main/pkg/extension/src/scripts/content/prepare-content.js#L274
+
+export const contentAtom = atom<Content[]>([]);
 
 const floatingPanelStyle: React.CSSProperties = {
     padding: '10px',
@@ -20,9 +25,23 @@ const floatingPanelStyle: React.CSSProperties = {
     position: 'fixed',
 }
 
+const getContent = (content: Content) => {
+    switch (content.type.case) {
+        case 'data':
+            const d = content.type.value;
+            switch (d.type.case) {
+                case 'url':
+                    return d.type.value.url;
+            }
+            break;
+    }
+    return 'unknown';
+}
+
 export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
     const [visible, setVisible] = useState<boolean>(false);
     const [tabContent, setTabContent] = useState<TabContent|undefined>(undefined);
+    const [content, setContent] = useAtom(contentAtom);
 
     useEffect(() => {
         const listener = (event: KeyboardEvent) => {
@@ -73,12 +92,28 @@ export const FloatingPanel: React.FC<FloatingPanelProps> = () => {
         setTabContent(undefined);
     }
 
-    if (!visible) {
+    if (content.length === 0 && !visible) {
         return null;
     }
 
     return (
         <div id="floating-panel" style={floatingPanelStyle}>
+            <ul>
+                {content.map((c) => {
+                    return (
+                        <li>
+                            <button className={"btn"} style={{userSelect: 'none'}} onClick={() => {
+                                setContent((prev) => {
+                                    return prev.filter((x) => {
+                                        return x.id !== c.id;
+                                    })
+                                })
+                            }}>X</button>
+                            {getContent(c)}
+                        </li>
+                    );
+                })}
+            </ul>
             {tabContent ? (
                 <>
                     <h5>Save this page?</h5>

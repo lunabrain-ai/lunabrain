@@ -10,16 +10,26 @@ import {notEmpty} from "@/util/predicates";
 import {ContentEditor} from "@/source/ContentEditor";
 import {useAuth} from "@/auth/state";
 import {FileDrop} from "@/file/FileDrop";
+import {AddTagBadge} from "@/tag/AddTagBadge";
 
 export const SourcePage: React.FC = () => {
-    const {sources, types, selected, setSelected, setTypes, getSources} = useSources();
+    const {
+        sources,
+        types,
+        selected,
+        setSelected,
+        setTypes,
+        getSources,
+        tags,
+        setTags
+    } = useSources();
     const {editContent} = useContentEditor();
     const { id } = useParams();
     const { logout } = useAuth();
 
     useEffect(() => {
         void getSources();
-    }, [types]);
+    }, [types, tags]);
 
     useEffect(() => {
         if (!id) {
@@ -103,6 +113,19 @@ export const SourcePage: React.FC = () => {
                                 <li onClick={toggleType('post')}>post</li>
                             </ul>
                         </details>
+                        <AddTagBadge onNewTag={(t) => {
+                            setTags((tags) => {
+                                if (tags.includes(t)) {
+                                    return tags;
+                                }
+                                return [...tags, t];
+                            });
+                        }} />
+                        {tags.map((tag) => (
+                            <span key={tag} className="badge badge-outline badge-sm" onClick={() => {
+                                setTags((tags) => tags.filter((t) => t !== tag));
+                            }}>{tag}</span>
+                        ))}
                         <ContentTable displayContent={selected.displayContent} />
                     </div>
                 )}
@@ -112,25 +135,25 @@ export const SourcePage: React.FC = () => {
 }
 
 const ContentTable: React.FC<{displayContent: DisplayContent[]}> = ({displayContent}) => {
-    const {editedContent, editContent} = useContentEditor();
+    const {selectedContent, selectContent} = useContentEditor();
     const { getSources } = useSources();
     const handleCheckboxChange = (content: Content|undefined, isChecked: boolean) => {
         if (isChecked && content) {
-            editContent(content);
+            selectContent(content);
         }
         if (!isChecked) {
-            editContent(undefined);
+            selectContent(undefined);
         }
     };
 
     const handleDelete = async () => {
-        if (!editedContent) {
+        if (!selectedContent) {
             return;
         }
         try {
             // TODO breadchris save content to group
             const resp = await contentService.delete({
-                contentIds: [editedContent.id],
+                contentIds: [selectedContent.id],
             });
             void getSources();
             toast.success('Deleted content');
@@ -139,15 +162,15 @@ const ContentTable: React.FC<{displayContent: DisplayContent[]}> = ({displayCont
             console.error('failed to delete', e)
         }
     }
-    const cnt = editedContent ? [
-        displayContent.find((c) => c.content?.id === editedContent.id),
-        ...displayContent.filter((c) => c.content?.id !== editedContent.id)
+    const cnt = selectedContent ? [
+        displayContent.find((c) => c.content?.id === selectedContent.id),
+        ...displayContent.filter((c) => c.content?.id !== selectedContent.id)
     ] : displayContent;
     return (
         <table className="table w-full">
             <thead>
             <tr>
-                <th>{editedContent && (
+                <th>{selectedContent && (
                     <TrashIcon onClick={handleDelete} className="h-5 w-5" />
                 )}</th>
                 <th>title</th>
@@ -162,7 +185,7 @@ const ContentTable: React.FC<{displayContent: DisplayContent[]}> = ({displayCont
                         <input
                             type="checkbox"
                             className="checkbox checkbox-accent"
-                            checked={editedContent?.id === item.content?.id}
+                            checked={selectedContent?.id === item.content?.id}
                             onChange={(e) => handleCheckboxChange(item.content, e.target.checked)}
                         />
                     </td>

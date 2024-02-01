@@ -1119,8 +1119,21 @@ html {
           mask-image: url("data:image/svg+xml,%3csvg width='3' height='3' xmlns='http://www.w3.org/2000/svg'%3e%3cpath fill='black' d='m 0 3 L 1 3 L 3 3 C 2 3 0 1 0 0'/%3e%3c/svg%3e");
 }
 
+.chat-end {
+  place-items: end;
+  grid-template-columns: 1fr auto;
+}
+
 .chat-end .chat-header {
   grid-column-start: 1;
+}
+
+.chat-end .chat-footer {
+  grid-column-start: 1;
+}
+
+.chat-end .chat-image {
+  grid-column-start: 2;
 }
 
 .chat-end .chat-bubble {
@@ -1647,11 +1660,6 @@ html {
   border-bottom-width: 2px;
   min-height: 2.2em;
   min-width: 2.2em;
-}
-
-.\!link {
-  cursor: pointer !important;
-  text-decoration-line: underline !important;
 }
 
 .link {
@@ -2924,19 +2932,9 @@ details.collapse summary::-webkit-details-marker {
   margin-inline-start: -1px;
 }
 
-.\!link:focus {
-  outline: 2px solid transparent !important;
-  outline-offset: 2px !important;
-}
-
 .link:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
-}
-
-.\!link:focus-visible {
-  outline: 2px solid currentColor !important;
-  outline-offset: 2px !important;
 }
 
 .link:focus-visible {
@@ -4205,6 +4203,14 @@ details.collapse summary::-webkit-details-marker {
   border-top-width: 4px;
 }
 
+.btn-sm {
+  height: 2rem;
+  min-height: 2rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  font-size: 0.875rem;
+}
+
 .btn-square:where(.btn-xs) {
   height: 1.5rem;
   width: 1.5rem;
@@ -4226,6 +4232,13 @@ details.collapse summary::-webkit-details-marker {
 .btn-square:where(.btn-lg) {
   height: 4rem;
   width: 4rem;
+  padding: 0px;
+}
+
+.btn-circle:where(.btn-sm) {
+  height: 2rem;
+  width: 2rem;
+  border-radius: 9999px;
   padding: 0px;
 }
 
@@ -4782,6 +4795,18 @@ details.collapse summary::-webkit-details-marker {
   bottom: var(--tooltip-tail-offset);
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 .\!visible {
   visibility: visible !important;
 }
@@ -4800,6 +4825,10 @@ details.collapse summary::-webkit-details-marker {
 
 .fixed {
   position: fixed;
+}
+
+.\!absolute {
+  position: absolute !important;
 }
 
 .absolute {
@@ -4855,6 +4884,10 @@ details.collapse summary::-webkit-details-marker {
 
 .mb-4 {
   margin-bottom: 1rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
 }
 
 .mt-4 {
@@ -4913,6 +4946,10 @@ details.collapse summary::-webkit-details-marker {
   height: 0.25rem;
 }
 
+.h-3 {
+  height: 0.75rem;
+}
+
 .h-5 {
   height: 1.25rem;
 }
@@ -4929,6 +4966,10 @@ details.collapse summary::-webkit-details-marker {
   height: 100vh;
 }
 
+.max-h-32 {
+  max-height: 8rem;
+}
+
 .max-h-72 {
   max-height: 18rem;
 }
@@ -4939,6 +4980,10 @@ details.collapse summary::-webkit-details-marker {
 
 .w-1 {
   width: 0.25rem;
+}
+
+.w-3 {
+  width: 0.75rem;
 }
 
 .w-5 {
@@ -4963,6 +5008,10 @@ details.collapse summary::-webkit-details-marker {
 
 .max-w-md {
   max-width: 28rem;
+}
+
+.max-w-sm {
+  max-width: 24rem;
 }
 
 .max-w-xs {
@@ -5089,6 +5138,10 @@ details.collapse summary::-webkit-details-marker {
   margin-bottom: calc(1rem * var(--tw-space-y-reverse));
 }
 
+.overflow-hidden {
+  overflow: hidden;
+}
+
 .overflow-x-auto {
   overflow-x: auto;
 }
@@ -5101,6 +5154,10 @@ details.collapse summary::-webkit-details-marker {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.text-ellipsis {
+  text-overflow: ellipsis;
 }
 
 .whitespace-pre-wrap {
@@ -5126,6 +5183,21 @@ details.collapse summary::-webkit-details-marker {
 .bg-base-100 {
   --tw-bg-opacity: 1;
   background-color: var(--fallback-b1,oklch(var(--b1)/var(--tw-bg-opacity)));
+}
+
+.bg-blue-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(59 130 246 / var(--tw-bg-opacity));
+}
+
+.bg-gray-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+}
+
+.bg-gray-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
 }
 
 .bg-white {
@@ -5162,6 +5234,11 @@ details.collapse summary::-webkit-details-marker {
   padding-right: 0.25rem;
 }
 
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
 .px-20 {
   padding-left: 5rem;
   padding-right: 5rem;
@@ -5175,6 +5252,11 @@ details.collapse summary::-webkit-details-marker {
 .px-5 {
   padding-left: 1.25rem;
   padding-right: 1.25rem;
+}
+
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }
 
 .py-12 {
@@ -5261,6 +5343,11 @@ details.collapse summary::-webkit-details-marker {
 .text-gray-700 {
   --tw-text-opacity: 1;
   color: rgb(55 65 81 / var(--tw-text-opacity));
+}
+
+.text-white {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
 .underline {

@@ -4,6 +4,7 @@ import {urlContent} from "./util";
 import {contentGet, contentSave, TabContent} from "./shared";
 import { Content } from "@/rpc/content/content_pb";
 import HttpHeader = chrome.webRequest.HttpHeader;
+import {Conversation} from "@/rpc/content/chatgpt/conversation_pb";
 
 let tabContent: TabContent|undefined = undefined;
 let history: {
@@ -19,7 +20,7 @@ const tabs = new Map<number, {
 }>();
 
 function extractUuidFromUrl(url: string): string | null {
-    const regex = /https:\/\/chat\.openai\.com\/backend-api\/conversation\/([0-9a-fA-F\-]+)/;
+    const regex = /^https:\/\/chat\.openai\.com\/backend-api\/conversation\/([0-9a-fA-F\-]+)$/;
     const match = url.match(regex);
     return match ? match[1] : null;
 }
@@ -77,7 +78,6 @@ const chromeExt = () => {
             tabContent = undefined;
         }
         if (message.action === contentSave) {
-            console.log('asdf')
             const content = Content.fromJson(message.data);
             try {
                 await saveContent(content);
@@ -157,10 +157,10 @@ const chromeExt = () => {
     chrome.webRequest.onCompleted.addListener(
         (details) => {
             const s = seen[details.url.toString()] || 0;
-            console.log('completed', details.url, details)
+            //console.log('completed', details.url, details)
             if (extractUuidFromUrl(details.url) && s < 2) {
                 const h = headers[details.url.toString()];
-                console.log('completed', details.url, details)
+                //console.log('completed', details.url, details)
                 fetch(details.url, {
                     headers: h.map((v) => {
                         return [v.name, v.value||'']
@@ -170,6 +170,18 @@ const chromeExt = () => {
                     return resp.json();
                 }).then((json) => {
                     console.log('json', json)
+                    const conv = Conversation.fromJson(json, {
+                        ignoreUnknownFields: true
+                    });
+                    const content = new Content({
+                        id: conv.conversationId,
+                        type: {
+                            case: 'chatgptConversation',
+                            value: conv
+                        },
+                        tags: ['chatgpt']
+                    });
+                    void saveContent(content);
                 }).catch((e) => {
                     console.error('failed to fetch', e)
 

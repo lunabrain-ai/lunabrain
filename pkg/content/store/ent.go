@@ -188,6 +188,7 @@ func (s *EntStore) SearchContent(
 func (s *EntStore) GetContentByID(ctx context.Context, contentID uuid.UUID) (*ent.Content, error) {
 	return s.client.Content.Query().
 		WithTags().
+		WithChildren().
 		Where(entcontent.ID(contentID)).
 		Only(ctx)
 }

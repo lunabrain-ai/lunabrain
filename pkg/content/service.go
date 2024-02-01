@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	connect_go "github.com/bufbuild/connect-go"
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
+	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-shiori/go-readability"
 	"github.com/google/uuid"
 	"github.com/google/wire"
@@ -26,6 +29,7 @@ import (
 	"log/slog"
 	"net/url"
 	"os"
+	"path"
 	"regexp"
 	"strings"
 	"time"
@@ -93,6 +97,7 @@ func (s *Service) sourceToContent(ctx context.Context, cs *content.Source, r *co
 	case *content.Source_Server:
 		resp, err := s.Search(ctx, connect_go.NewRequest(&content.Query{
 			ContentTypes: r.ContentTypes,
+			Tags:         r.Tags,
 		}))
 		if err != nil {
 			return nil, err
@@ -141,13 +146,19 @@ func (s *Service) enumerateSource(ctx context.Context, src *content.Source, r *c
 			Content: cn,
 		}
 		switch t := cn.Type.(type) {
+		case *content.Content_ChatgptConversation:
+			dc.Title = t.ChatgptConversation.Title
+			dc.Description = "ChatGPT conversation"
+			dc.Type = "chatgpt-conversation"
 		case *content.Content_Post:
 			dc.Title = t.Post.Title
 			dc.Description = t.Post.Content
 			dc.Type = "post"
 		case *content.Content_Site:
 			dc.Title = "site"
-			dc.Description = t.Site.HugoConfig.Title
+			if t.Site.HugoConfig != nil {
+				dc.Description = t.Site.HugoConfig.Title
+			}
 			dc.Type = "site"
 		case *content.Content_Data:
 			switch u := t.Data.Type.(type) {
@@ -162,6 +173,9 @@ func (s *Service) enumerateSource(ctx context.Context, src *content.Source, r *c
 			case *content.Data_Text:
 				dc.Description = u.Text.Data
 				dc.Type = "text"
+			case *content.Data_File:
+				dc.Title = u.File.File
+				dc.Type = "file"
 			}
 		case *content.Content_Normalized:
 			switch u := t.Normalized.Type.(type) {
@@ -217,21 +231,7 @@ func (s *Service) GetSources(ctx context.Context, c *connect_go.Request[content.
 
 func (s *Service) Publish(ctx context.Context, c *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error) {
 	// TODO breadchris once the flows through this code are more clear, break into smaller functions
-
-	//bkt, err := bucket.NewBuilder(bucket.Config{
-	//	Path: "/tmp/lunabrain",
-	//})
-	//if err != nil {
-	//	return nil, err
-	//}
-	b := publish.NewBlog(s.builder)
-
-	resp, err := s.Search(ctx, connect_go.NewRequest(&content.Query{
-		Tags: []string{"100daystooffload"},
-	}))
-	if err != nil {
-		return nil, err
-	}
+	b := publish.NewBlog()
 
 	sites, err := s.Search(ctx, connect_go.NewRequest(&content.Query{
 		// TODO breadchris use type safe name
@@ -255,34 +255,125 @@ func (s *Service) Publish(ctx context.Context, c *connect_go.Request[content.Con
 		return nil, errors.Errorf("unable to find site")
 	}
 
-	var cnt []*content.Content
-	for _, sc := range resp.Msg.StoredContent {
-		cnt = append(cnt, sc.Content)
+	if site.HugoConfig == nil {
+		return nil, errors.Errorf("hugo config is nil")
 	}
 
-	err = b.Publish("blog", site, cnt)
+	var blogSections []publish.BlogSection
+	for _, sc := range site.Sections {
+		resp, err := s.Search(ctx, connect_go.NewRequest(&content.Query{
+			Tags: sc.Tags,
+		}))
+		if err != nil {
+			return nil, err
+		}
+
+		var posts []*content.Content
+		for _, stored := range resp.Msg.StoredContent {
+			posts = append(posts, stored.Content)
+		}
+		blogSections = append(blogSections, publish.BlogSection{
+			Section: sc,
+			Posts:   posts,
+		})
+	}
+
+	// build for local bucket /@breadchris
+	err = b.Publish(s.builder.Dir("blog"), site, blogSections)
 	if err != nil {
 		return nil, err
 	}
 
+	// build for github
+	err = s.buildForGithub(b, site, blogSections)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO breadchris do not write logseq atm
+
+	return connect_go.NewResponse(&content.ContentIDs{ContentIds: c.Msg.GetContentIds()}), nil
+}
+
+func (s *Service) buildForGithub(
+	b *publish.Blog,
+	site *content.Site,
+	blogSections []publish.BlogSection,
+) error {
 	notes, err := bucket.NewBuilder(bucket.Config{
-		Path: "/Users/hacked/Documents/Github/notes/pages",
+		Path: "/Users/hacked/Documents/Github/notes",
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
 
+	// TODO breadchris right now it is being set to @breadchris, this should come from username?
+	d, err := notes.Dir("docs").Build()
+	if err != nil {
+		return err
+	}
+	site.HugoConfig.PublishDir = d
+	site.HugoConfig.BaseUrl = "https://breadchris.com"
+	err = b.Publish(s.builder.Dir("release"), site, blogSections)
+	if err != nil {
+		return err
+	}
+	if err = os.WriteFile(path.Join(d, "CNAME"), []byte("breadchris.com"), 0644); err != nil {
+		return err
+	}
+	return nil
+}
+
+func commitAndPush(repoPath, commitMessage, remoteName, branchName string) error {
+	repo, err := git.PlainOpen(repoPath)
+	if err != nil {
+		return fmt.Errorf("failed to open repo: %w", err)
+	}
+
+	w, err := repo.Worktree()
+	if err != nil {
+		return fmt.Errorf("failed to get worktree: %w", err)
+	}
+
+	_, err = w.Add(".")
+	if err != nil {
+		return fmt.Errorf("failed to add changes to index: %w", err)
+	}
+
+	_, err = w.Commit(commitMessage, &git.CommitOptions{
+		Author: &object.Signature{
+			Name:  "breadchris",
+			Email: "chris@breadchris.com",
+			When:  time.Now(),
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to commit changes: %w", err)
+	}
+
+	err = repo.Push(&git.PushOptions{
+		RemoteName: remoteName,
+		RefSpecs:   []config.RefSpec{config.RefSpec(branchName + ":" + branchName)},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to push changes: %w", err)
+	}
+
+	return nil
+}
+
+func writeNotes(notes *bucket.Builder, cnt []*content.Content) error {
 	// TODO breadchris commit changes https://chat.openai.com/share/20f66a27-51f5-4396-baf1-0a60373747b2
 	l, err := notes.File("lunabrain.md")
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	out := ""
 	for _, c := range cnt {
 		createdAt, err := time.Parse(time.RFC3339, c.CreatedAt)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		fmtDate := createdAt.Format("Jan 2th, 2006")
 
@@ -301,10 +392,9 @@ func (s *Service) Publish(ctx context.Context, c *connect_go.Request[content.Con
 	}
 
 	if err = os.WriteFile(l, []byte(out), 0644); err != nil {
-		return nil, err
+		return err
 	}
-
-	return connect_go.NewResponse(&content.ContentIDs{ContentIds: c.Msg.GetContentIds()}), nil
+	return nil
 }
 
 func (s *Service) Relate(ctx context.Context, c *connect_go.Request[content.RelateRequest]) (*connect_go.Response[emptypb.Empty], error) {
@@ -353,6 +443,8 @@ func (s *Service) Save(ctx context.Context, c *connect_go.Request[content.Conten
 				if err != nil {
 					return nil, err
 				}
+
+				// TODO breadchris newfile should return a url that can be set as the content url
 				t.File.Url, err = s.fileStore.NewFile(c.Msg.Content.Id)
 				if err != nil {
 					return nil, err
@@ -469,6 +561,9 @@ func (s *Service) Search(ctx context.Context, c *connect_go.Request[content.Quer
 			switch u := t.Data.Type.(type) {
 			case *content.Data_Url:
 				sc.Url = u.Url.Url
+			case *content.Data_File:
+				// TODO breadchris the URL for saved files should come from a store
+				u.File.Url = fmt.Sprintf("/media/%s", cn.ID)
 			}
 		}
 

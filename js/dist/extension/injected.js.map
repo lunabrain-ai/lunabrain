@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../extension/injected.ts"],
+  "sourcesContent": ["// console.log('Injected script loaded');\nwindow.onload = () => {\n    if (self.__next_f !== undefined) {\n        document.dispatchEvent(new CustomEvent('NEXT_JS_PARAMS', {\n            detail: JSON.stringify(self.__next_f)\n        }));\n    }\n};"],
+  "mappings": "mBACA,OAAO,OAAS,IAAM,CACd,KAAK,WAAa,QAClB,SAAS,cAAc,IAAI,YAAY,iBAAkB,CACrD,OAAQ,KAAK,UAAU,KAAK,QAAQ,CACxC,CAAC,CAAC,CAEV",
+  "names": []
+}

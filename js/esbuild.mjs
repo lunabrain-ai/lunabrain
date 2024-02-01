@@ -36,7 +36,8 @@ const baseOptions = {
         NodeModulesPolyfillPlugin(),
     ],
     minify: releaseBuild || buildStream,
-    sourcemap: 'external',
+    // sourcemap: 'external',
+    sourcemap: 'linked',
     define: {
         "global": "window",
         "process.env.BASE_URL": baseURL,

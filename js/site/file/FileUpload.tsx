@@ -3,7 +3,6 @@ import {contentService, projectService} from "@/service";
 import {useProjectContext} from "@/react/ProjectProvider";
 import toast from "react-hot-toast";
 import {VideoPlayer} from "@/media/VideoPlayer";
-import {MessageList} from "@/content/MessageList";
 
 function readFileInChunks(file: File, chunkSize: number = 25 * 1024 * 1024): Promise<void> {
     return new Promise((resolve, reject) => {

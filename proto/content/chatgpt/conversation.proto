@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+import "google/protobuf/struct.proto";
+
+package chatgpt;
+
+message Conversation {
+  string title = 1;
+  double create_time = 2;
+  double update_time = 3;
+  map<string, Node> mapping = 4;
+  string conversation_id = 5;
+  string conversation_template_id = 6;
+  string current_node = 7;
+  string gizmo_id = 8;
+  bool is_archived = 9;
+  // moderation_results = []
+  // plugin_ids = null
+  // safe_urls = []
+}
+
+message Node {
+  string id = 1;
+  Message message = 2;
+  string parent = 3;
+  repeated string children = 4;
+}
+
+message Message {
+  string id = 1;
+  Author author = 2;
+  double create_time = 3;  // Optional, based on usage in JSON
+  Content content = 4;
+  string status = 5;
+  bool end_turn = 6;  // Optional, based on usage in JSON
+  int32 weight = 7;
+  MessageMetadata metadata = 8;
+  string recipient = 9;
+  double update_time = 10;
+}
+
+message MessageMetadata {
+}
+
+message Author {
+  string role = 1;
+  AuthorMetadata metadata = 2;
+  string name = 3;
+}
+
+message Content {
+  // "text" or "dalle.text2im", prob others too
+  string content_type = 1;
+
+  // TODO breadchris make this work for images
+  // google.protobuf.Value parts = 2;
+  repeated string parts = 2;
+}
+
+message AuthorMetadata {
+  // This message can be extended based on the different key-value pairs found in your JSON's metadata.
+  // For example:
+  repeated Attachment attachments = 1;
+  string timestamp_ = 2;  // Use string for timestamps to avoid precision issues, or use int64/uint64 if they represent epoch time.
+  // Add other fields as needed.
+}
+
+message Attachment {
+  string id = 1;
+  string name = 2;
+  string mimeType = 3;
+}

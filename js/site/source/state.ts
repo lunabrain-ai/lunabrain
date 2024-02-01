@@ -9,41 +9,62 @@ const selectedSourceAtom = atom<EnumeratedSource|undefined>(undefined);
 selectedSourceAtom.debugLabel = 'selectedSourceAtom';
 const typesAtom = atom<string[]>([]);
 typesAtom.debugLabel = 'typesAtom';
+const tagsAtom = atom<string[]>([]);
+tagsAtom.debugLabel = 'tagsAtom';
 
 export const useSources = () => {
     const [sources, setSources] = useAtom(sourcesAtom);
     const [selected, setSelected] = useAtom(selectedSourceAtom);
     const [types, setTypes] = useAtom(typesAtom);
+    const [tags, setTags] = useAtom(tagsAtom);
 
     const getSources = async () => {
         const resp = await contentService.getSources({
             contentTypes: types,
+            tags,
         });
         setSources(resp.sources);
         if (resp.sources.length > 0) {
             setSelected(resp.sources[0]);
         }
     };
-    return {sources, selected, setSelected, getSources, types, setTypes};
+    return {sources, selected, setSelected, getSources, types, setTypes, tags, setTags};
 }
 
 const editedContentAtom = atom<Content|undefined>(undefined);
 editedContentAtom.debugLabel = 'editedContentAtom';
+const selectedContentAtom = atom<Content|undefined>(undefined);
+selectedContentAtom.debugLabel = 'selectedContentAtom';
 
 export const useContentEditor = () => {
     const [editedContent, setEditedContent] = useAtom(editedContentAtom);
+
+    // TODO breachris this feels wrong
+    const [selectedContent, setSelectedContent] = useAtom(selectedContentAtom);
+
     const editContent = (content: Content|undefined) => {
         if (content === undefined) {
             window.history.pushState({}, '', `/app`);
             setEditedContent(undefined);
         } else {
-            if (content.id !== undefined || content.id !== '') {
+            if (content.id !== undefined && content.id !== '') {
                 window.history.pushState({}, '', `/app/content/${content.id}`);
             }
             setEditedContent(content);
         }
     }
-    return {editedContent, editContent};
+    const selectContent = (content: Content|undefined) => {
+        if (content === undefined) {
+            window.history.pushState({}, '', `/app`);
+            setSelectedContent(undefined);
+        } else {
+            if (content.id !== undefined && content.id !== '') {
+                window.history.pushState({}, '', `/app/content/${content.id}`);
+            }
+            setSelectedContent(content);
+        }
+    }
+    return {editedContent, editContent, selectedContent, selectContent};
 }
 
 const recordingAtom = atom<boolean>(false);

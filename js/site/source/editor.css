@@ -9,3 +9,11 @@
     color: revert;
     text-decoration: revert;
 }
+
+.clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 4; /* Number of lines you want to display */
+}

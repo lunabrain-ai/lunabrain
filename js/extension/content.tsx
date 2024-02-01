@@ -46,6 +46,7 @@ document.addEventListener('NEXT_JS_PARAMS', function (e) {
     console.log(formatted);
 });
 
+// TODO breadchris make configurable
 // injectScriptFile('injected.js');
 
 const root = ReactDOM.createRoot(rootElem);

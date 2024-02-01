@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {FC, useEffect, useMemo, useRef, useState} from 'react';
 import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import BulletList from '@tiptap/extension-bullet-list';
 import ListItem from '@tiptap/extension-list-item';
@@ -7,7 +7,7 @@ import Paragraph from '@tiptap/extension-paragraph';
 import Document from "@tiptap/extension-document";
 import './editor.css';
 import {useContentEditor, useSources, useVoice} from "@/source/state";
-import {Content, GRPCTypeInfo, Post, Section, Site, TypesResponse} from "@/rpc/content/content_pb";
+import {Content, GRPCTypeInfo, Post, Section, Site, File} from "@/rpc/content/content_pb";
 import {
     AdjustmentsHorizontalIcon,
     MicrophoneIcon,
@@ -15,7 +15,7 @@ import {
     PlusIcon,
     StopIcon
 } from "@heroicons/react/24/outline";
-import {postContent, textContent, urlContent} from "../../extension/util";
+import {postContent, siteContent, textContent, urlContent} from "../../extension/util";
 import {contentService} from "@/service";
 import toast from "react-hot-toast";
 import { RichTextLink } from './rich-text-links';
@@ -27,10 +27,12 @@ import {Form, formControlAtom, useProtoForm} from "@/form/Form";
 import {Provider, useAtom} from "jotai";
 import {useForm} from "react-hook-form";
 import {cleanObject} from "@/util/form";
+import {Conversation} from "@/rpc/content/chatgpt/conversation_pb";
+import ReactMarkdown from "react-markdown";
 
 export const ContentEditor: React.FC<{}> = ({}) => {
     const settingsModal = useRef(null);
-    const { editedContent: content, editContent } = useContentEditor();
+    const { editedContent: content, editContent, selectedContent } = useContentEditor();
     const { getSources } = useSources();
     const [formControl, setFormControl] = useAtom(formControlAtom);
     const {fields, loadFormTypes} = useProtoForm();
@@ -48,9 +50,11 @@ export const ContentEditor: React.FC<{}> = ({}) => {
         // anytime the content changes outside of this editor, update the editor
         if (content) {
             setValue('data', content.toJson() as any);
-            if (editor) {
-                editor.commands.setContent(getContent(content));
-            }
+
+            // TODO breadchris we probably want to have this, but it causes the editor to lose focus
+            // if (editor) {
+            //     editor.commands.setContent(getContent(content));
+            // }
         }
         // editContent(new Content({
         //     type: {
@@ -62,6 +66,18 @@ export const ContentEditor: React.FC<{}> = ({}) => {
         //     },
         // }));
     }, [content]);
+
+    useEffect(() => {
+        if (selectedContent) {
+            setValue('data', selectedContent.toJson() as any);
+
+            // TODO breadchris we probably want to have this, but it causes the editor to lose focus
+            if (editor) {
+                editor.commands.setContent(getContent(selectedContent));
+            }
+            editContent(selectedContent);
+        }
+    }, [selectedContent]);
 
     const addTag = async (tag: string) => {
         if (!content) {
@@ -101,7 +117,13 @@ export const ContentEditor: React.FC<{}> = ({}) => {
                 switch (content.type.case) {
                     case 'post':
                         content.type.value.content = editor?.getHTML() || '';
-                        editContent(content);
+                        editContent(new Content({
+                            ...content,
+                            type: {
+                                case: 'post',
+                                value: content.type.value,
+                            }
+                        }));
                         break;
                 }
             }
@@ -148,12 +170,17 @@ export const ContentEditor: React.FC<{}> = ({}) => {
                 content: contentFromForm(),
                 related: []
             });
-            console.log(resp);
             void getSources();
             toast.success('Saved content');
         } catch (e) {
             toast.error('Failed to save content');
             console.error('failed to save', e)
+        }
+    }
+
+    const resetContent = () => {
+        if (editor) {
+            editor.commands.setContent('');
         }
     }
 
@@ -180,12 +207,20 @@ export const ContentEditor: React.FC<{}> = ({}) => {
                         <summary className={"btn"}><PlusIcon className={"h-6 w-6"} /></summary>
                         <ul className={"p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52"}>
                             <li onClick={() => {
+                                resetContent();
                                 editContent(urlContent('https://example.com', []));
                             }}>url</li>
                             <li onClick={() => {
+                                resetContent();
                                 editContent(postContent("Don't think, write."));
                             }}>
                                 post
+                            </li>
+                            <li onClick={() => {
+                                resetContent();
+                                editContent(siteContent());
+                            }}>
+                                site
                             </li>
                         </ul>
                     </details>
@@ -234,6 +269,18 @@ const ContentTypeEditor: React.FC<{
 }> = ({content, editor, onUpdate}) => {
     if (content) {
         switch (content.type.case) {
+            case 'chatgptConversation':
+                return <ChatGPTConversationEditor
+                    className={'h-screen overflow-y-auto space-y-2'}
+                    conversation={content.type.value} onUpdate={(c) => {
+                    onUpdate(new Content({
+                        ...content,
+                        type: {
+                            case: 'chatgptConversation',
+                            value: c,
+                        }
+                    }));
+                }} />;
             case 'site':
                 return (
                     <SiteEditor site={content.type.value} onUpdate={(s) => {
@@ -268,6 +315,22 @@ const ContentTypeEditor: React.FC<{
             case 'data':
                 const d = content.type.value;
                 switch (d.type.case) {
+                    case 'file':
+                        return <FileEditor id={content.id} file={d.type.value} onChange={(file) => {
+                            onUpdate(new Content({
+                                ...content,
+                                type: {
+                                    case: 'data',
+                                    value: {
+                                        ...content.type.value,
+                                        type: {
+                                            case: 'file',
+                                            value: file,
+                                        }
+                                    }
+                                }
+                            }));
+                        }} />
                     case 'url':
                         const u = d.type.value;
                         return <URLEditor url={u.url} onChange={(url) => {
@@ -313,8 +376,45 @@ const getContent = (content: Content|undefined) => {
     return msg;
 }
 
+// TODO breadchris component only designed for audio files with transcripts
+const FileEditor: React.FC<{id: string, file: File, onChange: (file: File) => void}> = ({id, file, onChange}) => {
+    const [relatedContent, setRelatedContent] = useState<string[]>([]);
+    useEffect(() => {
+        (async () => {
+            const res = await contentService.search({
+                contentID: id,
+            });
+            res.storedContent.forEach((c) => {
+                c.related.forEach((r) => {
+                    switch (r.type.case) {
+                        case 'normalized':
+                            const n = r.type.value;
+                            switch (n.type.case) {
+                                case 'transcript':
+                                    console.log(n)
+                                    setRelatedContent([...relatedContent, n.type.value.segments.map(s => s.text).join(' ')]);
+                                    break;
+                            }
+                    }
+                });
+            });
+        })();
+    }, []);
+    return (
+        <>
+            <h5>{file.file}</h5>
+            <audio src={file.url} controls={true} />
+            <ul>
+                {relatedContent.map((c) => (
+                    <li key={c}>{c}</li>
+                ))}
+            </ul>
+        </>
+    )
+}
+
 const SiteEditor: React.FC<{site: Site, onUpdate: (s: Site) => void}> = ({site, onUpdate}) => {
-    const [sectionIdx, setSectionIdx] = useState<number>(0);
+    const [sectionIdx, setSectionIdx] = useState<number|undefined>(undefined);
     const deleteSection = () => {
         onUpdate(new Site({
             ...site,
@@ -323,8 +423,13 @@ const SiteEditor: React.FC<{site: Site, onUpdate: (s: Site) => void}> = ({site, 
     }
     useEffect(() => {
         if (site.sections.length === 0) {
+            onUpdate(new Site({
+                ...site,
+                sections: [new Section({})],
+            }));
+        }
+        if (site.sections.length > 0 && sectionIdx === undefined) {
             setSectionIdx(0);
-            onUpdate(new Site({}));
         }
     }, [site]);
     return (
@@ -351,17 +456,110 @@ const SiteEditor: React.FC<{site: Site, onUpdate: (s: Site) => void}> = ({site, 
                     </a>
                 ))}
             </div>
-            <SectionEditor section={site.sections[sectionIdx]} onUpdate={(s: Section) => {
-                onUpdate(new Site({
-                    ...site,
-                    sections: site.sections.map((section, idx) => {
-                        if (idx === sectionIdx) {
-                            return s;
-                        }
-                        return section;
-                    })
-                }));
-            }} onDelete={deleteSection} />
+            {sectionIdx !== undefined && (
+                <SectionEditor section={site.sections[sectionIdx]} onUpdate={(s: Section) => {
+                    onUpdate(new Site({
+                        ...site,
+                        sections: site.sections.map((section, idx) => {
+                            if (idx === sectionIdx) {
+                                return s;
+                            }
+                            return section;
+                        })
+                    }));
+                }} onDelete={deleteSection} />
+            )}
         </>
     )
 }
+
+const ChatGPTConversationEditor: FC<{
+    conversation: Conversation;
+    onUpdate: (c: Conversation) => void;
+    className?: string;
+}> = ({conversation, onUpdate, className}) => {
+    const [visible, setVisible] = useState<string[]>([]);
+    const [path, setPath] = useState<string[]>([]);
+    const root = Object.keys(conversation.mapping).find((k) => !conversation.mapping[k].parent);
+
+    const initPath = (initialKey: string, initialPath: string[]) => {
+        let currentKey = initialKey;
+
+        while (currentKey && conversation.mapping[currentKey].children.length > 0) {
+            initialPath.push(currentKey);
+            currentKey = conversation.mapping[currentKey].children[0]; // Select the first child
+        }
+
+        // Include the last node with no children
+        if (currentKey) {
+            initialPath.push(currentKey);
+        }
+
+        setPath(initialPath);
+    };
+
+    useEffect(() => {
+        if (root !== undefined) {
+            initPath(root, []);
+        }
+    }, [conversation]);
+
+    // Function to update the path when a sibling is selected
+    const handleSelectSibling = (nodeKey: string, level: number) => {
+        initPath(nodeKey, path.slice(0, level));
+    };
+
+    return (
+        <div className={`${className || ''} p-4 bg-gray-100 rounded-md shadow`}>
+            <div className="flex flex-col gap-2">
+                {path.map((nodeKey, index) => {
+                    const node = conversation.mapping[nodeKey];
+                    if (!node) {
+                        console.warn(`Node ${nodeKey} not found in conversation mapping`)
+                        return null;
+                    }
+                    const isVisible = visible.includes(nodeKey);
+                    const author = node.message?.author;
+                    const parentNode = conversation.mapping[node.parent ?? ''];
+                    const siblings = parentNode ? parentNode.children : [];
+                    const msg = node.message?.content?.parts.join(' ');
+                    if (msg === undefined || msg === '') {
+                        return null;
+                    }
+
+                    return (
+                        <div key={nodeKey}>
+                            <div className={`chat ${author?.role !== 'user' ? 'chat-start' : 'chat-end'}`}>
+                                <div className="chat-header">{author?.role}</div>
+                                <div className={`chat-bubble overflow-x-auto ${isVisible ? 'max-h-32 overflow-hidden' : ''}`} onClick={() => {
+                                    if (visible.includes(nodeKey)) {
+                                        setVisible(visible.filter((v) => v !== nodeKey));
+                                    } else {
+                                        setVisible([...visible, nodeKey]);
+                                    }
+                                }}>
+                                    <ReactMarkdown className={isVisible ? 'clamp' : ''}>
+                                        {msg}
+                                    </ReactMarkdown>
+                                </div>
+                            </div>
+                            {author?.role === 'user' && siblings.length > 1 && (
+                                <div className="flex gap-2 mt-2">
+                                    {siblings.map((siblingKey) => (
+                                        <button
+                                            key={siblingKey}
+                                            className={`max-w-sm text-ellipsis px-2 py-1 text-sm rounded ${siblingKey === nodeKey ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                                            onClick={() => handleSelectSibling(siblingKey, index)}
+                                        >
+                                            {conversation.mapping[siblingKey].message?.content?.parts.join(' ')}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+};

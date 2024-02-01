@@ -158,12 +158,14 @@ const FieldInput: FC<{field: MsgField, path: string[]} & FormControlProps> = ({f
         case FieldDescriptorProto_Type.INT32:
             return <input type={"number"} className={"input input-bordered"} value={value} {...register(fieldPath)} />;
         default:
-            console.warn("Unhandled field type", field.field.type);
+            // TODO breadchris
+            // console.warn("Unhandled field type", field.field.type);
             return <input type={"text"} className={"input input-bordered"} value={value} {...register(fieldPath)} />;
     }
 }
 
 const MapField: FC<{field: MapField, path: string[]} & FormControlProps> = ({fc, path, field}) => {
+    const [editedKey, setEditedKey] = useState<{prev: string, new: string}|undefined>(undefined);
     const {resetField, setValue} = fc;
     // TODO breadchris can maps have keys that aren't strings?
     const fieldPath = path.join('.');
@@ -181,14 +183,23 @@ const MapField: FC<{field: MapField, path: string[]} & FormControlProps> = ({fc,
                         <td>
                             <button className="btn btn-error" onClick={() => {
                                 setValue(valuePath.join('.'), undefined);
-                            }}>Remove</button>
+                            }}>remove</button>
                             <div className={"map_key"}>
-                                <input type={"text"} className={"input input-bordered"} value={key} onChange={(e) => {
-                                    resetField(valuePath.join('.'));
-
-                                    const newKey = e.target.value;
-                                    setValue(path.concat(newKey).join('.'), fieldValue);
+                                <input type={"text"} className={"input input-bordered"} value={editedKey?.prev === key ? editedKey.new : key} onChange={(e) => {
+                                    setEditedKey({
+                                        prev: key,
+                                        new: e.target.value
+                                    });
                                 }} />
+                                {editedKey?.prev === key && (
+                                    <button className={"btn btn-sm"} onClick={() => {
+                                        if (editedKey?.prev === key) {
+                                            resetField(valuePath.join('.'));
+                                            setEditedKey(undefined);
+                                            setValue(path.concat(editedKey?.new).join('.'), fieldValue);
+                                        }
+                                    }}>save</button>
+                                )}
                             </div>
                             {key !== '' && (
                                 <div className={"map_value"}>

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package browser;
+
+message History {
+  repeated Node nodes = 1;
+  repeated Edge edges = 2;
+}
+
+message Node {
+  string id = 1;
+  string url = 2;
+  double visit_time = 3;
+  double visit_duration = 4;
+}
+
+message Edge {
+  string from = 1;
+  string to = 2;
+}
