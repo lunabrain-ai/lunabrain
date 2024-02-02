@@ -146,24 +146,6 @@ export default function ProjectProvider({children}: ProjectProviderProps) {
         // setGroups(res.groups);
     }
 
-    // useEffect(() => {
-    //     if (!user) {
-    //         (async () => {
-    //             try {
-    //                 const res = await userService.login({})
-    //                 if (!res.email) {
-    //                     console.warn('no user logged in')
-    //                     return
-    //                 }
-    //                 setUser(res)
-    //             } catch (e: any) {
-    //                 console.error(e)
-    //             }
-    //         })();
-    //     }
-    //     void loadGroups();
-    // }, [user]);
-
     const deleteContent = async (ids: string[]) => {
         const res = await contentService.delete({
             contentIds: ids,

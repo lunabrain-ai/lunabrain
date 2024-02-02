@@ -1219,15 +1219,6 @@ html {
   min-height: fit-content;
 }
 
-.\!diff {
-  position: relative !important;
-  display: grid !important;
-  width: 100% !important;
-  overflow: hidden !important;
-  container-type: inline-size !important;
-  grid-template-columns: auto 1fr !important;
-}
-
 .diff {
   position: relative;
   display: grid;
@@ -4934,10 +4925,6 @@ details.collapse summary::-webkit-details-marker {
   display: contents;
 }
 
-.list-item {
-  display: list-item;
-}
-
 .hidden {
   display: none;
 }
@@ -5348,10 +5335,6 @@ details.collapse summary::-webkit-details-marker {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-.underline {
-  text-decoration-line: underline;
 }
 
 .opacity-50 {
