@@ -203,27 +203,6 @@ export const ContentEditor: React.FC<{}> = ({}) => {
             </div>
             <div className={"flex justify-between w-full"}>
                 <div className={"flex space-x-2"}>
-                    <details className={"dropdown"}>
-                        <summary className={"btn"}><PlusIcon className={"h-6 w-6"} /></summary>
-                        <ul className={"p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52"}>
-                            <li onClick={() => {
-                                resetContent();
-                                editContent(urlContent('https://example.com', []));
-                            }}>url</li>
-                            <li onClick={() => {
-                                resetContent();
-                                editContent(postContent("Don't think, write."));
-                            }}>
-                                post
-                            </li>
-                            <li onClick={() => {
-                                resetContent();
-                                editContent(siteContent());
-                            }}>
-                                site
-                            </li>
-                        </ul>
-                    </details>
                     <VoiceInputButton onText={(text) => {
                         if (editor) {
                             editor.chain().focus().insertContent(text).run();
@@ -333,7 +312,7 @@ const ContentTypeEditor: React.FC<{
                         }} />
                     case 'url':
                         const u = d.type.value;
-                        return <URLEditor url={u.url} onChange={(url) => {
+                        return <URLEditor id={content.id} url={u.url} onChange={(url) => {
                             onUpdate(new Content({
                                 ...content,
                                 type: {
@@ -522,8 +501,9 @@ const ChatGPTConversationEditor: FC<{
                     const author = node.message?.author;
                     const parentNode = conversation.mapping[node.parent ?? ''];
                     const siblings = parentNode ? parentNode.children : [];
-                    const msg = node.message?.content?.parts.join(' ');
+                    const msg = node.message?.content?.textParts.join(' ');
                     if (msg === undefined || msg === '') {
+                        console.log('skipping node', nodeKey, node.message?.content)
                         return null;
                     }
 
@@ -532,11 +512,11 @@ const ChatGPTConversationEditor: FC<{
                             <div className={`chat ${author?.role !== 'user' ? 'chat-start' : 'chat-end'}`}>
                                 <div className="chat-header">{author?.role}</div>
                                 <div className={`chat-bubble overflow-x-auto ${isVisible ? 'max-h-32 overflow-hidden' : ''}`} onClick={() => {
-                                    if (visible.includes(nodeKey)) {
-                                        setVisible(visible.filter((v) => v !== nodeKey));
-                                    } else {
-                                        setVisible([...visible, nodeKey]);
-                                    }
+                                    // if (visible.includes(nodeKey)) {
+                                    //     setVisible(visible.filter((v) => v !== nodeKey));
+                                    // } else {
+                                    //     setVisible([...visible, nodeKey]);
+                                    // }
                                 }}>
                                     <ReactMarkdown className={isVisible ? 'clamp' : ''}>
                                         {msg}
@@ -551,7 +531,7 @@ const ChatGPTConversationEditor: FC<{
                                             className={`max-w-sm text-ellipsis px-2 py-1 text-sm rounded ${siblingKey === nodeKey ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
                                             onClick={() => handleSelectSibling(siblingKey, index)}
                                         >
-                                            {conversation.mapping[siblingKey].message?.content?.parts.join(' ')}
+                                            {conversation.mapping[siblingKey].message?.content?.textParts.join(' ')}
                                         </button>
                                     ))}
                                 </div>

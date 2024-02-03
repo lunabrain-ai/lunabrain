@@ -54,7 +54,32 @@ message Content {
 
   // TODO breadchris make this work for images
   // google.protobuf.Value parts = 2;
-  repeated string parts = 2;
+  repeated string text_parts = 2;
+  repeated ImageAsset image_parts = 3;
+  string text = 4;
+  // deprecated
+  repeated string parts = 5;
+}
+
+message ImageAsset {
+  string content_type = 1;
+  string asset_pointer = 2;
+  int64 size_bytes = 3;
+  int32 width = 4;
+  int32 height = 5;
+  int32 fovea = 6;
+  Metadata metadata = 7;
+}
+
+message Metadata {
+  DalleMetadata dalle = 1;
+}
+
+message DalleMetadata {
+  string gen_id = 1;
+  string prompt = 2;
+  uint32 seed = 3;
+  string serialization_title = 4;
 }
 
 message AuthorMetadata {

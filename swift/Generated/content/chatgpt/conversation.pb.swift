@@ -56,26 +56,35 @@ public struct Chatgpt_Node {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var id: String = String()
+  public var id: String {
+    get {return _storage._id}
+    set {_uniqueStorage()._id = newValue}
+  }
 
   public var message: Chatgpt_Message {
-    get {return _message ?? Chatgpt_Message()}
-    set {_message = newValue}
+    get {return _storage._message ?? Chatgpt_Message()}
+    set {_uniqueStorage()._message = newValue}
   }
   /// Returns true if `message` has been explicitly set.
-  public var hasMessage: Bool {return self._message != nil}
+  public var hasMessage: Bool {return _storage._message != nil}
   /// Clears the value of `message`. Subsequent reads from it will return its default value.
-  public mutating func clearMessage() {self._message = nil}
+  public mutating func clearMessage() {_uniqueStorage()._message = nil}
 
-  public var parent: String = String()
+  public var parent: String {
+    get {return _storage._parent}
+    set {_uniqueStorage()._parent = newValue}
+  }
 
-  public var children: [String] = []
+  public var children: [String] {
+    get {return _storage._children}
+    set {_uniqueStorage()._children = newValue}
+  }
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
-  fileprivate var _message: Chatgpt_Message? = nil
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 public struct Chatgpt_Message {
@@ -180,7 +189,86 @@ public struct Chatgpt_Content {
 
   /// TODO breadchris make this work for images
   /// google.protobuf.Value parts = 2;
+  public var textParts: [String] = []
+
+  public var imageParts: [Chatgpt_ImageAsset] = []
+
+  public var text: String = String()
+
+  /// deprecated
   public var parts: [String] = []
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Chatgpt_ImageAsset {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var contentType: String = String()
+
+  public var assetPointer: String = String()
+
+  public var sizeBytes: Int64 = 0
+
+  public var width: Int32 = 0
+
+  public var height: Int32 = 0
+
+  public var fovea: Int32 = 0
+
+  public var metadata: Chatgpt_Metadata {
+    get {return _metadata ?? Chatgpt_Metadata()}
+    set {_metadata = newValue}
+  }
+  /// Returns true if `metadata` has been explicitly set.
+  public var hasMetadata: Bool {return self._metadata != nil}
+  /// Clears the value of `metadata`. Subsequent reads from it will return its default value.
+  public mutating func clearMetadata() {self._metadata = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _metadata: Chatgpt_Metadata? = nil
+}
+
+public struct Chatgpt_Metadata {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var dalle: Chatgpt_DalleMetadata {
+    get {return _dalle ?? Chatgpt_DalleMetadata()}
+    set {_dalle = newValue}
+  }
+  /// Returns true if `dalle` has been explicitly set.
+  public var hasDalle: Bool {return self._dalle != nil}
+  /// Clears the value of `dalle`. Subsequent reads from it will return its default value.
+  public mutating func clearDalle() {self._dalle = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _dalle: Chatgpt_DalleMetadata? = nil
+}
+
+public struct Chatgpt_DalleMetadata {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var genID: String = String()
+
+  public var prompt: String = String()
+
+  public var seed: UInt32 = 0
+
+  public var serializationTitle: String = String()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -227,6 +315,9 @@ extension Chatgpt_Message: @unchecked Sendable {}
 extension Chatgpt_MessageMetadata: @unchecked Sendable {}
 extension Chatgpt_Author: @unchecked Sendable {}
 extension Chatgpt_Content: @unchecked Sendable {}
+extension Chatgpt_ImageAsset: @unchecked Sendable {}
+extension Chatgpt_Metadata: @unchecked Sendable {}
+extension Chatgpt_DalleMetadata: @unchecked Sendable {}
 extension Chatgpt_AuthorMetadata: @unchecked Sendable {}
 extension Chatgpt_Attachment: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
@@ -324,46 +415,84 @@ extension Chatgpt_Node: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     4: .same(proto: "children"),
   ]
 
+  fileprivate class _StorageClass {
+    var _id: String = String()
+    var _message: Chatgpt_Message? = nil
+    var _parent: String = String()
+    var _children: [String] = []
+
+    static let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _id = source._id
+      _message = source._message
+      _parent = source._parent
+      _children = source._children
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
-      case 2: try { try decoder.decodeSingularMessageField(value: &self._message) }()
-      case 3: try { try decoder.decodeSingularStringField(value: &self.parent) }()
-      case 4: try { try decoder.decodeRepeatedStringField(value: &self.children) }()
-      default: break
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 1: try { try decoder.decodeSingularStringField(value: &_storage._id) }()
+        case 2: try { try decoder.decodeSingularMessageField(value: &_storage._message) }()
+        case 3: try { try decoder.decodeSingularStringField(value: &_storage._parent) }()
+        case 4: try { try decoder.decodeRepeatedStringField(value: &_storage._children) }()
+        default: break
+        }
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    if !self.id.isEmpty {
-      try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
-    }
-    try { if let v = self._message {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    } }()
-    if !self.parent.isEmpty {
-      try visitor.visitSingularStringField(value: self.parent, fieldNumber: 3)
-    }
-    if !self.children.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.children, fieldNumber: 4)
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      if !_storage._id.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._id, fieldNumber: 1)
+      }
+      try { if let v = _storage._message {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+      } }()
+      if !_storage._parent.isEmpty {
+        try visitor.visitSingularStringField(value: _storage._parent, fieldNumber: 3)
+      }
+      if !_storage._children.isEmpty {
+        try visitor.visitRepeatedStringField(value: _storage._children, fieldNumber: 4)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Chatgpt_Node, rhs: Chatgpt_Node) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs._message != rhs._message {return false}
-    if lhs.parent != rhs.parent {return false}
-    if lhs.children != rhs.children {return false}
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._id != rhs_storage._id {return false}
+        if _storage._message != rhs_storage._message {return false}
+        if _storage._parent != rhs_storage._parent {return false}
+        if _storage._children != rhs_storage._children {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -530,7 +659,10 @@ extension Chatgpt_Content: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
   public static let protoMessageName: String = _protobuf_package + ".Content"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "content_type"),
-    2: .same(proto: "parts"),
+    2: .standard(proto: "text_parts"),
+    3: .standard(proto: "image_parts"),
+    4: .same(proto: "text"),
+    5: .same(proto: "parts"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -540,7 +672,10 @@ extension Chatgpt_Content: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.contentType) }()
-      case 2: try { try decoder.decodeRepeatedStringField(value: &self.parts) }()
+      case 2: try { try decoder.decodeRepeatedStringField(value: &self.textParts) }()
+      case 3: try { try decoder.decodeRepeatedMessageField(value: &self.imageParts) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self.text) }()
+      case 5: try { try decoder.decodeRepeatedStringField(value: &self.parts) }()
       default: break
       }
     }
@@ -550,15 +685,185 @@ extension Chatgpt_Content: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     if !self.contentType.isEmpty {
       try visitor.visitSingularStringField(value: self.contentType, fieldNumber: 1)
     }
+    if !self.textParts.isEmpty {
+      try visitor.visitRepeatedStringField(value: self.textParts, fieldNumber: 2)
+    }
+    if !self.imageParts.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.imageParts, fieldNumber: 3)
+    }
+    if !self.text.isEmpty {
+      try visitor.visitSingularStringField(value: self.text, fieldNumber: 4)
+    }
     if !self.parts.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.parts, fieldNumber: 2)
+      try visitor.visitRepeatedStringField(value: self.parts, fieldNumber: 5)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Chatgpt_Content, rhs: Chatgpt_Content) -> Bool {
     if lhs.contentType != rhs.contentType {return false}
+    if lhs.textParts != rhs.textParts {return false}
+    if lhs.imageParts != rhs.imageParts {return false}
+    if lhs.text != rhs.text {return false}
     if lhs.parts != rhs.parts {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Chatgpt_ImageAsset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".ImageAsset"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "content_type"),
+    2: .standard(proto: "asset_pointer"),
+    3: .standard(proto: "size_bytes"),
+    4: .same(proto: "width"),
+    5: .same(proto: "height"),
+    6: .same(proto: "fovea"),
+    7: .same(proto: "metadata"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.contentType) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.assetPointer) }()
+      case 3: try { try decoder.decodeSingularInt64Field(value: &self.sizeBytes) }()
+      case 4: try { try decoder.decodeSingularInt32Field(value: &self.width) }()
+      case 5: try { try decoder.decodeSingularInt32Field(value: &self.height) }()
+      case 6: try { try decoder.decodeSingularInt32Field(value: &self.fovea) }()
+      case 7: try { try decoder.decodeSingularMessageField(value: &self._metadata) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if !self.contentType.isEmpty {
+      try visitor.visitSingularStringField(value: self.contentType, fieldNumber: 1)
+    }
+    if !self.assetPointer.isEmpty {
+      try visitor.visitSingularStringField(value: self.assetPointer, fieldNumber: 2)
+    }
+    if self.sizeBytes != 0 {
+      try visitor.visitSingularInt64Field(value: self.sizeBytes, fieldNumber: 3)
+    }
+    if self.width != 0 {
+      try visitor.visitSingularInt32Field(value: self.width, fieldNumber: 4)
+    }
+    if self.height != 0 {
+      try visitor.visitSingularInt32Field(value: self.height, fieldNumber: 5)
+    }
+    if self.fovea != 0 {
+      try visitor.visitSingularInt32Field(value: self.fovea, fieldNumber: 6)
+    }
+    try { if let v = self._metadata {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Chatgpt_ImageAsset, rhs: Chatgpt_ImageAsset) -> Bool {
+    if lhs.contentType != rhs.contentType {return false}
+    if lhs.assetPointer != rhs.assetPointer {return false}
+    if lhs.sizeBytes != rhs.sizeBytes {return false}
+    if lhs.width != rhs.width {return false}
+    if lhs.height != rhs.height {return false}
+    if lhs.fovea != rhs.fovea {return false}
+    if lhs._metadata != rhs._metadata {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Chatgpt_Metadata: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".Metadata"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "dalle"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._dalle) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._dalle {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Chatgpt_Metadata, rhs: Chatgpt_Metadata) -> Bool {
+    if lhs._dalle != rhs._dalle {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Chatgpt_DalleMetadata: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".DalleMetadata"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "gen_id"),
+    2: .same(proto: "prompt"),
+    3: .same(proto: "seed"),
+    4: .standard(proto: "serialization_title"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.genID) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.prompt) }()
+      case 3: try { try decoder.decodeSingularUInt32Field(value: &self.seed) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self.serializationTitle) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.genID.isEmpty {
+      try visitor.visitSingularStringField(value: self.genID, fieldNumber: 1)
+    }
+    if !self.prompt.isEmpty {
+      try visitor.visitSingularStringField(value: self.prompt, fieldNumber: 2)
+    }
+    if self.seed != 0 {
+      try visitor.visitSingularUInt32Field(value: self.seed, fieldNumber: 3)
+    }
+    if !self.serializationTitle.isEmpty {
+      try visitor.visitSingularStringField(value: self.serializationTitle, fieldNumber: 4)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Chatgpt_DalleMetadata, rhs: Chatgpt_DalleMetadata) -> Bool {
+    if lhs.genID != rhs.genID {return false}
+    if lhs.prompt != rhs.prompt {return false}
+    if lhs.seed != rhs.seed {return false}
+    if lhs.serializationTitle != rhs.serializationTitle {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

@@ -11,6 +11,7 @@ import {ContentEditor} from "@/source/ContentEditor";
 import {useAuth} from "@/auth/state";
 import {FileDrop} from "@/file/FileDrop";
 import {AddTagBadge} from "@/tag/AddTagBadge";
+import {postContent, siteContent, urlContent} from "../../extension/util";
 
 export const SourcePage: React.FC = () => {
     const {
@@ -87,6 +88,26 @@ export const SourcePage: React.FC = () => {
                 </div>
                 <div className="flex-none">
                     <ul className="menu menu-horizontal px-1">
+                        <li>
+                            <details className={"dropdown"}>
+                                <summary>new</summary>
+                                <ul className={"p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52"}>
+                                    <li onClick={() => {
+                                        editContent(urlContent('https://example.com', []));
+                                    }}>url</li>
+                                    <li onClick={() => {
+                                        editContent(postContent("Don't think, write."));
+                                    }}>
+                                        post
+                                    </li>
+                                    <li onClick={() => {
+                                        editContent(siteContent());
+                                    }}>
+                                        site
+                                    </li>
+                                </ul>
+                            </details>
+                        </li>
                         <li><a onClick={handlePublish}>publish</a></li>
                         <li><a onClick={logout}>logout</a></li>
                     </ul>

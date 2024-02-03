@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
-import { Message as Message$1, proto3 } from "@bufbuild/protobuf";
+import { Message as Message$1, proto3, protoInt64 } from "@bufbuild/protobuf";
 
 /**
  * @generated from message chatgpt.Conversation
@@ -340,7 +340,24 @@ export class Content extends Message$1<Content> {
    * TODO breadchris make this work for images
    * google.protobuf.Value parts = 2;
    *
-   * @generated from field: repeated string parts = 2;
+   * @generated from field: repeated string text_parts = 2;
+   */
+  textParts: string[] = [];
+
+  /**
+   * @generated from field: repeated chatgpt.ImageAsset image_parts = 3;
+   */
+  imageParts: ImageAsset[] = [];
+
+  /**
+   * @generated from field: string text = 4;
+   */
+  text = "";
+
+  /**
+   * deprecated
+   *
+   * @generated from field: repeated string parts = 5;
    */
   parts: string[] = [];
 
@@ -353,7 +370,10 @@ export class Content extends Message$1<Content> {
   static readonly typeName = "chatgpt.Content";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "content_type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "parts", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 2, name: "text_parts", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 3, name: "image_parts", kind: "message", T: ImageAsset, repeated: true },
+    { no: 4, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "parts", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Content {
@@ -370,6 +390,171 @@ export class Content extends Message$1<Content> {
 
   static equals(a: Content | PlainMessage<Content> | undefined, b: Content | PlainMessage<Content> | undefined): boolean {
     return proto3.util.equals(Content, a, b);
+  }
+}
+
+/**
+ * @generated from message chatgpt.ImageAsset
+ */
+export class ImageAsset extends Message$1<ImageAsset> {
+  /**
+   * @generated from field: string content_type = 1;
+   */
+  contentType = "";
+
+  /**
+   * @generated from field: string asset_pointer = 2;
+   */
+  assetPointer = "";
+
+  /**
+   * @generated from field: int64 size_bytes = 3;
+   */
+  sizeBytes = protoInt64.zero;
+
+  /**
+   * @generated from field: int32 width = 4;
+   */
+  width = 0;
+
+  /**
+   * @generated from field: int32 height = 5;
+   */
+  height = 0;
+
+  /**
+   * @generated from field: int32 fovea = 6;
+   */
+  fovea = 0;
+
+  /**
+   * @generated from field: chatgpt.Metadata metadata = 7;
+   */
+  metadata?: Metadata;
+
+  constructor(data?: PartialMessage<ImageAsset>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chatgpt.ImageAsset";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "content_type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "asset_pointer", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "size_bytes", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 4, name: "width", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 5, name: "height", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 6, name: "fovea", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 7, name: "metadata", kind: "message", T: Metadata },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ImageAsset {
+    return new ImageAsset().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ImageAsset {
+    return new ImageAsset().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ImageAsset {
+    return new ImageAsset().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ImageAsset | PlainMessage<ImageAsset> | undefined, b: ImageAsset | PlainMessage<ImageAsset> | undefined): boolean {
+    return proto3.util.equals(ImageAsset, a, b);
+  }
+}
+
+/**
+ * @generated from message chatgpt.Metadata
+ */
+export class Metadata extends Message$1<Metadata> {
+  /**
+   * @generated from field: chatgpt.DalleMetadata dalle = 1;
+   */
+  dalle?: DalleMetadata;
+
+  constructor(data?: PartialMessage<Metadata>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chatgpt.Metadata";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "dalle", kind: "message", T: DalleMetadata },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Metadata {
+    return new Metadata().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Metadata {
+    return new Metadata().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Metadata {
+    return new Metadata().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Metadata | PlainMessage<Metadata> | undefined, b: Metadata | PlainMessage<Metadata> | undefined): boolean {
+    return proto3.util.equals(Metadata, a, b);
+  }
+}
+
+/**
+ * @generated from message chatgpt.DalleMetadata
+ */
+export class DalleMetadata extends Message$1<DalleMetadata> {
+  /**
+   * @generated from field: string gen_id = 1;
+   */
+  genId = "";
+
+  /**
+   * @generated from field: string prompt = 2;
+   */
+  prompt = "";
+
+  /**
+   * @generated from field: uint32 seed = 3;
+   */
+  seed = 0;
+
+  /**
+   * @generated from field: string serialization_title = 4;
+   */
+  serializationTitle = "";
+
+  constructor(data?: PartialMessage<DalleMetadata>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "chatgpt.DalleMetadata";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "gen_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "prompt", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "seed", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 4, name: "serialization_title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DalleMetadata {
+    return new DalleMetadata().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DalleMetadata {
+    return new DalleMetadata().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DalleMetadata {
+    return new DalleMetadata().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: DalleMetadata | PlainMessage<DalleMetadata> | undefined, b: DalleMetadata | PlainMessage<DalleMetadata> | undefined): boolean {
+    return proto3.util.equals(DalleMetadata, a, b);
   }
 }
 

@@ -1,7 +1,5 @@
 import {Content, DisplayContent, Segment} from "@/rpc/content/content_pb";
 import React from "react";
-import ReactMarkdown from "react-markdown";
-import {VideoPlayer} from "@/media/VideoPlayer";
 import {useContentEditor} from "@/source/state";
 
 interface ContentCardProps {

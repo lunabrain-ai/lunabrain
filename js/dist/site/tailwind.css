@@ -736,6 +736,45 @@ html {
   --tw-backdrop-sepia:  ;
 }
 
+.markdown h1 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+}
+
+.markdown h1 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.markdown h2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+}
+
+.markdown h2 {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.markdown h3 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+}
+
+.markdown h3 {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.markdown a {
+  --tw-text-opacity: 1;
+  color: rgb(37 99 235 / var(--tw-text-opacity));
+  text-decoration-line: underline;
+}
+
 .\!container {
   width: 100% !important;
 }

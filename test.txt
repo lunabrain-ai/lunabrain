@@ -1,9 +1,0 @@
-<datasource jta="true" jndi-name="java: jboss/datasources/MLO JNDI_DS ODEV" pool-name="mlo_dev3_Pool" e!1
-"true" use-java-context="true" use-ccm="true">
-<connection-url>jdbe: oracle: thin: @vm-dev-oracle1.systemautomation.com:1521:DEVMLO</connection-url>
-<driver>ojdbe7. jar</driver>
-<new-connection-sql>select 1 from dual</new-—connection-sql>
-<pool>
-<min-pool-size>0</min-pool-size>
-
-Kila =pO61|-s ize>50</max-pool-size>

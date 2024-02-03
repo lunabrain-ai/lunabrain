@@ -1,10 +1,10 @@
 /// <reference types="chrome"/>
 import {contentService, projectService, userService} from "@/service";
-import {urlContent} from "./util";
 import {contentGet, contentSave, TabContent} from "./shared";
 import { Content } from "@/rpc/content/content_pb";
 import HttpHeader = chrome.webRequest.HttpHeader;
-import {Conversation} from "@/rpc/content/chatgpt/conversation_pb";
+import {Conversation, ImageAsset, Content as ConvContent} from "@/rpc/content/chatgpt/conversation_pb";
+import {Conversation as TSConversation} from "./chatgpt";
 
 let tabContent: TabContent|undefined = undefined;
 let history: {
@@ -168,11 +168,49 @@ const chromeExt = () => {
                 }).then((resp) => {
                     // TODO breadchris create content and send it to the content script
                     return resp.json();
-                }).then((json) => {
+                }).then((json: TSConversation) => {
                     console.log('json', json)
-                    const conv = Conversation.fromJson(json, {
+                    let conv = Conversation.fromJson(json as any, {
                         ignoreUnknownFields: true
                     });
+
+                    Object.keys(json.mapping).map((k: any) => {
+                        const v = json.mapping[k];
+                        const c = v.message?.content;
+                        if (!c) {
+                            return;
+                        }
+                        let textParts: string[] = [];
+                        let imageParts: ImageAsset[] = [];
+                        let text = '';
+                        switch (c.content_type) {
+                            case 'text':
+                                textParts = c.parts;
+                                break;
+                            case 'multimodal_text':
+                                imageParts = c.parts.map((p) => {
+                                    return ImageAsset.fromJson(p as any, {
+                                        ignoreUnknownFields: true
+                                    });
+                                });
+                                break;
+                            case 'code':
+                                text = c.text;
+                                break;
+                        }
+                        if (conv.mapping[k].message !== undefined) {
+                            // @ts-ignore
+                            conv.mapping[k].message.content = new ConvContent({
+                                contentType: c.content_type as string,
+                                textParts: textParts,
+                                imageParts: imageParts,
+                                text: text
+                            });
+                        }
+                    });
+
+                    console.log(conv)
+
                     const content = new Content({
                         id: conv.conversationId,
                         type: {

@@ -32,4 +32,4 @@ plugins:
     out: swift/Generated
   - plugin: buf.build/apple/swift
     opt: Visibility=Public
-    out: mobile/lunabrain/Generated
+    out: swift/Generated

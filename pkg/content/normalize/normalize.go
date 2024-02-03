@@ -103,6 +103,12 @@ func (s *Normalize) Normalize(ctx context.Context, uid uuid.UUID, c *content.Con
 					return nil, nil, err
 				}
 				return cnt, tags, nil
+			case "github.com":
+				cnt, err := s.gitURL(ul)
+				if err != nil {
+					return nil, nil, err
+				}
+				return cnt, tags, nil
 			case "youtube.com":
 				slog.Debug("downloading youtube video", "host", pUrl.Host, "id", pUrl.Query().Get("v"))
 				r, err := s.DownloadYouTubeVideo(ctx, &connect_go.Request[genapi.YouTubeVideo]{

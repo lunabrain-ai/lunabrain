@@ -1,3 +1,17 @@
 @tailwind base;
+
+.markdown h1 {
+    @apply text-2xl space-y-4;
+}
+.markdown h2 {
+    @apply text-xl space-y-4;
+}
+.markdown h3 {
+    @apply text-lg space-y-4;
+}
+.markdown a {
+    @apply text-blue-600 underline;
+}
+
 @tailwind components;
 @tailwind utilities;
