@@ -10,7 +10,6 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
 	"github.com/lunabrain-ai/lunabrain/pkg/util"
 	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
-	"github.com/pkg/errors"
 	"github.com/reactivex/rxgo/v2"
 	"log/slog"
 	ghttp "net/http"
@@ -69,7 +68,7 @@ func (s *Normalize) Normalize(ctx context.Context, uid uuid.UUID, c *content.Con
 				if path.Ext(name) == ".m4a" {
 					ct, obs, err = s.ProcessAudio(context.TODO(), u.File, id, true)
 				} else {
-					return nil, nil, errors.Errorf("unsupported file type: %s", contentType)
+					return nil, nil, nil
 				}
 			}
 			if err != nil {

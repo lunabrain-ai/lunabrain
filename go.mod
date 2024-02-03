@@ -17,6 +17,7 @@ require (
 	github.com/bwmarrin/discordgo v0.27.1
 	github.com/chromedp/cdproto v0.0.0-20230319112347-6603f2c23d36
 	github.com/chromedp/chromedp v0.9.1
+	github.com/cloudflare/cloudflare-go v0.86.0
 	github.com/cosmtrek/air v1.29.0
 	github.com/dominikbraun/graph v0.23.0
 	github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
@@ -30,6 +31,7 @@ require (
 	github.com/google/uuid v1.4.0
 	github.com/google/wire v0.5.0
 	github.com/gorilla/sessions v1.2.2
+	github.com/gosimple/slug v1.13.1
 	github.com/hajimehoshi/go-mp3 v0.3.4
 	github.com/iancoleman/strcase v0.2.0
 	github.com/kkdai/youtube/v2 v2.8.3
@@ -37,7 +39,7 @@ require (
 	github.com/lmittmann/tint v1.0.2
 	github.com/makiuchi-d/arelo v1.12.0
 	github.com/markbates/goth v1.78.0
-	github.com/mattn/go-sqlite3 v1.14.18
+	github.com/mattn/go-sqlite3 v1.14.19
 	github.com/pion/rtp v1.7.13
 	github.com/pion/webrtc/v3 v3.1.58
 	github.com/pkg/errors v0.9.1
@@ -101,7 +103,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chromedp/sysutil v1.0.0 // indirect
 	github.com/cloudflare/circl v1.3.3 // indirect
-	github.com/cloudflare/cloudflare-go v0.86.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.3 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -143,7 +144,6 @@ require (
 	github.com/gorilla/mux v1.7.3 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect
-	github.com/gosimple/slug v1.13.1 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.5 // indirect

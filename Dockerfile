@@ -1,5 +1,5 @@
 FROM alpine
-RUN apk add --no-cache build-base sdl2-dev go libsndfile-dev
+RUN apk add --no-cache build-base sdl2-dev go libsndfile-dev ffmpeg hugo
 WORKDIR /app
 ADD . .
 # RUN make whisper && make models

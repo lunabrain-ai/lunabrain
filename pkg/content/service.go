@@ -285,10 +285,10 @@ func (s *Service) Publish(ctx context.Context, c *connect_go.Request[content.Con
 	}
 
 	// build for github
-	//err = s.buildForGithub(b, site, blogSections)
-	//if err != nil {
-	//	return nil, err
-	//}
+	err = s.buildForGithub(b, site, blogSections)
+	if err != nil {
+		return nil, err
+	}
 
 	// TODO breadchris do not write logseq atm
 
