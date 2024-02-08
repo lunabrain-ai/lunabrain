@@ -104,7 +104,7 @@ public struct Content_HugoConfig {
     set {_uniqueStorage()._languages = newValue}
   }
 
-  public var outputs: Dictionary<String,Content_repeated_string> {
+  public var outputs: Dictionary<String,Content_RepeatedString> {
     get {return _storage._outputs}
     set {_uniqueStorage()._outputs = newValue}
   }
@@ -168,7 +168,7 @@ public struct Content_LanguageConfig {
 
   public var taxonomies: Dictionary<String,String> = [:]
 
-  public var menu: Dictionary<String,Content_repeated_menu_item> = [:]
+  public var menu: Dictionary<String,Content_RepeatedMenuItem> = [:]
 
   public var params: Dictionary<String,String> = [:]
 
@@ -340,7 +340,7 @@ public struct Content_ServiceConfig {
   public init() {}
 }
 
-public struct Content_repeated_string {
+public struct Content_RepeatedString {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -352,7 +352,7 @@ public struct Content_repeated_string {
   public init() {}
 }
 
-public struct Content_repeated_menu_item {
+public struct Content_RepeatedMenuItem {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -569,8 +569,8 @@ extension Content_RendererConfig: @unchecked Sendable {}
 extension Content_HighlightConfig: @unchecked Sendable {}
 extension Content_ServicesConfig: @unchecked Sendable {}
 extension Content_ServiceConfig: @unchecked Sendable {}
-extension Content_repeated_string: @unchecked Sendable {}
-extension Content_repeated_menu_item: @unchecked Sendable {}
+extension Content_RepeatedString: @unchecked Sendable {}
+extension Content_RepeatedMenuItem: @unchecked Sendable {}
 extension Content_ParamsConfig: @unchecked Sendable {}
 extension Content_ProfileModeConfig: @unchecked Sendable {}
 extension Content_ButtonConfig: @unchecked Sendable {}
@@ -622,7 +622,7 @@ extension Content_HugoConfig: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     var _mainSections: [String] = []
     var _minify: Content_MinifyConfig? = nil
     var _languages: Dictionary<String,Content_LanguageConfig> = [:]
-    var _outputs: Dictionary<String,Content_repeated_string> = [:]
+    var _outputs: Dictionary<String,Content_RepeatedString> = [:]
     var _params: Content_ParamsConfig? = nil
     var _markup: Content_MarkupConfig? = nil
     var _services: Content_ServicesConfig? = nil
@@ -684,7 +684,7 @@ extension Content_HugoConfig: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         case 13: try { try decoder.decodeRepeatedStringField(value: &_storage._mainSections) }()
         case 14: try { try decoder.decodeSingularMessageField(value: &_storage._minify) }()
         case 15: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,Content_LanguageConfig>.self, value: &_storage._languages) }()
-        case 16: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,Content_repeated_string>.self, value: &_storage._outputs) }()
+        case 16: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,Content_RepeatedString>.self, value: &_storage._outputs) }()
         case 17: try { try decoder.decodeSingularMessageField(value: &_storage._params) }()
         case 18: try { try decoder.decodeSingularMessageField(value: &_storage._markup) }()
         case 19: try { try decoder.decodeSingularMessageField(value: &_storage._services) }()
@@ -746,7 +746,7 @@ extension Content_HugoConfig: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,Content_LanguageConfig>.self, value: _storage._languages, fieldNumber: 15)
       }
       if !_storage._outputs.isEmpty {
-        try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,Content_repeated_string>.self, value: _storage._outputs, fieldNumber: 16)
+        try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,Content_RepeatedString>.self, value: _storage._outputs, fieldNumber: 16)
       }
       try { if let v = _storage._params {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 17)
@@ -847,7 +847,7 @@ extension Content_LanguageConfig: SwiftProtobuf.Message, SwiftProtobuf._MessageI
       case 2: try { try decoder.decodeSingularInt32Field(value: &self.weight) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.title) }()
       case 4: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufString>.self, value: &self.taxonomies) }()
-      case 5: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,Content_repeated_menu_item>.self, value: &self.menu) }()
+      case 5: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,Content_RepeatedMenuItem>.self, value: &self.menu) }()
       case 6: try { try decoder.decodeMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufString>.self, value: &self.params) }()
       default: break
       }
@@ -868,7 +868,7 @@ extension Content_LanguageConfig: SwiftProtobuf.Message, SwiftProtobuf._MessageI
       try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufString>.self, value: self.taxonomies, fieldNumber: 4)
     }
     if !self.menu.isEmpty {
-      try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,Content_repeated_menu_item>.self, value: self.menu, fieldNumber: 5)
+      try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMessageMap<SwiftProtobuf.ProtobufString,Content_RepeatedMenuItem>.self, value: self.menu, fieldNumber: 5)
     }
     if !self.params.isEmpty {
       try visitor.visitMapField(fieldType: SwiftProtobuf._ProtobufMap<SwiftProtobuf.ProtobufString,SwiftProtobuf.ProtobufString>.self, value: self.params, fieldNumber: 6)
@@ -1224,8 +1224,8 @@ extension Content_ServiceConfig: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
   }
 }
 
-extension Content_repeated_string: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".repeated_string"
+extension Content_RepeatedString: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".RepeatedString"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "values"),
   ]
@@ -1249,15 +1249,15 @@ extension Content_repeated_string: SwiftProtobuf.Message, SwiftProtobuf._Message
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Content_repeated_string, rhs: Content_repeated_string) -> Bool {
+  public static func ==(lhs: Content_RepeatedString, rhs: Content_RepeatedString) -> Bool {
     if lhs.values != rhs.values {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension Content_repeated_menu_item: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".repeated_menu_item"
+extension Content_RepeatedMenuItem: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".RepeatedMenuItem"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "items"),
   ]
@@ -1281,7 +1281,7 @@ extension Content_repeated_menu_item: SwiftProtobuf.Message, SwiftProtobuf._Mess
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Content_repeated_menu_item, rhs: Content_repeated_menu_item) -> Bool {
+  public static func ==(lhs: Content_RepeatedMenuItem, rhs: Content_RepeatedMenuItem) -> Bool {
     if lhs.items != rhs.items {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true

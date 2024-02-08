@@ -18,7 +18,7 @@ message HugoConfig {
   repeated string main_sections = 13;
   MinifyConfig minify = 14;
   map<string, LanguageConfig> languages = 15;
-  map<string, repeated_string> outputs = 16;
+  map<string, RepeatedString> outputs = 16;
   ParamsConfig params = 17;
   MarkupConfig markup = 18;
   ServicesConfig services = 19;
@@ -33,7 +33,7 @@ message LanguageConfig {
   int32 weight = 2;
   string title = 3;
   map<string, string> taxonomies = 4;
-  map<string, repeated_menu_item> menu = 5;
+  map<string, RepeatedMenuItem> menu = 5;
   map<string, string> params = 6;
 }
 
@@ -79,11 +79,11 @@ message ServiceConfig {
   bool disable_inline_css = 1;
 }
 
-message repeated_string {
+message RepeatedString {
   repeated string values = 1;
 }
 
-message repeated_menu_item {
+message RepeatedMenuItem {
   repeated MenuItem items = 1;
 }
 

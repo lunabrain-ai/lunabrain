@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Content, ContentIDs, Contents, GetSourcesRequest, Query, RelateRequest, Results, SetTagsRequest, Sources, TagRequest, Tags, TypesResponse, VoiceInputRequest, VoiceInputResponse } from "./content_pb.js";
+import { Content, ContentIDs, Contents, GetSourcesRequest, InferRequest, InferResponse, Query, RelateRequest, Results, SetTagsRequest, Sources, TagRequest, Tags, TypesResponse, VoiceInputRequest, VoiceInputResponse } from "./content_pb.js";
 import { Empty, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -92,6 +92,15 @@ export const ContentService = {
       I: GetSourcesRequest,
       O: Sources,
       kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc content.ContentService.Infer
+     */
+    infer: {
+      name: "Infer",
+      I: InferRequest,
+      O: InferResponse,
+      kind: MethodKind.ServerStreaming,
     },
     /**
      * @generated from rpc content.ContentService.Types

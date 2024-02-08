@@ -63,6 +63,11 @@ public protocol Content_ContentServiceClientInterface: Sendable {
     @available(iOS 13, *)
     func `getSources`(request: Content_GetSourcesRequest, headers: Connect.Headers) async -> ResponseMessage<Content_Sources>
 
+    func `infer`(headers: Connect.Headers, onResult: @escaping @Sendable (Connect.StreamResult<Content_InferResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Content_InferRequest>
+
+    @available(iOS 13, *)
+    func `infer`(headers: Connect.Headers) -> any Connect.ServerOnlyAsyncStreamInterface<Content_InferRequest, Content_InferResponse>
+
     @discardableResult
     func `types`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers, completion: @escaping @Sendable (ResponseMessage<Content_TypesResponse>) -> Void) -> Connect.Cancelable
 
@@ -173,6 +178,15 @@ public final class Content_ContentServiceClient: Content_ContentServiceClientInt
         return await self.client.unary(path: "/content.ContentService/GetSources", request: request, headers: headers)
     }
 
+    public func `infer`(headers: Connect.Headers = [:], onResult: @escaping @Sendable (Connect.StreamResult<Content_InferResponse>) -> Void) -> any Connect.ServerOnlyStreamInterface<Content_InferRequest> {
+        return self.client.serverOnlyStream(path: "/content.ContentService/Infer", headers: headers, onResult: onResult)
+    }
+
+    @available(iOS 13, *)
+    public func `infer`(headers: Connect.Headers = [:]) -> any Connect.ServerOnlyAsyncStreamInterface<Content_InferRequest, Content_InferResponse> {
+        return self.client.serverOnlyStream(path: "/content.ContentService/Infer", headers: headers)
+    }
+
     @discardableResult
     public func `types`(request: SwiftProtobuf.Google_Protobuf_Empty, headers: Connect.Headers = [:], completion: @escaping @Sendable (ResponseMessage<Content_TypesResponse>) -> Void) -> Connect.Cancelable {
         return self.client.unary(path: "/content.ContentService/Types", request: request, headers: headers, completion: completion)
@@ -203,6 +217,7 @@ public final class Content_ContentServiceClient: Content_ContentServiceClientInt
             public static let setTags = Connect.MethodSpec(name: "SetTags", service: "content.ContentService", type: .unary)
             public static let publish = Connect.MethodSpec(name: "Publish", service: "content.ContentService", type: .unary)
             public static let getSources = Connect.MethodSpec(name: "GetSources", service: "content.ContentService", type: .unary)
+            public static let infer = Connect.MethodSpec(name: "Infer", service: "content.ContentService", type: .serverStream)
             public static let types = Connect.MethodSpec(name: "Types", service: "content.ContentService", type: .unary)
             public static let voiceInput = Connect.MethodSpec(name: "VoiceInput", service: "content.ContentService", type: .serverStream)
         }

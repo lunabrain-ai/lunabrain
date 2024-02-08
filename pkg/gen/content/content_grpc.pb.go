@@ -32,6 +32,7 @@ type ContentServiceClient interface {
 	SetTags(ctx context.Context, in *SetTagsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Publish(ctx context.Context, in *ContentIDs, opts ...grpc.CallOption) (*ContentIDs, error)
 	GetSources(ctx context.Context, in *GetSourcesRequest, opts ...grpc.CallOption) (*Sources, error)
+	Infer(ctx context.Context, in *InferRequest, opts ...grpc.CallOption) (ContentService_InferClient, error)
 	Types(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TypesResponse, error)
 	VoiceInput(ctx context.Context, in *VoiceInputRequest, opts ...grpc.CallOption) (ContentService_VoiceInputClient, error)
 }
@@ -125,6 +126,38 @@ func (c *contentServiceClient) GetSources(ctx context.Context, in *GetSourcesReq
 	return out, nil
 }
 
+func (c *contentServiceClient) Infer(ctx context.Context, in *InferRequest, opts ...grpc.CallOption) (ContentService_InferClient, error) {
+	stream, err := c.cc.NewStream(ctx, &ContentService_ServiceDesc.Streams[0], "/content.ContentService/Infer", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &contentServiceInferClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type ContentService_InferClient interface {
+	Recv() (*InferResponse, error)
+	grpc.ClientStream
+}
+
+type contentServiceInferClient struct {
+	grpc.ClientStream
+}
+
+func (x *contentServiceInferClient) Recv() (*InferResponse, error) {
+	m := new(InferResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *contentServiceClient) Types(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TypesResponse, error) {
 	out := new(TypesResponse)
 	err := c.cc.Invoke(ctx, "/content.ContentService/Types", in, out, opts...)
@@ -135,7 +168,7 @@ func (c *contentServiceClient) Types(ctx context.Context, in *emptypb.Empty, opt
 }
 
 func (c *contentServiceClient) VoiceInput(ctx context.Context, in *VoiceInputRequest, opts ...grpc.CallOption) (ContentService_VoiceInputClient, error) {
-	stream, err := c.cc.NewStream(ctx, &ContentService_ServiceDesc.Streams[0], "/content.ContentService/VoiceInput", opts...)
+	stream, err := c.cc.NewStream(ctx, &ContentService_ServiceDesc.Streams[1], "/content.ContentService/VoiceInput", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -179,6 +212,7 @@ type ContentServiceServer interface {
 	SetTags(context.Context, *SetTagsRequest) (*emptypb.Empty, error)
 	Publish(context.Context, *ContentIDs) (*ContentIDs, error)
 	GetSources(context.Context, *GetSourcesRequest) (*Sources, error)
+	Infer(*InferRequest, ContentService_InferServer) error
 	Types(context.Context, *emptypb.Empty) (*TypesResponse, error)
 	VoiceInput(*VoiceInputRequest, ContentService_VoiceInputServer) error
 }
@@ -213,6 +247,9 @@ func (UnimplementedContentServiceServer) Publish(context.Context, *ContentIDs) (
 }
 func (UnimplementedContentServiceServer) GetSources(context.Context, *GetSourcesRequest) (*Sources, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSources not implemented")
+}
+func (UnimplementedContentServiceServer) Infer(*InferRequest, ContentService_InferServer) error {
+	return status.Errorf(codes.Unimplemented, "method Infer not implemented")
 }
 func (UnimplementedContentServiceServer) Types(context.Context, *emptypb.Empty) (*TypesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Types not implemented")
@@ -394,6 +431,27 @@ func _ContentService_GetSources_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ContentService_Infer_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(InferRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(ContentServiceServer).Infer(m, &contentServiceInferServer{stream})
+}
+
+type ContentService_InferServer interface {
+	Send(*InferResponse) error
+	grpc.ServerStream
+}
+
+type contentServiceInferServer struct {
+	grpc.ServerStream
+}
+
+func (x *contentServiceInferServer) Send(m *InferResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 func _ContentService_Types_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -482,6 +540,11 @@ var ContentService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Infer",
+			Handler:       _ContentService_Infer_Handler,
+			ServerStreams: true,
+		},
 		{
 			StreamName:    "VoiceInput",
 			Handler:       _ContentService_VoiceInput_Handler,

@@ -86,9 +86,9 @@ export class HugoConfig extends Message<HugoConfig> {
   languages: { [key: string]: LanguageConfig } = {};
 
   /**
-   * @generated from field: map<string, content.repeated_string> outputs = 16;
+   * @generated from field: map<string, content.RepeatedString> outputs = 16;
    */
-  outputs: { [key: string]: repeated_string } = {};
+  outputs: { [key: string]: RepeatedString } = {};
 
   /**
    * @generated from field: content.ParamsConfig params = 17;
@@ -128,7 +128,7 @@ export class HugoConfig extends Message<HugoConfig> {
     { no: 13, name: "main_sections", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
     { no: 14, name: "minify", kind: "message", T: MinifyConfig },
     { no: 15, name: "languages", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "message", T: LanguageConfig} },
-    { no: 16, name: "outputs", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "message", T: repeated_string} },
+    { no: 16, name: "outputs", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "message", T: RepeatedString} },
     { no: 17, name: "params", kind: "message", T: ParamsConfig },
     { no: 18, name: "markup", kind: "message", T: MarkupConfig },
     { no: 19, name: "services", kind: "message", T: ServicesConfig },
@@ -213,9 +213,9 @@ export class LanguageConfig extends Message<LanguageConfig> {
   taxonomies: { [key: string]: string } = {};
 
   /**
-   * @generated from field: map<string, content.repeated_menu_item> menu = 5;
+   * @generated from field: map<string, content.RepeatedMenuItem> menu = 5;
    */
-  menu: { [key: string]: repeated_menu_item } = {};
+  menu: { [key: string]: RepeatedMenuItem } = {};
 
   /**
    * @generated from field: map<string, string> params = 6;
@@ -234,7 +234,7 @@ export class LanguageConfig extends Message<LanguageConfig> {
     { no: 2, name: "weight", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
     { no: 3, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "taxonomies", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
-    { no: 5, name: "menu", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "message", T: repeated_menu_item} },
+    { no: 5, name: "menu", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "message", T: RepeatedMenuItem} },
     { no: 6, name: "params", kind: "map", K: 9 /* ScalarType.STRING */, V: {kind: "scalar", T: 9 /* ScalarType.STRING */} },
   ]);
 
@@ -625,76 +625,76 @@ export class ServiceConfig extends Message<ServiceConfig> {
 }
 
 /**
- * @generated from message content.repeated_string
+ * @generated from message content.RepeatedString
  */
-export class repeated_string extends Message<repeated_string> {
+export class RepeatedString extends Message<RepeatedString> {
   /**
    * @generated from field: repeated string values = 1;
    */
   values: string[] = [];
 
-  constructor(data?: PartialMessage<repeated_string>) {
+  constructor(data?: PartialMessage<RepeatedString>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "content.repeated_string";
+  static readonly typeName = "content.RepeatedString";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "values", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): repeated_string {
-    return new repeated_string().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RepeatedString {
+    return new RepeatedString().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): repeated_string {
-    return new repeated_string().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RepeatedString {
+    return new RepeatedString().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): repeated_string {
-    return new repeated_string().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RepeatedString {
+    return new RepeatedString().fromJsonString(jsonString, options);
   }
 
-  static equals(a: repeated_string | PlainMessage<repeated_string> | undefined, b: repeated_string | PlainMessage<repeated_string> | undefined): boolean {
-    return proto3.util.equals(repeated_string, a, b);
+  static equals(a: RepeatedString | PlainMessage<RepeatedString> | undefined, b: RepeatedString | PlainMessage<RepeatedString> | undefined): boolean {
+    return proto3.util.equals(RepeatedString, a, b);
   }
 }
 
 /**
- * @generated from message content.repeated_menu_item
+ * @generated from message content.RepeatedMenuItem
  */
-export class repeated_menu_item extends Message<repeated_menu_item> {
+export class RepeatedMenuItem extends Message<RepeatedMenuItem> {
   /**
    * @generated from field: repeated content.MenuItem items = 1;
    */
   items: MenuItem[] = [];
 
-  constructor(data?: PartialMessage<repeated_menu_item>) {
+  constructor(data?: PartialMessage<RepeatedMenuItem>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "content.repeated_menu_item";
+  static readonly typeName = "content.RepeatedMenuItem";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "items", kind: "message", T: MenuItem, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): repeated_menu_item {
-    return new repeated_menu_item().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RepeatedMenuItem {
+    return new RepeatedMenuItem().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): repeated_menu_item {
-    return new repeated_menu_item().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RepeatedMenuItem {
+    return new RepeatedMenuItem().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): repeated_menu_item {
-    return new repeated_menu_item().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RepeatedMenuItem {
+    return new RepeatedMenuItem().fromJsonString(jsonString, options);
   }
 
-  static equals(a: repeated_menu_item | PlainMessage<repeated_menu_item> | undefined, b: repeated_menu_item | PlainMessage<repeated_menu_item> | undefined): boolean {
-    return proto3.util.equals(repeated_menu_item, a, b);
+  static equals(a: RepeatedMenuItem | PlainMessage<RepeatedMenuItem> | undefined, b: RepeatedMenuItem | PlainMessage<RepeatedMenuItem> | undefined): boolean {
+    return proto3.util.equals(RepeatedMenuItem, a, b);
   }
 }
 

@@ -1,22 +1,78 @@
 /// <reference types="chrome"/>
 import {contentService, projectService, userService} from "@/service";
-import {contentGet, contentSave, TabContent} from "./shared";
+import {contentGet, contentSave, historyGet, TabContent} from "./shared";
 import { Content } from "@/rpc/content/content_pb";
 import HttpHeader = chrome.webRequest.HttpHeader;
 import {Conversation, ImageAsset, Content as ConvContent} from "@/rpc/content/chatgpt/conversation_pb";
 import {Conversation as TSConversation} from "./chatgpt";
+import {History, Node, Edge} from "@/rpc/content/browser/history_pb";
+import {uuidv4} from "./util";
+import {getItem, setItem} from "./chrome/storage";
 
 let tabContent: TabContent|undefined = undefined;
-let history: {
-    from: string;
-    to: string;
-    time: number;
-}[] = [];
+let content: Content|undefined = undefined;
+
+const getHistoryContent = async () => {
+    if (content) {
+        return content;
+    }
+
+    try {
+        const storedHistory = await getItem('history');
+        if (storedHistory) {
+            content = Content.fromJson(JSON.parse(storedHistory));
+            return content;
+        }
+    } catch (e) {
+        console.warn('failed to load history from localstorage', e);
+    }
+
+    return new Content({
+        id: uuidv4(),
+        type: {
+            case: 'browserHistory',
+            value: new History()
+        },
+        tags: []
+    })
+}
+
+const getHistory = async () => {
+    const content = await getHistoryContent();
+    return content.type.value as History;
+}
+
+const setHistory = async (h: History) => {
+    const content = await getHistoryContent();
+    const history = new Content({
+        id: content.id,
+        type: {
+            case: 'browserHistory',
+            value: h
+        },
+        tags: content.tags
+    });
+    void setItem('history', history.toJsonString());
+    //void saveContent(history);
+}
+
+async function saveContent(content: Content) {
+    try {
+        const resp = await contentService.save({
+            content: content,
+            related: []
+        });
+        console.log(resp);
+    } catch (e) {
+        console.error('failed to save', e)
+    }
+}
 
 const tabs = new Map<number, {
     created: number;
     closed: number;
-    tab: chrome.tabs.Tab
+    tab: chrome.tabs.Tab;
+    prev: chrome.tabs.Tab | undefined;
 }>();
 
 function extractUuidFromUrl(url: string): string | null {
@@ -26,18 +82,6 @@ function extractUuidFromUrl(url: string): string | null {
 }
 
 const chromeExt = () => {
-    async function saveContent(content: Content) {
-        try {
-            const resp = await contentService.save({
-                content: content,
-                related: []
-            });
-            console.log(resp);
-        } catch (e) {
-            console.error('failed to save', e)
-        }
-    }
-
     (
         async () => {
             const resp = await userService.login({}, {});
@@ -54,8 +98,12 @@ const chromeExt = () => {
         console.log('Extension Started');
     })
 
+    chrome.history.onVisited.addListener((result) => {
+        console.log('onVisited', result.url)
+    });
+
     chrome.webNavigation.onCommitted.addListener((details) => {
-        console.log('completed', details.url)
+        console.log('onCommitted', details.url)
     });
 
     function getTabDetails(tabId: number): Promise<chrome.tabs.Tab | undefined> {
@@ -71,22 +119,31 @@ const chromeExt = () => {
         });
     }
 
-    chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         // TODO breadchris replace with a typed action
         if (message.action === contentGet) {
             sendResponse({ data: tabContent });
             tabContent = undefined;
         }
-        if (message.action === contentSave) {
-            const content = Content.fromJson(message.data);
-            try {
-                await saveContent(content);
-            } catch (e) {
-                sendResponse({ data: { error: e } });
-                return;
-            }
-            sendResponse({ data: {} });
+        if (message.action === historyGet) {
+            (async () => {
+                const history = await getHistory();
+                sendResponse({ data: history.toJsonString(), status: true });
+            })();
         }
+        if (message.action === contentSave) {
+            (async () => {
+                const content = Content.fromJson(message.data);
+                try {
+                    await saveContent(content);
+                } catch (e) {
+                    sendResponse({data: {error: e}});
+                    return;
+                }
+                sendResponse({data: {}});
+            })();
+        }
+        return true;
     });
 
     chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
@@ -95,12 +152,45 @@ const chromeExt = () => {
         }
         const tabDetails = await getTabDetails(tabId);
         if (tabDetails) {
+            // console.log('onUpdated', tabId, changeInfo, tabDetails);
             const t = tabs.get(tabId);
             if (t) {
                 tabs.set(tabId, {
                     ...t,
-                    tab: tabDetails
+                    tab: tabDetails,
+                    prev: t.tab
                 });
+
+                if (changeInfo.status === 'complete') {
+                    console.log('onUpdated:complete', tabId, tabDetails.url, tabDetails);
+                    const history = await getHistory();
+
+                    if (tabDetails.url) {
+                        const newNode = new Node({
+                            id: uuidv4(),
+                            url: tabDetails.url,
+                            title: tabDetails.title || '',
+                        });
+                        const foundNode = history.nodes.find((n) => n.url === tabDetails.url);
+                        if (!foundNode) {
+                            history.nodes.push(newNode);
+                        }
+                        const n = foundNode || newNode;
+
+                        const prevNode = history.nodes.find((n) => n.url === t?.prev?.url);
+                        console.log("prev", prevNode, t);
+                        if (prevNode) {
+                            history.edges.push(new Edge({
+                                from: prevNode.id,
+                                to: n.id,
+                                visitTime: Date.now(),
+                                tab: tabId.toString()
+                            }));
+                        }
+                    }
+                    void setHistory(history);
+                    // TODO breadchris deal with tabDetails.openerTabId
+                }
             }
         }
     });
@@ -114,7 +204,8 @@ const chromeExt = () => {
             tabs.set(tab.id, {
                 created: Date.now(),
                 closed: -1,
-                tab: tabDetails
+                tab: tabDetails,
+                prev: undefined
             });
         }
     })
@@ -149,7 +240,7 @@ const chromeExt = () => {
                 }
                 // TODO breadchris auto collecting config
             }
-            console.log(`Visited URL: ${details.url}, Referrer: ${details.initiator}`);
+            console.log('onBeforeRequest', details.url, details);
         }, { urls: ["<all_urls>"] }, [])
 
     let headers: Record<string, HttpHeader[]> = {};
@@ -229,6 +320,7 @@ const chromeExt = () => {
 
     chrome.webRequest.onBeforeSendHeaders.addListener(
         (details) => {
+            //console.log('onBeforeSendHeaders', details.url, details);
             let refererValue = '';
             if (!details.requestHeaders) {
                 return;
@@ -237,7 +329,7 @@ const chromeExt = () => {
             if (extractUuidFromUrl(details.url)) {
                 seen[details.url.toString()] = s + 1;
                 headers[details.url.toString()] = details.requestHeaders;
-                console.log('send', details.url, details)
+                //console.log('send', details.url, details)
             }
             for (let header of details.requestHeaders) {
                 if (header.name.toLowerCase() === "referer" && header.value) {
@@ -253,7 +345,6 @@ const chromeExt = () => {
     );
 }
 
-console.log('asdf')
 chromeExt();
 
 export {};

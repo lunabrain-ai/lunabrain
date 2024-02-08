@@ -23,9 +23,19 @@ service ContentService {
   rpc SetTags(SetTagsRequest) returns (google.protobuf.Empty);
   rpc Publish(ContentIDs) returns (ContentIDs);
   rpc GetSources(GetSourcesRequest) returns (Sources);
+  rpc Infer(InferRequest) returns (stream InferResponse);
   rpc Types(google.protobuf.Empty) returns (TypesResponse);
   rpc VoiceInput(VoiceInputRequest) returns (stream VoiceInputResponse);
 }
+
+message InferRequest {
+  string prompt = 1;
+}
+
+message InferResponse {
+  string text = 1;
+}
+
 
 message TypesResponse {
   GRPCTypeInfo content = 1;

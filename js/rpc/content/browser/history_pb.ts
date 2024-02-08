@@ -64,14 +64,9 @@ export class Node extends Message<Node> {
   url = "";
 
   /**
-   * @generated from field: double visit_time = 3;
+   * @generated from field: string title = 3;
    */
-  visitTime = 0;
-
-  /**
-   * @generated from field: double visit_duration = 4;
-   */
-  visitDuration = 0;
+  title = "";
 
   constructor(data?: PartialMessage<Node>) {
     super();
@@ -83,8 +78,7 @@ export class Node extends Message<Node> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "visit_time", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
-    { no: 4, name: "visit_duration", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
+    { no: 3, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Node {
@@ -118,6 +112,21 @@ export class Edge extends Message<Edge> {
    */
   to = "";
 
+  /**
+   * @generated from field: string tab = 3;
+   */
+  tab = "";
+
+  /**
+   * @generated from field: double visit_time = 4;
+   */
+  visitTime = 0;
+
+  /**
+   * @generated from field: double visit_duration = 5;
+   */
+  visitDuration = 0;
+
   constructor(data?: PartialMessage<Edge>) {
     super();
     proto3.util.initPartial(data, this);
@@ -128,6 +137,9 @@ export class Edge extends Message<Edge> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "from", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "to", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "tab", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "visit_time", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
+    { no: 5, name: "visit_duration", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Edge {

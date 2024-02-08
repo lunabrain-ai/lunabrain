@@ -1,5 +1,5 @@
-import React, {FC, useEffect, useMemo, useRef, useState} from 'react';
-import { useEditor, EditorContent, Editor } from '@tiptap/react';
+import React, {FC, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useEditor, EditorContent, Editor, BubbleMenu} from '@tiptap/react';
 import BulletList from '@tiptap/extension-bullet-list';
 import ListItem from '@tiptap/extension-list-item';
 import Text from '@tiptap/extension-text';
@@ -15,20 +15,23 @@ import {
     PlusIcon,
     StopIcon
 } from "@heroicons/react/24/outline";
-import {postContent, siteContent, textContent, urlContent} from "../../extension/util";
-import {contentService} from "@/service";
+import {contentService, projectService} from "@/service";
 import toast from "react-hot-toast";
 import { RichTextLink } from './rich-text-links';
 import {AddTagBadge} from "@/tag/AddTagBadge";
-import {SectionEditor} from "@/source/SectionEditor";
 import {URLEditor} from "@/source/URLEditor";
 import History from '@tiptap/extension-history';
 import {Form, formControlAtom, useProtoForm} from "@/form/Form";
 import {Provider, useAtom} from "jotai";
 import {useForm} from "react-hook-form";
 import {cleanObject} from "@/util/form";
-import {Conversation} from "@/rpc/content/chatgpt/conversation_pb";
-import ReactMarkdown from "react-markdown";
+import {FileEditor} from "@/source/editors/FileEditor";
+import {SiteEditor} from "@/source/editors/SiteEditor";
+import {ChatGPTConversationEditor} from "@/source/editors/ChatGPTConversationEditor";
+import {commands} from "@/source/TiptapCommands";
+import {Bold} from "@tiptap/extension-bold";
+import {Italic} from "@tiptap/extension-italic";
+import {Strike} from "@tiptap/extension-strike";
 
 export const ContentEditor: React.FC<{}> = ({}) => {
     const settingsModal = useRef(null);
@@ -39,11 +42,17 @@ export const ContentEditor: React.FC<{}> = ({}) => {
 
     const fc = useForm();
     const { setValue } = fc;
+    const abortControllerRef = useRef<AbortController|undefined>(undefined);
 
     // TODO breadchris this will become problematic with multiple forms on the page, need provider
     useEffect(() => {
         void loadFormTypes();
         setFormControl(fc);
+        return () => {
+            if (abortControllerRef.current) {
+                abortControllerRef.current.abort();
+            }
+        };
     }, []);
 
     useEffect(() => {
@@ -99,6 +108,31 @@ export const ContentEditor: React.FC<{}> = ({}) => {
         }));
     }
 
+    const inferFromSelectedText = async (prompt: string) => {
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+        }
+        const controller = new AbortController();
+        abortControllerRef.current = controller;
+
+        try {
+            const res = contentService.infer({
+                prompt,
+            }, {
+                timeoutMs: undefined,
+                signal: controller.signal,
+            })
+            for await (const exec of res) {
+                editor?.chain().focus().insertContent(exec.text || '').run();
+            }
+        } catch (e: any) {
+            toast.error(e.message);
+            console.log(e);
+        } finally {
+            abortControllerRef.current = undefined;
+        }
+    }
+
     const editor = useEditor({
         extensions: [
             Document,
@@ -107,9 +141,12 @@ export const ContentEditor: React.FC<{}> = ({}) => {
             BulletList,
             ListItem,
             RichTextLink,
+            Bold,
+            Italic,
+            Strike,
             History.configure({
                 depth: 100,
-            })
+            }),
         ],
         onUpdate: ({ editor }) => {
             localStorage.setItem('editorContent', editor.getHTML());
@@ -178,6 +215,10 @@ export const ContentEditor: React.FC<{}> = ({}) => {
         }
     }
 
+    const onStop = () => {
+        abortControllerRef.current?.abort();
+    }
+
     const resetContent = () => {
         if (editor) {
             editor.commands.setContent('');
@@ -188,6 +229,23 @@ export const ContentEditor: React.FC<{}> = ({}) => {
         <div>
             <div className={""}>
                 {editor && <ContentTypeEditor content={content} onUpdate={editContent} editor={editor} />}
+                {editor && <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
+                    <button
+                        onClick={() => {
+                            const { view, state } = editor
+                            const { from, to } = view.state.selection
+                            const text = state.doc.textBetween(from, to, '')
+                            editor.commands.setTextSelection({from: to, to: to});
+                            editor.commands.enter();
+                            if (text) {
+                                void inferFromSelectedText(text)
+                            }
+                        }}
+                        className={'btn ' + editor.isActive('bold') ? 'is-active' : ''}
+                    >
+                        ai
+                    </button>
+                </BubbleMenu>}
                 <dialog id="my_modal_1" className="modal" ref={settingsModal}>
                     <div className="modal-box">
                         {fields && <Form fields={fields} />}
@@ -202,18 +260,18 @@ export const ContentEditor: React.FC<{}> = ({}) => {
                 </dialog>
             </div>
             <div className={"flex justify-between w-full"}>
-                <div className={"flex space-x-2"}>
-                    <VoiceInputButton onText={(text) => {
-                        if (editor) {
-                            editor.chain().focus().insertContent(text).run();
-                        }
-                    }} />
+                <div className={"flex flex-row space-x-2"}>
                     <AddTagBadge onNewTag={addTag} />
                     <span>
                         <button className={"btn"} onClick={() => settingsModal.current?.showModal()}>
                             <AdjustmentsHorizontalIcon className="h-6 w-6" />
                         </button>
                     </span>
+                    {abortControllerRef.current && (
+                        <button className={"btn"} onClick={onStop}>
+                            <StopIcon className="h-6 w-6" />
+                        </button>
+                    )}
                 </div>
                 <button className={"btn"} onClick={onSubmit}>
                     <PaperAirplaneIcon className="h-6 w-6" />
@@ -228,6 +286,7 @@ export const ContentEditor: React.FC<{}> = ({}) => {
     );
 };
 
+// TODO breadchris useful for when OS does not support voice input, browsers don't have great support
 const VoiceInputButton: React.FC<{onText: (text: string) => void}> = ({onText}) => {
     const { start, stop, recording } = useVoice();
     return (
@@ -246,94 +305,102 @@ const ContentTypeEditor: React.FC<{
     onUpdate: (content: Content) => void,
     editor: Editor,
 }> = ({content, editor, onUpdate}) => {
-    if (content) {
-        switch (content.type.case) {
-            case 'chatgptConversation':
-                return <ChatGPTConversationEditor
-                    className={'h-screen overflow-y-auto space-y-2'}
-                    conversation={content.type.value} onUpdate={(c) => {
-                    onUpdate(new Content({
-                        ...content,
-                        type: {
-                            case: 'chatgptConversation',
-                            value: c,
-                        }
-                    }));
-                }} />;
-            case 'site':
-                return (
-                    <SiteEditor site={content.type.value} onUpdate={(s) => {
+    const getContent = (content: Content|undefined) => {
+        if (content) {
+            switch (content.type.case) {
+                case 'chatgptConversation':
+                    return <ChatGPTConversationEditor
+                        className={'h-screen overflow-y-auto space-y-2'}
+                        conversation={content.type.value} onUpdate={(c) => {
                         onUpdate(new Content({
                             ...content,
                             type: {
-                                case: 'site',
-                                value: s,
+                                case: 'chatgptConversation',
+                                value: c,
                             }
                         }));
-                    }} />
-                )
-            case 'post':
-                const p = content.type.value;
-                return (
-                    <div className={"space-y-2"}>
-                        <input type="text" value={p.title} onChange={(e) => {
+                    }} />;
+                case 'site':
+                    return (
+                        <SiteEditor site={content.type.value} onUpdate={(s) => {
                             onUpdate(new Content({
                                 ...content,
                                 type: {
-                                    case: 'post',
-                                    value: {
-                                        ...p,
-                                        title: e.target.value,
-                                    }
-                                }
-                            }));
-                        }} placeholder="title" className="input w-full max-w-xs" />
-                        <EditorContent className={"max-h-72 overflow-y-auto"} editor={editor} />
-                    </div>
-                )
-            case 'data':
-                const d = content.type.value;
-                switch (d.type.case) {
-                    case 'file':
-                        return <FileEditor id={content.id} file={d.type.value} onChange={(file) => {
-                            onUpdate(new Content({
-                                ...content,
-                                type: {
-                                    case: 'data',
-                                    value: {
-                                        ...content.type.value,
-                                        type: {
-                                            case: 'file',
-                                            value: file,
-                                        }
-                                    }
+                                    case: 'site',
+                                    value: s,
                                 }
                             }));
                         }} />
-                    case 'url':
-                        const u = d.type.value;
-                        return <URLEditor id={content.id} url={u.url} onChange={(url) => {
-                            onUpdate(new Content({
-                                ...content,
-                                type: {
-                                    case: 'data',
-                                    value: {
-                                        ...content.type.value,
-                                        type: {
-                                            case: 'url',
-                                            value: {
-                                                ...u,
-                                                url: url,
+                    )
+                case 'post':
+                    const p = content.type.value;
+                    return (
+                        <div className={"space-y-2"}>
+                            <input type="text" value={p.title} onChange={(e) => {
+                                onUpdate(new Content({
+                                    ...content,
+                                    type: {
+                                        case: 'post',
+                                        value: {
+                                            ...p,
+                                            title: e.target.value,
+                                        }
+                                    }
+                                }));
+                            }} placeholder="title" className="input w-full max-w-xs" />
+                            <EditorContent className={"max-h-72 overflow-y-auto"} editor={editor} />
+                        </div>
+                    )
+                case 'data':
+                    const d = content.type.value;
+                    switch (d.type.case) {
+                        case 'file':
+                            return <FileEditor id={content.id} file={d.type.value} onChange={(file) => {
+                                onUpdate(new Content({
+                                    ...content,
+                                    type: {
+                                        case: 'data',
+                                        value: {
+                                            ...content.type.value,
+                                            type: {
+                                                case: 'file',
+                                                value: file,
                                             }
                                         }
                                     }
-                                }
-                            }));
-                        }} />
-                }
+                                }));
+                            }} />
+                        case 'url':
+                            const u = d.type.value;
+                            return <URLEditor id={content.id} url={u.url} onChange={(url) => {
+                                onUpdate(new Content({
+                                    ...content,
+                                    type: {
+                                        case: 'data',
+                                        value: {
+                                            ...content.type.value,
+                                            type: {
+                                                case: 'url',
+                                                value: {
+                                                    ...u,
+                                                    url: url,
+                                                }
+                                            }
+                                        }
+                                    }
+                                }));
+                            }} />
+                    }
+            }
         }
+        return <EditorContent className={"max-h-72 overflow-y-auto"} editor={editor} />;
+        return null;
     }
-    return <EditorContent className={"max-h-72 overflow-y-auto"} editor={editor} />;
+    return (
+        <div>
+            {getContent(content)}
+        </div>
+    );
 }
 
 const getContent = (content: Content|undefined) => {
@@ -354,192 +421,3 @@ const getContent = (content: Content|undefined) => {
     }
     return msg;
 }
-
-// TODO breadchris component only designed for audio files with transcripts
-const FileEditor: React.FC<{id: string, file: File, onChange: (file: File) => void}> = ({id, file, onChange}) => {
-    const [relatedContent, setRelatedContent] = useState<string[]>([]);
-    useEffect(() => {
-        (async () => {
-            const res = await contentService.search({
-                contentID: id,
-            });
-            res.storedContent.forEach((c) => {
-                c.related.forEach((r) => {
-                    switch (r.type.case) {
-                        case 'normalized':
-                            const n = r.type.value;
-                            switch (n.type.case) {
-                                case 'transcript':
-                                    console.log(n)
-                                    setRelatedContent([...relatedContent, n.type.value.segments.map(s => s.text).join(' ')]);
-                                    break;
-                            }
-                    }
-                });
-            });
-        })();
-    }, []);
-    return (
-        <>
-            <h5>{file.file}</h5>
-            <audio src={file.url} controls={true} />
-            <ul>
-                {relatedContent.map((c) => (
-                    <li key={c}>{c}</li>
-                ))}
-            </ul>
-        </>
-    )
-}
-
-const SiteEditor: React.FC<{site: Site, onUpdate: (s: Site) => void}> = ({site, onUpdate}) => {
-    const [sectionIdx, setSectionIdx] = useState<number|undefined>(undefined);
-    const deleteSection = () => {
-        onUpdate(new Site({
-            ...site,
-            sections: site.sections.filter((_, i) => i !== sectionIdx),
-        }));
-    }
-    useEffect(() => {
-        if (site.sections.length === 0) {
-            onUpdate(new Site({
-                ...site,
-                sections: [new Section({})],
-            }));
-        }
-        if (site.sections.length > 0 && sectionIdx === undefined) {
-            setSectionIdx(0);
-        }
-    }, [site]);
-    return (
-        <>
-            <div className="text-gray-600 px-3 py-2">
-                <h4 className="text-lg font-semibold">site: {site.hugoConfig?.title || 'untitled'}</h4>
-            </div>
-            <button className={"btn"} onClick={() => {
-                onUpdate(new Site({
-                    ...site,
-                    sections: [...site.sections, new Section({})],
-                }));
-            }}>
-                <PlusIcon className="h-6 w-6" />
-            </button>
-            <div className="tabs tabs-bordered my-6">
-                {site.sections.map((section, idx) => (
-                    <a
-                        className={`tab ${idx === sectionIdx ? 'tab-active' : ''}`}
-                        key={idx}
-                        onClick={() => setSectionIdx(idx)}
-                    >
-                        {section.menu?.name || 'untitled'}
-                    </a>
-                ))}
-            </div>
-            {sectionIdx !== undefined && (
-                <SectionEditor section={site.sections[sectionIdx]} onUpdate={(s: Section) => {
-                    onUpdate(new Site({
-                        ...site,
-                        sections: site.sections.map((section, idx) => {
-                            if (idx === sectionIdx) {
-                                return s;
-                            }
-                            return section;
-                        })
-                    }));
-                }} onDelete={deleteSection} />
-            )}
-        </>
-    )
-}
-
-const ChatGPTConversationEditor: FC<{
-    conversation: Conversation;
-    onUpdate: (c: Conversation) => void;
-    className?: string;
-}> = ({conversation, onUpdate, className}) => {
-    const [visible, setVisible] = useState<string[]>([]);
-    const [path, setPath] = useState<string[]>([]);
-    const root = Object.keys(conversation.mapping).find((k) => !conversation.mapping[k].parent);
-
-    const initPath = (initialKey: string, initialPath: string[]) => {
-        let currentKey = initialKey;
-
-        while (currentKey && conversation.mapping[currentKey].children.length > 0) {
-            initialPath.push(currentKey);
-            currentKey = conversation.mapping[currentKey].children[0]; // Select the first child
-        }
-
-        // Include the last node with no children
-        if (currentKey) {
-            initialPath.push(currentKey);
-        }
-
-        setPath(initialPath);
-    };
-
-    useEffect(() => {
-        if (root !== undefined) {
-            initPath(root, []);
-        }
-    }, [conversation]);
-
-    // Function to update the path when a sibling is selected
-    const handleSelectSibling = (nodeKey: string, level: number) => {
-        initPath(nodeKey, path.slice(0, level));
-    };
-
-    return (
-        <div className={`${className || ''} p-4 bg-gray-100 rounded-md shadow`}>
-            <div className="flex flex-col gap-2">
-                {path.map((nodeKey, index) => {
-                    const node = conversation.mapping[nodeKey];
-                    if (!node) {
-                        console.warn(`Node ${nodeKey} not found in conversation mapping`)
-                        return null;
-                    }
-                    const isVisible = visible.includes(nodeKey);
-                    const author = node.message?.author;
-                    const parentNode = conversation.mapping[node.parent ?? ''];
-                    const siblings = parentNode ? parentNode.children : [];
-                    const msg = node.message?.content?.textParts.join(' ');
-                    if (msg === undefined || msg === '') {
-                        console.log('skipping node', nodeKey, node.message?.content)
-                        return null;
-                    }
-
-                    return (
-                        <div key={nodeKey}>
-                            <div className={`chat ${author?.role !== 'user' ? 'chat-start' : 'chat-end'}`}>
-                                <div className="chat-header">{author?.role}</div>
-                                <div className={`chat-bubble overflow-x-auto ${isVisible ? 'max-h-32 overflow-hidden' : ''}`} onClick={() => {
-                                    // if (visible.includes(nodeKey)) {
-                                    //     setVisible(visible.filter((v) => v !== nodeKey));
-                                    // } else {
-                                    //     setVisible([...visible, nodeKey]);
-                                    // }
-                                }}>
-                                    <ReactMarkdown className={isVisible ? 'clamp' : ''}>
-                                        {msg}
-                                    </ReactMarkdown>
-                                </div>
-                            </div>
-                            {author?.role === 'user' && siblings.length > 1 && (
-                                <div className="flex gap-2 mt-2">
-                                    {siblings.map((siblingKey) => (
-                                        <button
-                                            key={siblingKey}
-                                            className={`max-w-sm text-ellipsis px-2 py-1 text-sm rounded ${siblingKey === nodeKey ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                                            onClick={() => handleSelectSibling(siblingKey, index)}
-                                        >
-                                            {conversation.mapping[siblingKey].message?.content?.textParts.join(' ')}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    );
-                })}
-            </div>
-        </div>
-    );
-};

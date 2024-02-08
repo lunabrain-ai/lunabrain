@@ -10,11 +10,13 @@ message History {
 message Node {
   string id = 1;
   string url = 2;
-  double visit_time = 3;
-  double visit_duration = 4;
+  string title = 3;
 }
 
 message Edge {
   string from = 1;
   string to = 2;
+  string tab = 3;
+  double visit_time = 4;
+  double visit_duration = 5;
 }

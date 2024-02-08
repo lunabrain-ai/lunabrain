@@ -4,20 +4,17 @@ import (
 	"context"
 	connect_go "github.com/bufbuild/connect-go"
 	"github.com/lunabrain-ai/lunabrain/pkg/gen"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
 	"github.com/reactivex/rxgo/v2"
 	"log/slog"
 )
 
-func (s *Service) Infer(ctx context.Context, c *connect_go.Request[gen.InferRequest], c2 *connect_go.ServerStream[gen.InferResponse]) error {
-	var content string
-	for _, t := range c.Msg.Text {
-		content += t + " "
-	}
+func (s *Service) Infer(ctx context.Context, r *connect_go.Request[content.InferRequest], c2 *connect_go.ServerStream[content.InferResponse]) error {
 	var (
 		obs rxgo.Observable
 		err error
 	)
-	obs, err = s.openai.Ask(c.Msg.Prompt, content)
+	obs, err = s.openai.PromptStream(ctx, r.Msg.Prompt)
 	if err != nil {
 		return err
 	}
@@ -28,7 +25,7 @@ func (s *Service) Infer(ctx context.Context, c *connect_go.Request[gen.InferRequ
 		if !ok {
 			return
 		}
-		if err := c2.Send(&gen.InferResponse{
+		if err := c2.Send(&content.InferResponse{
 			Text: s,
 		}); err != nil {
 			slog.Error("error sending token", "error", err)

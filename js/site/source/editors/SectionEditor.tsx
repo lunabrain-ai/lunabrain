@@ -101,7 +101,7 @@ export const SectionEditor: React.FC<{
                     }),
                 }));
             }} />
-            <div className={"flex space-x-2"}>
+            <div className={"flex flex-row space-x-2"}>
                 <AddTagBadge onNewTag={(tag) => {
                     void setSiteTags([...tags, tag]);
                 }} />

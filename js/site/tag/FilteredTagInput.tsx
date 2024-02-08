@@ -82,16 +82,15 @@ export const TagInput: React.FC<{
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="search by tag..."
                 className="input input-bordered w-full"
-                list="tags"
             />
             {debouncedOptions.length > 0 && (
-                <datalist id="tags">
+                <ul className={"p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52"}>
                     {debouncedOptions.map((option) => (
-                        <option key={option} onClick={() => onChange(option)}>
+                        <li key={option} onClick={() => onChange(option)}>
                             {option}
-                        </option>
+                        </li>
                     ))}
-                </datalist>
+                </ul>
             )}
         </div>
     );

@@ -29,10 +29,11 @@
     "webNavigation",
     "webRequest",
     "history",
-    "tabs"
+    "tabs",
+    "storage"
   ],
   "web_accessible_resources": [{
-    "resources": ["injected.js"],
+    "resources": ["injected.js", "tailwind.css"],
     "matches": ["<all_urls>"]
   }],
   "chrome_url_overrides": {

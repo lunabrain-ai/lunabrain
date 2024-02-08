@@ -5,7 +5,6 @@ import {MinusCircleIcon, HashtagIcon} from "@heroicons/react/24/outline";
 
 export const AddTagBadge: React.FC<{ onNewTag: (tag: string) => void }> = ({ onNewTag }) => {
     const [addingTag, setAddingTag] = useState(false);
-    const icon = addingTag ? <MinusCircleIcon className={"h-6 w-6"} /> : <HashtagIcon className={"h-6 w-6"} />;
     const [selectedTag, setSelectedTag] = useState<string>('');
     const onAddTag = (tag: string) => {
         if (tag) {
@@ -15,12 +14,12 @@ export const AddTagBadge: React.FC<{ onNewTag: (tag: string) => void }> = ({ onN
     };
 
     return (
-        <span>
+        <div>
             <button
                 className="btn"
                 onClick={() => setAddingTag(!addingTag)}
             >
-                {icon}
+                {addingTag ? <MinusCircleIcon className={"h-6 w-6"} /> : <HashtagIcon className={"h-6 w-6"} />}
             </button>
             {addingTag && (
                 <FilteredTagInput
@@ -29,6 +28,6 @@ export const AddTagBadge: React.FC<{ onNewTag: (tag: string) => void }> = ({ onN
                     onAddTag={onAddTag}
                 />
             )}
-        </span>
+        </div>
     );
 };

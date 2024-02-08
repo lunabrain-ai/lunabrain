@@ -4,7 +4,7 @@ import {NewSaveWizard} from "./NewSaveWizard";
 import {urlContent} from "./util";
 import {atom} from "jotai";
 import {Content} from "@/rpc/content/content_pb";
-import {useAtom} from "jotai/index";
+import {useAtom} from "jotai";
 
 interface FloatingPanelProps {}
 

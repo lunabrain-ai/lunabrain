@@ -126,28 +126,34 @@ export const SourcePage: React.FC = () => {
                 )}
                 {selected && (
                     // <ContentCards displayContent={selected.displayContent} />
-                    <div className={"overflow-x-auto"}>
-                        <details className={"dropdown"}>
-                            <summary className={"btn"}>type</summary>
-                            <ul className={"p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52"}>
-                                <li onClick={toggleType('site')}>site</li>
-                                <li onClick={toggleType('post')}>post</li>
-                            </ul>
-                        </details>
-                        <AddTagBadge onNewTag={(t) => {
-                            setTags((tags) => {
-                                if (tags.includes(t)) {
-                                    return tags;
-                                }
-                                return [...tags, t];
-                            });
-                        }} />
-                        {tags.map((tag) => (
-                            <span key={tag} className="badge badge-outline badge-sm" onClick={() => {
-                                setTags((tags) => tags.filter((t) => t !== tag));
-                            }}>{tag}</span>
-                        ))}
-                        <ContentTable displayContent={selected.displayContent} />
+                    <div className={"flex flex-col"}>
+                        <div className={"flex flex-row space-y-2"}>
+                            <div>
+                                <details className={"dropdown"}>
+                                    <summary className={"btn"}>type</summary>
+                                    <ul className={"p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52"}>
+                                        <li onClick={toggleType('site')}>site</li>
+                                        <li onClick={toggleType('post')}>post</li>
+                                    </ul>
+                                </details>
+                            </div>
+                            <AddTagBadge onNewTag={(t) => {
+                                setTags((tags) => {
+                                    if (tags.includes(t)) {
+                                        return tags;
+                                    }
+                                    return [...tags, t];
+                                });
+                            }} />
+                            {tags.map((tag) => (
+                                <span key={tag} className="badge badge-outline badge-sm" onClick={() => {
+                                    setTags((tags) => tags.filter((t) => t !== tag));
+                                }}>{tag}</span>
+                            ))}
+                        </div>
+                        <div className={"overflow-x-auto"}>
+                            <ContentTable displayContent={selected.displayContent} />
+                        </div>
                     </div>
                 )}
             </div>

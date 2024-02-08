@@ -33,3 +33,6 @@ plugins:
   - plugin: buf.build/apple/swift
     opt: Visibility=Public
     out: swift/Generated
+#  - plugin: elm
+#    opt: json
+#    out: ./js/elm/gen

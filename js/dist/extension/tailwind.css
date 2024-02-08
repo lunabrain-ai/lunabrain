@@ -4902,6 +4902,11 @@ details.collapse summary::-webkit-details-marker {
   margin-right: 0.25rem;
 }
 
+.mx-\[3vw\] {
+  margin-left: 3vw;
+  margin-right: 3vw;
+}
+
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
@@ -4922,6 +4927,10 @@ details.collapse summary::-webkit-details-marker {
 
 .mt-4 {
   margin-top: 1rem;
+}
+
+.mt-8 {
+  margin-top: 2rem;
 }
 
 .block {
@@ -5376,6 +5385,10 @@ details.collapse summary::-webkit-details-marker {
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
+.line-through {
+  text-decoration-line: line-through;
+}
+
 .opacity-50 {
   opacity: 0.5;
 }
@@ -5441,6 +5454,11 @@ details.collapse summary::-webkit-details-marker {
 }
 
 @media (min-width: 1024px) {
+  .lg\:mx-\[6vw\] {
+    margin-left: 6vw;
+    margin-right: 6vw;
+  }
+
   .lg\:px-20 {
     padding-left: 5rem;
     padding-right: 5rem;

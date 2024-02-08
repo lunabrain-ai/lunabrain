@@ -53,6 +53,8 @@ const (
 	// ContentServiceGetSourcesProcedure is the fully-qualified name of the ContentService's GetSources
 	// RPC.
 	ContentServiceGetSourcesProcedure = "/content.ContentService/GetSources"
+	// ContentServiceInferProcedure is the fully-qualified name of the ContentService's Infer RPC.
+	ContentServiceInferProcedure = "/content.ContentService/Infer"
 	// ContentServiceTypesProcedure is the fully-qualified name of the ContentService's Types RPC.
 	ContentServiceTypesProcedure = "/content.ContentService/Types"
 	// ContentServiceVoiceInputProcedure is the fully-qualified name of the ContentService's VoiceInput
@@ -71,6 +73,7 @@ type ContentServiceClient interface {
 	SetTags(context.Context, *connect_go.Request[content.SetTagsRequest]) (*connect_go.Response[emptypb.Empty], error)
 	Publish(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
 	GetSources(context.Context, *connect_go.Request[content.GetSourcesRequest]) (*connect_go.Response[content.Sources], error)
+	Infer(context.Context, *connect_go.Request[content.InferRequest]) (*connect_go.ServerStreamForClient[content.InferResponse], error)
 	Types(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.TypesResponse], error)
 	VoiceInput(context.Context, *connect_go.Request[content.VoiceInputRequest]) (*connect_go.ServerStreamForClient[content.VoiceInputResponse], error)
 }
@@ -130,6 +133,11 @@ func NewContentServiceClient(httpClient connect_go.HTTPClient, baseURL string, o
 			baseURL+ContentServiceGetSourcesProcedure,
 			opts...,
 		),
+		infer: connect_go.NewClient[content.InferRequest, content.InferResponse](
+			httpClient,
+			baseURL+ContentServiceInferProcedure,
+			opts...,
+		),
 		types: connect_go.NewClient[emptypb.Empty, content.TypesResponse](
 			httpClient,
 			baseURL+ContentServiceTypesProcedure,
@@ -154,6 +162,7 @@ type contentServiceClient struct {
 	setTags    *connect_go.Client[content.SetTagsRequest, emptypb.Empty]
 	publish    *connect_go.Client[content.ContentIDs, content.ContentIDs]
 	getSources *connect_go.Client[content.GetSourcesRequest, content.Sources]
+	infer      *connect_go.Client[content.InferRequest, content.InferResponse]
 	types      *connect_go.Client[emptypb.Empty, content.TypesResponse]
 	voiceInput *connect_go.Client[content.VoiceInputRequest, content.VoiceInputResponse]
 }
@@ -203,6 +212,11 @@ func (c *contentServiceClient) GetSources(ctx context.Context, req *connect_go.R
 	return c.getSources.CallUnary(ctx, req)
 }
 
+// Infer calls content.ContentService.Infer.
+func (c *contentServiceClient) Infer(ctx context.Context, req *connect_go.Request[content.InferRequest]) (*connect_go.ServerStreamForClient[content.InferResponse], error) {
+	return c.infer.CallServerStream(ctx, req)
+}
+
 // Types calls content.ContentService.Types.
 func (c *contentServiceClient) Types(ctx context.Context, req *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.TypesResponse], error) {
 	return c.types.CallUnary(ctx, req)
@@ -224,6 +238,7 @@ type ContentServiceHandler interface {
 	SetTags(context.Context, *connect_go.Request[content.SetTagsRequest]) (*connect_go.Response[emptypb.Empty], error)
 	Publish(context.Context, *connect_go.Request[content.ContentIDs]) (*connect_go.Response[content.ContentIDs], error)
 	GetSources(context.Context, *connect_go.Request[content.GetSourcesRequest]) (*connect_go.Response[content.Sources], error)
+	Infer(context.Context, *connect_go.Request[content.InferRequest], *connect_go.ServerStream[content.InferResponse]) error
 	Types(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.TypesResponse], error)
 	VoiceInput(context.Context, *connect_go.Request[content.VoiceInputRequest], *connect_go.ServerStream[content.VoiceInputResponse]) error
 }
@@ -279,6 +294,11 @@ func NewContentServiceHandler(svc ContentServiceHandler, opts ...connect_go.Hand
 		svc.GetSources,
 		opts...,
 	)
+	contentServiceInferHandler := connect_go.NewServerStreamHandler(
+		ContentServiceInferProcedure,
+		svc.Infer,
+		opts...,
+	)
 	contentServiceTypesHandler := connect_go.NewUnaryHandler(
 		ContentServiceTypesProcedure,
 		svc.Types,
@@ -309,6 +329,8 @@ func NewContentServiceHandler(svc ContentServiceHandler, opts ...connect_go.Hand
 			contentServicePublishHandler.ServeHTTP(w, r)
 		case ContentServiceGetSourcesProcedure:
 			contentServiceGetSourcesHandler.ServeHTTP(w, r)
+		case ContentServiceInferProcedure:
+			contentServiceInferHandler.ServeHTTP(w, r)
 		case ContentServiceTypesProcedure:
 			contentServiceTypesHandler.ServeHTTP(w, r)
 		case ContentServiceVoiceInputProcedure:
@@ -356,6 +378,10 @@ func (UnimplementedContentServiceHandler) Publish(context.Context, *connect_go.R
 
 func (UnimplementedContentServiceHandler) GetSources(context.Context, *connect_go.Request[content.GetSourcesRequest]) (*connect_go.Response[content.Sources], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.GetSources is not implemented"))
+}
+
+func (UnimplementedContentServiceHandler) Infer(context.Context, *connect_go.Request[content.InferRequest], *connect_go.ServerStream[content.InferResponse]) error {
+	return connect_go.NewError(connect_go.CodeUnimplemented, errors.New("content.ContentService.Infer is not implemented"))
 }
 
 func (UnimplementedContentServiceHandler) Types(context.Context, *connect_go.Request[emptypb.Empty]) (*connect_go.Response[content.TypesResponse], error) {

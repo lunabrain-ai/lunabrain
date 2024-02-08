@@ -11,6 +11,80 @@ import { History } from "./browser/history_pb.js";
 import { HugoConfig, MenuItem } from "./blog_pb.js";
 
 /**
+ * @generated from message content.InferRequest
+ */
+export class InferRequest extends Message<InferRequest> {
+  /**
+   * @generated from field: string prompt = 1;
+   */
+  prompt = "";
+
+  constructor(data?: PartialMessage<InferRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.InferRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "prompt", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): InferRequest {
+    return new InferRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): InferRequest {
+    return new InferRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): InferRequest {
+    return new InferRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: InferRequest | PlainMessage<InferRequest> | undefined, b: InferRequest | PlainMessage<InferRequest> | undefined): boolean {
+    return proto3.util.equals(InferRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message content.InferResponse
+ */
+export class InferResponse extends Message<InferResponse> {
+  /**
+   * @generated from field: string text = 1;
+   */
+  text = "";
+
+  constructor(data?: PartialMessage<InferResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "content.InferResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "text", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): InferResponse {
+    return new InferResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): InferResponse {
+    return new InferResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): InferResponse {
+    return new InferResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: InferResponse | PlainMessage<InferResponse> | undefined, b: InferResponse | PlainMessage<InferResponse> | undefined): boolean {
+    return proto3.util.equals(InferResponse, a, b);
+  }
+}
+
+/**
  * @generated from message content.TypesResponse
  */
 export class TypesResponse extends Message<TypesResponse> {

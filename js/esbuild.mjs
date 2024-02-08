@@ -1,6 +1,7 @@
 import esbuild from "esbuild";
 import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
 import { spawn, spawnSync } from "child_process";
+import ElmPlugin from 'esbuild-plugin-elm';
 
 const releaseBuild = process.env.BUILD === 'true'
 const targets = (process.env.TARGETS || '').split(',')
@@ -34,6 +35,13 @@ const baseOptions = {
         // TODO breadchris use swc over tsc
         // swcPlugin(),
         NodeModulesPolyfillPlugin(),
+        // https://www.npmjs.com/package/react-elm-components
+        // ElmPlugin({
+        //     debug: true,
+        //     optimize: isProd,
+        //     clearOnWatch: watch,
+        //     verbose: true,
+        // }),
     ],
     minify: releaseBuild || buildStream,
     // sourcemap: 'external',
@@ -76,9 +84,7 @@ const runTailwindBuild = (target, watch, outfile) => {
 
 async function doBuild(target, options, port) {
     // TODO breadchris support tailwind for extension
-    if (buildSite||buildStream) {
-        runTailwindBuild(target, !releaseBuild, `${options.outdir}/tailwind.css`);
-    }
+    runTailwindBuild(target, !releaseBuild, `${options.outdir}/tailwind.css`);
     if (releaseBuild) {
         await esbuild.build(options);
     } else {

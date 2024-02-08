@@ -43,9 +43,7 @@ public struct Browser_Node {
 
   public var url: String = String()
 
-  public var visitTime: Double = 0
-
-  public var visitDuration: Double = 0
+  public var title: String = String()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -60,6 +58,12 @@ public struct Browser_Edge {
   public var from: String = String()
 
   public var to: String = String()
+
+  public var tab: String = String()
+
+  public var visitTime: Double = 0
+
+  public var visitDuration: Double = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -119,8 +123,7 @@ extension Browser_Node: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "id"),
     2: .same(proto: "url"),
-    3: .standard(proto: "visit_time"),
-    4: .standard(proto: "visit_duration"),
+    3: .same(proto: "title"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -131,8 +134,7 @@ extension Browser_Node: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.url) }()
-      case 3: try { try decoder.decodeSingularDoubleField(value: &self.visitTime) }()
-      case 4: try { try decoder.decodeSingularDoubleField(value: &self.visitDuration) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self.title) }()
       default: break
       }
     }
@@ -145,11 +147,8 @@ extension Browser_Node: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     if !self.url.isEmpty {
       try visitor.visitSingularStringField(value: self.url, fieldNumber: 2)
     }
-    if self.visitTime != 0 {
-      try visitor.visitSingularDoubleField(value: self.visitTime, fieldNumber: 3)
-    }
-    if self.visitDuration != 0 {
-      try visitor.visitSingularDoubleField(value: self.visitDuration, fieldNumber: 4)
+    if !self.title.isEmpty {
+      try visitor.visitSingularStringField(value: self.title, fieldNumber: 3)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -157,8 +156,7 @@ extension Browser_Node: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
   public static func ==(lhs: Browser_Node, rhs: Browser_Node) -> Bool {
     if lhs.id != rhs.id {return false}
     if lhs.url != rhs.url {return false}
-    if lhs.visitTime != rhs.visitTime {return false}
-    if lhs.visitDuration != rhs.visitDuration {return false}
+    if lhs.title != rhs.title {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -169,6 +167,9 @@ extension Browser_Edge: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "from"),
     2: .same(proto: "to"),
+    3: .same(proto: "tab"),
+    4: .standard(proto: "visit_time"),
+    5: .standard(proto: "visit_duration"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -179,6 +180,9 @@ extension Browser_Edge: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self.from) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.to) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self.tab) }()
+      case 4: try { try decoder.decodeSingularDoubleField(value: &self.visitTime) }()
+      case 5: try { try decoder.decodeSingularDoubleField(value: &self.visitDuration) }()
       default: break
       }
     }
@@ -191,12 +195,24 @@ extension Browser_Edge: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     if !self.to.isEmpty {
       try visitor.visitSingularStringField(value: self.to, fieldNumber: 2)
     }
+    if !self.tab.isEmpty {
+      try visitor.visitSingularStringField(value: self.tab, fieldNumber: 3)
+    }
+    if self.visitTime != 0 {
+      try visitor.visitSingularDoubleField(value: self.visitTime, fieldNumber: 4)
+    }
+    if self.visitDuration != 0 {
+      try visitor.visitSingularDoubleField(value: self.visitDuration, fieldNumber: 5)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Browser_Edge, rhs: Browser_Edge) -> Bool {
     if lhs.from != rhs.from {return false}
     if lhs.to != rhs.to {return false}
+    if lhs.tab != rhs.tab {return false}
+    if lhs.visitTime != rhs.visitTime {return false}
+    if lhs.visitDuration != rhs.visitDuration {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
