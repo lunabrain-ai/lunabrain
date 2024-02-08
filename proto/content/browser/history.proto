@@ -11,6 +11,8 @@ message Node {
   string id = 1;
   string url = 2;
   string title = 3;
+  double open = 4;
+  double close = 5;
 }
 
 message Edge {

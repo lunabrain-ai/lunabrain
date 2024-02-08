@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {History} from "./History";
+import {BrowserHistory} from "./BrowserHistory";
 import {FloatingPanel} from "./FloatingPanel";
 import {Journey} from "./Journey";
 
@@ -15,6 +15,6 @@ root.render(
     <React.StrictMode>
         <FloatingPanel />
         {/*<Journey />*/}
-        <History />
+        <BrowserHistory />
     </React.StrictMode>
 );

@@ -68,6 +68,16 @@ export class Node extends Message<Node> {
    */
   title = "";
 
+  /**
+   * @generated from field: double open = 4;
+   */
+  open = 0;
+
+  /**
+   * @generated from field: double close = 5;
+   */
+  close = 0;
+
   constructor(data?: PartialMessage<Node>) {
     super();
     proto3.util.initPartial(data, this);
@@ -79,6 +89,8 @@ export class Node extends Message<Node> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "title", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "open", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
+    { no: 5, name: "close", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Node {

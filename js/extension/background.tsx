@@ -1,6 +1,6 @@
 /// <reference types="chrome"/>
 import {contentService, projectService, userService} from "@/service";
-import {contentGet, contentSave, historyGet, TabContent} from "./shared";
+import {contentGet, contentSave, historyDelete, historyGet, TabContent} from "./shared";
 import { Content } from "@/rpc/content/content_pb";
 import HttpHeader = chrome.webRequest.HttpHeader;
 import {Conversation, ImageAsset, Content as ConvContent} from "@/rpc/content/chatgpt/conversation_pb";
@@ -43,16 +43,17 @@ const getHistory = async () => {
 }
 
 const setHistory = async (h: History) => {
-    const content = await getHistoryContent();
+    const c = await getHistoryContent();
     const history = new Content({
-        id: content.id,
+        id: c.id,
         type: {
             case: 'browserHistory',
             value: h
         },
-        tags: content.tags
+        tags: c.tags
     });
     void setItem('history', history.toJsonString());
+    content = history;
     //void saveContent(history);
 }
 
@@ -131,6 +132,12 @@ const chromeExt = () => {
                 sendResponse({ data: history.toJsonString(), status: true });
             })();
         }
+        if (message.action === historyDelete) {
+            (async () => {
+                await setHistory(new History());
+                sendResponse({ data: {}, status: true });
+            })();
+        }
         if (message.action === contentSave) {
             (async () => {
                 const content = Content.fromJson(message.data);
@@ -170,6 +177,8 @@ const chromeExt = () => {
                             id: uuidv4(),
                             url: tabDetails.url,
                             title: tabDetails.title || '',
+                            open: Date.now(),
+                            close: -1
                         });
                         const foundNode = history.nodes.find((n) => n.url === tabDetails.url);
                         if (!foundNode) {
@@ -180,6 +189,10 @@ const chromeExt = () => {
                         const prevNode = history.nodes.find((n) => n.url === t?.prev?.url);
                         console.log("prev", prevNode, t);
                         if (prevNode) {
+                            history.nodes[history.nodes.findIndex((n) => n.id === prevNode.id)] = new Node({
+                                ...prevNode,
+                                close: Date.now()
+                            });
                             history.edges.push(new Edge({
                                 from: prevNode.id,
                                 to: n.id,

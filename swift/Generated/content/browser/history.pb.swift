@@ -45,6 +45,10 @@ public struct Browser_Node {
 
   public var title: String = String()
 
+  public var `open`: Double = 0
+
+  public var close: Double = 0
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -124,6 +128,8 @@ extension Browser_Node: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     1: .same(proto: "id"),
     2: .same(proto: "url"),
     3: .same(proto: "title"),
+    4: .same(proto: "open"),
+    5: .same(proto: "close"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -135,6 +141,8 @@ extension Browser_Node: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
       case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.url) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.title) }()
+      case 4: try { try decoder.decodeSingularDoubleField(value: &self.`open`) }()
+      case 5: try { try decoder.decodeSingularDoubleField(value: &self.close) }()
       default: break
       }
     }
@@ -150,6 +158,12 @@ extension Browser_Node: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     if !self.title.isEmpty {
       try visitor.visitSingularStringField(value: self.title, fieldNumber: 3)
     }
+    if self.`open` != 0 {
+      try visitor.visitSingularDoubleField(value: self.`open`, fieldNumber: 4)
+    }
+    if self.close != 0 {
+      try visitor.visitSingularDoubleField(value: self.close, fieldNumber: 5)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -157,6 +171,8 @@ extension Browser_Node: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     if lhs.id != rhs.id {return false}
     if lhs.url != rhs.url {return false}
     if lhs.title != rhs.title {return false}
+    if lhs.`open` != rhs.`open` {return false}
+    if lhs.close != rhs.close {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

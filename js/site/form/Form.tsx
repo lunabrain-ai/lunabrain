@@ -22,7 +22,6 @@ import {FieldDescriptorProto_Type} from "@bufbuild/protobuf";
 import {atom, createStore, Provider, useAtom} from "jotai";
 import {Content, TypesResponse} from "@/rpc/content/content_pb";
 import {contentService} from "@/service";
-import {cleanObject} from "@/util/form";
 
 export type FormControl = {
     control: Control;

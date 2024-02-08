@@ -17,12 +17,9 @@ export const SourcePage: React.FC = () => {
     const {
         sources,
         types,
-        selected,
         setSelected,
-        setTypes,
         getSources,
         tags,
-        setTags
     } = useSources();
     const {editContent} = useContentEditor();
     const { id } = useParams();
@@ -66,15 +63,6 @@ export const SourcePage: React.FC = () => {
         }
     }
 
-    const toggleType = (type: string) => async () => {
-        setTypes((types) => {
-            if (types.includes(type)) {
-                return types.filter((t) => t !== type);
-            }
-            return [...types, type];
-        });
-    }
-
     if (!sources) {
         return (
             <div className="loading loading-lg"></div>
@@ -88,6 +76,9 @@ export const SourcePage: React.FC = () => {
                 </div>
                 <div className="flex-none">
                     <ul className="menu menu-horizontal px-1">
+                        <li>
+                            <ContentDrawer />
+                        </li>
                         <li>
                             <details className={"dropdown"}>
                                 <summary>new</summary>
@@ -121,12 +112,41 @@ export const SourcePage: React.FC = () => {
                         </div>
                     </div>
                 </FileDrop>
-                {sources.length > 1 && (
-                    <Tabs sources={sources} selected={selected} onSelectSource={handleSelectSource} />
-                )}
+                {/*{sources.length > 1 && (*/}
+                {/*    <Tabs sources={sources} selected={selected} onSelectSource={handleSelectSource} />*/}
+                {/*)}*/}
+            </div>
+        </div>
+    );
+}
+
+const ContentDrawer: React.FC<{}> = () => {
+    const {
+        selected,
+        setTypes,
+        setTags,
+        tags,
+    } = useSources();
+
+    const toggleType = (type: string) => async () => {
+        setTypes((types) => {
+            if (types.includes(type)) {
+                return types.filter((t) => t !== type);
+            }
+            return [...types, type];
+        });
+    }
+    return (
+        <div className="drawer z-50">
+            <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+            <div className="drawer-content">
+                <label htmlFor="my-drawer" className="drawer-button">your shit</label>
+            </div>
+            <div className="drawer-side">
+                <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
                 {selected && (
                     // <ContentCards displayContent={selected.displayContent} />
-                    <div className={"flex flex-col"}>
+                    <div className={"flex flex-col p-4 w-80 min-h-full bg-base-200 text-base-content"}>
                         <div className={"flex flex-row space-y-2"}>
                             <div>
                                 <details className={"dropdown"}>
@@ -158,7 +178,7 @@ export const SourcePage: React.FC = () => {
                 )}
             </div>
         </div>
-    );
+    )
 }
 
 const ContentTable: React.FC<{displayContent: DisplayContent[]}> = ({displayContent}) => {
@@ -202,7 +222,6 @@ const ContentTable: React.FC<{displayContent: DisplayContent[]}> = ({displayCont
                 )}</th>
                 <th>title</th>
                 <th>tags</th>
-                <th>description</th>
             </tr>
             </thead>
             <tbody>
@@ -224,7 +243,6 @@ const ContentTable: React.FC<{displayContent: DisplayContent[]}> = ({displayCont
                             ))}
                         </div>
                     </td>
-                    <td className="max-w-xs truncate text-gray-500 font-normal">{item.description}</td>
                 </tr>
             ))}
             </tbody>
