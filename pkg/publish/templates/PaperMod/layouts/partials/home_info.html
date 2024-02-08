@@ -9,5 +9,15 @@
     <footer class="entry-footer">
         {{ partial "social_icons.html" (dict "align" site.Params.homeInfoParams.AlignSocialIconsTo) }}
     </footer>
+    <form
+            action="https://buttondown.email/api/emails/embed-subscribe/breadchris"
+            method="post"
+            target="popupwindow"
+            onsubmit="window.open('https://buttondown.email/breadchris', 'popupwindow')"
+            class="embeddable-buttondown-form"
+    >
+        <input type="email" name="email" id="bd-input" placeholder="join the email list" />
+        <input type="submit" id="bd-submit" value="Subscribe" />
+    </form>
 </article>
 {{- end -}}
