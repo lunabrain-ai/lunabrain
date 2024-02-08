@@ -32,10 +32,18 @@ import {commands} from "@/source/TiptapCommands";
 import {Bold} from "@tiptap/extension-bold";
 import {Italic} from "@tiptap/extension-italic";
 import {Strike} from "@tiptap/extension-strike";
+import {ContentDrawer} from "@/source/ContentDrawer";
+import {postContent, siteContent, urlContent} from "../../extension/util";
 
 export const ContentEditor: React.FC<{}> = ({}) => {
     const settingsModal = useRef(null);
-    const { editedContent: content, editContent, selectedContent } = useContentEditor();
+    const {
+        editedContent: content,
+        editContent, selectedContent,
+        newContent,
+        setNewContent,
+        changeContent
+    } = useContentEditor();
     const { getSources } = useSources();
     const [formControl, setFormControl] = useAtom(formControlAtom);
     const {fields, loadFormTypes} = useProtoForm();
@@ -59,22 +67,16 @@ export const ContentEditor: React.FC<{}> = ({}) => {
         // anytime the content changes outside of this editor, update the editor
         if (content) {
             setValue('data', content.toJson() as any);
-
-            // TODO breadchris we probably want to have this, but it causes the editor to lose focus
-            // if (editor) {
-            //     editor.commands.setContent(getContent(content));
-            // }
         }
-        // editContent(new Content({
-        //     type: {
-        //         case: 'post',
-        //         value: {
-        //             title: '',
-        //             content: localStorage.getItem('editorContent') || '',
-        //         }
-        //     },
-        // }));
     }, [content]);
+
+    useEffect(() => {
+        // handle editor updates independently since content will be updated every editor change
+        if (editor) {
+            editor.commands.setContent(getContent(content));
+        }
+        setNewContent(false);
+    }, [newContent]);
 
     useEffect(() => {
         if (selectedContent) {
@@ -226,8 +228,18 @@ export const ContentEditor: React.FC<{}> = ({}) => {
     }
 
     return (
-        <div>
-            <div className={""}>
+        <div className={"sm:mx-4 lg:mx-16"}>
+            <div className="mb-16 flex flex-col">
+                <div className="flex flex-row justify-between">
+                    <span>
+                        {content?.tags.map((tag) => (
+                            <span key={tag} className="badge badge-outline badge-sm" onClick={() => removeTag(tag)}>{tag}</span>
+                        ))}
+                    </span>
+                    <button onClick={() => settingsModal.current?.showModal()}>
+                        <AdjustmentsHorizontalIcon className="h-6 w-6" />
+                    </button>
+                </div>
                 {editor && <ContentTypeEditor content={content} onUpdate={editContent} editor={editor} />}
                 {editor && <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
                     <button
@@ -259,29 +271,39 @@ export const ContentEditor: React.FC<{}> = ({}) => {
                     </div>
                 </dialog>
             </div>
-            <div className={"flex justify-between w-full"}>
-                <div className={"flex flex-row space-x-2"}>
-                    <AddTagBadge onNewTag={addTag} />
-                    <span>
-                        <button className={"btn"} onClick={() => settingsModal.current?.showModal()}>
-                            <AdjustmentsHorizontalIcon className="h-6 w-6" />
-                        </button>
-                    </span>
-                    {abortControllerRef.current && (
-                        <button className={"btn"} onClick={onStop}>
-                            <StopIcon className="h-6 w-6" />
-                        </button>
-                    )}
-                </div>
-                <button className={"btn"} onClick={onSubmit}>
+            <div className="btm-nav">
+                <ContentDrawer />
+                <details className={"dropdown dropdown-top flex"}>
+                    <summary tabIndex={0} className={"btn"}>
+                        <PlusIcon className="h-6 w-6" />
+                    </summary>
+                    <ul tabIndex={0} className={"dropdown-content z-50 menu p-2 shadow bg-base-100 rounded-box w-52"}>
+                        <li onClick={() => {
+                            changeContent(urlContent('https://example.com', []));
+                        }}><a>url</a></li>
+                        <li onClick={() => {
+                            console.log('hello')
+                            changeContent(postContent("Don't think, write."));
+                        }}>
+                            <a>post</a>
+                        </li>
+                        <li onClick={() => {
+                            changeContent(siteContent());
+                        }}>
+                            <a>site</a>
+                        </li>
+                    </ul>
+                </details>
+                <AddTagBadge onNewTag={addTag} />
+                {abortControllerRef.current && (
+                    <button onClick={onStop}>
+                        <StopIcon className="h-6 w-6" />
+                    </button>
+                )}
+                <button onClick={onSubmit}>
                     <PaperAirplaneIcon className="h-6 w-6" />
                 </button>
             </div>
-            <span>
-                {content?.tags.map((tag) => (
-                    <span key={tag} className="badge badge-outline badge-sm" onClick={() => removeTag(tag)}>{tag}</span>
-                ))}
-            </span>
         </div>
     );
 };
@@ -310,7 +332,7 @@ const ContentTypeEditor: React.FC<{
             switch (content.type.case) {
                 case 'chatgptConversation':
                     return <ChatGPTConversationEditor
-                        className={'h-screen overflow-y-auto space-y-2'}
+                        className={'space-y-2'}
                         conversation={content.type.value} onUpdate={(c) => {
                         onUpdate(new Content({
                             ...content,
@@ -348,7 +370,7 @@ const ContentTypeEditor: React.FC<{
                                     }
                                 }));
                             }} placeholder="title" className="input w-full max-w-xs" />
-                            <EditorContent className={"max-h-72 overflow-y-auto"} editor={editor} />
+                            <EditorContent editor={editor} />
                         </div>
                     )
                 case 'data':
@@ -393,8 +415,7 @@ const ContentTypeEditor: React.FC<{
                     }
             }
         }
-        return <EditorContent className={"max-h-72 overflow-y-auto"} editor={editor} />;
-        return null;
+        return <EditorContent editor={editor} />;
     }
     return (
         <div>

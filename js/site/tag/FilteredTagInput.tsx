@@ -75,7 +75,7 @@ export const TagInput: React.FC<{
     const debouncedOptions = useDebounce(matchingOptions, 300);
 
     return (
-        <div className="max-w-md">
+        <>
             <input
                 type="text"
                 value={value}
@@ -86,12 +86,14 @@ export const TagInput: React.FC<{
             {debouncedOptions.length > 0 && (
                 <ul className={"p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52"}>
                     {debouncedOptions.map((option) => (
-                        <li key={option} onClick={() => onChange(option)}>
-                            {option}
+                        <li key={option}>
+                            <a onClick={() => {
+                                onChange(option)
+                            }}>{option}</a>
                         </li>
                     ))}
                 </ul>
             )}
-        </div>
+        </>
     );
 };

@@ -39,57 +39,55 @@ export const ChatGPTConversationEditor: FC<{
     };
 
     return (
-        <div className={`${className || ''} p-4 bg-gray-100 rounded-md shadow`}>
-            <div className="flex flex-col gap-2">
-                {path.map((nodeKey, index) => {
-                    const node = conversation.mapping[nodeKey];
-                    if (!node) {
-                        console.warn(`Node ${nodeKey} not found in conversation mapping`)
-                        return null;
-                    }
-                    const isVisible = visible.includes(nodeKey);
-                    const author = node.message?.author;
-                    const parentNode = conversation.mapping[node.parent ?? ''];
-                    const siblings = parentNode ? parentNode.children : [];
-                    const msg = node.message?.content?.textParts.join(' ');
-                    if (msg === undefined || msg === '') {
-                        console.log('skipping node', nodeKey, node.message?.content)
-                        return null;
-                    }
+        <div className="flex flex-col gap-2">
+            {path.map((nodeKey, index) => {
+                const node = conversation.mapping[nodeKey];
+                if (!node) {
+                    console.warn(`Node ${nodeKey} not found in conversation mapping`)
+                    return null;
+                }
+                const isVisible = visible.includes(nodeKey);
+                const author = node.message?.author;
+                const parentNode = conversation.mapping[node.parent ?? ''];
+                const siblings = parentNode ? parentNode.children : [];
+                const msg = node.message?.content?.textParts.join(' ');
+                if (msg === undefined || msg === '') {
+                    console.log('skipping node', nodeKey, node.message?.content)
+                    return null;
+                }
 
-                    return (
-                        <div key={node.id}>
-                            <div className={`chat ${author?.role !== 'user' ? 'chat-start' : 'chat-end'}`}>
-                                <div className="chat-header">{author?.role}</div>
-                                <div className={`chat-bubble overflow-x-auto ${isVisible ? 'max-h-32 overflow-hidden' : ''}`} onClick={() => {
-                                    // if (visible.includes(nodeKey)) {
-                                    //     setVisible(visible.filter((v) => v !== nodeKey));
-                                    // } else {
-                                    //     setVisible([...visible, nodeKey]);
-                                    // }
-                                }}>
-                                    <ReactMarkdown className={isVisible ? 'clamp' : ''}>
-                                        {msg}
-                                    </ReactMarkdown>
-                                </div>
+                return (
+                    <div key={node.id}>
+                        <div className={`chat ${author?.role !== 'user' ? 'chat-start' : 'chat-end'}`}>
+                            <div className="chat-header">{author?.role}</div>
+                            <div className={`chat-bubble overflow-x-auto ${isVisible ? 'max-h-32 overflow-hidden' : ''}`} onClick={() => {
+                                // if (visible.includes(nodeKey)) {
+                                //     setVisible(visible.filter((v) => v !== nodeKey));
+                                // } else {
+                                //     setVisible([...visible, nodeKey]);
+                                // }
+                            }}>
+                                <ReactMarkdown className={isVisible ? 'clamp' : ''}>
+                                    {msg}
+                                </ReactMarkdown>
                             </div>
-                            {author?.role === 'user' && siblings.length > 1 && (
-                                <div className="flex gap-2 mt-2">
-                                    {siblings.map((siblingKey) => (
-                                        <button
-                                            key={siblingKey}
-                                            className={`max-w-sm text-ellipsis px-2 py-1 text-sm rounded ${siblingKey === nodeKey ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                                            onClick={() => handleSelectSibling(siblingKey, index)}
-                                        >
-                                            {conversation.mapping[siblingKey].message?.content?.textParts.join(' ')}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
                         </div>
-                    );
-                })}
-            </div>
+                        {author?.role === 'user' && siblings.length > 1 && (
+                            <div className="flex gap-2 mt-2">
+                                {siblings.map((siblingKey) => (
+                                    <button
+                                        key={siblingKey}
+                                        className={`max-w-sm text-ellipsis px-2 py-1 text-sm rounded ${siblingKey === nodeKey ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                                        onClick={() => handleSelectSibling(siblingKey, index)}
+                                    >
+                                        {conversation.mapping[siblingKey].message?.content?.textParts.join(' ')}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                );
+            })}
         </div>
     );
 };

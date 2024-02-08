@@ -35,12 +35,15 @@ const editedContentAtom = atom<Content|undefined>(undefined);
 editedContentAtom.debugLabel = 'editedContentAtom';
 const selectedContentAtom = atom<Content|undefined>(undefined);
 selectedContentAtom.debugLabel = 'selectedContentAtom';
+const newContentAtom = atom<boolean>(false);
+newContentAtom.debugLabel = 'newContent';
 
 export const useContentEditor = () => {
     const [editedContent, setEditedContent] = useAtom(editedContentAtom);
 
     // TODO breachris this feels wrong
     const [selectedContent, setSelectedContent] = useAtom(selectedContentAtom);
+    const [newContent, setNewContent] = useAtom(newContentAtom);
 
     const editContent = (content: Content|undefined) => {
         if (content === undefined) {
@@ -53,6 +56,13 @@ export const useContentEditor = () => {
             setEditedContent(content);
         }
     }
+
+    const changeContent = (content: Content) => {
+        window.history.pushState({}, '', `/app`);
+        setEditedContent(content);
+        setNewContent(true);
+    }
+
     const selectContent = (content: Content|undefined) => {
         if (content === undefined) {
             window.history.pushState({}, '', `/app`);
@@ -64,7 +74,15 @@ export const useContentEditor = () => {
             setSelectedContent(content);
         }
     }
-    return {editedContent, editContent, selectedContent, selectContent};
+    return {
+        editedContent,
+        editContent,
+        selectedContent,
+        selectContent,
+        changeContent,
+        newContent,
+        setNewContent
+    };
 }
 
 const recordingAtom = atom<boolean>(false);

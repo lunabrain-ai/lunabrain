@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { FilteredTagInput } from "@/tag/FilteredTagInput";
 import {MinusCircleIcon, HashtagIcon} from "@heroicons/react/24/outline";
 
@@ -14,9 +14,9 @@ export const AddTagBadge: React.FC<{ onNewTag: (tag: string) => void }> = ({ onN
     };
 
     return (
-        <div>
+        <div className={"flex flex-row"}>
             <button
-                className="btn"
+                className="btn flex"
                 onClick={() => setAddingTag(!addingTag)}
             >
                 {addingTag ? <MinusCircleIcon className={"h-6 w-6"} /> : <HashtagIcon className={"h-6 w-6"} />}
