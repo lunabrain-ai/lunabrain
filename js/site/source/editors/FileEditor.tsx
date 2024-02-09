@@ -7,6 +7,9 @@ export const FileEditor: React.FC<{id: string, file: File, onChange: (file: File
     const [relatedContent, setRelatedContent] = useState<string[]>([]);
     useEffect(() => {
         (async () => {
+            if (!id) {
+                return;
+            }
             const res = await contentService.search({
                 contentID: id,
             });

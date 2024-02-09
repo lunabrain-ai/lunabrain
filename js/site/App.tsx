@@ -8,12 +8,28 @@ import {Home} from "@/home/Home";
 import {ChatPage} from "@/chat/ChatPage";
 import {VerifyPage} from "@/auth/VerifyPage";
 import {Provider} from "jotai";
-import {DevTools} from "jotai-devtools";
 import {Admin} from "@/admin/Admin";
+import {SourcePage} from "@/source/SourcePage";
+import {AuthForm} from "@/auth/AuthForm";
 
 const AppRoutes = () => {
     const commonRoutes = [{
         path: '/app',
+        element: (
+            <div className="h-screen flex flex-col gap-4 w-full">
+                <div className="mt-4">
+                    <div className="items-center px-5 py-12 lg:px-20">
+                        <div className="flex flex-col w-full max-w-md p-10 mx-auto space-y-4">
+                            <p>oh, hello.</p>
+                            <a href={"/app/content"} className={"btn"}>let's go write something.</a>
+                            {/*<a href={"/app/chat"} className={"btn"}>chat</a>*/}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }, {
+        path: '/app/content',
         element: <Home />
     }, {
         path: '/app/group/:groupID',

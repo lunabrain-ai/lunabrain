@@ -18,10 +18,10 @@ import (
 	"github.com/lunabrain-ai/lunabrain/pkg/group"
 	"github.com/lunabrain-ai/lunabrain/pkg/http"
 	"github.com/lunabrain-ai/lunabrain/pkg/log"
-	"github.com/lunabrain-ai/lunabrain/pkg/openai"
+	"github.com/lunabrain-ai/lunabrain/pkg/providers/openai"
+	"github.com/lunabrain-ai/lunabrain/pkg/providers/whisper"
 	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/lunabrain-ai/lunabrain/pkg/user"
-	"github.com/lunabrain-ai/lunabrain/pkg/whisper"
 	"github.com/urfave/cli/v2"
 )
 

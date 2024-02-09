@@ -16,7 +16,7 @@ export const AddTagBadge: React.FC<{ onNewTag: (tag: string) => void }> = ({ onN
     return (
         <div className={"flex flex-row"}>
             <button
-                className="btn flex"
+                className="flex"
                 onClick={() => setAddingTag(!addingTag)}
             >
                 {addingTag ? <MinusCircleIcon className={"h-6 w-6"} /> : <HashtagIcon className={"h-6 w-6"} />}

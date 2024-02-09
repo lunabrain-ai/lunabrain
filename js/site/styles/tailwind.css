@@ -13,5 +13,18 @@
     @apply text-blue-600 underline;
 }
 
+.tiptap h1 {
+    @apply text-2xl space-y-4;
+}
+.tiptap h2 {
+    @apply text-xl space-y-4;
+}
+.tiptap h3 {
+    @apply text-lg space-y-4;
+}
+.tiptap a {
+    @apply text-blue-600 underline;
+}
+
 @tailwind components;
 @tailwind utilities;

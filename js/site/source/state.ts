@@ -1,7 +1,8 @@
-import {Content, EnumeratedSource, Sources, VoiceInputResponse} from "@/rpc/content/content_pb";
+import {Content, EnumeratedSource, Post, Sources, VoiceInputResponse} from "@/rpc/content/content_pb";
 import {contentService} from "@/service";
 import { atom, useAtom } from "jotai";
 import {useEffect, useState} from "react";
+import {uuidv4} from "../../extension/util";
 
 const sourcesAtom = atom<EnumeratedSource[]|undefined>(undefined);
 sourcesAtom.debugLabel = 'sourcesAtom';
@@ -31,7 +32,16 @@ export const useSources = () => {
     return {sources, selected, setSelected, getSources, types, setTypes, tags, setTags};
 }
 
-const editedContentAtom = atom<Content|undefined>(undefined);
+export const editorContent = 'editorContent';
+
+const editedContentAtom = atom<Content|undefined>(new Content({
+    type: {
+        case: 'post',
+        value: new Post({
+            content: localStorage.getItem(editorContent) || "don't think, write.",
+        })
+    }
+}));
 editedContentAtom.debugLabel = 'editedContentAtom';
 const selectedContentAtom = atom<Content|undefined>(undefined);
 selectedContentAtom.debugLabel = 'selectedContentAtom';

@@ -82,9 +82,7 @@ export const SourcePage: React.FC = () => {
                 </div>
             </div>
             <div className="flex-grow">
-                <FileDrop>
-                    <ContentEditor />
-                </FileDrop>
+                <ContentEditor />
                 {/*{sources.length > 1 && (*/}
                 {/*    <Tabs sources={sources} selected={selected} onSelectSource={handleSelectSource} />*/}
                 {/*)}*/}

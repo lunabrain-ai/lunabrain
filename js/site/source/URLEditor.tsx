@@ -15,6 +15,10 @@ export const URLEditor: React.FC<{
 
     useEffect(() => {
         (async () => {
+            if (!id) {
+                return;
+            }
+            console.log(id)
             const res = await contentService.search({
                 contentID: id,
             });
@@ -46,7 +50,7 @@ export const URLEditor: React.FC<{
                         <h2 className="card-title">{a.article.title}</h2>
                         <p className="max-h-72 truncate text-gray-500 font-normal">{a.article.text}</p>
                         <button className={"btn"} onClick={() => setOpenedArticle(a.id)}>read</button>
-                        <Modal open={openedArticle === a.id}>
+                        <Modal open={openedArticle === a.id} onClose={() => setOpenedArticle(undefined)}>
                             <h1>{a.article.title}</h1>
                             <p>{a.article.text}</p>
                             <div className="flex justify-end">
@@ -61,7 +65,7 @@ export const URLEditor: React.FC<{
                     <div className="card-body">
                         <p className="max-h-72 truncate text-gray-500 font-normal">{a.readme.data}</p>
                         <button className={"btn"} onClick={() => setOpenedArticle(a.id)}>read</button>
-                        <Modal open={openedArticle === a.id}>
+                        <Modal open={openedArticle === a.id} onClose={() => setOpenedArticle(undefined)}>
                             <ReactMarkdown className={"markdown"}>
                                 {a.readme.data}
                             </ReactMarkdown>

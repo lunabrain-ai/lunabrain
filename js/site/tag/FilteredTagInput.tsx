@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useProjectContext } from "@/react/ProjectProvider";
 import { Tag } from "@/rpc/content/content_pb";
 import { useDebounce } from "@uidotdev/usehooks";
-import {HashtagIcon, PlusIcon} from "@heroicons/react/24/outline";
+import {HashtagIcon, PlusIcon, TagIcon} from "@heroicons/react/24/outline";
 import {useTags} from "@/tag/state";
 
 function flattenTag(tag: Tag): string[] {
@@ -52,37 +52,22 @@ export const FilteredTagInput: React.FC<{
         setMatchingOptions(filterOptions(tag));
         setSelectedTag(tag);
     }
-
-    return (
-        <div className="flex items-center gap-2">
-            <TagInput value={selectedTag} onChange={onChange} matchingOptions={matchingOptions} />
-            <button onClick={() => onAddTag(selectedTag)} className="btn btn-square btn-primary">
-                <HashtagIcon className={"h-6 w-6"} />
-            </button>
-        </div>
-    )
-}
-
-export const TagInput: React.FC<{
-    onChange: (tag: string) => void,
-    value: string,
-    matchingOptions: string[],
-}> = ({
-          onChange,
-          value,
-          matchingOptions,
-      }) => {
     const debouncedOptions = useDebounce(matchingOptions, 300);
 
     return (
-        <>
-            <input
-                type="text"
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                placeholder="search by tag..."
-                className="input input-bordered w-full"
-            />
+        <div className={"flex flex-col space-y-2"}>
+            <div className={"flex flex-row space-x-2"}>
+                <input
+                    type="text"
+                    value={selectedTag}
+                    onChange={(e) => onChange(e.target.value)}
+                    placeholder="search by tag..."
+                    className="input input-bordered w-full"
+                />
+                <button onClick={() => onAddTag(selectedTag)} className="btn btn-square btn-primary">
+                    <TagIcon className={"h-6 w-6"} />
+                </button>
+            </div>
             {debouncedOptions.length > 0 && (
                 <ul className={"p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52"}>
                     {debouncedOptions.map((option) => (
@@ -94,6 +79,6 @@ export const TagInput: React.FC<{
                     ))}
                 </ul>
             )}
-        </>
-    );
-};
+        </div>
+    )
+}
