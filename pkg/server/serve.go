@@ -115,7 +115,7 @@ func (a *APIHTTPServer) handleGoogleCallback(w http.ResponseWriter, r *http.Requ
 		slog.Error("failed to connect oauth user", "error", err)
 		return
 	}
-	http.Redirect(w, r, "/app/chat", http.StatusFound)
+	http.Redirect(w, r, "/app", http.StatusFound)
 }
 
 // TODO breadchris the initialization of this feels awkward

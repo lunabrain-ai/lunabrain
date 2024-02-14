@@ -17,7 +17,7 @@ func NewDefaultConfig() Config {
 		Enabled:          false,
 		Container:        "${CONTAINER:\"\"}",
 		DefaultNamespace: "${DEFAULT_NAMESPACE:\"challenges\"}",
-		DefaultIngress:   "${DEFAULT_INGRESS:\"xctf-ingress\"}",
+		DefaultIngress:   "${DEFAULT_INGRESS:\"justshare-ingress\"}",
 		GcsAccount:       "${GCS_ACCOUNT:\"data/gcs_account.json\"}",
 	}
 }

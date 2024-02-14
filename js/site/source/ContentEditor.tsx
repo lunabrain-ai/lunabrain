@@ -439,23 +439,23 @@ const BottomNav: React.FC<{
        <div className="btm-nav">
            <ContentDrawer />
            <Modal open={newContent} onClose={onNewClose}>
-               <div className="flex justify-end">
-                   <li onClick={() => {
+               <div className="flex flex-col">
+                   <button className={"btn"} onClick={() => {
                        addImage();
                        setNewContent(false);
                    }}>
-                       <a>image</a>
-                   </li>
-                   <li onClick={() => {
+                       image
+                   </button>
+                   <button className={"btn"} onClick={() => {
                        changeContent(urlContent('https://example.com', []));
                        setNewContent(false);
-                   }}><a>url</a></li>
-                   <li onClick={() => {
+                   }}>url</button>
+                   <button className={"btn"} onClick={() => {
                        changeContent(postContent("Don't think, write."));
                        setNewContent(false);
                    }}>
-                       <a>post</a>
-                   </li>
+                       post
+                   </button>
                    <li onClick={() => {
                        changeContent(siteContent());
                        setNewContent(false);
