@@ -10,8 +10,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/justshare-io/justshare/pkg/ent/group"
-	"github.com/justshare-io/justshare/pkg/ent/groupinvite"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupinvite"
 )
 
 // GroupInviteCreate is the builder for creating a GroupInvite entity.

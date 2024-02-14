@@ -2,9 +2,9 @@ package store
 
 import (
 	"github.com/google/uuid"
-	"github.com/justshare-io/justshare/pkg/db"
-	"github.com/justshare-io/justshare/pkg/db/model"
-	"github.com/justshare-io/justshare/pkg/gen/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
 	"github.com/pkg/errors"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"

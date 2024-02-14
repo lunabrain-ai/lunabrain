@@ -1,0 +1,19 @@
+{{ define "main" }}
+<div>
+    <!-- Begin actual content -->
+    <article>
+      <div class="row justify-content-center">
+        <div class="col-md-12">
+          <h1>{{.Title}}</h1>
+            {{ partial "textprocessing.html" .}}
+            {{with .Params.description}}
+              <p>{{.}}</p>
+            {{end}}
+          <h5>Explore</h5>
+            {{partial "page-list.html" .Paginator.Pages.ByLastmod.Reverse }}
+            {{ template "_internal/pagination.html" .}}
+        </div>
+      </div>
+    </article>
+</div>
+{{end}}

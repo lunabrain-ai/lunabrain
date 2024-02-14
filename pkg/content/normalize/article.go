@@ -2,7 +2,7 @@ package normalize
 
 import (
 	"github.com/go-shiori/go-readability"
-	"github.com/justshare-io/justshare/pkg/gen/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
 	"time"
 )
 

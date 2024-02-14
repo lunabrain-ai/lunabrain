@@ -2,7 +2,7 @@
 
 package runtime
 
-// The schema-stitching logic is generated in github.com/justshare-io/justshare/pkg/ent/runtime.go
+// The schema-stitching logic is generated in github.com/lunabrain-ai/lunabrain/pkg/ent/runtime.go
 
 const (
 	Version = "v0.12.4"                                         // Version of ent codegen.

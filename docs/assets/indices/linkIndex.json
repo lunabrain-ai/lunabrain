@@ -1,0 +1,84 @@
+{
+  "index": {
+    "links": {
+      "/": [
+        {
+          "source": "/",
+          "target": "/News-Sources",
+          "text": "News Sources"
+        },
+        {
+          "source": "/",
+          "target": "/Text-Processing",
+          "text": "Text Processing"
+        }
+      ],
+      "/Models": [
+        {
+          "source": "/Models",
+          "target": "/Hugging-Face",
+          "text": "Hugging Face"
+        }
+      ],
+      "/Vector-Search": [
+        {
+          "source": "/Vector-Search",
+          "target": "/FAISS",
+          "text": "FAISS"
+        }
+      ]
+    },
+    "backlinks": {
+      "/FAISS": [
+        {
+          "source": "/Vector-Search",
+          "target": "/FAISS",
+          "text": "FAISS"
+        }
+      ],
+      "/Hugging-Face": [
+        {
+          "source": "/Models",
+          "target": "/Hugging-Face",
+          "text": "Hugging Face"
+        }
+      ],
+      "/News-Sources": [
+        {
+          "source": "/",
+          "target": "/News-Sources",
+          "text": "News Sources"
+        }
+      ],
+      "/Text-Processing": [
+        {
+          "source": "/",
+          "target": "/Text-Processing",
+          "text": "Text Processing"
+        }
+      ]
+    }
+  },
+  "links": [
+    {
+      "source": "/Models",
+      "target": "/Hugging-Face",
+      "text": "Hugging Face"
+    },
+    {
+      "source": "/Vector-Search",
+      "target": "/FAISS",
+      "text": "FAISS"
+    },
+    {
+      "source": "/",
+      "target": "/News-Sources",
+      "text": "News Sources"
+    },
+    {
+      "source": "/",
+      "target": "/Text-Processing",
+      "text": "Text Processing"
+    }
+  ]
+}

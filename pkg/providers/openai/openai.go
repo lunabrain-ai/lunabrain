@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/wire"
-	"github.com/justshare-io/justshare/pkg/gen/jsonschema"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/jsonschema"
 	"github.com/pkg/errors"
 	"github.com/reactivex/rxgo/v2"
 	tokenizer "github.com/samber/go-gpt-3-encoder"

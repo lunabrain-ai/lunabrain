@@ -5,7 +5,7 @@ import (
 	"github.com/benbjohnson/litestream"
 	lsgcs "github.com/benbjohnson/litestream/gcs"
 	"github.com/google/wire"
-	"github.com/justshare-io/justshare/pkg/db/model"
+	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/pkg/errors"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"

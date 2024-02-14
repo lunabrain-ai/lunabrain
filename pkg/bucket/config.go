@@ -14,7 +14,7 @@ type Config struct {
 
 func NewDefaultConfig() Config {
 	return Config{
-		LocalName: "${LOCAL_NAME:\"justshare\"}",
+		LocalName: "${LOCAL_NAME:\"lunabrain\"}",
 		Path:      "${BUCKET_PATH:\"data\"}",
 		URLBase:   "${URL_BASE:\"http://localhost:8080\"}",
 	}

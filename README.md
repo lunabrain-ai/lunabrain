@@ -1,24 +1,24 @@
-# justshare
+# LunaBrain
 
 Build shared context with you and your homies.
 
-[![justshare Demo](docs/assets/images/demo.png)](https://www.youtube.com/live/UoRi3Fqh6Jg?si=CQVxzNWAqL6KOMa1&t=268 "justshare Demo")
+[![LunaBrain Demo](docs/assets/images/demo.png)](https://www.youtube.com/live/UoRi3Fqh6Jg?si=CQVxzNWAqL6KOMa1&t=268 "LunaBrain Demo")
 
 ### Library 
-- To use justshare as a Go library, refer to the [documentation](https://pkg.go.dev/github.com/justshare-io/justshare) (Note: This code is still like pre-alpha, so the API is subject to change)
+- To use LunaBrain as a Go library, refer to the [documentation](https://pkg.go.dev/github.com/lunabrain-ai/lunabrain) (Note: This code is still like pre-alpha, so the API is subject to change)
 
 ## License
 
-justshare is licensed under the Apache 2.0 license. See the `LICENSE` file for more details.
+LunaBrain is licensed under the Apache 2.0 license. See the `LICENSE` file for more details.
 
 ## Getting Started
 
-To get started with justshare, follow these steps:
+To get started with LunaBrain, follow these steps:
 
 ### Setup Repo
 
 ```shell
-git clone --recursive https://github.com/justshare-io/justshare.git
+git clone --recursive https://github.com/lunabrain-ai/lunabrain.git
 ```
 
 ### Running
@@ -60,7 +60,7 @@ go generate -x ./...
 
 ## Contributing
 
-We welcome contributions to justshare! To contribute, please follow these steps:
+We welcome contributions to LunaBrain! To contribute, please follow these steps:
 
 1. Fork the repository
 2. Create a new branch for your feature

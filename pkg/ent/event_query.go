@@ -11,8 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	entevent "github.com/justshare-io/justshare/pkg/ent/event"
-	"github.com/justshare-io/justshare/pkg/ent/predicate"
+	entevent "github.com/lunabrain-ai/lunabrain/pkg/ent/event"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/predicate"
 )
 
 // EventQuery is the builder for querying Event entities.

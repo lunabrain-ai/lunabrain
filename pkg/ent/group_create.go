@@ -10,12 +10,12 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/justshare-io/justshare/pkg/ent/content"
-	"github.com/justshare-io/justshare/pkg/ent/group"
-	"github.com/justshare-io/justshare/pkg/ent/groupinvite"
-	"github.com/justshare-io/justshare/pkg/ent/groupuser"
-	"github.com/justshare-io/justshare/pkg/ent/tag"
-	"github.com/justshare-io/justshare/pkg/gen/user"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupinvite"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupuser"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/tag"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/user"
 )
 
 // GroupCreate is the builder for creating a Group entity.

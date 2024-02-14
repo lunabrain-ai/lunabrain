@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/dominikbraun/graph"
 	"github.com/gocolly/colly/v2"
-	"github.com/justshare-io/justshare/pkg/gen/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
 	"log/slog"

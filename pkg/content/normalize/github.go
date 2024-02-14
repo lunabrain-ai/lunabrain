@@ -3,7 +3,7 @@ package normalize
 import (
 	"github.com/go-git/go-git/v5"
 	"github.com/google/uuid"
-	"github.com/justshare-io/justshare/pkg/gen/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
 	"log/slog"
 	"os"
 	"path"

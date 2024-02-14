@@ -8,9 +8,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/justshare-io/justshare/pkg/ent/predicate"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/predicate"
 
-	entevent "github.com/justshare-io/justshare/pkg/ent/event"
+	entevent "github.com/lunabrain-ai/lunabrain/pkg/ent/event"
 )
 
 // EventDelete is the builder for deleting a Event entity.

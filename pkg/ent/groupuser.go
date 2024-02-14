@@ -9,9 +9,9 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/justshare-io/justshare/pkg/ent/group"
-	"github.com/justshare-io/justshare/pkg/ent/groupuser"
-	entuser "github.com/justshare-io/justshare/pkg/ent/user"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupuser"
+	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
 )
 
 // GroupUser is the model entity for the GroupUser schema.

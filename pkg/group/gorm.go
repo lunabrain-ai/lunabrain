@@ -2,9 +2,9 @@ package group
 
 import (
 	"github.com/google/uuid"
-	"github.com/justshare-io/justshare/pkg/db"
-	"github.com/justshare-io/justshare/pkg/db/model"
-	"github.com/justshare-io/justshare/pkg/gen/user"
+	"github.com/lunabrain-ai/lunabrain/pkg/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/user"
 	"github.com/pkg/errors"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"

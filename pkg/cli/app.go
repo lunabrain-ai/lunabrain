@@ -1,8 +1,8 @@
 package cli
 
 import (
-	"github.com/justshare-io/justshare/pkg/log"
-	"github.com/justshare-io/justshare/pkg/server"
+	"github.com/lunabrain-ai/lunabrain/pkg/log"
+	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/urfave/cli/v2"
 )
 
@@ -17,7 +17,7 @@ func NewApp(
 	apiServer *server.APIHTTPServer,
 ) *cli.App {
 	return &cli.App{
-		Name:   "justshare",
+		Name:   "lunabrain",
 		Usage:  "Save and search for information.",
 		Action: NewServeAction(apiServer),
 		Commands: []*cli.Command{

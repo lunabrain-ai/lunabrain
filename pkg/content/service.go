@@ -10,17 +10,17 @@ import (
 	"github.com/go-shiori/go-readability"
 	"github.com/google/uuid"
 	"github.com/google/wire"
-	"github.com/justshare-io/justshare/pkg/bucket"
-	"github.com/justshare-io/justshare/pkg/content/normalize"
-	"github.com/justshare-io/justshare/pkg/content/store"
-	"github.com/justshare-io/justshare/pkg/ent"
-	"github.com/justshare-io/justshare/pkg/gen/content"
-	"github.com/justshare-io/justshare/pkg/gen/content/contentconnect"
-	"github.com/justshare-io/justshare/pkg/http"
-	"github.com/justshare-io/justshare/pkg/providers/openai"
-	"github.com/justshare-io/justshare/pkg/providers/whisper"
-	"github.com/justshare-io/justshare/pkg/publish"
-	"github.com/justshare-io/justshare/pkg/util"
+	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
+	"github.com/lunabrain-ai/lunabrain/pkg/content/normalize"
+	"github.com/lunabrain-ai/lunabrain/pkg/content/store"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/content/contentconnect"
+	"github.com/lunabrain-ai/lunabrain/pkg/http"
+	"github.com/lunabrain-ai/lunabrain/pkg/providers/openai"
+	"github.com/lunabrain-ai/lunabrain/pkg/providers/whisper"
+	"github.com/lunabrain-ai/lunabrain/pkg/publish"
+	"github.com/lunabrain-ai/lunabrain/pkg/util"
 	"github.com/pkg/errors"
 	"github.com/protoflow-labs/protoflow/pkg/grpc"
 	"google.golang.org/protobuf/reflect/protoreflect"
@@ -199,7 +199,7 @@ func (s *Service) enumerateSource(ctx context.Context, src *content.Source, r *c
 func (s *Service) GetSources(ctx context.Context, c *connect_go.Request[content.GetSourcesRequest]) (*connect_go.Response[content.Sources], error) {
 	srcs := []*content.Source{
 		{
-			Name: "justshare",
+			Name: "lunabrain",
 			Type: &content.Source_Server{
 				Server: &content.Server{},
 			},
@@ -364,7 +364,7 @@ func commitAndPush(repoPath, commitMessage, remoteName, branchName string) error
 
 func writeNotes(notes *bucket.Builder, cnt []*content.Content) error {
 	// TODO breadchris commit changes https://chat.openai.com/share/20f66a27-51f5-4396-baf1-0a60373747b2
-	l, err := notes.File("justshare.md")
+	l, err := notes.File("lunabrain.md")
 	if err != nil {
 		return err
 	}

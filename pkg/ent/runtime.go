@@ -6,13 +6,13 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/justshare-io/justshare/pkg/ent/content"
-	entevent "github.com/justshare-io/justshare/pkg/ent/event"
-	"github.com/justshare-io/justshare/pkg/ent/group"
-	"github.com/justshare-io/justshare/pkg/ent/groupuser"
-	"github.com/justshare-io/justshare/pkg/ent/schema"
-	"github.com/justshare-io/justshare/pkg/ent/tag"
-	entuser "github.com/justshare-io/justshare/pkg/ent/user"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/content"
+	entevent "github.com/lunabrain-ai/lunabrain/pkg/ent/event"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupuser"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/schema"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/tag"
+	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
 	"github.com/markbates/goth"
 )
 

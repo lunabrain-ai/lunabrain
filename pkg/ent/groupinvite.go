@@ -9,8 +9,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/justshare-io/justshare/pkg/ent/group"
-	"github.com/justshare-io/justshare/pkg/ent/groupinvite"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupinvite"
 )
 
 // GroupInvite is the model entity for the GroupInvite schema.

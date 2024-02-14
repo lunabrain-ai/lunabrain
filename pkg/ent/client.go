@@ -10,20 +10,20 @@ import (
 	"reflect"
 
 	"github.com/google/uuid"
-	"github.com/justshare-io/justshare/pkg/ent/migrate"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/migrate"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/justshare-io/justshare/pkg/ent/content"
-	entevent "github.com/justshare-io/justshare/pkg/ent/event"
-	"github.com/justshare-io/justshare/pkg/ent/group"
-	"github.com/justshare-io/justshare/pkg/ent/groupinvite"
-	"github.com/justshare-io/justshare/pkg/ent/groupuser"
-	"github.com/justshare-io/justshare/pkg/ent/session"
-	"github.com/justshare-io/justshare/pkg/ent/tag"
-	entuser "github.com/justshare-io/justshare/pkg/ent/user"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/content"
+	entevent "github.com/lunabrain-ai/lunabrain/pkg/ent/event"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupinvite"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupuser"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/session"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/tag"
+	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
 )
 
 // Client is the client that holds all ent builders.

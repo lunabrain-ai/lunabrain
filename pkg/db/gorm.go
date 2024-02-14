@@ -3,7 +3,7 @@ package db
 import (
 	"github.com/alexferrari88/gohn/pkg/gohn"
 	"github.com/google/uuid"
-	"github.com/justshare-io/justshare/pkg/db/model"
+	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 	"github.com/pkg/errors"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"

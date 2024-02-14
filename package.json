@@ -1,5 +1,5 @@
 {
-  "name": "@justshare/js",
+  "name": "@lunabrain/js",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -8,7 +8,7 @@
     "dev:stream": "cd js && BASE_URL=https://breadchris.ngrok.io TARGETS=stream node esbuild.mjs",
     "dev:site": "cd js && BASE_URL=http://localhost:8000 TARGETS=site node esbuild.mjs",
     "dev:extension": "cd js && BASE_URL=http://localhost:8000 TARGETS=extension node esbuild.mjs",
-    "build": "cd js && BASE_URL=https://demo.justshare.com BUILD=true node esbuild.mjs"
+    "build": "cd js && BASE_URL=https://demo.lunabrain.com BUILD=true node esbuild.mjs"
   },
   "dependencies": {
     "@emotion/css": "^11.11.2",

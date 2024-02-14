@@ -10,10 +10,10 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/justshare-io/justshare/pkg/ent/content"
-	"github.com/justshare-io/justshare/pkg/ent/groupuser"
-	"github.com/justshare-io/justshare/pkg/ent/schema"
-	entuser "github.com/justshare-io/justshare/pkg/ent/user"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupuser"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/schema"
+	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
 	"github.com/markbates/goth"
 )
 

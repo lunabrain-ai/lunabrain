@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/breadchris/scs/v2"
 	"github.com/google/uuid"
-	"github.com/justshare-io/justshare/pkg/ent"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent"
 	"github.com/pkg/errors"
 )
 

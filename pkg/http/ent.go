@@ -2,8 +2,8 @@ package http
 
 import (
 	"context"
-	"github.com/justshare-io/justshare/pkg/ent"
-	"github.com/justshare-io/justshare/pkg/ent/session"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/session"
 	"log/slog"
 	"time"
 

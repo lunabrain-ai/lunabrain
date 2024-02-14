@@ -1,7 +1,7 @@
 package util
 
 import (
-	"github.com/justshare-io/justshare/pkg/db/model"
+	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
 )
 
 func GenerateTranscript(msgs []*model.DiscordMessage) string {

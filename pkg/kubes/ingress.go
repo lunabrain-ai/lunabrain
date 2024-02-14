@@ -1,7 +1,7 @@
 package kubes
 
 import (
-	"github.com/justshare-io/justshare/pkg/util"
+	"github.com/lunabrain-ai/lunabrain/pkg/util"
 	networkingv1 "k8s.io/api/networking/v1"
 )
 

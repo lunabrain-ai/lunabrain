@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/justshare-io/justshare/pkg/ent/content"
-	"github.com/justshare-io/justshare/pkg/ent/predicate"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/predicate"
 )
 
 // ContentDelete is the builder for deleting a Content entity.

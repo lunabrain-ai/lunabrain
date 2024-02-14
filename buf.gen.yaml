@@ -2,7 +2,7 @@ version: v1
 managed:
   enabled: true
   go_package_prefix:
-    default: github.com/justshare-io/justshare/pkg/gen
+    default: github.com/lunabrain-ai/lunabrain/pkg/gen
 plugins:
   - plugin: buf.build/protocolbuffers/go
     out: ./pkg/gen

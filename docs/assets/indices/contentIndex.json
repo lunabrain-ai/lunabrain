@@ -1,0 +1,56 @@
+{
+  "/": {
+    "title": "ML Wiki",
+    "content": "Stay connected to what is happening in the wild west of AI!\n\n- Learn fundamentals\n- Stay in the know about what is going on with [[News Sources]]\n- [[Text Processing]] is important for AI",
+    "lastmodified": "2023-04-11T12:16:18.114044222-07:00",
+    "tags": null
+  },
+  "/Applications/Chat-Bots": {
+    "title": "Chat Bots",
+    "content": "- [Knowledge Graph-Based Chatbot With GPT-3 and Neo4j](https://medium.com/neo4j/knowledge-graph-based-chatbot-with-gpt-3-and-neo4j-c4ebbd325ed)\n-",
+    "lastmodified": "2023-04-11T12:16:18.110710908-07:00",
+    "tags": null
+  },
+  "/FAISS": {
+    "title": "FAISS",
+    "content": "Project URL: https://github.com/facebookresearch/faiss\n\n### Pinecone FAISS Book\nhttps://www.pinecone.io/learn/faiss/\n\n#### Notes\n- Using the `IndexFlatL2` index alone is computationally expensive, it doesn’t scale well.\n-",
+    "lastmodified": "2023-04-11T12:16:18.110710908-07:00",
+    "tags": null
+  },
+  "/Fundamentals": {
+    "title": "Fundamentals",
+    "content": "## Learn\n- [Amazing video series from 3 blue 1 brown](https://www.youtube.com/watch?v=aircAruvnKk\u0026list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi)",
+    "lastmodified": "2023-04-11T12:16:18.110710908-07:00",
+    "tags": null
+  },
+  "/Hugging-Face": {
+    "title": "Hugging Face",
+    "content": "https://huggingface.co/",
+    "lastmodified": "2023-04-11T12:16:18.114044222-07:00",
+    "tags": null
+  },
+  "/Models": {
+    "title": "Models",
+    "content": "Machine learning (ML) models are increasingly important in various industries as they enable automated predictions, decision-making, and insights from large and complex datasets. These models are designed to improve with time as they receive more data and learn to identify patterns, allowing businesses to make more accurate predictions and informed decisions. One of the prominent platforms for building and deploying state-of-the-art natural language processing (NLP) models is [[Hugging Face]]. Hugging Face provides easy-to-use libraries and tools for building and fine-tuning NLP models and is widely used by developers, data scientists, and researchers to create and train custom NLP models for various use cases, such as chatbots, sentiment analysis, and language translation.\n\n- 03/29/23 - Lit Review of currently available models https://kipp.ly/blog/transformer-taxonomy/",
+    "lastmodified": "2023-04-11T12:16:18.114044222-07:00",
+    "tags": null
+  },
+  "/News-Sources": {
+    "title": "News Sources",
+    "content": "Places you can go to stay plugged in about AI advancements!\n\n## Awesome Lists\n- https://github.com/imaurer/awesome-decentralized-llm\n\n## Feeds\n\n- [HackerNews](https://news.ycombinator.com/)\n\n## Discord\n- [LunaBrain](https://discord.gg/4KhauRRA)\n- [LangChain](https://discord.gg/S7qDt6Qh)\n- [LlamaIndex](https://discord.gg/UTvXb2Tp)\n- [Replicate](https://discord.gg/replicate)",
+    "lastmodified": "2023-04-11T12:16:18.114044222-07:00",
+    "tags": null
+  },
+  "/Text-Processing": {
+    "title": "Text Processing",
+    "content": "Text normalization is a critical step in natural language processing, and machine learning (ML) techniques have proven to be effective in this domain. ML text normalization techniques involve training models on large corpora of text to learn patterns and rules for standardizing text. These models can then be used to automatically correct spelling errors, expand contractions, and transform abbreviations to their full forms. By using ML text normalization techniques, NLP applications can better understand and process text data, leading to more accurate and efficient analysis.\n\n## Text Normalization Techniques for Machine Learning\n\n### Introduction\n- Definition of text normalization\n- Importance of text normalization in NLP\n\n### Rule-Based Text Normalization\n- Overview of rule-based text normalization\n- Techniques for rule-based text normalization (e.g., stemming, lemmatization, stop-word removal)\n- Advantages and disadvantages of rule-based text normalization\n\n### Machine Learning Text Normalization\n- Overview of machine learning text normalization\n- Techniques for machine learning text normalization (e.g., sequence labeling, deep learning, unsupervised learning)\n- Advantages and disadvantages of machine learning text normalization\n\n### Comparison of Rule-Based and Machine Learning Text Normalization\n- Differences between rule-based and machine learning text normalization\n- Use cases for each technique\n- Best practices for selecting the appropriate technique\n\n### Applications of Text Normalization in NLP\n- Overview of NLP applications that require text normalization (e.g., sentiment analysis, named entity recognition, machine translation)\n- Case studies demonstrating the importance of text normalization in NLP applications",
+    "lastmodified": "2023-04-11T12:16:18.114044222-07:00",
+    "tags": null
+  },
+  "/Vector-Search": {
+    "title": "Vector Search",
+    "content": "[Awesome List](https://github.com/currentslab/awesome-vector-search)\n\n## Tools\n### Open Source\n- [[FAISS]] - Facebook Vector Search\n- https://github.com/nmslib/hnswlib/ \"supposedly lower memory requirements and allows for adding new vectors to an existing index\"\n- \"If you do have a tiny index and want to try Google's version of vector search (as an alternative to Faiss), you can easily run ScaNN locally\" https://github.com/google-research/google-research/tree/master/scann\n\n\n- https://github.com/qdrant/qdrant\n- https://github.com/hora-search/hora\n- [OpenAI Plugin](https://github.com/openai/chatgpt-retrieval-plugin)",
+    "lastmodified": "2023-04-11T12:16:18.114044222-07:00",
+    "tags": null
+  }
+}

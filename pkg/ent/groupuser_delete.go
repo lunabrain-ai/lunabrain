@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/justshare-io/justshare/pkg/ent/groupuser"
-	"github.com/justshare-io/justshare/pkg/ent/predicate"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupuser"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/predicate"
 )
 
 // GroupUserDelete is the builder for deleting a GroupUser entity.

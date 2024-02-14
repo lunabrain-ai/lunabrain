@@ -4,7 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"github.com/chromedp/chromedp"
-	"github.com/justshare-io/justshare/pkg/db"
+	"github.com/lunabrain-ai/lunabrain/pkg/db"
 	"github.com/pkg/errors"
 	"io"
 	"log/slog"

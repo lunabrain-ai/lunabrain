@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/justshare-io/justshare/pkg/gen/user"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/user"
 )
 
 // Group holds the schema definition for the Group entity.

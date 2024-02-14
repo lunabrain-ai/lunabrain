@@ -5,7 +5,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/geziyor/geziyor"
 	"github.com/geziyor/geziyor/client"
-	"github.com/justshare-io/justshare/pkg/bucket"
+	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/pkg/errors"
 	"gocloud.dev/blob"
 	"log/slog"

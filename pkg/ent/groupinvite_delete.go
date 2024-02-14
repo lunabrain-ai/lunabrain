@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/justshare-io/justshare/pkg/ent/groupinvite"
-	"github.com/justshare-io/justshare/pkg/ent/predicate"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupinvite"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/predicate"
 )
 
 // GroupInviteDelete is the builder for deleting a GroupInvite entity.

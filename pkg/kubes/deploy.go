@@ -2,7 +2,7 @@ package kubes
 
 import (
 	"fmt"
-	"github.com/justshare-io/justshare/pkg/util"
+	"github.com/lunabrain-ai/lunabrain/pkg/util"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

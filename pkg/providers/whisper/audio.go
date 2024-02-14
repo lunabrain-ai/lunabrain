@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/go-audio/wav"
 	"github.com/hajimehoshi/go-mp3"
-	"github.com/justshare-io/justshare/pkg/bucket"
+	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
 	"github.com/pkg/errors"
 	"io"
 	"math"

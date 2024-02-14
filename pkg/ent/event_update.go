@@ -11,9 +11,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	entevent "github.com/justshare-io/justshare/pkg/ent/event"
-	"github.com/justshare-io/justshare/pkg/ent/predicate"
-	"github.com/justshare-io/justshare/pkg/gen/event"
+	entevent "github.com/lunabrain-ai/lunabrain/pkg/ent/event"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/predicate"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/event"
 )
 
 // EventUpdate is the builder for updating Event entities.

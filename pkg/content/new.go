@@ -2,7 +2,7 @@ package content
 
 import (
 	"github.com/google/uuid"
-	"github.com/justshare-io/justshare/pkg/gen/content"
+	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
 )
 
 func NewTextContent(uri, s string, tags []string) *content.Content {

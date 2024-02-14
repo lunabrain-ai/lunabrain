@@ -8,7 +8,7 @@ import (
 	context "context"
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
-	kubes "github.com/justshare-io/justshare/pkg/gen/kubes"
+	kubes "github.com/lunabrain-ai/lunabrain/pkg/gen/kubes"
 	http "net/http"
 	strings "strings"
 )

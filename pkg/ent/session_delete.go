@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/justshare-io/justshare/pkg/ent/predicate"
-	"github.com/justshare-io/justshare/pkg/ent/session"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/predicate"
+	"github.com/lunabrain-ai/lunabrain/pkg/ent/session"
 )
 
 // SessionDelete is the builder for deleting a Session entity.

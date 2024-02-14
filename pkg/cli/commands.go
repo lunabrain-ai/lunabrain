@@ -2,8 +2,8 @@ package cli
 
 import (
 	"bufio"
-	"github.com/justshare-io/justshare/pkg/bot"
-	"github.com/justshare-io/justshare/pkg/server"
+	"github.com/lunabrain-ai/lunabrain/pkg/bot"
+	"github.com/lunabrain-ai/lunabrain/pkg/server"
 	"github.com/protoflow-labs/protoflow/pkg/util/reload"
 	"github.com/urfave/cli/v2"
 	"log/slog"
