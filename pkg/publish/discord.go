@@ -2,9 +2,9 @@ package publish
 
 import (
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/pkg/chat/discord"
-	"github.com/lunabrain-ai/lunabrain/pkg/db"
-	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
+	"github.com/justshare-io/justshare/pkg/chat/discord"
+	"github.com/justshare-io/justshare/pkg/db"
+	"github.com/justshare-io/justshare/pkg/db/model"
 	"log/slog"
 )
 

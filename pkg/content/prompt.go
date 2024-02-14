@@ -3,8 +3,8 @@ package content
 import (
 	"context"
 	connect_go "github.com/bufbuild/connect-go"
-	"github.com/lunabrain-ai/lunabrain/pkg/gen"
-	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
+	"github.com/justshare-io/justshare/pkg/gen"
+	"github.com/justshare-io/justshare/pkg/gen/content"
 	"github.com/reactivex/rxgo/v2"
 	"log/slog"
 )

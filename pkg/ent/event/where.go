@@ -7,7 +7,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/predicate"
+	"github.com/justshare-io/justshare/pkg/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.

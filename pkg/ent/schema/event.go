@@ -4,7 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/pkg/gen/event"
+	"github.com/justshare-io/justshare/pkg/gen/event"
 	"time"
 )
 

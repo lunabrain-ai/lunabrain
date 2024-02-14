@@ -11,9 +11,9 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/content"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/schema"
-	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
+	"github.com/justshare-io/justshare/pkg/ent/content"
+	"github.com/justshare-io/justshare/pkg/ent/schema"
+	entuser "github.com/justshare-io/justshare/pkg/ent/user"
 )
 
 // Content is the model entity for the Content schema.

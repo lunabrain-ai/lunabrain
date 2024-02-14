@@ -5,13 +5,13 @@ package cli
 
 import (
 	"github.com/google/wire"
-	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
-	"github.com/lunabrain-ai/lunabrain/pkg/config"
-	"github.com/lunabrain-ai/lunabrain/pkg/db"
-	"github.com/lunabrain-ai/lunabrain/pkg/log"
-	"github.com/lunabrain-ai/lunabrain/pkg/providers/openai"
-	"github.com/lunabrain-ai/lunabrain/pkg/providers/whisper"
-	"github.com/lunabrain-ai/lunabrain/pkg/server"
+	"github.com/justshare-io/justshare/pkg/bucket"
+	"github.com/justshare-io/justshare/pkg/config"
+	"github.com/justshare-io/justshare/pkg/db"
+	"github.com/justshare-io/justshare/pkg/log"
+	"github.com/justshare-io/justshare/pkg/providers/openai"
+	"github.com/justshare-io/justshare/pkg/providers/whisper"
+	"github.com/justshare-io/justshare/pkg/server"
 	"github.com/urfave/cli/v2"
 )
 

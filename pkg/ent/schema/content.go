@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
+	"github.com/justshare-io/justshare/pkg/gen/content"
 	"google.golang.org/protobuf/encoding/protojson"
 	"time"
 )

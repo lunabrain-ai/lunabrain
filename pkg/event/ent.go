@@ -2,8 +2,8 @@ package event
 
 import (
 	"context"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent"
-	"github.com/lunabrain-ai/lunabrain/pkg/gen/event"
+	"github.com/justshare-io/justshare/pkg/ent"
+	"github.com/justshare-io/justshare/pkg/gen/event"
 )
 
 type EntStore struct {

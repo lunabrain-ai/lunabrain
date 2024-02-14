@@ -1,7 +1,7 @@
 package content
 
 import (
-	"github.com/lunabrain-ai/lunabrain/pkg/util"
+	"github.com/justshare-io/justshare/pkg/util"
 	"github.com/pkg/errors"
 	"github.com/reactivex/rxgo/v2"
 	"log/slog"

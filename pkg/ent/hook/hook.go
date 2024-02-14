@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/lunabrain-ai/lunabrain/pkg/ent"
+	"github.com/justshare-io/justshare/pkg/ent"
 )
 
 // The ContentFunc type is an adapter to allow the use of ordinary

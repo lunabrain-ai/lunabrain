@@ -5,12 +5,12 @@ package enttest
 import (
 	"context"
 
-	"github.com/lunabrain-ai/lunabrain/pkg/ent"
+	"github.com/justshare-io/justshare/pkg/ent"
 	// required by schema hooks.
-	_ "github.com/lunabrain-ai/lunabrain/pkg/ent/runtime"
+	_ "github.com/justshare-io/justshare/pkg/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/migrate"
+	"github.com/justshare-io/justshare/pkg/ent/migrate"
 )
 
 type (

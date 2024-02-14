@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/predicate"
+	"github.com/justshare-io/justshare/pkg/ent/group"
+	"github.com/justshare-io/justshare/pkg/ent/predicate"
 )
 
 // GroupDelete is the builder for deleting a Group entity.

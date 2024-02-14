@@ -5,7 +5,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/lunabrain-ai/lunabrain/pkg/cli"
+	"github.com/justshare-io/justshare/pkg/cli"
 	"log/slog"
 	"os"
 )

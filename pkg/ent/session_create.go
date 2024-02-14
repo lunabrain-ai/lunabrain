@@ -10,7 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/session"
+	"github.com/justshare-io/justshare/pkg/ent/session"
 )
 
 // SessionCreate is the builder for creating a Session entity.

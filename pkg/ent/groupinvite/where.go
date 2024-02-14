@@ -5,7 +5,7 @@ package groupinvite
 import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/predicate"
+	"github.com/justshare-io/justshare/pkg/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.

@@ -1,5 +1,4 @@
 tmp/
-.lunabrain.yaml
 .idea/
 data/
 node_modules/
@@ -25,6 +24,6 @@ venv3.*/
 *.egg
 *.egg-info/
 
-.lunabrain.yaml
+.justshare.yaml
 chat.yaml
 openaif.json

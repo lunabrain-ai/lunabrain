@@ -7,7 +7,7 @@ import {FloatingPanel} from "./FloatingPanel";
 // new EventSource('/esbuild').addEventListener('change', () => location.reload())
 
 const rootElem = document.createElement("div");
-rootElem.setAttribute("id", "lunabrain-root");
+rootElem.setAttribute("id", "justshare-root");
 document.body.appendChild(rootElem);
 
 // let shadowRoot = rootElem.attachShadow({mode: 'open'});

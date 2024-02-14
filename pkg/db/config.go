@@ -22,12 +22,12 @@ type Config struct {
 
 func NewDefaultConfig() Config {
 	return Config{
-		DSN:   "${DSN:\"file:data/lunabrain.db?_fk=1\"}",
+		DSN:   "${DSN:\"file:data/justshare.db?_fk=1\"}",
 		Type:  "sqlite3",
 		Debug: false,
 
-		Bucket:                       "${BUCKET:\"lunabrain\"}",
-		BackupName:                   "${BACKUP_NAME:\"lunabrain\"}",
+		Bucket:                       "${BUCKET:\"justshare\"}",
+		BackupName:                   "${BACKUP_NAME:\"justshare\"}",
 		Endpoint:                     "${ENDPOINT:\"http://localhost:9000\"}",
 		AwsAccessKeyID:               "${AWS_ACCESS_KEY_ID:\"minio\"}",
 		AwsSecretAccessKey:           "${AWS_SECRET_ACCESS_KEY:\"minio123\"}",

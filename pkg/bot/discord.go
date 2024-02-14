@@ -2,9 +2,9 @@ package bot
 
 import (
 	"github.com/bwmarrin/discordgo"
-	util2 "github.com/lunabrain-ai/lunabrain/pkg/chat/discord/util"
-	"github.com/lunabrain-ai/lunabrain/pkg/db"
-	"github.com/lunabrain-ai/lunabrain/pkg/db/model"
+	util2 "github.com/justshare-io/justshare/pkg/chat/discord/util"
+	"github.com/justshare-io/justshare/pkg/db"
+	"github.com/justshare-io/justshare/pkg/db/model"
 	"log/slog"
 )
 

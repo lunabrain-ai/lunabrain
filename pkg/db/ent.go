@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/benbjohnson/litestream"
 	lsgcs "github.com/benbjohnson/litestream/gcs"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/migrate"
+	"github.com/justshare-io/justshare/pkg/ent"
+	"github.com/justshare-io/justshare/pkg/ent/migrate"
 	"log/slog"
 	"os"
 )

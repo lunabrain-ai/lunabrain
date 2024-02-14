@@ -12,16 +12,16 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/content"
+	"github.com/justshare-io/justshare/pkg/ent/content"
 
-	entevent "github.com/lunabrain-ai/lunabrain/pkg/ent/event"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupinvite"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupuser"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/session"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/tag"
+	entevent "github.com/justshare-io/justshare/pkg/ent/event"
+	"github.com/justshare-io/justshare/pkg/ent/group"
+	"github.com/justshare-io/justshare/pkg/ent/groupinvite"
+	"github.com/justshare-io/justshare/pkg/ent/groupuser"
+	"github.com/justshare-io/justshare/pkg/ent/session"
+	"github.com/justshare-io/justshare/pkg/ent/tag"
 
-	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
+	entuser "github.com/justshare-io/justshare/pkg/ent/user"
 )
 
 // ent aliases to avoid import conflicts in user's code.

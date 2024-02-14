@@ -8,7 +8,7 @@ import (
 	context "context"
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
-	chat "github.com/lunabrain-ai/lunabrain/pkg/gen/chat"
+	chat "github.com/justshare-io/justshare/pkg/gen/chat"
 	http "net/http"
 	strings "strings"
 )

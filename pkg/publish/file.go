@@ -3,7 +3,7 @@ package publish
 import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/pkg/db"
+	"github.com/justshare-io/justshare/pkg/db"
 	"log/slog"
 )
 

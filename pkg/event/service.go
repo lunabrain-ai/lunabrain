@@ -4,9 +4,9 @@ import (
 	"context"
 	connectgo "github.com/bufbuild/connect-go"
 	"github.com/google/wire"
-	"github.com/lunabrain-ai/lunabrain/pkg/gen/event"
-	"github.com/lunabrain-ai/lunabrain/pkg/gen/event/eventconnect"
-	"github.com/lunabrain-ai/lunabrain/pkg/http"
+	"github.com/justshare-io/justshare/pkg/gen/event"
+	"github.com/justshare-io/justshare/pkg/gen/event/eventconnect"
+	"github.com/justshare-io/justshare/pkg/http"
 )
 
 var ProviderSet = wire.NewSet(

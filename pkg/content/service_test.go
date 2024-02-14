@@ -2,7 +2,7 @@ package content
 
 import (
 	"fmt"
-	"github.com/lunabrain-ai/lunabrain/pkg/gen/content"
+	"github.com/justshare-io/justshare/pkg/gen/content"
 	"strings"
 	"testing"
 )

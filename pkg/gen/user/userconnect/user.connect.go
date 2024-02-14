@@ -8,7 +8,7 @@ import (
 	context "context"
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
-	user "github.com/lunabrain-ai/lunabrain/pkg/gen/user"
+	user "github.com/justshare-io/justshare/pkg/gen/user"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	http "net/http"
 	strings "strings"

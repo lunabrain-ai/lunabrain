@@ -11,8 +11,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	entevent "github.com/lunabrain-ai/lunabrain/pkg/ent/event"
-	"github.com/lunabrain-ai/lunabrain/pkg/gen/event"
+	entevent "github.com/justshare-io/justshare/pkg/ent/event"
+	"github.com/justshare-io/justshare/pkg/gen/event"
 )
 
 // Event is the model entity for the Event schema.

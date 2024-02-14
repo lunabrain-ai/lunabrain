@@ -9,7 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/session"
+	"github.com/justshare-io/justshare/pkg/ent/session"
 )
 
 // Session is the model entity for the Session schema.

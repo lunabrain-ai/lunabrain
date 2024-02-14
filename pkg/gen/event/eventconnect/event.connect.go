@@ -8,7 +8,7 @@ import (
 	context "context"
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
-	event "github.com/lunabrain-ai/lunabrain/pkg/gen/event"
+	event "github.com/justshare-io/justshare/pkg/gen/event"
 	http "net/http"
 	strings "strings"
 )

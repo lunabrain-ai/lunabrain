@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
-	"github.com/lunabrain-ai/lunabrain/pkg/providers/openai"
+	"github.com/justshare-io/justshare/pkg/providers/openai"
 	"log/slog"
 )
 

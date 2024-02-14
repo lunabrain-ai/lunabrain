@@ -3,10 +3,10 @@ package group
 import (
 	"context"
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/group"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/groupinvite"
-	"github.com/lunabrain-ai/lunabrain/pkg/gen/user"
+	"github.com/justshare-io/justshare/pkg/ent"
+	"github.com/justshare-io/justshare/pkg/ent/group"
+	"github.com/justshare-io/justshare/pkg/ent/groupinvite"
+	"github.com/justshare-io/justshare/pkg/gen/user"
 	"github.com/pkg/errors"
 )
 

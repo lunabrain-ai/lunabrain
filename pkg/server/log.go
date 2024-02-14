@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/bufbuild/connect-go"
 	"github.com/google/uuid"
-	"github.com/lunabrain-ai/lunabrain/pkg/gen/event"
+	"github.com/justshare-io/justshare/pkg/gen/event"
 	"log/slog"
 	"net/http"
 	"strings"

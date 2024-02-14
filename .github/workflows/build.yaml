@@ -24,7 +24,7 @@ jobs:
           yq: "4.16.2"
 
       - name: Docker Build
-        run: docker build . -t lunabrain
+        run: docker build . -t justshare
 
 #      - if: ${{ !(github.event_name == 'push' && github.ref == 'refs/heads/main') }}
 #        run: exit 0
@@ -53,10 +53,10 @@ jobs:
 #          echo SERVER_IMAGE_ID=$SERVER_IMAGE_ID
 #          echo VERSION=$VERSION
 #
-#          docker tag lunabrain $SERVER_IMAGE_ID:$VERSION
+#          docker tag justshare $SERVER_IMAGE_ID:$VERSION
 #          docker push $SERVER_IMAGE_ID:$VERSION
 #
-#          yq -i e ".services.lunabrain.image |= \"$(docker inspect --format='{{index .RepoDigests 0}}' $SERVER_IMAGE_ID:$VERSION)\"" docker-compose.prod.yaml
+#          yq -i e ".services.justshare.image |= \"$(docker inspect --format='{{index .RepoDigests 0}}' $SERVER_IMAGE_ID:$VERSION)\"" docker-compose.prod.yaml
 #      - name: Create commit
 #        id: create-commit
 #        if: github.ref == 'refs/heads/main'

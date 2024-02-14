@@ -6,7 +6,7 @@ import (
 )
 
 func TestParseFile(t *testing.T) {
-	file := "/Users/hacked/Documents/GitHub/lunabrain/js/site/form/walk.ts"
+	file := "/Users/hacked/Documents/GitHub/justshare/js/site/form/walk.ts"
 	sourceCode, err := os.ReadFile(file)
 	if err != nil {
 		t.Errorf("os.ReadFile() error = %v", err)

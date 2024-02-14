@@ -1,14 +1,14 @@
 package config
 
 import (
-	"github.com/lunabrain-ai/lunabrain/pkg/bucket"
-	"github.com/lunabrain-ai/lunabrain/pkg/content"
-	"github.com/lunabrain-ai/lunabrain/pkg/db"
-	"github.com/lunabrain-ai/lunabrain/pkg/event"
-	"github.com/lunabrain-ai/lunabrain/pkg/providers/openai"
-	"github.com/lunabrain-ai/lunabrain/pkg/providers/whisper"
-	"github.com/lunabrain-ai/lunabrain/pkg/scrape"
-	"github.com/lunabrain-ai/lunabrain/pkg/user"
+	"github.com/justshare-io/justshare/pkg/bucket"
+	"github.com/justshare-io/justshare/pkg/content"
+	"github.com/justshare-io/justshare/pkg/db"
+	"github.com/justshare-io/justshare/pkg/event"
+	"github.com/justshare-io/justshare/pkg/providers/openai"
+	"github.com/justshare-io/justshare/pkg/providers/whisper"
+	"github.com/justshare-io/justshare/pkg/scrape"
+	"github.com/justshare-io/justshare/pkg/user"
 	"go.uber.org/config"
 	"log/slog"
 	"os"
@@ -16,9 +16,9 @@ import (
 )
 
 const (
-	userConfigDir = ".lunabrain"
-	configDir     = "config/lunabrain/"
-	configFile    = ".lunabrain.yaml"
+	userConfigDir = ".justshare"
+	configDir     = "config/justshare/"
+	configFile    = ".justshare.yaml"
 )
 
 type Config struct {

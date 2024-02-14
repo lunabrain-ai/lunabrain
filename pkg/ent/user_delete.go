@@ -8,9 +8,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/lunabrain-ai/lunabrain/pkg/ent/predicate"
+	"github.com/justshare-io/justshare/pkg/ent/predicate"
 
-	entuser "github.com/lunabrain-ai/lunabrain/pkg/ent/user"
+	entuser "github.com/justshare-io/justshare/pkg/ent/user"
 )
 
 // UserDelete is the builder for deleting a User entity.
